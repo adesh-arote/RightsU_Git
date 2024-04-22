@@ -11,15 +11,13 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.ComponentModel;
 
 namespace RightsU.API.Controllers
 {
-    [SwaggerConsumes("application/json")]
-    [SwaggerProduces("application/json")]
-    [HideInDocs]
-    [SysLogFilter]
-    [CustomExceptionFilter]
-    public class milestonetypeController : ApiController
+    [DisplayName("Milestone Type")]
+    [Route("api/milestonetype")]
+    public class milestonetypeController : BaseController
     {
         public enum Order
         {
@@ -45,15 +43,7 @@ namespace RightsU.API.Controllers
         /// <param name="size">The size (total records) of each page</param>
         /// <param name="sort">Defines on which attribute the results should be sorted</param>
         /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(MilestoneTypeReturn))]
-        [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
-        [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
-        [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
-        [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
-        [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
-
         [HttpGet]
-        [Route("api/milestonetype")]
         public async Task<HttpResponseMessage> GetMilestoneType(Order order, Int32 page, Int32 size, SortColumn sort, string searchValue = "")
         {
             var response = new HttpResponseMessage();
@@ -62,33 +52,8 @@ namespace RightsU.API.Controllers
 
             GenericReturn objReturn = objMilestoneTypeService.GetMilestoneType(order.ToString(), sort.ToString(), size, page, searchValue, 0);
 
-            if (objReturn.StatusCode == HttpStatusCode.OK)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.OK, objReturn.Response, Configuration.Formatters.JsonFormatter);
-                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
-                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
-                response.Headers.Add("message", objReturn.Message);
-                return response;
-            }
-            else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
-                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
-                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
-                response.Headers.Add("message", objReturn.Message);
-                return response;
-            }
-            else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
-                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
-                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
-                response.Headers.Add("message", objReturn.Message);
-                return response;
-            }
+            objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+            response = CreateResponse(objReturn, true);
 
             return response;
         }

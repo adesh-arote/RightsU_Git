@@ -59,9 +59,24 @@ BEGIN
 					And ADMR.Acq_Deal_Movie_Code = DM.Acq_Deal_Movie_Code
 					AND ADRP.Platform_Code in
 					(
-						select platform_code from Platform (NOLOCK) where isnull(applicable_for_asrun_schedule,''N'') = ''Y''
+						select platform_code from Platform (NOLOCK) where isnull(Is_No_Of_Run,''N'') = ''Y''
 					)
-					AND ((Convert(date, ADR.Right_Start_Date, 103) >= Convert(date, GETDATE() , 103)) OR (Convert(date, isnull(ADR.Right_End_Date, GETDATE() ), 103) >= Convert(date, GETDATE() , 103)))
+					AND ((Convert(date, isnull(ADR.Right_End_Date, GETDATE() ), 103) <= Convert(date, GETDATE() , 103)))
+					)'
+		END
+		ELSE
+		BEGIN
+		SET @filter = @filter + ' AND Exists (SELECT * FROM Acq_Deal_Rights ADR (NOLOCK)
+					inner join Acq_Deal_Rights_Platform ADRP (NOLOCK) on ADRp.Acq_Deal_Rights_Code = ADR.Acq_Deal_Rights_Code
+					Inner Join Acq_Deal_Rights_Title ADRT (NOLOCK) on ADRT.Acq_Deal_Rights_Code = ADR.Acq_Deal_Rights_Code
+					Inner Join Acq_Deal_Movie ADMR (NOLOCK) On ADRT.Title_Code = ADMR.Title_Code WHERE
+					ADR.Acq_Deal_Code = D.Acq_Deal_Code
+					And ADMR.Acq_Deal_Movie_Code = DM.Acq_Deal_Movie_Code
+					AND ADRP.Platform_Code in
+					(
+						select platform_code from Platform (NOLOCK) where isnull(Is_No_Of_Run,''N'') = ''Y''
+					)
+					AND ((Convert(date, isnull(ADR.Right_Start_Date, GETDATE() ), 103) >= Convert(date, GETDATE() , 103)) OR (Convert(date, isnull(ADR.Right_End_Date, GETDATE() ), 103) >= Convert(date, GETDATE() , 103)))
 					)'
 		END
 		IF(@Channel != '')

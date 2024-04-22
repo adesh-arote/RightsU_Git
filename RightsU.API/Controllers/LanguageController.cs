@@ -11,22 +11,20 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.ComponentModel;
 
 namespace RightsU.API.Controllers
 {
-    [SwaggerConsumes("application/json")]
-    [SwaggerProduces("application/json")]
-    [HideInDocs]
-    [SysLogFilter]
-    [CustomExceptionFilter]
-    public class languageController : ApiController
+    [DisplayName("Language")]
+    [Route("api/language")]
+    public class languageController : BaseController
     {
       
         public enum SortColumn
         {
-            LanguageName = 1
-            //UpdatedDate = 2,
-            //TitleName = 3
+            CreatedDate = 1,
+            UpdatedDate = 2,
+            LanguageName = 3
         }
 
         private readonly LanguageServices objLanguageServices = new LanguageServices();
@@ -43,14 +41,7 @@ namespace RightsU.API.Controllers
         /// <param name="dateGt">Format - "dd-mmm-yyyy", filter basis on creation or modification date whichever falls into criteria</param>
         /// <param name="dateLt">Format - "dd-mmm-yyyy", filter basis on creation or modification date whichever falls into criteria</param>
         /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(LanguageReturn))]
-        [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
-        [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
-        [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
-        [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
-        [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpGet]
-        [Route("api/language")]
         public async Task<HttpResponseMessage> GetLanguageList(Order order, Int32 page, Int32 size, SortColumn sort, string searchValue = "", string dateGt = "", string dateLt = "")
         {
             var response = new HttpResponseMessage();
@@ -58,33 +49,8 @@ namespace RightsU.API.Controllers
             startTime = DateTime.Now;
             GenericReturn objReturn = objLanguageServices.GetLanguageList(order.ToString(), sort.ToString(), size, page, searchValue, dateGt, dateLt, 0);
 
-            if (objReturn.StatusCode == HttpStatusCode.OK)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.OK, objReturn.Response, Configuration.Formatters.JsonFormatter);
-                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
-                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
-                response.Headers.Add("message", objReturn.Message);
-                return response;
-            }
-            else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
-                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
-                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
-                response.Headers.Add("message", objReturn.Message);
-                return response;
-            }
-            else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
-                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
-                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
-                response.Headers.Add("message", objReturn.Message);
-                return response;
-            }
+            objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+            response = CreateResponse(objReturn, true);
 
             return response;
         }
@@ -95,12 +61,6 @@ namespace RightsU.API.Controllers
         /// <remarks>Retrieves Assets by Id</remarks>
         /// <param name="id">get specific asset data using id.</param>
         /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(Language))]
-        [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
-        [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
-        [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
-        [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
-        [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpGet]
         [Route("api/Language/{id}")]
         public async Task<HttpResponseMessage> GetTitleById(int? id)
@@ -110,24 +70,8 @@ namespace RightsU.API.Controllers
             startTime = DateTime.Now;
             GenericReturn objReturn = objLanguageServices.GetLanguageById(id.Value);
 
-            if (objReturn.StatusCode == HttpStatusCode.OK)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
-                return response;
-            }
-            else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn.Response, Configuration.Formatters.JsonFormatter);
-                return response;
-            }
-            else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
-                return response;
-            }
+            objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+            response = CreateResponse(objReturn, true);
 
             return response;
         }
@@ -138,14 +82,7 @@ namespace RightsU.API.Controllers
         /// <remarks>Create / Save New Language</remarks>
         /// <param name="Input">Input data object for Create/Save New Language</param>
         /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success")]
-        [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
-        [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
-        [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
-        [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
-        [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPost]
-        [Route("api/Language")]
         public async Task<HttpResponseMessage> PostLanguage(Language objInput)
         {
             var response = new HttpResponseMessage();
@@ -154,24 +91,8 @@ namespace RightsU.API.Controllers
 
             GenericReturn objReturn = objLanguageServices.PostLanguage(objInput);
 
-            if (objReturn.StatusCode == HttpStatusCode.OK)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
-                return response;
-            }
-            else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
-                return response;
-            }
-            else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
-                return response;
-            }
+            objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+            response = CreateResponse(objReturn, false);
 
             return response;
         }
@@ -182,40 +103,16 @@ namespace RightsU.API.Controllers
         /// <remarks>Update / Modify Language details by id</remarks>
         /// <param name="Input">Input data object for Modify existing Language</param>
         /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success")]
-        [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
-        [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
-        [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
-        [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
-        [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPut]
-        [Route("api/Language")]
         public async Task<HttpResponseMessage> PutLanguage(Language objInput)
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
-            GenericReturn objReturn = new GenericReturn();
-            objReturn = objLanguageServices.PutLanguage(objInput);
+            GenericReturn objReturn = objLanguageServices.PutLanguage(objInput);
 
-            if (objReturn.StatusCode == HttpStatusCode.OK)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
-                return response;
-            }
-            else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn.Response, Configuration.Formatters.JsonFormatter);
-                return response;
-            }
-            else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
-                return response;
-            }
+            objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+            response = CreateResponse(objReturn, false);
 
             return response;
         }
@@ -226,12 +123,6 @@ namespace RightsU.API.Controllers
         /// <remarks>Modify Active/Deactive Status of Existing Language</remarks>
         /// <param name="Input">Input data object for Modify existing Language Active/Deactive Status</param>
         /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success")]
-        [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
-        [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
-        [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
-        [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
-        [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPut]
         [Route("api/Language/ChangeActiveStatus")]
         public async Task<HttpResponseMessage> ChangeActiveStatus(Language Input)
@@ -240,27 +131,10 @@ namespace RightsU.API.Controllers
             DateTime startTime;
             startTime = DateTime.Now;
 
-            GenericReturn objReturn = new GenericReturn();
-            objReturn = objLanguageServices.ChangeActiveStatus(Input);
+            GenericReturn objReturn = objLanguageServices.ChangeActiveStatus(Input);
 
-            if (objReturn.StatusCode == HttpStatusCode.OK)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
-                return response;
-            }
-            else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn.Response, Configuration.Formatters.JsonFormatter);
-                return response;
-            }
-            else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
-                return response;
-            }
+            objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+            response = CreateResponse(objReturn, false);
 
             return response;
         }

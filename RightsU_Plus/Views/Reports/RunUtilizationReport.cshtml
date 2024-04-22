@@ -26,15 +26,17 @@
                 $('#changeLabel').html("Movie Title :");
                 TitleType = "M";
                 $('#txtTitle').val('');
+                $('#hdnTitleCode').val('0');
                 $('#txtTitle').attr('placeholder', 'Movie Title');
-                Clear();
+                //Clear();
             }
             else if ($(".TitleTypeCls:checked").val() == "S") {
                 $('#changeLabel').html("Program Title :");
                 TitleType = "S";
                 $('#txtTitle').val('');
+                $('#hdnTitleCode').val('0');
                 $('#txtTitle').attr('placeholder', 'Program Title');
-                Clear();
+                //Clear();
             }
             //else if ($(".TitleTypeCls:checked").val() == "A") {
             //    $('#changeLabel').html("Album Title :");

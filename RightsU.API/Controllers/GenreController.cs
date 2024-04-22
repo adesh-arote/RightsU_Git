@@ -11,15 +11,13 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.ComponentModel;
 
 namespace RightsU.API.Controllers
 {
-    [SwaggerConsumes("application/json")]
-    [SwaggerProduces("application/json")]
-    [HideInDocs]
-    [SysLogFilter]
-    [CustomExceptionFilter]
-    public class genreController : ApiController
+    [DisplayName("Genre")]
+    [Route("api/genre")]
+    public class genreController : BaseController
     {
         public enum SortColumn
         {
@@ -42,15 +40,8 @@ namespace RightsU.API.Controllers
         /// <param name="sort">Defines on which attribute the results should be sorted</param>
         /// <param name="dateGt">Format - "dd-mmm-yyyy", filter basis on creation or modification date whichever falls into criteria</param>
         /// <param name="dateLt">Format - "dd-mmm-yyyy", filter basis on creation or modification date whichever falls into criteria</param>
-        /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(GenreReturn))]
-        [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
-        [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
-        [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
-        [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
-        [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
+        /// <returns></returns>        
         [HttpGet]
-        [Route("api/genre")]
         public async Task<HttpResponseMessage> GetGenreList(Order order, Int32 page, Int32 size, SortColumn sort, string searchValue = "", string dateGt = "", string dateLt = "")
         {
             var response = new HttpResponseMessage();
@@ -59,33 +50,36 @@ namespace RightsU.API.Controllers
 
             GenericReturn objReturn = objGenreServices.GetGenreList(order.ToString(), sort.ToString(), size, page, searchValue, dateGt, dateLt, 0);
 
-            if (objReturn.StatusCode == HttpStatusCode.OK)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.OK, objReturn.Response, Configuration.Formatters.JsonFormatter);
-                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
-                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
-                response.Headers.Add("message", objReturn.Message);
-                return response;
-            }
-            else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
-                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
-                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
-                response.Headers.Add("message", objReturn.Message);
-                return response;
-            }
-            else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
-                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
-                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
-                response.Headers.Add("message", objReturn.Message);
-                return response;
-            }
+            objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+            response = CreateResponse(objReturn, true);
+
+            //if (objReturn.StatusCode == HttpStatusCode.OK)
+            //{
+            //    objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+            //    response = Request.CreateResponse(HttpStatusCode.OK, objReturn.Response, Configuration.Formatters.JsonFormatter);
+            //    response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+            //    response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+            //    response.Headers.Add("message", objReturn.Message);
+            //    return response;
+            //}
+            //else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
+            //{
+            //    objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+            //    response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
+            //    response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+            //    response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+            //    response.Headers.Add("message", objReturn.Message);
+            //    return response;
+            //}
+            //else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
+            //{
+            //    objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+            //    response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
+            //    response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+            //    response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+            //    response.Headers.Add("message", objReturn.Message);
+            //    return response;
+            //}
 
             return response;
         }
@@ -96,12 +90,6 @@ namespace RightsU.API.Controllers
         /// <remarks>Retrieves Genre by Id</remarks>
         /// <param name="id">get specific genre data using id.</param>
         /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(Genres))]
-        [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
-        [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
-        [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
-        [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
-        [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpGet]
         [Route("api/genre/{id}")]
         public async Task<HttpResponseMessage> GetGenreById(int? id)
@@ -112,24 +100,8 @@ namespace RightsU.API.Controllers
 
             GenericReturn objReturn = objGenreServices.GetGenreById(id.Value);
 
-            if (objReturn.StatusCode == HttpStatusCode.OK)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
-                return response;
-            }
-            else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
-                return response;
-            }
-            else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
-                return response;
-            }
+            objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+            response = CreateResponse(objReturn, true);
 
             return response;
         }
@@ -139,42 +111,18 @@ namespace RightsU.API.Controllers
         /// </summary>
         /// <remarks>Create / Save New Genre</remarks>
         /// <param name="Input">Input data object for Create/Save New Genre</param>
-        /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success")]
-        [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
-        [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
-        [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
-        [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
-        [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
+        /// <returns></returns>        
         [HttpPost]
-        [Route("api/genre")]
         public async Task<HttpResponseMessage> PostGenre(Genres Input)
-        {            
+        {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
 
             GenericReturn objReturn = objGenreServices.PostGenre(Input);
 
-            if (objReturn.StatusCode == HttpStatusCode.OK)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
-                return response;
-            }
-            else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
-                return response;
-            }
-            else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
-                return response;
-            }
-
+            objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+            response = CreateResponse(objReturn, false);
             return response;
         }
 
@@ -184,41 +132,17 @@ namespace RightsU.API.Controllers
         /// <remarks>Update / Modify Genre details by id</remarks>
         /// <param name="Input">Input data object for Modify existing Genre</param>
         /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success")]
-        [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
-        [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
-        [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
-        [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
-        [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
-        [HttpPut]
-        [Route("api/genre")]
+        [HttpPut]        
         public async Task<HttpResponseMessage> PutGenre(Genres Input)
-        {  
+        {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
 
-            GenericReturn objReturn = new GenericReturn();
-            objReturn = objGenreServices.PutGenre(Input);
+            GenericReturn objReturn = objGenreServices.PutGenre(Input);
 
-            if (objReturn.StatusCode == HttpStatusCode.OK)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
-                return response;
-            }
-            else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn.Response, Configuration.Formatters.JsonFormatter);
-                return response;
-            }
-            else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
-                return response;
-            }
+            objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+            response = CreateResponse(objReturn, false);
 
             return response;
         }
@@ -229,12 +153,6 @@ namespace RightsU.API.Controllers
         /// <remarks>Modify Active/Deactive Status of Existing Genre</remarks>
         /// <param name="Input">Input data object for Modify existing genre Active/Deactive Status</param>
         /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success")]
-        [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
-        [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
-        [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
-        [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
-        [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPut]
         [Route("api/genre/ChangeActiveStatus")]
         public async Task<HttpResponseMessage> ChangeActiveStatus(Genres Input)
@@ -243,27 +161,10 @@ namespace RightsU.API.Controllers
             DateTime startTime;
             startTime = DateTime.Now;
 
-            GenericReturn objReturn = new GenericReturn();
-            objReturn = objGenreServices.ChangeActiveStatus(Input);
+            GenericReturn objReturn = objGenreServices.ChangeActiveStatus(Input);
 
-            if (objReturn.StatusCode == HttpStatusCode.OK)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
-                return response;
-            }
-            else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn.Response, Configuration.Formatters.JsonFormatter);
-                return response;
-            }
-            else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
-                return response;
-            }
+            objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+            response = CreateResponse(objReturn, false);
 
             return response;
         }

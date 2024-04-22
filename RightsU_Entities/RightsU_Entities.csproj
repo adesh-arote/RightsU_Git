@@ -206,7 +206,7 @@
     <Compile Include="Master_Entities\AL_Vendor_TnC.cs" />
     <Compile Include="Master_Entities\Banner.cs" />
     <Compile Include="Master_Entities\MasterAuditLogInput.cs" />
-	<Compile Include="Master_Entities\Attrib_Report_Column.cs" />
+    <Compile Include="Master_Entities\Attrib_Report_Column.cs" />
     <Compile Include="Master_Entities\Digital.cs" />
     <Compile Include="Master_Entities\Digital_Config.cs" />
     <Compile Include="Master_Entities\Digital_Data.cs" />
@@ -477,6 +477,7 @@
     <Compile Include="ProjectMilestone\ProjectMilestoneDetail.cs" />
     <Compile Include="ProjectMilestone\ProjectMilestoneTitle.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RopLoginEntities.cs" />
     <Compile Include="StatusMessage.cs" />
     <Compile Include="StoreProcedure_Entities\USPAL_GetBookingsheetDataForLoadsheet_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USPAL_GetBookingSheetList_Result.cs" />

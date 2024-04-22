@@ -2063,7 +2063,7 @@ namespace RightsU.API.BLL.Services
 
                 objProgramRepositories.Add(objProgram);
 
-                _objRet.Response = new { id = objProgram.Program_Code };
+                _objRet.id = objProgram.Program_Code;
 
             }
 
@@ -2121,7 +2121,7 @@ namespace RightsU.API.BLL.Services
 
                 objProgramRepositories.AddEntity(objProgram);
 
-                _objRet.Response = new { id = objProgram.Program_Code };
+                _objRet.id = objProgram.Program_Code;
             }
 
             return _objRet;
@@ -2171,7 +2171,7 @@ namespace RightsU.API.BLL.Services
                 objProgram.Is_Active = objInput.Is_Active.ToUpper();
 
                 objProgramRepositories.Update(objProgram);
-                _objRet.Response = new { id = objProgram.Program_Code };
+                _objRet.id = objProgram.Program_Code;
 
             }
 
@@ -2958,8 +2958,6 @@ namespace RightsU.API.BLL.Services
 
             return _objRet;
         }
-
-
     }
     #endregion
 
@@ -3365,7 +3363,7 @@ namespace RightsU.API.BLL.Services
 
                 objLanguageRepositories.Add(objlanguage);
 
-                _objRet.Response = new { id = objlanguage.Language_Code };
+                _objRet.id = objlanguage.Language_Code;
 
             }
 
@@ -3423,7 +3421,7 @@ namespace RightsU.API.BLL.Services
 
                 objLanguageRepositories.Update(objlanguage);
 
-                _objRet.Response = new { id = objlanguage.Language_Code };
+                _objRet.id = objlanguage.Language_Code;
             }
             return _objRet;
         }
@@ -3472,7 +3470,7 @@ namespace RightsU.API.BLL.Services
                 objLanguage.Is_Active = objInput.Is_Active.ToUpper();
 
                 objLanguageRepositories.Update(objLanguage);
-                _objRet.Response = new { language_id = objLanguage.Language_Code };
+                _objRet.id = objLanguage.Language_Code;
 
             }
             return _objRet;
@@ -8934,7 +8932,7 @@ namespace RightsU.API.BLL.Services
                     _dealSegmentReturn.paging.total = dealSegments.Count;
 
                     GlobalTool.GetPaging(page, size, dealSegments.Count, out noOfRecordSkip, out noOfRecordTake);
-                     if (sort.ToLower() == "Deal_Segment_Name".ToLower())
+                    if (sort.ToLower() == "Deal_Segment_Name".ToLower())
                     {
                         if (order.ToUpper() == "ASC")
                         {
@@ -8966,7 +8964,7 @@ namespace RightsU.API.BLL.Services
             _dealSegmentReturn.content = dealSegments;
             _dealSegmentReturn.paging.page = page;
             _dealSegmentReturn.paging.size = size;
-        
+
             _objRet.Response = _dealSegmentReturn;
 
             return _objRet;
@@ -9017,7 +9015,7 @@ namespace RightsU.API.BLL.Services
 
             return _objRet;
         }
-        
+
         public GenericReturn PostDealSegment(Deal_Segment objInput)
         {
             GenericReturn _objRet = new GenericReturn();
@@ -9057,7 +9055,7 @@ namespace RightsU.API.BLL.Services
                 objDealSegmentRepositories.Add(objInput);
 
                 _objRet.id = objInput.Deal_Segment_Code;
-                
+
             }
 
             if (!_objRet.IsSuccess)
@@ -9247,7 +9245,7 @@ namespace RightsU.API.BLL.Services
             _revenueVerticalReturn.content = revenueVerticals;
             _revenueVerticalReturn.paging.page = page;
             _revenueVerticalReturn.paging.size = size;
-          
+
             _objRet.Response = _revenueVerticalReturn;
 
             return _objRet;
@@ -9312,7 +9310,7 @@ namespace RightsU.API.BLL.Services
             {
                 _objRet = GlobalTool.SetError(_objRet, "ERR154");
             }
-           
+
             else
             {
                 if (objInput.Type != "A" && objInput.Type != "S")
@@ -9336,26 +9334,26 @@ namespace RightsU.API.BLL.Services
             }
 
             #endregion
-           
-                if (_objRet.IsSuccess)
-                {
-                    objInput.Revenue_Vertical_Code = objInput.Revenue_Vertical_Code;
-                    objInput.Type = objInput.Type;
-                    objInput.Is_Active = "Y";
 
-                    objRevenueVerticalRepositories.Add(objInput);
+            if (_objRet.IsSuccess)
+            {
+                objInput.Revenue_Vertical_Code = objInput.Revenue_Vertical_Code;
+                objInput.Type = objInput.Type;
+                objInput.Is_Active = "Y";
 
-                    _objRet.id = objInput.Revenue_Vertical_Code;
+                objRevenueVerticalRepositories.Add(objInput);
 
-                }
-            
+                _objRet.id = objInput.Revenue_Vertical_Code;
 
-                if (!_objRet.IsSuccess)
-                {
-                    _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
-                }
+            }
 
-            
+
+            if (!_objRet.IsSuccess)
+            {
+                _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+            }
+
+
             return _objRet;
         }
 
@@ -9386,7 +9384,7 @@ namespace RightsU.API.BLL.Services
                 {
                     _objRet = GlobalTool.SetError(_objRet, "ERR327");
                 }
-                
+
                 else
                 {
                     var CheckDuplicate = objRevenueVerticalRepositories.SearchFor(new { Revenue_Vertical_Name = objInput.Revenue_Vertical_Name }).ToList();
@@ -9596,7 +9594,7 @@ namespace RightsU.API.BLL.Services
 
             AssignWorkFlowReturn _assignworkFlowReturn = new AssignWorkFlowReturn();
             List<Workflow_Module> assignworkFlow = new List<Workflow_Module>();
-           
+
 
             try
             {
@@ -9604,7 +9602,7 @@ namespace RightsU.API.BLL.Services
                 {
                     assignworkFlow = objAssignWorkFlowRepositories.GetAll().ToList();
 
-                    assignworkFlow = assignworkFlow.Where(w => w.Is_Active ==  "Y").ToList();
+                    assignworkFlow = assignworkFlow.Where(w => w.Is_Active == "Y").ToList();
 
                     if (!string.IsNullOrWhiteSpace(search_value))
                     {
