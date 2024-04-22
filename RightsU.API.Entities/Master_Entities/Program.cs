@@ -32,26 +32,24 @@ namespace RightsU.API.Entities
         public Nullable<int> Last_Action_By { get; set; }
         [JsonIgnore]
         public Nullable<System.DateTime> Lock_Time { get; set; }
-        [JsonIgnore]
+
         [ForeignKeyReference(typeof(Deal_Type))]
-        [OneToOne]
+        [JsonProperty(PropertyName = "deal_type_id")]
         public Nullable<int> Deal_Type_Code { get; set; }
-        
-        //[ManyToOne]
+                
+        [ManyToOne]        
         [SimpleSaveIgnore]
-        [SimpleLoadIgnore]
-        [JsonProperty(PropertyName = "deal_type_name")]
-        public virtual string Deal_Type_Name { get; set; }
+        [Column("Deal_Type_Code")]
+        public virtual Deal_Type deal_type { get; set; }
 
         [ForeignKeyReference(typeof(Genres))]
-        [JsonIgnore]        
+        [JsonProperty(PropertyName = "genres_id")]
         public Nullable<int> Genres_Code { get; set; }
-        
-        //[ManyToOne]
+                
+        [ManyToOne]        
         [SimpleSaveIgnore]
-        [SimpleLoadIgnore]
-        [JsonProperty(PropertyName = "genres_name")]
-        public virtual string Genres_Name { get; set; }
+        [Column("Genres_Code")]
+        public virtual Genres Genres { get; set; }
 
         [JsonProperty(PropertyName = "is_active")]
         public string Is_Active { get; set; }        

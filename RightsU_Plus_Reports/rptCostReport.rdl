@@ -1606,9 +1606,6 @@ iif(parameters!NumberFormat.Value = "en-IN","hi-IN",""))</Language>
                             <Parameter Name="Title_Codes">
                               <Value>=Fields!Title_Code.Value</Value>
                             </Parameter>
-                            <Parameter Name="DateFormat">
-                              <Value>=Parameters!DateFormat.Value</Value>
-                            </Parameter>
                           </Parameters>
                           <Style>
                             <Border>
@@ -1618,6 +1615,7 @@ iif(parameters!NumberFormat.Value = "en-IN","hi-IN",""))</Language>
                           </Style>
                         </Subreport>
                         <ColSpan>3</ColSpan>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell />
