@@ -19,7 +19,7 @@ namespace RightsU_Entities
         public string Message { get; set; }
         public bool IsSuccess { get; set; }
         public object Token { get; set; }
-        public int SecurityGroupCode { get; set; }
+        public Nullable<int> SecurityGroupCode { get; set; }
         public object UserName { get; set; }
         public string IsSystemPassword { get; set; }
     }
