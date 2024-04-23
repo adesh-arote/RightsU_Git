@@ -1133,6 +1133,13 @@ namespace RightsU.API.DAL
     #region -------- Milestone Type -----------
     public class MilestoneTypeRepositories : MainRepository<Milestone_Type>
     {
+
+        public Milestone_Type Get(int Id)
+        {
+            var obj = new { Milestone_Type_Code = Id };
+
+            return base.GetById<Milestone_Type>(obj);
+        }
         public MilestoneTypeReturn GetMilestoneType_List(string order, Int32 page, string search_value, Int32 size, string sort, Int32 id)
         {
             MilestoneTypeReturn objMilestoneTypeReturn = new MilestoneTypeReturn();

@@ -1010,12 +1010,23 @@ namespace RightsU_Plus.Controllers
                         response1.Wait();
 
                         var responseBody1 = response1.Result.Content.ReadAsStringAsync();
-                        rootObject = JsonConvert.DeserializeObject<RootObject>(responseBody1.Result);
-                        rootObject.Return.Message = "RuCore Login Successful";
-                        rootObject.LoginTokens = objLoginToken;
-                    }
-                    StatusCode = Convert.ToString(result.StatusCode);
-                    Msg = "Success";
+                        var UserMessage  = JsonConvert.DeserializeObject<dynamic>(responseBody1.Result);
+                        string message = UserMessage.Return.Message;
+                        if (message != "Locked")
+                        {
+                            rootObject = JsonConvert.DeserializeObject<RootObject>(responseBody1.Result);
+                            rootObject.Return.Message = "RuCore Login Successful";
+                            rootObject.LoginTokens = objLoginToken;
+                            StatusCode = Convert.ToString(result.StatusCode);
+                            Msg = "Success";
+                        }
+                        else
+                        {
+                            rootObject = JsonConvert.DeserializeObject<RootObject>(responseBody1.Result);
+                            StatusCode = Convert.ToString(0);
+                            Msg = rootObject.Return.Message;
+                        }
+                    }                    
                 }
                 else
                 {

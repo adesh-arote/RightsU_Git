@@ -101,7 +101,7 @@ BEGIN
 			FROM
 			(
 				SELECT DISTINCT 
-				AD.Agreement_No, (select Business_Unit_Name from Business_Unit where Business_Unit_Code = AD.Acq_Deal_Code) Business_Unit,
+				AD.Agreement_No, (select Business_Unit_Name from Business_Unit where Business_Unit_Code = AD.Business_Unit_Code) Business_Unit,
 				TT.Title_Name,
 				AD.Acq_Deal_Code Deal_Code,
 				CCR.BMS_Asset_Code Title_Content_Code,
