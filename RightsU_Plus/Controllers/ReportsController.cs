@@ -1748,7 +1748,7 @@ namespace RightsU_Plus.Controllers
 
             if (RunType == "C")
                 RunType = Convert.ToString(0);
-            else
+            else if(RunType == "U")
                 RunType = Convert.ToString(-1);
 
             ReportParameter[] parm;

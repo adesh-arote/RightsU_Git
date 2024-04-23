@@ -35,6 +35,7 @@
         objMessageKey = (MessageKey)Session["objMessageKey"];
     }
     ImgPathData imgLogo = (ImgPathData)Session["CLientImgpathData"];
+    var LoginName = "";
 }
 <!DOCTYPE html>
 <link type="image/ico" rel="icon" href="~/Images/u-to.ico" />
@@ -224,7 +225,7 @@
             showLoading();
             var langCode = $(element).find("span.item-code").text();
             var LayoutDirection_G = $(element).find("span.layout-direction").text();
-
+           
 
             $.ajax({
                 type: "POST",
@@ -919,6 +920,7 @@
 
         function RedirectToROP(UserCode, UserName, UserPassword) {
             debugger;
+            LoginName = UserName;
 
             $.ajax({
                 type: "POST",
@@ -938,27 +940,55 @@
                         redirectToLogin();
                     }
                     else {
-                        var uniqueKey = 'key_' + Date.now();
-                        localStorage.setItem(uniqueKey, result);
-                        var url = '@System.Configuration.ConfigurationManager.AppSettings["ROPDashboardURL"]?uniqueKey=' + encodeURIComponent(uniqueKey);
-                        window.open(url, '_blank');
-
-                        // Construct URL with data stored in local storage
-                        //var baseUrl = 'System.Configuration.ConfigurationManager.AppSettings["ROPDashboardURL"]';
-                        //var storedData = JSON.parse(localStorage.getItem('response_data'));
-                        //var url = baseUrl + '?' + $.param(storedData);
-                        //window.open(url, '_blank');
-
-                        //var f = $('<form action="System.Configuration.ConfigurationManager.AppSettings["ROPDashboardURL"]" method="POST" target="_blank" >' + '?' +
-                        //    result +
-                        //'</form>').appendTo('body').submit();                      
+                        if (JSON.parse(result).Message == "Locked") {
+                            showAlert("E", "User ALready Logged In. Do you wnt to release account?", "OKCANCEL");
+                        }
+                        else {
+                            var uniqueKey = 'key_' + Date.now();
+                            localStorage.setItem(uniqueKey, result);
+                            var url = '@System.Configuration.ConfigurationManager.AppSettings["ROPDashboardURL"]?uniqueKey=' + encodeURIComponent(uniqueKey);
+                            window.open(url, '_blank');
+                        }
                     }
                 },
                 error: function (result) {
                     alert('Error: ' + result.responseText);
                 }
             });
-        }       
+        }
+
+        function handleCancel() {
+            return false;
+        }
+
+        function handleOk() {
+            debugger;
+            $.ajax({
+                type: "POST",
+                url: '@System.Configuration.ConfigurationManager.AppSettings["ROPUserLogoutURL"]',
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                async: true,
+                data: JSON.stringify({
+                    Login_Name: LoginName
+                }),
+                success: function (result) {
+                    debugger;
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        if (result.User.Message == "Logout Successfull") {
+                            showAlert("S", "User Logout Successfully.");
+                        }
+                        else {
+                            alert('Error: ' + result.responseText);
+                        }
+                    }
+                },
+                
+            });
+        }
     </script>
 </head>
 

@@ -102,6 +102,11 @@ namespace RightsU.API.DAL.Repository
                         
                     });
                 }
+
+                if (entity.Milestone_Type_Code > 0)
+                {
+                    entity.milestone_type = new MilestoneTypeRepositories().Get(entity.Milestone_Type_Code.Value);
+                }
             }
 
             return entity;
