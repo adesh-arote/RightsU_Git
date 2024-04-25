@@ -74,6 +74,7 @@
     <Compile Include="Entities\BMS_Schedule_Import_Config.cs" />
     <Compile Include="Entities\Channel.cs" />
     <Compile Include="Entities\Schedule_Data_UDT.cs" />
+    <Compile Include="Entities\Upload_Err_Detail.cs" />
     <Compile Include="Entities\Upload_Files.cs" />
     <Compile Include="Error.cs" />
     <Compile Include="Form1.cs">
