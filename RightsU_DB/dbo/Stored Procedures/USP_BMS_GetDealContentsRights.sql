@@ -21,11 +21,19 @@ BEGIN
 	if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_BMS_GetDealContentsRights]', 'Step 1', 0, 'Started Procedure', 0, ''
 	
 	DECLARE @BMS_API_Deal_Prefix as VARCHAR(10),@BMS_API_Asset_Prefix VARCHAR(50),@BMS_API_DealContent_Prefix VARCHAR(50),@BMS_API_DealContentRights_Prefix VARCHAR(50),@BMS_API_Channel_Prefix VARCHAR(50)
+	DECLARE @BMS_API_Since_Days INT
 	SET @BMS_API_Deal_Prefix = (SELECT top 1 Parameter_Value FROM System_Parameter_New Where Parameter_Name='BMS_API_Deal_Prefix')
 	SET @BMS_API_Asset_Prefix = (SELECT top 1 Parameter_Value FROM System_Parameter_New Where Parameter_Name='BMS_API_Asset_Prefix')
 	SET @BMS_API_DealContent_Prefix = (SELECT top 1 Parameter_Value FROM System_Parameter_New Where Parameter_Name='BMS_API_DealContent_Prefix')
 	SET @BMS_API_DealContentRights_Prefix = (SELECT top 1 Parameter_Value FROM System_Parameter_New Where Parameter_Name='BMS_API_DealContentRights_Prefix')
 	SET @BMS_API_Channel_Prefix = (SELECT top 1 Parameter_Value FROM System_Parameter_New Where Parameter_Name='BMS_API_Channel_Prefix')
+	SET @BMS_API_Since_Days = (SELECT top 1 Parameter_Value FROM System_Parameter_New Where Parameter_Name='BMS_API_Since_Days')
+
+	IF(ISNULL(@since,'')='')
+	BEGIN
+		SET @since = CAST(DATEADD(day,-@BMS_API_Since_Days,GETDATE()) as DATE)
+	END
+	
 
 	DECLARE @Params NVARCHAR(MAX) = '';
 	IF(ISNULL(@AssetId,'')<>'' AND ISNULL(@DealId,'')<>'')
@@ -48,7 +56,7 @@ BEGIN
 		FROM BMS_Deal_Content_Rights BDCR (NOLOCK)
 		INNER JOIN BMS_Deal_Content BDC (NOLOCK) ON BDC.BMS_Deal_Content_Code=BDCR.BMS_Deal_Content_Code		
 		LEFT JOIN Right_Rule RR (NOLOCK) ON BDCR.RU_Right_Rule_Code=RR.Right_Rule_Code
-		WHERE BDCR.BMS_Asset_Code =@AssetId AND BDC.BMS_Deal_Code =@DealId
+		WHERE ISNULL(BDCR.Updated_On,BDCR.Created_On) >=@since AND BDCR.BMS_Asset_Code =@AssetId AND BDC.BMS_Deal_Code =@DealId
 
 		--SET @Params += ' AND BDC.BMS_Asset_Code ='+@AssetId+' AND BDC.BMS_Deal_Code ='+@DealId
 	END
@@ -73,7 +81,7 @@ BEGIN
 		FROM BMS_Deal_Content_Rights BDCR (NOLOCK)
 		INNER JOIN BMS_Deal_Content BDC (NOLOCK) ON BDC.BMS_Deal_Content_Code=BDCR.BMS_Deal_Content_Code		
 		LEFT JOIN Right_Rule RR (NOLOCK) ON BDCR.RU_Right_Rule_Code=RR.Right_Rule_Code
-		WHERE BDCR.BMS_Asset_Code =@AssetId
+		WHERE ISNULL(BDCR.Updated_On,BDCR.Created_On) >=@since AND BDCR.BMS_Asset_Code =@AssetId
 		--SET @Params += ' AND BDC.BMS_Asset_Code ='+@AssetId
 	END
 	ELSE IF(ISNULL(@DealId,'')<>'')
@@ -96,7 +104,7 @@ BEGIN
 		FROM BMS_Deal_Content_Rights BDCR (NOLOCK)
 		INNER JOIN BMS_Deal_Content BDC (NOLOCK) ON BDC.BMS_Deal_Content_Code=BDCR.BMS_Deal_Content_Code		
 		LEFT JOIN Right_Rule RR (NOLOCK) ON BDCR.RU_Right_Rule_Code=RR.Right_Rule_Code
-		WHERE BDC.BMS_Deal_Code =@DealId
+		WHERE ISNULL(BDCR.Updated_On,BDCR.Created_On) >=@since AND BDC.BMS_Deal_Code =@DealId
 
 		--SET @Params += ' AND BDC.BMS_Deal_Code ='+@DealId
 	END

@@ -16,7 +16,15 @@ BEGIN
 	if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_BMS_GetDeals]', 'Step 1', 0, 'Started Procedure', 0, ''
 	
 	DECLARE @BMS_API_Deal_Prefix as VARCHAR(10)
+	DECLARE @BMS_API_Since_Days INT
+
 	SET @BMS_API_Deal_Prefix = (SELECT top 1 Parameter_Value FROM System_Parameter_New Where Parameter_Name='BMS_API_Deal_Prefix')
+	SET @BMS_API_Since_Days = (SELECT top 1 Parameter_Value FROM System_Parameter_New Where Parameter_Name='BMS_API_Since_Days')
+
+	IF(ISNULL(@since,'')='')
+	BEGIN
+		SET @since = CAST(DATEADD(day,-@BMS_API_Since_Days,GETDATE()) as DATE)
+	END
 
 	IF(ISNULL(@AssetId,'')<>'')
 	BEGIN
@@ -38,7 +46,7 @@ BEGIN
 		INNER JOIN Entity E (NOLOCK) ON E.Entity_Code=BD.RU_Licensee_Code	
 		INNER JOIN Category CT (NOLOCK) ON CT.Category_Code=BD.RU_Category_Code
 		LEFT JOIN BMS_Deal_Content BDC (NOLOCK) ON BDC.BMS_Deal_Code=BD.BMS_Deal_Code
-		WHERE BDC.BMS_Asset_Code=@AssetId
+		WHERE BDC.BMS_Asset_Code=@AssetId AND ISNULL(BD.Updated_On,BD.Created_On) >= @since
 
 	END
 	ELSE
