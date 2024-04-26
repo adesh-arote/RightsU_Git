@@ -2587,7 +2587,7 @@ Phone: +65 (0) 31632622</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Smartjog</Value>
+                                  <Value>Delivery System</Value>
                                   <Style>
                                     <FontSize>11pt</FontSize>
                                   </Style>
@@ -2610,6 +2610,7 @@ Phone: +65 (0) 31632622</Value>
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>

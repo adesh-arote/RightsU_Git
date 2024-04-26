@@ -59,10 +59,18 @@ BEGIN
 	
 			DECLARE @filter VARCHAR(8000);	SET @filter = ' '
 			DECLARE @strSql VARCHAR(MAX)	SET @strSql = ' '
-			DECLARE @BV_Program_Category_Name_For_Show VARCHAR(100)
-			SELECT  @BV_Program_Category_Name_For_Show = BV_Program_Category_Name FROM System_Parameter_New SPN
-			INNER JOIN BV_Program_Category PC ON PC.BV_Program_Category_code = SPN.Parameter_Value
-			where SPN.Parameter_Name = 'BV_Program_Category_Code_For_Show'
+			DECLARE @BV_Program_Category_Name_For_Show NVARCHAR(MAX)
+			--SELECT  @BV_Program_Category_Name_For_Show = BV_Program_Category_Name FROM System_Parameter_New SPN
+			--INNER JOIN BV_Program_Category PC ON PC.BV_Program_Category_code = SPN.Parameter_Value
+			--where SPN.Parameter_Name = 'BV_Program_Category_Code_For_Show'
+
+			DECLARE @BV_Pc_Code NVARCHAR(MAX) = (select Parameter_Value FROM System_Parameter_New WHERE Parameter_Name= 'BV_Program_Category_Code_For_Show')
+
+			SELECT @BV_Program_Category_Name_For_Show = ISNULL(STUFF((SELECT DISTINCT ',''' + t.BV_Program_Category_Name + ''''
+			FROM BV_Program_Category t (NOLOCK)    
+			WHERE t.BV_Program_Category_code IN (SELECT number FROM dbo.fn_Split_withdelemiter(@BV_Pc_Code, ',') WHERE number NOT IN ('0', ''))
+			FOR XML PATH(''), TYPE      
+			 ).value('.', 'NVARCHAR(MAX)'), 1, 1, ''), '')
 
 			IF(@ReportType = 'S')
 			BEGIN
@@ -87,7 +95,7 @@ BEGIN
 					SET @filter = ' '
 				END
 
-				IF(@TitleType = 'SHOW' OR @TitleType = 'ALL')
+				IF(@TitleType = 'Program' OR @TitleType = 'ALL')
 				BEGIN
 					IF((@EpisodeFrom != '') AND (@EpisodeTo != ''))
 					BEGIN
@@ -95,7 +103,7 @@ BEGIN
 					END		
 				END
 		
-				IF(@TitleType = 'MOVIE' OR @TitleType = 'ALL')
+				IF(@TitleType = 'Movie' OR @TitleType = 'ALL')
 				BEGIN
 					SET @strSql = '
 					INSERT INTO #ExceptionReport
@@ -104,19 +112,19 @@ BEGIN
 						File_Schedule_Item_Log_Date,  File_Schedule_Item_Log_Time, File_Schedule_Item_Duration, File_HouseID, 
 						Channel_Code, Channel_Name, Notification_Msg
 					)  
-
 					select ENS.Title_Code, T.Title_Name , ENS.Program_Episode_Title, ENS.Program_Category, ENS.Program_Episode_Number, ENS.Program_Title, 
 					ENS.Schedule_Item_Log_Date, ENS.Schedule_Item_Log_Time, ENS.Schedule_Item_Duration, ENS.Scheduled_Version_House_Number_List, C.channel_code, C.channel_name,
 					ENS.Email_Notification_Msg
 					from Email_Notification_Schedule ENS (NOLOCK)
 					LEFT OUTER JOIN Title T (NOLOCK) ON T.title_code = ENS.Title_Code
 					INNER JOIN Channel C (NOLOCK) ON C.channel_code = ENS.Channel_Code
-					WHERE 1=1 AND Program_category NOT In ('''+ ISNULL(@BV_Program_Category_Name_For_Show,'') +''') ' + @filter
+					WHERE 1=1 ' + @filter
+					--WHERE 1=1 AND Program_category NOT In ('''+ ISNULL(@BV_Program_Category_Name_For_Show,'') +''') ' + @filter
 			
 					PRINT @strSql
 					EXEC(@strSql)
 				END
-				IF(@TitleType = 'SHOW' OR @TitleType = 'ALL')
+				IF(@TitleType = 'Program' OR @TitleType = 'ALL')
 				BEGIN
 					-----SELECT 'aaa'
 					SET @strSql = '
@@ -126,14 +134,13 @@ BEGIN
 						File_Schedule_Item_Log_Date,  File_Schedule_Item_Log_Time, File_Schedule_Item_Duration, File_HouseID, 
 						Channel_Code, Channel_Name, Notification_Msg
 					)  
-
 					select ENS.Title_Code, T.Title_Name , ENS.Program_Episode_Title, ENS.Program_Category, ENS.Program_Episode_Number, ENS.Program_Title, 
 					ENS.Schedule_Item_Log_Date, ENS.Schedule_Item_Log_Time, ENS.Schedule_Item_Duration, ENS.Scheduled_Version_House_Number_List, C.channel_code, C.channel_name,
 					ENS.Email_Notification_Msg
 					from Email_Notification_Schedule ENS (NOLOCK)
 					LEFT OUTER JOIN Title T (NOLOCK) ON T.title_code = ENS.Title_Code
 					INNER JOIN Channel C (NOLOCK) ON C.channel_code = ENS.Channel_Code
-					WHERE 1=1  AND Program_category IN ('''+ ISNULL(@BV_Program_Category_Name_For_Show,'') +''') ' + ISNULL(@filter,'')
+					WHERE 1=1  AND Program_category IN ('+ ISNULL(@BV_Program_Category_Name_For_Show,'') +') ' + ISNULL(@filter,'')
 			
 					PRINT @strSql
 					EXEC(@strSql)
@@ -156,7 +163,7 @@ BEGIN
 					SET @filter = ' '
 				END
 		
-				IF(@TitleType = 'MOVIE' OR @TitleType = 'ALL')
+				IF(@TitleType = 'Movie' OR @TitleType = 'ALL')
 				BEGIN
 					SET @strSql = '
 					INSERT INTO #ExceptionReport 
@@ -165,7 +172,6 @@ BEGIN
 						File_Schedule_Item_Log_Date,  File_Schedule_Item_Log_Time, File_Schedule_Item_Duration, File_HouseID, 
 						Channel_Code, Channel_Name, Notification_Msg
 					)  
-
 					select ENA.Title_Code, T.title_name, NULL, NULL, NULL, ENA.TITLE, 
 					ENA.ON_AIR, ENA.Dt_Tm, ENA.DUration, ENA.ID, 
 					C.channel_code, C.channel_name, ENA.Email_Notification_Msg
@@ -177,7 +183,7 @@ BEGIN
 					PRINT @strSql
 					EXEC(@strSql)
 				END
-				IF(@TitleType = 'SHOW' OR @TitleType = 'ALL')
+				IF(@TitleType = 'Program' OR @TitleType = 'ALL')
 				BEGIN
 					SET @strSql = '
 					INSERT INTO #ExceptionReport 
@@ -186,7 +192,6 @@ BEGIN
 						File_Schedule_Item_Log_Date,  File_Schedule_Item_Log_Time, File_Schedule_Item_Duration, File_HouseID, 
 						Channel_Code, Channel_Name, Notification_Msg
 					)  
-
 					select ENA.Title_Code, T.title_name, NULL, NULL, NULL, ENA.TITLE, 
 					ENA.ON_AIR, ENA.Dt_Tm, ENA.DUration, ENA.ID, 
 					C.channel_code, C.channel_name, ENA.Email_Notification_Msg

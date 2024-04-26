@@ -92,7 +92,7 @@ namespace RightsU_ScheduleFileProcess
 
                 Error.WriteLog_Conditional("STEP 1.3  : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Calling Procedure USP_Music_Schedule");
 
-                objUSP_Music_ScheduleRepositories.USP_Music_Schedule();                
+                objUSP_Music_ScheduleRepositories.USP_Music_Schedule();
             }
             catch (Exception ex)
             {
@@ -120,7 +120,10 @@ namespace RightsU_ScheduleFileProcess
             BMS_Schedule_Import_ConfigRepositories objBMS_Schedule_Import_ConfigRepositories = new BMS_Schedule_Import_ConfigRepositories();
             BMSUploadData_Repositories objBMSUploadData_Repositories = new BMSUploadData_Repositories();
             Upload_FilesRepositories objUpload_FilesRepositories = new Upload_FilesRepositories();
+            Upload_Err_DetailRepositories objUpload_Err_DetailRepositories = new Upload_Err_DetailRepositories();
             Int32 File_Code = 0;
+
+            File_Code = objUpload_Files.File_Code.Value;
 
             DataTable datatable = new DataTable();
 
@@ -164,8 +167,6 @@ namespace RightsU_ScheduleFileProcess
                 {
                     Error.WriteLog_Conditional("STEP 1.2 : Data rows are filled into datatable.");
 
-                    File_Code = objUpload_Files.File_Code.Value;
-
                     Error.WriteLog_Conditional("STEP 1.3 : File detail added into file upload table : File_Code = " + Convert.ToString(File_Code));
 
                     List<BMS_Schedule_Import_Config> objBMSScheduleImportConfig = new List<BMS_Schedule_Import_Config>();
@@ -176,9 +177,44 @@ namespace RightsU_ScheduleFileProcess
                     if (objBMSScheduleImportConfig.Count > 0)
                     {
                         List<Schedule_Data_UDT> ScheduleDataUDT = new List<Schedule_Data_UDT>();
+
+                        // Check Validation for File Columns.
+                        foreach (var column in objBMSScheduleImportConfig)
+                        {
+                            if (!datatable.Columns.Contains("\"" + column.Input_Column_Name + "\""))
+                            {
+                                Upload_Err_Detail objUpload_Err_Detail = new Upload_Err_Detail();
+                                objUpload_Err_Detail.File_Code = File_Code;
+                                objUpload_Err_Detail.Row_Num = 0;
+                                objUpload_Err_Detail.Err_Cols = "1InvFrmt";
+                                objUpload_Err_Detail.Upload_Type = "S";
+                                objUpload_Err_Detail.Upload_Title_Type = "M";
+                                objUpload_Err_DetailRepositories.Add(objUpload_Err_Detail);
+                                if (objUpload_Err_Detail.Upload_Detail_Code > 0)
+                                {
+                                    Upload_Files objUploadFiles = new Upload_Files();
+                                    objUploadFiles = objUpload_FilesRepositories.GetUpload_FilesById(File_Code);
+                                    objUploadFiles.Err_YN = "Y";
+                                    objUploadFiles.Record_Status = "E";
+                                    objUpload_FilesRepositories.Update(objUploadFiles);
+                                }
+
+                                if (!Directory.Exists(FolderPath + ConfigurationManager.AppSettings["Failed_File"]))
+                                {
+                                    Directory.CreateDirectory(FolderPath + ConfigurationManager.AppSettings["Failed_File"]);
+                                }
+                                File.Move(filePath, FolderPath + ConfigurationManager.AppSettings["Failed_File"] + objUpload_Files.File_Name);
+
+                                return 0;
+                            }
+                        }
+
+                        // Check Validation for File Columns.
+
                         foreach (DataRow row in datatable.Rows)
                         {
                             Schedule_Data_UDT ScheduleData = new Schedule_Data_UDT();
+
                             foreach (DataColumn column in datatable.Columns)
                             {
                                 string Input_Column_Name = objBMSScheduleImportConfig.Where(w => w.Input_Column_Name == column.ColumnName.Replace("\"", "")).Select(l => l.Input_Column_Name).FirstOrDefault();
@@ -203,6 +239,32 @@ namespace RightsU_ScheduleFileProcess
                                         ScheduleData.Schedule_Item_Duration = row["\"Schedule Item Duration\""].ToString().Replace("\"", "");
                                     if (column.ColumnName.Replace("\"", "") == "Scheduled Version House Number List")
                                         ScheduleData.Scheduled_Version_House_Number_List = row["\"Scheduled Version House Number List\""].ToString().Replace("\"", "");
+                                }
+                                else
+                                {
+                                    Upload_Err_Detail objUpload_Err_Detail = new Upload_Err_Detail();
+                                    objUpload_Err_Detail.File_Code = File_Code;
+                                    objUpload_Err_Detail.Row_Num = 0;
+                                    objUpload_Err_Detail.Err_Cols = "1InvFrmt";
+                                    objUpload_Err_Detail.Upload_Type = "S";
+                                    objUpload_Err_Detail.Upload_Title_Type = "M";
+                                    objUpload_Err_DetailRepositories.Add(objUpload_Err_Detail);
+                                    if (objUpload_Err_Detail.Upload_Detail_Code > 0)
+                                    {
+                                        Upload_Files objUploadFiles = new Upload_Files();
+                                        objUploadFiles = objUpload_FilesRepositories.GetUpload_FilesById(File_Code);
+                                        objUploadFiles.Err_YN = "Y";
+                                        objUploadFiles.Record_Status = "E";
+                                        objUpload_FilesRepositories.Update(objUploadFiles);
+                                    }
+
+                                    if (!Directory.Exists(FolderPath + ConfigurationManager.AppSettings["Failed_File"]))
+                                    {
+                                        Directory.CreateDirectory(FolderPath + ConfigurationManager.AppSettings["Failed_File"]);
+                                    }
+                                    File.Move(filePath, FolderPath + ConfigurationManager.AppSettings["Failed_File"] + objUpload_Files.File_Name);
+
+                                    return 0;
                                 }
                             }
 
@@ -229,6 +291,10 @@ namespace RightsU_ScheduleFileProcess
                                     objUploadFiles.Record_Status = "P";
                                     objUpload_FilesRepositories.Update(objUploadFiles);
 
+                                    if (!Directory.Exists(FolderPath + ConfigurationManager.AppSettings["Success_File"]))
+                                    {
+                                        Directory.CreateDirectory(FolderPath + ConfigurationManager.AppSettings["Success_File"]);
+                                    }
                                     File.Move(filePath, FolderPath + ConfigurationManager.AppSettings["Success_File"] + objUpload_Files.File_Name);
                                 }
                                 else
@@ -241,6 +307,10 @@ namespace RightsU_ScheduleFileProcess
                                     objUploadFiles.Record_Status = "E";
                                     objUpload_FilesRepositories.Update(objUploadFiles);
 
+                                    if (!Directory.Exists(FolderPath + ConfigurationManager.AppSettings["Failed_File"]))
+                                    {
+                                        Directory.CreateDirectory(FolderPath + ConfigurationManager.AppSettings["Failed_File"]);
+                                    }
                                     File.Move(filePath, FolderPath + ConfigurationManager.AppSettings["Failed_File"] + objUpload_Files.File_Name);
 
                                     return 0;
@@ -248,6 +318,34 @@ namespace RightsU_ScheduleFileProcess
                             }
                         }
                     }
+                }
+                else
+                {
+                    Error.WriteLog_Conditional("STEP 1.7 : File is Empty");
+
+                    Upload_Err_Detail objUpload_Err_Detail = new Upload_Err_Detail();
+                    objUpload_Err_Detail.File_Code = File_Code;
+                    objUpload_Err_Detail.Row_Num = 0;
+                    objUpload_Err_Detail.Err_Cols = "1NRF";
+                    objUpload_Err_Detail.Upload_Type = "S";
+                    objUpload_Err_Detail.Upload_Title_Type = "M";
+                    objUpload_Err_DetailRepositories.Add(objUpload_Err_Detail);
+                    if (objUpload_Err_Detail.Upload_Detail_Code > 0)
+                    {
+                        Upload_Files objUploadFiles = new Upload_Files();
+                        objUploadFiles = objUpload_FilesRepositories.GetUpload_FilesById(File_Code);
+                        objUploadFiles.Err_YN = "Y";
+                        objUploadFiles.Record_Status = "E";
+                        objUpload_FilesRepositories.Update(objUploadFiles);
+                    }
+
+                    if (!Directory.Exists(FolderPath + ConfigurationManager.AppSettings["Failed_File"]))
+                    {
+                        Directory.CreateDirectory(FolderPath + ConfigurationManager.AppSettings["Failed_File"]);
+                    }
+                    File.Move(filePath, FolderPath + ConfigurationManager.AppSettings["Failed_File"] + objUpload_Files.File_Name);
+
+                    return 0;
                 }
 
                 #endregion

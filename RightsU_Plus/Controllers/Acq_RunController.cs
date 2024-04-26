@@ -995,6 +995,23 @@ namespace RightsU_Plus.Controllers
                     objRun.Acq_Deal_Run_Channel.Add(objDRRunChannel);
                 }
             }
+            if (RunDefType != GlobalParams.CHANNEL_WISE)
+            {
+                if (lbChannel != null)
+                {
+                    List<RightsU_Entities.Channel> lstChannel = new Channel_Service(objLoginEntity.ConnectionStringName).SearchFor(c => lbChannel.Contains(c.Channel_Code.ToString())).ToList();
+
+                    foreach (RightsU_Entities.Channel objChannel in lstChannel)
+                    {
+                        Acq_Deal_Run_Channel objDRRunChannel = new Acq_Deal_Run_Channel();
+                        objDRRunChannel.Channel_Code = objChannel.Channel_Code;
+                        objDRRunChannel.ChannelNames = objChannel.Channel_Name;
+                        objDRRunChannel.Min_Runs = objRun.No_Of_Runs;
+                        objDRRunChannel.EntityState = State.Added;
+                        objRun.Acq_Deal_Run_Channel.Add(objDRRunChannel);
+                    }
+                }
+            }
 
             List<USP_Validate_Run_UDT> lstUSP_Validate_Run_UDT = ValidateRunWithScheduleRun(ddlPTitle, hdnIs_Yearwise_Definition, lstYearwiseRun, hdnIs_Channel_Definition_Rights, objRun.Acq_Deal_Run_Channel.ToList());
 
