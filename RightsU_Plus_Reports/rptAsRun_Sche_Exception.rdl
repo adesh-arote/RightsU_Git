@@ -424,7 +424,7 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
                   <Width>1.41146in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.41146in</Width>
+                  <Width>1.69792in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1.60417in</Width>
@@ -433,7 +433,7 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
                   <Width>1.89063in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.41146in</Width>
+                  <Width>1.30729in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1.41146in</Width>
@@ -448,14 +448,14 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox12">
+                        <Textbox Name="Textbox13">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=First(Fields!Col_Head1.Value, "DS_Headers")</Value>
+                                  <Value>Title Name</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>12pt</FontSize>
@@ -485,14 +485,14 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox13">
+                        <Textbox Name="Textbox26">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=First(Fields!Col_Head2.Value, "DS_Headers")</Value>
+                                  <Value>Program Episode Title</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>12pt</FontSize>
@@ -506,7 +506,7 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox12</rd:DefaultName>
+                          <rd:DefaultName>Textbox26</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -712,14 +712,14 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="english_title">
+                        <Textbox Name="File_Program_Title">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!File_Episode_Title.Value</Value>
+                                  <Value>=Fields!title_name.Value</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -729,7 +729,7 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>english_title</rd:DefaultName>
+                          <rd:DefaultName>File_Program_Title</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -744,7 +744,7 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="File_Program_Title">
+                        <Textbox Name="Textbox27">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -761,7 +761,7 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>File_Program_Title</rd:DefaultName>
+                          <rd:DefaultName>Textbox27</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -943,19 +943,15 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
             </TablixBody>
             <TablixColumnHierarchy>
               <TablixMembers>
+                <TablixMember />
                 <TablixMember>
                   <Visibility>
-                    <Hidden>=iif(Parameters!TitleType.Value = "MOVIE", false, true)</Hidden>
+                    <Hidden>=IIF(Parameters!TitleType.Value = "Program", false, true)</Hidden>
                   </Visibility>
                 </TablixMember>
                 <TablixMember>
                   <Visibility>
-                    <Hidden>=iif(Parameters!TitleType.Value = "SHOW", false, true)</Hidden>
-                  </Visibility>
-                </TablixMember>
-                <TablixMember>
-                  <Visibility>
-                    <Hidden>=iif(Parameters!TitleType.Value = "SHOW", false, true)</Hidden>
+                    <Hidden>=IIF(Parameters!TitleType.Value = "Program", false, true)</Hidden>
                   </Visibility>
                 </TablixMember>
                 <TablixMember />
@@ -987,7 +983,7 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
             <NoRowsMessage>No Records Found</NoRowsMessage>
             <DataSetName>DS_Exception</DataSetName>
             <Height>0.48208in</Height>
-            <Width>10.63543in</Width>
+            <Width>10.81772in</Width>
             <Visibility>
               <Hidden>=IIF(First(Fields!Layout_Direction.Value, "DS_Direction") = "LTR", False, True)</Hidden>
             </Visibility>
@@ -1515,7 +1511,7 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!EndDate.Value), "01-JAN-2000",Paramete
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=IIF(Parameters!TitleType.Value= "SHOW","PROGRAM","MOVIE")</Value>
+                                  <Value>=IIF(Parameters!TitleType.Value= "Program","Program","Movie")</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -3574,7 +3570,7 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!EndDate.Value), "01-JAN-2000",Paramete
         <Height>6.50492in</Height>
         <Style />
       </Body>
-      <Width>10.76043in</Width>
+      <Width>10.92189in</Width>
       <Page>
         <LeftMargin>1in</LeftMargin>
         <RightMargin>1in</RightMargin>

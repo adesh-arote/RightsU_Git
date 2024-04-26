@@ -1255,20 +1255,19 @@ namespace RightsU_Plus.Controllers
             return Json(result);
         }
 
-        public PartialViewResult BindRunExceptionReport(string TitleCodes, string FromDate, string ToDate, string TitleType, string datetimeformat, string dateformat, string EpisodeFrom, string EpisodeTo)
+        public PartialViewResult BindRunExceptionReport(string TitleCodes, string FromDate, string ToDate, string TitleType,   string EpisodeFrom, string EpisodeTo)
         {
-            string ReportType = "S", from = "", to = "", Type = "";
+            string ReportType = "S", from = "", to = "",  datetimeformat = "", dateformat = "";
             List<string> lstTitleTypeCode = new List<string>();
             if (TitleType == "M")
             {
-                Type = TitleType = "MOVIE";
+                TitleType = "Movie";
             }  
             else
             {
-                TitleType = "PROGRAM";
-                Type = "SHOW";
+                TitleType = "Program";
             }        
-            int DealTypeCode = new Deal_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Deal_Type_Name.ToUpper() == TitleType).Select(s => s.Deal_Type_Code).FirstOrDefault();
+            int DealTypeCode = new Deal_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Deal_Type_Name.ToUpper() == TitleType.ToUpper()).Select(s => s.Deal_Type_Code).FirstOrDefault();
             string title_names = TypeWiseTitleAutosuggest(TitleCodes, DealTypeCode);
             if (FromDate != "")
                 from = GlobalUtil.MakedateFormat(FromDate);
@@ -1278,7 +1277,7 @@ namespace RightsU_Plus.Controllers
             ReportParameter[] parm = new ReportParameter[13];
             parm[0] = new ReportParameter("ReportType", ReportType);
             parm[1] = new ReportParameter("IsShowAll", "'N'");
-            parm[2] = new ReportParameter("TitleType", Type);
+            parm[2] = new ReportParameter("TitleType", TitleType);
             parm[3] = new ReportParameter("TitleCode", title_names);
             parm[4] = new ReportParameter("StartDate", GlobalUtil.MakedateFormat(FromDate));
             parm[5] = new ReportParameter("EndDate", GlobalUtil.MakedateFormat(ToDate));
@@ -1728,13 +1727,14 @@ namespace RightsU_Plus.Controllers
                 return Json(result);
             }
         }
-        public ActionResult BindRunUtilizationReport(string BU_Code, string TitleCodes, string ChannelCodes, string AllYears, string ParamExpandOrCollapse, string RunType, string IsDealExpire, string ClusterCode, string BUName, string TitleType)
+        public ActionResult BindRunUtilizationReport(string BU_Code, string TitleCodes, string ChannelCodes, string AllYears, string RunType, string IsDealExpire, string ClusterCode, string BUName, string TitleType)
         {
+            string ParamExpandOrCollapse = "";
             if (TitleType == "M")
-                TitleType = "MOVIE";
+                TitleType = "Movie";
             else
-                TitleType = "PROGRAM";
-            int DealTypeCode = new Deal_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Deal_Type_Name.ToUpper() == TitleType).Select(s => s.Deal_Type_Code).FirstOrDefault();
+                TitleType = "Program";
+            int DealTypeCode = new Deal_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Deal_Type_Name.ToUpper() == TitleType.ToUpper()).Select(s => s.Deal_Type_Code).FirstOrDefault();
             string title_names = TypeWiseTitleAutosuggest(TitleCodes, DealTypeCode);
             string channel_names = ChannelAutosuggest(ChannelCodes);
             string ReportName = "CHANNEL_WISE_CONSUMPTION";
@@ -1768,7 +1768,7 @@ namespace RightsU_Plus.Controllers
             parm[9] = new ReportParameter("CreatedBy", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
             parm[10] = new ReportParameter("SysLanguageCode", objLoginUser.System_Language_Code.ToString());
             parm[11] = new ReportParameter("Module_Code", objLoginUser.moduleCode.ToString());
-            parm[12] = new ReportParameter("TitleType", TitleType.ToUpper());
+            parm[12] = new ReportParameter("TitleType", TitleType);
             if (BUName.Contains("English"))
             {
                 parm[13] = new ReportParameter("Channel_Region", "0");
