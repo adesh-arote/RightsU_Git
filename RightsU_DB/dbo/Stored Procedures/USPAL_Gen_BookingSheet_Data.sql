@@ -46,7 +46,10 @@ BEGIN
 		SeasonWOZero VARCHAR(100),
 		EpisodeWOZero VARCHAR(100),
 		TitleLang2Char VARCHAR(100),
-		IncrementNo5Digit VARCHAR(100)
+		IncrementNo5Digit VARCHAR(100),
+		Title_Type VARCHAR(100), 
+		Columns_Code INT, 
+		Target_Column VARCHAR(100)
 	)
 	
 	CREATE TABLE #TempBookingDataToGen
@@ -154,9 +157,16 @@ BEGIN
 	WHERE Extended_Group_Code = @Extended_Group_ForBookingSheet AND arc.AL_Recommendation_Code = @RecommendationCode
 	--AND arc.Title_Content_Code IN (SELECT arc.Title_Content_Code
 	
-	INSERT INTO #TempFileName(Title_Code, Title_Content_Code, Additional_Condition, File_Names)
-	SELECT DISTINCT Title_Code, Title_Content_Code, Additional_Condition, Additional_Condition 
-	FROM #TempBookingContent WHERE Target_Table = 'FileNameGeneration'
+	--INSERT INTO #TempFileName(Title_Code, Title_Content_Code, Additional_Condition, File_Names)
+	--SELECT DISTINCT Title_Code, Title_Content_Code, Additional_Condition, Additional_Condition 
+	--FROM #TempBookingContent WHERE Target_Table = 'FileNameGeneration'
+
+	INSERT INTO #TempFileName(Title_Code, Title_Content_Code, Additional_Condition, File_Names, Title_Type, Columns_Code, Target_Column)
+	SELECT DISTINCT tbc.Title_Code, tbc.Title_Content_Code, tbc.Additional_Condition, tbc.Additional_Condition,
+		   CASE WHEN ec.Columns_Name like '%Trailer%' THEN 'T' ELSE Display_Name END AS Title_Type, tbc.Columns_Code, tbc.Target_Column
+	FROM #TempBookingContent tbc
+	    INNER JOIN Extended_Columns ec ON tbc.Columns_Code = ec.Columns_Code
+    WHERE tbc.Target_Table = 'FileNameGeneration'
 
 	--SELECT * 
 	UPDATE tmp SET tmp.Title = t.Title_Name, tmp.TitleLanguage = LEFT(l.Language_Name, 3), tmp.TitleWOSpace = REPLACE(LTRIM(RTRIM(t.Title_Name)), ' ', ''), tmp.TitleLang3Char = LEFT(l.Language_Name, 3), tmp.TitleLang2Char = LEFT(l.Language_Name, 2)
@@ -200,9 +210,16 @@ BEGIN
 	UPDATE tmp2 SET tmp2.IncrementNo = a.IncNo, tmp2.IncrementNo5Digit =  RIGHT('00000'+ CONVERT(VARCHAR,a.IncNo),5)
 	FROM (
 		SELECT Title_Content_Code, Additional_Condition, RIGHT('0000' + CAST((@MAXNo + ROW_NUMBER() OVER(ORDER BY Title_Content_Code ASC)) AS VARCHAR), 5) AS IncNo
-		FROM #TempFileName tmp WHERE tmp.Additional_Condition LIKE '%increment%'
+		FROM #TempFileName tmp WHERE tmp.Additional_Condition LIKE '%increment%' AND tmp.Title_Type <> 'T'
 	) AS a
 	INNER JOIN #TempFileName tmp2 ON a.Title_Content_Code = tmp2.Title_Content_Code AND a.Additional_Condition = tmp2.Additional_Condition
+
+	UPDATE t1 SET t1.IncrementNo = t2.IncrementNo, t1.IncrementNo5Digit = t2.IncrementNo5Digit 
+	FROM #TempFileName t1 
+	INNER JOIN #TempFileName t2 ON t1.Title_Code = t2.Title_Code 
+	AND t1.Title_Content_Code = t2.Title_Content_Code 
+	AND t1.Title_Type = 'T' AND t2.Title_Type = 'M'
+	AND t1.Target_Column = t2.Columns_Code 
 	
 	SELECT @MAXNo = MAX(CAST(ISNULL(IncrementNo, 0) AS INT)) FROM #TempFileName WHERE CAST(ISNULL(IncrementNo, 0) AS INT) > 0
 
@@ -263,6 +280,7 @@ BEGIN
 	UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{IncrementNo5Digit}', ISNULL(IncrementNo5Digit, ''))
 	UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{AppendS}', IIF(ISNULL(EmbSubs3Char, '')<>'', 'S', ''))
 	UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{AppendSUB}', IIF(ISNULL(EmbSubs3Char, '')<>'', 'SUB', ''))
+	UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{RemoveUnderscore}', IIF(ISNULL(EmbSubs3Char, '')<>'', '_', ''))
 	--SELECT * FROM #TempFileName
 	--RETURN
 	UPDATE tbc SET tbc.Columns_Value = tfn.File_Names
