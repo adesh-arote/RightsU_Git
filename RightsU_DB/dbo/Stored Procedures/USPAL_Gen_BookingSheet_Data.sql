@@ -230,20 +230,29 @@ BEGIN
 	INNER JOIN #TempFileName tmp ON tmp.Title_Code = ext.Record_Code
 	WHERE Columns_Name = 'Subtitling' AND Table_Name = 'TITLE'
 
-	UPDATE tmp SET tmp.Version = UPPER(LEFT(ext.Column_Value, 2)) 
+	--UPDATE tmp SET tmp.Version = (LEFT(ext.Column_Value, 2)) 
+	--FROM VWALTitleRecomExt ext
+	--INNER JOIN #TempFileName tmp ON tmp.Title_Code = ext.Record_Code
+	--WHERE Columns_Name = 'Version' AND Table_Name = 'TITLE'
+
+	UPDATE tmp SET tmp.Version = ISNULL((SELECT TOP 1 BMS_Version_ID FROM [Version] WHERE Version_Name = ext.Column_Value),'') 
 	FROM VWALTitleRecomExt ext
 	INNER JOIN #TempFileName tmp ON tmp.Title_Code = ext.Record_Code
-	WHERE Columns_Name = 'Version' AND Table_Name = 'TITLE'
+	WHERE Columns_Name = 'Version' AND Table_Name = 'TITLE'	
 	
 	UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{CycleStart}', CycleStart)
 	UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{CycleStartYYYYMM}', CycleStartYYYYMM)
 	UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{CycleStartYYMM}', CycleStartYYMM)
-	UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{Title}', REPLACE(Title, ' ', '_'))
+	--UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{Title}', REPLACE(Title, ' ', '_'))
+	--UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{Title}', REPLACE((REPLACE(TRANSLATE(Title, '!@#$%^&*()-_=+[{]}\|:;"'',<.>/?~`', '################################'), '#', '')), ' ', '_'))
+	UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{Title}', REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(Title, '!', ''),'@',''),'#',''),'$',''),'%',''),'^',''),'&',''),'*',''),'(',''),')',''),'-',''),'_',''),'=',''),'+',''),'[',''),'{',''),']',''),'}',''),'\',''),'|',''),':',''),';',''),'"',''),'''',''),',',''),'<',''),'.',''),'>',''),'/',''),'?',''),'~',''),'`',''), ' ', '_'))
 	UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{IncrementNo}', ISNULL(IncrementNo, ''))
 	UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{TitleLanguage}', TitleLanguage)
 	UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{Season}', ISNULL(Season, ''))
 	UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{Episode}', ISNULL(Episode, ''))
-	UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{TitleWOSpace}', ISNULL(TitleWOSpace, ''))
+	--UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{TitleWOSpace}', ISNULL(TitleWOSpace, ''))
+	--UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{TitleWOSpace}', REPLACE((REPLACE(TRANSLATE(ISNULL(TitleWOSpace, ''), '!@#$%^&*()-_=+[{]}\|:;"'',<.>/?~`', '################################'), '#', '')), ' ', ''))
+	UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{TitleWOSpace}', ISNULL(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(ISNULL(TitleWOSpace, ''), '!', ''),'@',''),'#',''),'$',''),'%',''),'^',''),'&',''),'*',''),'(',''),')',''),'-',''),'_',''),'=',''),'+',''),'[',''),'{',''),']',''),'}',''),'\',''),'|',''),':',''),';',''),'"',''),'''',''),',',''),'<',''),'.',''),'>',''),'/',''),'?',''),'~',''),'`',''), ''))
 	UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{TitleLang3Char}', ISNULL(TitleLang3Char, ''))
 	UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{EmbSubs3Char}', ISNULL(EmbSubs3Char, ''))
 	UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{Version}', ISNULL(Version, ''))
@@ -252,6 +261,8 @@ BEGIN
 	UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{EpisodeWOZero}', ISNULL(EpisodeWOZero, ''))
 	UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{TitleLang2Char}', ISNULL(TitleLang2Char, ''))
 	UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{IncrementNo5Digit}', ISNULL(IncrementNo5Digit, ''))
+	UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{AppendS}', IIF(ISNULL(EmbSubs3Char, '')<>'', 'S', ''))
+	UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{AppendSUB}', IIF(ISNULL(EmbSubs3Char, '')<>'', 'SUB', ''))
 	--SELECT * FROM #TempFileName
 	--RETURN
 	UPDATE tbc SET tbc.Columns_Value = tfn.File_Names
