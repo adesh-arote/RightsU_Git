@@ -135,9 +135,9 @@ BEGIN
 		D.Agreement_No, DM.title_code, DM.Acq_Deal_movie_code,
 		' + @TitleName + '
 		--DBO.UFN_GetTitleNameInFormat( dbo.UFN_GetDealTypeCondition(D.Deal_Type_Code), T.Title_Name, DM.Episode_Starts_From, DM.Episode_End_To) AS Title_Name, 
-		( select dbo.UFN_Get_DataFor_RightsUsageReport_New(DM.Acq_Deal_movie_code, ''RP'','''+@StartDate+''','''+@EndDate+''','''+@Channel+''','''+@RunType+''')),
-		ISNULL(( select dbo.UFN_Get_DataFor_RightsUsageReport_New(DM.Acq_Deal_movie_code, ''PR'','''+@StartDate+''','''+@EndDate+''','''+@Channel+''','''+@RunType+''')),0),
-		ISNULL(( select dbo.UFN_Get_DataFor_RightsUsageReport_New(DM.Acq_Deal_movie_code, ''AR'','''+@StartDate+''','''+@EndDate+''','''+@Channel+''','''+@RunType+''')),0), ttc.Episode_No, T.Title_Name
+		( select dbo.UFN_Get_DataFor_RightsUsageReport_New(DM.Acq_Deal_movie_code,  ttc.Title_Content_Code ,''RP'','''+@StartDate+''','''+@EndDate+''','''+@Channel+''','''+@RunType+''')),
+		ISNULL(( select dbo.UFN_Get_DataFor_RightsUsageReport_New(DM.Acq_Deal_movie_code, ttc.Title_Content_Code , ''PR'','''+@StartDate+''','''+@EndDate+''','''+@Channel+''','''+@RunType+''')),0),
+		ISNULL(( select dbo.UFN_Get_DataFor_RightsUsageReport_New(DM.Acq_Deal_movie_code, ttc.Title_Content_Code , ''AR'','''+@StartDate+''','''+@EndDate+''','''+@Channel+''','''+@RunType+''')),0), ttc.Episode_No, T.Title_Name
 		FROM Acq_Deal D   (NOLOCK)
 		INNER JOIN Acq_Deal_Movie DM (NOLOCK) ON DM.Acq_Deal_code = D.Acq_Deal_code
 		INNER JOIN Title_Content ttc (NOLOCK) ON ttc.Title_Code = DM.Title_Code 

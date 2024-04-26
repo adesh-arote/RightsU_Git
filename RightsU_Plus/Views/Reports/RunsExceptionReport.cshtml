@@ -10,11 +10,11 @@
 <script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
 <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
 <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
-<style>
+@*<style>
     #ddlDateTimeFormat_chosen{
         width:200px!important;
     }
-</style>
+</style>*@
 <script>
     var URL_BindTitle = '@Url.Action("BindTitleForRunException", "Reports")';
     var URL_BindRunsExceptionReport = '@Url.Action("BindRunExceptionReport", "Reports")';
@@ -152,8 +152,8 @@
                     FromDate: $('#txtfrom').val(),
                     ToDate: $('#txtto').val(),
                     TitleType: dealType,
-                    datetimeformat: $('#ddlDateTimeFormat').val(),
-                    dateformat: $('#ddlDateFormat').val(),
+                    //datetimeformat: $('#ddlDateTimeFormat').val(),
+                    //dateformat: $('#ddlDateFormat').val(),
                     EpisodeFrom: $('#txtEpFrom').val(),
                     EpisodeTo: $('#txtEpTo').val()
                 }),
@@ -337,7 +337,7 @@
                             <b>@objMessageKey.FromDate:</b>
                         </div>
                         <div class="col-md-5">
-                            <input type="text" title="@objMessageKey.FromDate" class="isDatepicker shortDate common" value="" id="txtfrom" style="width:115%;" placeholder="DD/MM/YYYY" autocomplete="off" />
+                            <input type="text" title="@objMessageKey.FromDate" class="isDatepicker shortDate common" value="" id="txtfrom" style="width:100%;" placeholder="DD/MM/YYYY" autocomplete="off" />
                         </div>
                     </div>
 
@@ -345,38 +345,14 @@
                         <div class="col-md-3">
                             <b>@objMessageKey.ToDate:</b>
                         </div>
-                        <div class="col-md-5">
-                            <input type="text" title="@objMessageKey.ToDate" class="isDatepicker shortDate common" value="" id="txtto" style="width:115%;" placeholder="DD/MM/YYYY" autocomplete="off" />
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-4">
                         <div class="col-md-4">
-                            <b>@objMessageKey.DateFormat:</b>
+                            <input type="text" title="@objMessageKey.ToDate" class="isDatepicker shortDate common" value="" id="txtto" style="width:100%;" placeholder="DD/MM/YYYY" autocomplete="off" />
                         </div>
-                        <div class="col-md-7">
-                            @Html.DropDownList("DateFormat", (List<SelectListItem>)ViewBag.DateFormat, new { @id = "ddlDateFormat", @class = "form_input chosen-select" })
-                        </div>
-                    </div>
-
-                    <div class="col-md-4">
-                        <div class="col-md-5">
-                            <b>@objMessageKey.DateTimeFormat:</b>
-                        </div>
-                        <div class="col-md-7">
-                            @Html.DropDownList("DateTimeFormat", (List<SelectListItem>)ViewBag.DateTimeFormat, new { @id = "ddlDateTimeFormat", @class = "form_input chosen-select" })
-                        </div>
-                    </div>
-
-                    <div class="col-md-4">
-                        <div class="col-md-12" style="text-align: end;">
+                        <div class="col-md-5" style="text-align: end;">
                             <input type="button" id="btnShow" class="btn btn-primary" value="@objMessageKey.Show" onclick="return btnShow_OnClick()">
                             <input type="button" id="btnClear" class="btn btn-primary" value="@objMessageKey.ClearAll" onclick="Clear()" />
                         </div>
                     </div>
-                </div>
             </div>
         
             <div id="divResult">

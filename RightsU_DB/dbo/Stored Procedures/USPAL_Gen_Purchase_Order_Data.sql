@@ -9,6 +9,7 @@ BEGIN
 	IF OBJECT_ID('tempdb..#TempBookingSheetDetail') IS NOT NULL DROP TABLE #TempBookingSheetDetail
 	IF OBJECT_ID('tempdb..#TempCurrentCycleTitle') IS NOT NULL DROP TABLE #TempCurrentCycleTitle
 	IF OBJECT_ID('tempdb..#TempBookingSheetDistributor') IS NOT NULL DROP TABLE #TempBookingSheetDistributor
+	IF OBJECT_ID('tempdb..#tmpPONumber') IS NOT NULL DROP TABLE #tmpPONumber
 
 	CREATE TABLE #TempBookingSheetDetail
 	(
@@ -33,6 +34,14 @@ BEGIN
 		Vendor_Name NVARCHAR(MAX), 
 		Vendor_Code INT,
 		Short_Code NVARCHAR(100)
+	)
+
+	CREATE TABLE #tmpPONumber
+	(
+		[ID] [int] IDENTITY(1,1) NOT NULL,
+		AL_Purchase_Order_Details_Code INT,
+		MaxPOCount INT,
+		RowNum INT
 	)
 
 	DECLARE @BookingSheetCode INT	= 0, @VendorCode INT = 0, @Vendor_Short_Code NVARCHAR(20) = '', @PO_NO NVARCHAR(MAX) = '', @PO_Max_Count NVARCHAR(10) = '0', @AL_Proposal_Code INT = 0, @RecommendationCode INT = 0
@@ -84,7 +93,18 @@ BEGIN
 		WHERE absd.AL_Booking_Sheet_Code = @BookingSheetCode 
 		AND Columns_Code IN (SELECT Parameter_Value FROM system_parameter_New WHERE Parameter_Name = 'AL_Ext_Col_Distributor_Value')
 
-		UPDATE apod SET PO_Number = CAST(ISNULL(@Vendor_Short_Code,0) AS VARCHAR) + '/Aeroplay/'+ CAST(apod.AL_Purchase_Order_Details_Code AS NVARCHAR(10)), 
+		INSERT INTO #tmpPONumber (AL_Purchase_Order_Details_Code, MaxPOCount, RowNum)
+		SELECT apod.AL_Purchase_Order_Details_Code, (SELECT TOP 1 RunningNo FROM MHRequestIds WHERE RequestType = 'PO'), 1
+		FROM AL_Purchase_Order_Details apod 
+		LEFT JOIN #TempBookingSheetDistributor tbsd ON tbsd.AL_Purchase_Order_Code = @ALPurchaseOrderCode 
+		AND apod.Title_Code = tbsd.Title_Code AND apod.Title_Content_Code = tbsd.Title_Content_Code	
+		INNER JOIN #TempCurrentCycleTitle tcct ON tcct.Title_Code = apod.Title_Code AND tcct.Title_Content_Code = apod.Title_Content_Code
+		INNER JOIN Title t ON t.Title_Code = apod.Title_Code 
+		AND t.Deal_Type_Code IN (SELECT number FROM [dbo].[fn_Split_withdelemiter]((SELECT sp.Parameter_Value FROM System_Parameter sp WHERE sp.Parameter_Name = 'AL_DealType_Movies'),','))
+		WHERE apod.AL_Proposal_Code = @AL_Proposal_Code
+
+		--UPDATE apod SET PO_Number = CAST(ISNULL(@Vendor_Short_Code,0) AS VARCHAR) + '/Aeroplay/'+ CAST(apod.AL_Purchase_Order_Details_Code AS NVARCHAR(10)),
+		UPDATE apod SET PO_Number = CAST(ISNULL(@Vendor_Short_Code,0) AS VARCHAR) + '/Aeroplay/'+ CAST((SELECT tpo.MaxPOCount + ID FROM #tmpPONumber tpo WHERE tpo.AL_Purchase_Order_Details_Code = apod.AL_Purchase_Order_Details_Code) AS NVARCHAR(10)),
 		Vendor_Code = ISNULL(tbsd.Vendor_Code,@VendorCode)
 		FROM AL_Purchase_Order_Details apod 
 		LEFT JOIN #TempBookingSheetDistributor tbsd ON tbsd.AL_Purchase_Order_Code = @ALPurchaseOrderCode 
@@ -93,6 +113,12 @@ BEGIN
 		INNER JOIN Title t ON t.Title_Code = apod.Title_Code 
 		AND t.Deal_Type_Code IN (SELECT number FROM [dbo].[fn_Split_withdelemiter]((SELECT sp.Parameter_Value FROM System_Parameter sp WHERE sp.Parameter_Name = 'AL_DealType_Movies'),','))
 		WHERE apod.AL_Proposal_Code = @AL_Proposal_Code
+
+		IF EXISTS(SELECT TOP 1 * FROM #tmpPONumber tp)
+		BEGIN
+			UPDATE mri SET mri.RunningNo = (SELECT MAX(tpo.MaxPOCount + ID) FROM #tmpPONumber tpo) FROM  MHRequestIds mri WHERE mri.RequestType = 'PO'
+			TRUNCATE TABLE #tmpPONumber
+		END
 
 		UPDATE apod SET Vendor_Code = ISNULL(tbsd.Vendor_Code,@VendorCode)
 		FROM AL_Purchase_Order_Details apod 
@@ -103,7 +129,19 @@ BEGIN
 		AND t.Deal_Type_Code IN (SELECT number FROM [dbo].[fn_Split_withdelemiter]((SELECT sp.Parameter_Value FROM System_Parameter sp WHERE sp.Parameter_Name = 'AL_DealType_Show'),','))
 		WHERE apod.AL_Proposal_Code = @AL_Proposal_Code
 
-		UPDATE apod SET PO_Number = CAST(ISNULL(@Vendor_Short_Code,0) AS VARCHAR) + '/Aeroplay/'+ CAST((SELECT TOP 1 apodt.AL_Purchase_Order_Details_Code FROM AL_Purchase_Order_Details apodt WHERE apodt.AL_Proposal_Code = @AL_Proposal_Code AND apodt.Vendor_Code = apod.Vendor_Code AND ISNULL(apodt.PO_Number,'') = '') AS NVARCHAR(10)), 
+		INSERT INTO #tmpPONumber (AL_Purchase_Order_Details_Code, MaxPOCount, RowNum)
+		SELECT AL_Purchase_Order_Details_Code, MaxPOCount, DENSE_RANK() OVER(Order By ALPurchaseOrderDetailCode) AS RowNum FROM
+		(SELECT apod.AL_Purchase_Order_Details_Code AS AL_Purchase_Order_Details_Code, (SELECT TOP 1 RunningNo FROM MHRequestIds WHERE RequestType = 'PO') AS MaxPOCount, (SELECT TOP 1 apodt.AL_Purchase_Order_Details_Code FROM AL_Purchase_Order_Details apodt WHERE apodt.AL_Proposal_Code = @AL_Proposal_Code AND apodt.Vendor_Code = apod.Vendor_Code AND ISNULL(apodt.PO_Number,'') = '') AS ALPurchaseOrderDetailCode
+		FROM AL_Purchase_Order_Details apod 
+		LEFT JOIN #TempBookingSheetDistributor tbsd ON tbsd.AL_Purchase_Order_Code = @ALPurchaseOrderCode 
+		AND apod.Title_Code = tbsd.Title_Code AND apod.Title_Content_Code = tbsd.Title_Content_Code	
+		INNER JOIN #TempCurrentCycleTitle tcct ON tcct.Title_Code = apod.Title_Code AND tcct.Title_Content_Code = apod.Title_Content_Code
+		INNER JOIN Title t ON t.Title_Code = apod.Title_Code 
+		AND t.Deal_Type_Code IN (SELECT number FROM [dbo].[fn_Split_withdelemiter]((SELECT sp.Parameter_Value FROM System_Parameter sp WHERE sp.Parameter_Name = 'AL_DealType_Show'),','))
+		WHERE apod.AL_Proposal_Code = @AL_Proposal_Code) AS T
+
+		--UPDATE apod SET PO_Number = CAST(ISNULL(@Vendor_Short_Code,0) AS VARCHAR) + '/Aeroplay/'+ CAST((SELECT TOP 1 apodt.AL_Purchase_Order_Details_Code FROM AL_Purchase_Order_Details apodt WHERE apodt.AL_Proposal_Code = @AL_Proposal_Code AND apodt.Vendor_Code = apod.Vendor_Code AND ISNULL(apodt.PO_Number,'') = '') AS NVARCHAR(10)), 
+		UPDATE apod SET PO_Number = CAST(ISNULL(@Vendor_Short_Code,0) AS VARCHAR) + '/Aeroplay/'+ CAST( (SELECT tpo.MaxPOCount + RowNum FROM #tmpPONumber tpo WHERE tpo.AL_Purchase_Order_Details_Code = (SELECT TOP 1 apodt.AL_Purchase_Order_Details_Code FROM AL_Purchase_Order_Details apodt WHERE apodt.AL_Proposal_Code = @AL_Proposal_Code AND apodt.Vendor_Code = apod.Vendor_Code AND ISNULL(apodt.PO_Number,'') = '')) AS NVARCHAR(10)), 
 		Vendor_Code = ISNULL(tbsd.Vendor_Code,@VendorCode)
 		FROM AL_Purchase_Order_Details apod 
 		LEFT JOIN #TempBookingSheetDistributor tbsd ON tbsd.AL_Purchase_Order_Code = @ALPurchaseOrderCode 
@@ -112,6 +150,12 @@ BEGIN
 		INNER JOIN Title t ON t.Title_Code = apod.Title_Code 
 		AND t.Deal_Type_Code IN (SELECT number FROM [dbo].[fn_Split_withdelemiter]((SELECT sp.Parameter_Value FROM System_Parameter sp WHERE sp.Parameter_Name = 'AL_DealType_Show'),','))
 		WHERE apod.AL_Proposal_Code = @AL_Proposal_Code
+
+		IF EXISTS(SELECT TOP 1 * FROM #tmpPONumber tp)
+		BEGIN
+			UPDATE mri SET mri.RunningNo = (SELECT MAX(tpo.MaxPOCount + ID) FROM #tmpPONumber tpo) FROM  MHRequestIds mri WHERE mri.RequestType = 'PO'
+			TRUNCATE TABLE #tmpPONumber
+		END
 
 		UPDATE absd SET  Columns_Value = apod.PO_Number
 		FROM AL_Booking_Sheet_Details absd 
@@ -141,7 +185,17 @@ BEGIN
 		WHERE absd.AL_Booking_Sheet_Code = @BookingSheetCode 
 		AND Columns_Code IN (SELECT Parameter_Value FROM system_parameter_New WHERE Parameter_Name = 'AL_Ext_Col_Distributor_Value');
 
-		UPDATE apod SET PO_Number = CAST(ISNULL(@Vendor_Short_Code,0) AS VARCHAR) + '/Aeroplay/'+ CAST(apod.AL_Purchase_Order_Details_Code AS NVARCHAR(10)), 
+		INSERT INTO #tmpPONumber (AL_Purchase_Order_Details_Code, MaxPOCount, RowNum)
+		SELECT apod.AL_Purchase_Order_Details_Code, (SELECT TOP 1 RunningNo FROM MHRequestIds WHERE RequestType = 'PO'), 1
+		FROM AL_Purchase_Order_Details apod 
+		LEFT JOIN #TempBookingSheetDistributor tbsd ON tbsd.AL_Purchase_Order_Code = @ALPurchaseOrderCode 
+		AND apod.Title_Code = tbsd.Title_Code AND apod.Title_Content_Code = tbsd.Title_Content_Code	
+		INNER JOIN Title t ON t.Title_Code = apod.Title_Code 
+		AND t.Deal_Type_Code IN (SELECT number FROM [dbo].[fn_Split_withdelemiter]((SELECT sp.Parameter_Value FROM System_Parameter sp WHERE sp.Parameter_Name = 'AL_DealType_Movies'),','))
+		WHERE apod.AL_Proposal_Code = @AL_Proposal_Code
+
+		--UPDATE apod SET PO_Number = CAST(ISNULL(@Vendor_Short_Code,0) AS VARCHAR) + '/Aeroplay/'+ CAST(apod.AL_Purchase_Order_Details_Code AS NVARCHAR(10)),
+		UPDATE apod SET PO_Number = CAST(ISNULL(@Vendor_Short_Code,0) AS VARCHAR) + '/Aeroplay/'+ CAST((SELECT tpo.MaxPOCount + ID FROM #tmpPONumber tpo WHERE tpo.AL_Purchase_Order_Details_Code = apod.AL_Purchase_Order_Details_Code) AS NVARCHAR(10)),
 		Vendor_Code = ISNULL(tbsd.Vendor_Code,@VendorCode)
 		FROM AL_Purchase_Order_Details apod 
 		LEFT JOIN #TempBookingSheetDistributor tbsd ON tbsd.AL_Purchase_Order_Code = @ALPurchaseOrderCode 
@@ -149,6 +203,12 @@ BEGIN
 		INNER JOIN Title t ON t.Title_Code = apod.Title_Code 
 		AND t.Deal_Type_Code IN (SELECT number FROM [dbo].[fn_Split_withdelemiter]((SELECT sp.Parameter_Value FROM System_Parameter sp WHERE sp.Parameter_Name = 'AL_DealType_Movies'),','))
 		WHERE apod.AL_Proposal_Code = @AL_Proposal_Code
+
+		IF EXISTS(SELECT TOP 1 * FROM #tmpPONumber tp)
+		BEGIN
+			UPDATE mri SET mri.RunningNo = (SELECT MAX(tpo.MaxPOCount + ID) FROM #tmpPONumber tpo) FROM  MHRequestIds mri WHERE mri.RequestType = 'PO'
+			TRUNCATE TABLE #tmpPONumber
+		END
 
 		UPDATE apod SET Vendor_Code = ISNULL(tbsd.Vendor_Code,@VendorCode)
 		FROM AL_Purchase_Order_Details apod 
@@ -158,7 +218,18 @@ BEGIN
 		AND t.Deal_Type_Code IN (SELECT number FROM [dbo].[fn_Split_withdelemiter]((SELECT sp.Parameter_Value FROM System_Parameter sp WHERE sp.Parameter_Name = 'AL_DealType_Show'),','))
 		WHERE apod.AL_Proposal_Code = @AL_Proposal_Code
 
-		UPDATE apod SET PO_Number = CAST(ISNULL(@Vendor_Short_Code,0) AS VARCHAR) + '/Aeroplay/'+ CAST((SELECT TOP 1 apodt.AL_Purchase_Order_Details_Code FROM AL_Purchase_Order_Details apodt WHERE apodt.AL_Proposal_Code = @AL_Proposal_Code AND apodt.Vendor_Code = apod.Vendor_Code AND ISNULL(apodt.PO_Number,'') = '') AS NVARCHAR(10)), 
+		INSERT INTO #tmpPONumber (AL_Purchase_Order_Details_Code, MaxPOCount, RowNum)
+		SELECT AL_Purchase_Order_Details_Code, MaxPOCount, DENSE_RANK() OVER(Order By ALPurchaseOrderDetailCode) AS RowNum FROM
+		(SELECT apod.AL_Purchase_Order_Details_Code AS AL_Purchase_Order_Details_Code, (SELECT TOP 1 RunningNo FROM MHRequestIds WHERE RequestType = 'PO') AS MaxPOCount, (SELECT TOP 1 apodt.AL_Purchase_Order_Details_Code FROM AL_Purchase_Order_Details apodt WHERE apodt.AL_Proposal_Code = @AL_Proposal_Code AND apodt.Vendor_Code = apod.Vendor_Code AND ISNULL(apodt.PO_Number,'') = '') AS ALPurchaseOrderDetailCode
+		FROM AL_Purchase_Order_Details apod 
+		LEFT JOIN #TempBookingSheetDistributor tbsd ON tbsd.AL_Purchase_Order_Code = @ALPurchaseOrderCode 
+		AND apod.Title_Code = tbsd.Title_Code AND apod.Title_Content_Code = tbsd.Title_Content_Code	
+		INNER JOIN Title t ON t.Title_Code = apod.Title_Code 
+		AND t.Deal_Type_Code IN (SELECT number FROM [dbo].[fn_Split_withdelemiter]((SELECT sp.Parameter_Value FROM System_Parameter sp WHERE sp.Parameter_Name = 'AL_DealType_Show'),','))
+		WHERE apod.AL_Proposal_Code = @AL_Proposal_Code) AS T
+
+		--UPDATE apod SET PO_Number = CAST(ISNULL(@Vendor_Short_Code,0) AS VARCHAR) + '/Aeroplay/'+ CAST((SELECT TOP 1 apodt.AL_Purchase_Order_Details_Code FROM AL_Purchase_Order_Details apodt WHERE apodt.AL_Proposal_Code = @AL_Proposal_Code AND apodt.Vendor_Code = apod.Vendor_Code AND ISNULL(apodt.PO_Number,'') = '') AS NVARCHAR(10)),
+		UPDATE apod SET PO_Number = CAST(ISNULL(@Vendor_Short_Code,0) AS VARCHAR) + '/Aeroplay/'+ CAST( (SELECT tpo.MaxPOCount + RowNum FROM #tmpPONumber tpo WHERE tpo.AL_Purchase_Order_Details_Code = (SELECT TOP 1 apodt.AL_Purchase_Order_Details_Code FROM AL_Purchase_Order_Details apodt WHERE apodt.AL_Proposal_Code = @AL_Proposal_Code AND apodt.Vendor_Code = apod.Vendor_Code AND ISNULL(apodt.PO_Number,'') = '')) AS NVARCHAR(10)), 
 		Vendor_Code = ISNULL(tbsd.Vendor_Code,@VendorCode)
 		FROM AL_Purchase_Order_Details apod 
 		LEFT JOIN #TempBookingSheetDistributor tbsd ON tbsd.AL_Purchase_Order_Code = @ALPurchaseOrderCode 
@@ -166,6 +237,12 @@ BEGIN
 		INNER JOIN Title t ON t.Title_Code = apod.Title_Code 
 		AND t.Deal_Type_Code IN (SELECT number FROM [dbo].[fn_Split_withdelemiter]((SELECT sp.Parameter_Value FROM System_Parameter sp WHERE sp.Parameter_Name = 'AL_DealType_Show'),','))
 		WHERE apod.AL_Proposal_Code = @AL_Proposal_Code
+
+		IF EXISTS(SELECT TOP 1 * FROM #tmpPONumber tp)
+		BEGIN
+			UPDATE mri SET mri.RunningNo = (SELECT MAX(tpo.MaxPOCount + ID) FROM #tmpPONumber tpo) FROM  MHRequestIds mri WHERE mri.RequestType = 'PO'
+			TRUNCATE TABLE #tmpPONumber
+		END
 
 		UPDATE absd SET  Columns_Value = apod.PO_Number
 		FROM AL_Booking_Sheet_Details absd 
@@ -183,5 +260,6 @@ BEGIN
 	IF OBJECT_ID('tempdb..#TempBookingSheetDetail') IS NOT NULL DROP TABLE #TempBookingSheetDetail
 	IF OBJECT_ID('tempdb..#TempCurrentCycleTitle') IS NOT NULL DROP TABLE #TempCurrentCycleTitle
 	IF OBJECT_ID('tempdb..#TempBookingSheetDistributor') IS NOT NULL DROP TABLE #TempBookingSheetDistributor
+	IF OBJECT_ID('tempdb..#tmpPONumber') IS NOT NULL DROP TABLE #tmpPONumber
 
 END

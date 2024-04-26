@@ -857,7 +857,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=IIf(Parameters!Run_Type.Value = "C", "Limited", IIf(Parameters!Run_Type.Value = "U", "Unlimited", IIf(Parameters!Run_Type.Value = "", "NA","")))</Value>
+                                  <Value>=IIf(Parameters!Run_Type.Value = "0", "Limited", IIf(Parameters!Run_Type.Value = "-1", "Unlimited", IIf(Parameters!Run_Type.Value = "", "NA","")))</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -1326,7 +1326,11 @@
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
-                <TablixMember />
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>true</Hidden>
+                  </Visibility>
+                </TablixMember>
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
@@ -2026,7 +2030,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!Order_For_schedule.Value</Value>
+                                  <Value>=Fields!Provision_Runs.Value</Value>
                                   <Style>
                                     <FontSize>11pt</FontSize>
                                   </Style>
@@ -2098,7 +2102,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=IIF(Fields!Balance_Runs.Value = -1, "Unlimited", Fields!Balance_Runs.Value)</Value>
+                                  <Value>=IIF(Fields!NoOfRuns.Value = -1, "Unlimited", Fields!Balance_Runs.Value)</Value>
                                   <Style>
                                     <FontSize>11pt</FontSize>
                                   </Style>
@@ -2957,11 +2961,6 @@
     </ReportParameter>
     <ReportParameter Name="AllYears">
       <DataType>String</DataType>
-      <DefaultValue>
-        <Values>
-          <Value>N</Value>
-        </Values>
-      </DefaultValue>
       <Prompt>AllYears</Prompt>
     </ReportParameter>
     <ReportParameter Name="ParamExpandOrCollapse">
@@ -2971,6 +2970,7 @@
           <Value>Collapse</Value>
         </Values>
       </DefaultValue>
+      <AllowBlank>true</AllowBlank>
       <Prompt>ParamExpandOrCollapse</Prompt>
     </ReportParameter>
     <ReportParameter Name="Run_Type">
@@ -2981,8 +2981,6 @@
     </ReportParameter>
     <ReportParameter Name="IsDealExpire">
       <DataType>String</DataType>
-      <Nullable>true</Nullable>
-      <AllowBlank>true</AllowBlank>
       <Prompt>IsDealExpire</Prompt>
     </ReportParameter>
     <ReportParameter Name="IsCurrentYear">

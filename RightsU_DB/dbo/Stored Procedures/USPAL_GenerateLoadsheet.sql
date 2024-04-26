@@ -2,6 +2,11 @@
 @AL_Load_Sheet_Code INT,
 @AL_Lab_Code VARCHAR(100)
 AS
+
+--DECLARE
+--@AL_Load_Sheet_Code INT = 19,
+--@AL_Lab_Code VARCHAR(100) = 'West Entertainment'
+
 BEGIN
 	--DECLARE
 	--@AL_Load_Sheet_Code INT = 2079,
@@ -372,20 +377,28 @@ BEGIN
 	)
 
 	DECLARE @TitleContentIntersect TABLE (
-		TitleContentCode INT
+		TitleContentCode INT,
+		Vendor_Name VARCHAR(1000)
 	)
 
 	INSERT INTO @tblBookingSheetCodes(BookingSheetCodes)
 	SELECT AL_Booking_Sheet_Code FROM AL_Load_Sheet_Details WHERE AL_Load_Sheet_Code = @AL_Load_Sheet_Code 
 
 	INSERT INTO @TitleContentIntersect
-	SELECT Title_Content_Code FROM AL_Booking_Sheet_Details WHERE COlumns_Code =  78 AND Columns_Value = 'English'AND AL_Booking_Sheet_Code IN (SELECT BookingSheetCodes FROM @tblBookingSheetCodes )
+	SELECT Title_Content_Code, v.Vendor_Name FROM AL_Booking_Sheet_Details  bsd
+	INNER JOIN  AL_Booking_Sheet bs ON bsd.AL_Booking_Sheet_Code = bs.AL_Booking_Sheet_Code
+	INNER JOIN Vendor v ON v.Vendor_Code = bs.Vendor_Code
+	WHERE COlumns_Code =  78 AND Columns_Value = 'English'AND bsd.AL_Booking_Sheet_Code IN (SELECT BookingSheetCodes FROM @tblBookingSheetCodes )
 	INTERSECT
-	SELECT Title_Content_Code FROM AL_Booking_Sheet_Details WHERE COlumns_Code =  63 AND Columns_Value = 'Movie' AND AL_Booking_Sheet_Code IN (SELECT BookingSheetCodes FROM @tblBookingSheetCodes )
+	SELECT Title_Content_Code, v.Vendor_Name FROM AL_Booking_Sheet_Details  bsd
+	INNER JOIN  AL_Booking_Sheet bs ON bsd.AL_Booking_Sheet_Code = bs.AL_Booking_Sheet_Code
+	INNER JOIN Vendor v ON v.Vendor_Code = bs.Vendor_Code
+	WHERE COlumns_Code =  63 AND Columns_Value = 'Movie' AND bsd.AL_Booking_Sheet_Code IN (SELECT BookingSheetCodes FROM @tblBookingSheetCodes )
 	INTERSECT
-	SELECT Title_Content_Code FROM AL_Booking_Sheet_Details WHERE COlumns_Code =  83 AND ISNULL(Columns_Value,'') = '' AND AL_Booking_Sheet_Code IN (SELECT BookingSheetCodes FROM @tblBookingSheetCodes )
-
-	
+	SELECT Title_Content_Code, v.Vendor_Name FROM AL_Booking_Sheet_Details  bsd
+	INNER JOIN  AL_Booking_Sheet bs ON bsd.AL_Booking_Sheet_Code = bs.AL_Booking_Sheet_Code
+	INNER JOIN Vendor v ON v.Vendor_Code = bs.Vendor_Code 
+	WHERE COlumns_Code =  83 AND ISNULL(Columns_Value,'') = '' AND bsd.AL_Booking_Sheet_Code IN (SELECT BookingSheetCodes FROM @tblBookingSheetCodes )	
 	
 	IF EXISTS(SELECT * from ##tmp WHERE Title_Content_Code IN (Select TitleContentCode FROM @TitleContentIntersect))
 	BEGIN
@@ -400,7 +413,7 @@ BEGIN
 		INSERT INTO #tempTrailorData
 		SELECT * from (
 			SELECT ROW_NUMBER() OVER (PARTITION BY Title_Content_Code ORDER BY  Title_Content_Code) AS row_num,* FROM 
-			##tmp WHERE Title_Content_Code IN (Select TitleContentCode FROM @TitleContentIntersect)
+			##tmp AS tmp WHERE Title_Content_Code IN (Select TitleContentCode FROM @TitleContentIntersect tci WHERE tmp.Airline = tci.Vendor_Name)
 		) AS a
 		WHERE a.row_num = 1
 
@@ -529,6 +542,8 @@ BEGIN
 		ELSE IF(@AL_Lab_Code = 'Above')
 		BEGIN
 
+			ALTER TABLE ##tmp ADD [ITEM #] INT
+
 			SELECT ROW_NUMBER() OVER (PARTITION BY [AIRLINE/IATA Code] ORDER BY A.[MOVIE / SERIES TITLE], A.[EPISODE NAME]) row_num, * 
 			INTO #FinalOutputAbove
 			FROM (
@@ -567,6 +582,9 @@ BEGIN
 		END
 		ELSE IF(@AL_Lab_Code = 'Anuvu')
 		BEGIN
+
+			ALTER TABLE ##tmp ADD [ITEM #] INT
+
 			UPDATE B SET B.[ITEM #] = B.row_num
 			FROM (
 				SELECT ROW_NUMBER() OVER (PARTITION BY [Airline] ORDER BY [English Title] ) row_num,* 

@@ -2,12 +2,12 @@
 (
 	@TitleCodes VARCHAR(MAX),
 	@ChannelCodes VARCHAR(MAX),
-	@AllYears CHAR(1)='N',
+	@AllYears CHAR(1),
 	@Flag VARCHAR(10),
 	@Run_Type CHAR(2),--(0) = Limited, (-1) = UnLimited
 	@DMContentCodes VARCHAR(5000) = NULL,
 	@Channel_Region int = 0,
-	@IsDealExpire char(1) = 'N'
+	@IsDealExpire char(1)
 )
 ---- =============================================
 ---- Updated By : Anchal Sikarwar
@@ -115,12 +115,14 @@ BEGIN
 				CCR.Total_Runs Defined_Runs,
 				(
 					SELECT COUNT(*) FROM BV_Schedule_Transaction BV (NOLOCK) WHERE BV.BMS_Deal_Content_Rights_Code = CCR.BMS_Deal_Content_Rights_Code AND
-					CONVERT(DATETIME, CONVERT(CHAR(12), Schedule_Item_Log_Date, 103) + ' ' + CONVERT(CHAR(8), Schedule_Item_Log_Time, 108), 103)
+					--CONVERT(DATETIME, CONVERT(CHAR(12), Schedule_Item_Log_Date, 103) + ' ' + CONVERT(CHAR(8), Schedule_Item_Log_Time, 108), 103)
+					CONVERT(DATETIME, Schedule_Item_Log_DateTime, 103)
 					> GETDATE() AND BV.IsProcessed = 'Y' AND ISNULL(BV.IsIgnore, 'N') <> 'Y'
 				) AS Provision_Runs,
 				(
 					SELECT COUNT(*) FROM BV_Schedule_Transaction BV (NOLOCK) WHERE BV.BMS_Deal_Content_Rights_Code = CCR.BMS_Deal_Content_Rights_Code AND
-					CONVERT(DATETIME, CONVERT(CHAR(12), Schedule_Item_Log_Date, 103) + ' ' + CONVERT(CHAR(8), Schedule_Item_Log_Time, 108), 103)
+					--CONVERT(DATETIME, CONVERT(CHAR(12), Schedule_Item_Log_Date, 103) + ' ' + CONVERT(CHAR(8), Schedule_Item_Log_Time, 108), 103)
+					CONVERT(DATETIME, Schedule_Item_Log_DateTime, 103)
 					<= GETDATE() AND BV.IsProcessed = 'Y' AND ISNULL(BV.IsIgnore, 'N') <> 'Y'
 				) AS Consume_Runs,
 				CCR.Start_Date Rights_Start_Date,
@@ -146,11 +148,14 @@ BEGIN
 				Where ISNULL(CCR.Is_Active, 'N') = 'Y' 
 				AND CASE WHEN @Run_Type = '' THEN 1 
 				WHEN @Run_Type = '-1' THEN CASE WHEN CCR.Total_Runs = '-1' THEN 1 ELSE 0 END
-				WHEN @Run_Type = '0' THEN CASE WHEN CCR.Total_Runs >= 0 THEN 1 ELSE 0 END ELSE 0 END = 1 
+				WHEN @Run_Type = '0' THEN CASE WHEN CCR.Total_Runs >= 0 THEN 1 ELSE 0 END ELSE 0 END = 1
+				AND ((Convert(datetime, isnull(CCR.End_Date, GETDATE() ), 103) >= Convert(date, GETDATE() , 103)) OR @IsDealExpire <> 'Y')
+				AND ((@AllYears = 'N' AND GETDATE() BETWEEN CCR.Start_Date AND CCR.End_Date) OR @AllYears = 'Y')
 			) AS X
 			GROUP BY X.Agreement_No, 
 			X.Title_Name, X.Deal_Code, X.Title_Content_Code, X.Channel_Code, X.Channel_Name, X.Channels_Beam, X.Channel_Id, X.Run_Def_Type, X.Order_For_schedule,
 			X.Right_Rule_Name, X.Deal_Type,Consume_Runs,X.Business_Unit,X.Episode_No,X.Language_Name,X.Deal_Type_Name,X.Genres_Name,X.ModeOfAcq
+			ORDER BY X.Episode_No
 		END
 		ELSE
 		BEGIN
