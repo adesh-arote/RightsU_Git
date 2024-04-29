@@ -1,11 +1,12 @@
 ﻿CREATE FUNCTION [dbo].[UFN_Get_DataFor_RightsUsageReport_New]
 (
 	@Acq_Deal_Movie_Code INT,
+	@Title_Content_Code INT,
 	@Type VARCHAR(50),
-	 @StartDate VARCHAR(30),
-	 @EndDate VARCHAR(30),
-	 @Channel VARCHAR(MAX),
-	 @RunType VARCHAR(1)
+	@StartDate VARCHAR(30),
+	@EndDate VARCHAR(30),
+	@Channel VARCHAR(MAX),
+	@RunType VARCHAR(1)
 )
 RETURNS NVARCHAR(MAX)
 AS

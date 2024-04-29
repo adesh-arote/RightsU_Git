@@ -9417,4 +9417,24 @@ namespace RightsU_BLL
         }
 
     }
+
+    public class User_Details_Service
+    {
+        private readonly User_Details_Repository objRepository;
+
+        public User_Details_Service(string Connection_Str)
+        {
+            this.objRepository = new User_Details_Repository(Connection_Str);
+        }
+        public IQueryable<Users_Detail> SearchFor(Expression<Func<Users_Detail, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public Users_Detail GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+    }
 }

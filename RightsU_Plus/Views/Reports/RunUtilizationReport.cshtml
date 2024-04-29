@@ -26,15 +26,17 @@
                 $('#changeLabel').html("Movie Title :");
                 TitleType = "M";
                 $('#txtTitle').val('');
+                $('#hdnTitleCode').val('0');
                 $('#txtTitle').attr('placeholder', 'Movie Title');
-                Clear();
+                //Clear();
             }
             else if ($(".TitleTypeCls:checked").val() == "S") {
                 $('#changeLabel').html("Program Title :");
                 TitleType = "S";
                 $('#txtTitle').val('');
+                $('#hdnTitleCode').val('0');
                 $('#txtTitle').attr('placeholder', 'Program Title');
-                Clear();
+                //Clear();
             }
             //else if ($(".TitleTypeCls:checked").val() == "A") {
             //    $('#changeLabel').html("Album Title :");
@@ -117,6 +119,7 @@
         else {
             strYear = 'Y';
         }
+
         var subDeal = $('#chkExpiryDeal').is(':checked');
         if (subDeal == true) {
             subDeal = "Y";
@@ -124,12 +127,14 @@
         else {
             subDeal = "N";
         }
-        if (year == 'EA' || strYear == 'N') {
-            strParamExpandOrCollapse = "Expand";
-        }
-        else {
-            strParamExpandOrCollapse = "Collapse";
-        }
+
+        //if (year == 'EA' || strYear == 'N') {
+        //    strParamExpandOrCollapse = "Expand";
+        //}
+        //else {
+        //    strParamExpandOrCollapse = "Collapse";
+        //}
+
         if ($('#ddlRunType').val() == '0') {
             strRunType = "";
         }
@@ -488,11 +493,11 @@
                                                 @Html.DropDownList("ClusterList", (List<SelectListItem>)ViewBag.ClusterList, "Please Select", new { @id = "ddlCluster", @class = "form_input chosen-select" })
                                             </td>
                                         }
-                                        <td colspan="2">
-                                            <input type="radio" name="year" id="rbCurrentYear" value="CY" /><text>&nbsp;&nbsp; <b>@objMessageKey.CurrentYear</b> &nbsp;&nbsp;</text>
-                                            <input type="radio" name="year" id="rbExpandAll" value="EA" /><text>&nbsp;&nbsp; <b>Expand All</b> &nbsp;&nbsp;</text>
-                                            <input type="radio" name="year" id="rbNA" checked="checked" value="N" />&nbsp;&nbsp; <b>@objMessageKey.NA</b> &nbsp;&nbsp;
-                                        </td>
+                                            <td colspan="2">
+                                                <input type="radio" name="year" id="rbExpandAll" value="EA" checked="checked" /><text>&nbsp;&nbsp; <b>All Years</b> &nbsp;&nbsp;</text>
+                                                <input type="radio" name="year" id="rbCurrentYear" value="CY" /><text>&nbsp;&nbsp; <b>@objMessageKey.CurrentYear</b> &nbsp;&nbsp;</text>
+                                                @*<input type="radio" name="year" id="rbNA" checked="checked" value="N" />&nbsp;&nbsp; <b>@objMessageKey.NA</b> &nbsp;&nbsp;*@
+                                            </td>
 
                                         <td></td>
 

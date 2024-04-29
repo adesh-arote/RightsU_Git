@@ -4045,5 +4045,8 @@ namespace RightsU_DAL
         public BV_Schedule_Transaction_Repository(string conStr) : base(conStr) { }
     }
 
-
+    public class User_Details_Repository : RightsU_Repository<Users_Detail>
+    {
+        public User_Details_Repository(string conStr) : base(conStr) { }
+    }
 }

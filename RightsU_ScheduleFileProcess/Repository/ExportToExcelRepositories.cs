@@ -78,6 +78,38 @@ namespace RightsU_ScheduleFileProcess.Repository
             }
         }
 
+        public class Upload_Err_DetailRepositories : MainRepository<Upload_Err_Detail>
+        {
+            public void Add(Upload_Err_Detail entity)
+            {
+                base.AddEntity(entity);
+            }
+
+            public Upload_Err_Detail GetUpload_Err_DetailById(long Id)
+            {
+                var obj = new { Upload_Detail_Code = Id };
+
+                return base.GetById<Upload_Err_Detail>(obj);
+            }
+
+            public IEnumerable<Upload_Err_Detail> SearchFor(object param)
+            {
+                return base.SearchForEntity<Upload_Err_Detail>(param);
+            }
+
+
+            public void Update(Upload_Err_Detail entity)
+            {
+                Upload_Err_Detail oldObj = GetUpload_Err_DetailById(entity.Upload_Detail_Code.Value);
+                base.UpdateEntity(oldObj, entity);
+            }
+
+            public void Delete(Upload_Err_Detail entity)
+            {
+                base.DeleteEntity(entity);
+            }
+        }
+
         public class USP_BMS_Schedule1_Validate_Temp_BV_ScheduleRepositories : MainRepository<dynamic>
         {
             public void USP_BMS_Schedule1_Validate_Temp_BV_Schedule(int File_Code ,string Channel_Code, string IsReprocess, string BV_Episode_ID)

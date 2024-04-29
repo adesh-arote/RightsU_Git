@@ -26,14 +26,14 @@ BEGIN
 		  (select TOP 1 Version_Code FROm Title_Content_Version TCV (NOLOCK) where TCV.Title_Content_Code =TC.Title_Content_Code ) AS Version_Code,  
 		  CASE WHEN BST.IsIgnore = 'Y' THEN 'Yes' ELSE 'No' END AS IsIgnore,  
 		  BST.Play_Day, BST.Play_Run, 
-		  CASE WHEN ISNULL(BSE.Email_Notification_Msg_Code,0) = 0 THEN ''   
-		  ELSE (select Msg.Email_Msg from Email_Notification_Msg Msg (NOLOCK) WHERE Msg.Email_Notification_Msg_Code = BSE.Email_Notification_Msg_Code) END [Error]  
+		  CASE WHEN ISNULL(BST.BV_Schedule_Transaction_Code,0) = 0 THEN ''   
+		  ELSE (select ENS.Email_Notification_Msg from Email_Notification_Schedule ENS (NOLOCK) WHERE ENS.BV_Schedule_Transaction_Code = BST.BV_Schedule_Transaction_Code) END [Error]  
 		 FROM Title_Content TC (nolock)  
-		 INNER JOIN Content_Channel_Run CCR (NOLOCK) ON CCR.Title_Content_Code = TC.Title_Content_Code AND CCR.Title_Content_Code = @Title_Content_Code  
-		 INNER JOIN BV_Schedule_Transaction BST (nolock) ON BST.Title_Code = CCR.Title_Code --BST.Content_Channel_Run_Code = CCR.Content_Channel_Run_Code  
+		 --INNER JOIN Content_Channel_Run CCR (NOLOCK) ON CCR.Title_Content_Code = TC.Title_Content_Code AND CCR.Title_Content_Code = @Title_Content_Code  
+		 INNER JOIN BV_Schedule_Transaction BST (nolock) ON BST.Title_Code = TC.Title_Code AND BST.Program_Episode_ID = TC.Ref_BMS_Content_Code --BST.Content_Channel_Run_Code = CCR.Content_Channel_Run_Code  
 		 INNER JOIN Channel C (nolock) ON C.Channel_Code = BST.Channel_Code  
-		 LEFT JOIN BMS_Schedule_Exception BSE (NOLOCK) ON BSE.BV_Schedule_Transaction_Code = BST.BV_Schedule_Transaction_Code  
-		 WHERE   
+		 --LEFT JOIN BMS_Schedule_Exception BSE (NOLOCK) ON BSE.BV_Schedule_Transaction_Code = BST.BV_Schedule_Transaction_Code  
+		 WHERE TC.Title_Content_Code = @Title_Content_Code AND
 		(BST.Channel_Code IN (select number from dbo.fn_Split_withdelemiter(@Channel_Codes,',')) OR @Channel_Codes = '')  
 		 AND   
 		 (  

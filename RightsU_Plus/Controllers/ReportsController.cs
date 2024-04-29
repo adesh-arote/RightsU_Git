@@ -1255,27 +1255,24 @@ namespace RightsU_Plus.Controllers
             return Json(result);
         }
 
-        public PartialViewResult BindRunExceptionReport(string TitleCodes, string FromDate, string ToDate, string TitleType, string datetimeformat, string dateformat, string EpisodeFrom, string EpisodeTo)
+        public PartialViewResult BindRunExceptionReport(string TitleCodes, string FromDate, string ToDate, string TitleType,   string EpisodeFrom, string EpisodeTo)
         {
-            string ReportType = "S";
-            string from = "";
-            string to = "";
+            string ReportType = "S", from = "", to = "",  datetimeformat = "", dateformat = "";
             List<string> lstTitleTypeCode = new List<string>();
             if (TitleType == "M")
+            {
                 TitleType = "Movie";
+            }  
             else
+            {
                 TitleType = "Program";
-            int DealTypeCode = new Deal_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Deal_Type_Name == TitleType).Select(s => s.Deal_Type_Code).FirstOrDefault();
+            }        
+            int DealTypeCode = new Deal_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Deal_Type_Name.ToUpper() == TitleType.ToUpper()).Select(s => s.Deal_Type_Code).FirstOrDefault();
             string title_names = TypeWiseTitleAutosuggest(TitleCodes, DealTypeCode);
             if (FromDate != "")
                 from = GlobalUtil.MakedateFormat(FromDate);
             if (ToDate != "")
                 to = GlobalUtil.MakedateFormat(ToDate);
-
-            if (TitleType == "M")
-                TitleType = "MOVIE";
-            else
-                TitleType = "SHOW";
 
             ReportParameter[] parm = new ReportParameter[13];
             parm[0] = new ReportParameter("ReportType", ReportType);
@@ -1730,13 +1727,14 @@ namespace RightsU_Plus.Controllers
                 return Json(result);
             }
         }
-        public ActionResult BindRunUtilizationReport(string BU_Code, string TitleCodes, string ChannelCodes, string AllYears, string ParamExpandOrCollapse, string RunType, string IsDealExpire, string ClusterCode, string BUName, string TitleType)
+        public ActionResult BindRunUtilizationReport(string BU_Code, string TitleCodes, string ChannelCodes, string AllYears, string RunType, string IsDealExpire, string ClusterCode, string BUName, string TitleType)
         {
+            string ParamExpandOrCollapse = "";
             if (TitleType == "M")
                 TitleType = "Movie";
             else
                 TitleType = "Program";
-            int DealTypeCode = new Deal_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Deal_Type_Name == TitleType).Select(s => s.Deal_Type_Code).FirstOrDefault();
+            int DealTypeCode = new Deal_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Deal_Type_Name.ToUpper() == TitleType.ToUpper()).Select(s => s.Deal_Type_Code).FirstOrDefault();
             string title_names = TypeWiseTitleAutosuggest(TitleCodes, DealTypeCode);
             string channel_names = ChannelAutosuggest(ChannelCodes);
             string ReportName = "CHANNEL_WISE_CONSUMPTION";
@@ -1747,11 +1745,17 @@ namespace RightsU_Plus.Controllers
                     ChannelCodes = String.Join(",", new Channel_Region_Mapping_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Channel_Region_Code.ToString() == ClusterCode).Select(x => x.Channel_code).ToList());
                 }
             }
+
+            if (RunType == "C")
+                RunType = Convert.ToString(0);
+            else if(RunType == "U")
+                RunType = Convert.ToString(-1);
+
             ReportParameter[] parm;
             if (BUName.Contains("English"))
-                parm = new ReportParameter[13];
+                parm = new ReportParameter[14];
             else
-                parm = new ReportParameter[12];
+                parm = new ReportParameter[13];
             parm[0] = new ReportParameter("BU_Code", BU_Code);
             parm[1] = new ReportParameter("TitleCodes", title_names);
             parm[2] = new ReportParameter("Flag", "MOVIE");
@@ -1764,9 +1768,10 @@ namespace RightsU_Plus.Controllers
             parm[9] = new ReportParameter("CreatedBy", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
             parm[10] = new ReportParameter("SysLanguageCode", objLoginUser.System_Language_Code.ToString());
             parm[11] = new ReportParameter("Module_Code", objLoginUser.moduleCode.ToString());
+            parm[12] = new ReportParameter("TitleType", TitleType);
             if (BUName.Contains("English"))
             {
-                parm[12] = new ReportParameter("Channel_Region", "0");
+                parm[13] = new ReportParameter("Channel_Region", "0");
                 ReportName = "CHANNEL_WISE_CONSUMPTION_ENGLISH";
             }
             ReportViewer rptViewer = BindReport(parm, "CHANNEL_WISE_CONSUMPTION_ENGLISH");

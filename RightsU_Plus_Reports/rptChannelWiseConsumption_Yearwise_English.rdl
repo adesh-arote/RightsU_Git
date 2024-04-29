@@ -408,7 +408,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>:</Value>
                                   <Style>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
@@ -572,6 +572,110 @@
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox6">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Title Type</Value>
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontSize>12pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox6</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox8">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>:</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox8</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox12">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Parameters!TitleType.Value</Value>
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox12</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
                   <Height>0.2751in</Height>
                   <TablixCells>
                     <TablixCell>
@@ -583,7 +687,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Channel Code</Value>
+                                  <Value>Channels</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>12pt</FontSize>
@@ -753,7 +857,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=IIf(Parameters!Run_Type.Value = "C", "Limited", IIf(Parameters!Run_Type.Value = "U", "Unlimited", IIf(Parameters!Run_Type.Value = "", "NA","")))</Value>
+                                  <Value>=IIf(Parameters!Run_Type.Value = "0", "Limited", IIf(Parameters!Run_Type.Value = "-1", "Unlimited", IIf(Parameters!Run_Type.Value = "", "NA","")))</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -1222,6 +1326,11 @@
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>true</Hidden>
+                  </Visibility>
+                </TablixMember>
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
@@ -1231,8 +1340,9 @@
             <PageBreak>
               <BreakLocation>Start</BreakLocation>
             </PageBreak>
-            <Top>1.20479in</Top>
-            <Height>2.0251in</Height>
+            <Top>0.91437in</Top>
+            <Left>0.02328cm</Left>
+            <Height>2.2751in</Height>
             <Width>11.9271in</Width>
             <Style>
               <Border>
@@ -1920,7 +2030,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!Order_For_schedule.Value</Value>
+                                  <Value>=Fields!Provision_Runs.Value</Value>
                                   <Style>
                                     <FontSize>11pt</FontSize>
                                   </Style>
@@ -1992,7 +2102,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=IIF(Fields!Balance_Runs.Value = -1, "Unlimited", Fields!Balance_Runs.Value)</Value>
+                                  <Value>=IIF(Fields!NoOfRuns.Value = -1, "Unlimited", Fields!Balance_Runs.Value)</Value>
                                   <Style>
                                     <FontSize>11pt</FontSize>
                                   </Style>
@@ -2799,8 +2909,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>DataSet</DataSetName>
-            <Top>0.29042in</Top>
-            <Left>0.3425in</Left>
+            <Left>0.00917in</Left>
             <Height>0.75in</Height>
             <Width>14in</Width>
             <ZIndex>1</ZIndex>
@@ -2811,7 +2920,7 @@
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>3.47989in</Height>
+        <Height>3.48114in</Height>
         <Style />
       </Body>
       <Width>17.3425in</Width>
@@ -2852,11 +2961,6 @@
     </ReportParameter>
     <ReportParameter Name="AllYears">
       <DataType>String</DataType>
-      <DefaultValue>
-        <Values>
-          <Value>N</Value>
-        </Values>
-      </DefaultValue>
       <Prompt>AllYears</Prompt>
     </ReportParameter>
     <ReportParameter Name="ParamExpandOrCollapse">
@@ -2866,6 +2970,7 @@
           <Value>Collapse</Value>
         </Values>
       </DefaultValue>
+      <AllowBlank>true</AllowBlank>
       <Prompt>ParamExpandOrCollapse</Prompt>
     </ReportParameter>
     <ReportParameter Name="Run_Type">
@@ -2876,8 +2981,6 @@
     </ReportParameter>
     <ReportParameter Name="IsDealExpire">
       <DataType>String</DataType>
-      <Nullable>true</Nullable>
-      <AllowBlank>true</AllowBlank>
       <Prompt>IsDealExpire</Prompt>
     </ReportParameter>
     <ReportParameter Name="IsCurrentYear">
@@ -3080,6 +3183,10 @@
       <Nullable>true</Nullable>
       <Prompt>Module Code</Prompt>
     </ReportParameter>
+    <ReportParameter Name="TitleType">
+      <DataType>String</DataType>
+      <Prompt>TitleType</Prompt>
+    </ReportParameter>
   </ReportParameters>
   <ReportParametersLayout>
     <GridLayoutDefinition>
@@ -3280,6 +3387,11 @@
           <ColumnIndex>1</ColumnIndex>
           <RowIndex>13</RowIndex>
           <ParameterName>Module_Code</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>2</ColumnIndex>
+          <RowIndex>13</RowIndex>
+          <ParameterName>TitleType</ParameterName>
         </CellDefinition>
       </CellDefinitions>
     </GridLayoutDefinition>

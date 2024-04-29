@@ -424,7 +424,7 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
                   <Width>1.41146in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.41146in</Width>
+                  <Width>1.69792in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1.60417in</Width>
@@ -433,7 +433,7 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
                   <Width>1.89063in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.41146in</Width>
+                  <Width>1.30729in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1.41146in</Width>
@@ -448,14 +448,14 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox12">
+                        <Textbox Name="Textbox13">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=First(Fields!Col_Head1.Value, "DS_Headers")</Value>
+                                  <Value>Title Name</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>12pt</FontSize>
@@ -485,14 +485,14 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox13">
+                        <Textbox Name="Textbox26">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=First(Fields!Col_Head2.Value, "DS_Headers")</Value>
+                                  <Value>Program Episode Title</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>12pt</FontSize>
@@ -506,7 +506,7 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox12</rd:DefaultName>
+                          <rd:DefaultName>Textbox26</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -712,14 +712,14 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="english_title">
+                        <Textbox Name="File_Program_Title">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!File_Episode_Title.Value</Value>
+                                  <Value>=Fields!title_name.Value</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -729,7 +729,7 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>english_title</rd:DefaultName>
+                          <rd:DefaultName>File_Program_Title</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -744,7 +744,7 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="File_Program_Title">
+                        <Textbox Name="Textbox27">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -761,7 +761,7 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>File_Program_Title</rd:DefaultName>
+                          <rd:DefaultName>Textbox27</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -943,19 +943,15 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
             </TablixBody>
             <TablixColumnHierarchy>
               <TablixMembers>
+                <TablixMember />
                 <TablixMember>
                   <Visibility>
-                    <Hidden>=iif(Parameters!TitleType.Value = "MOVIE", false, true)</Hidden>
+                    <Hidden>=IIF(Parameters!TitleType.Value = "Program", false, true)</Hidden>
                   </Visibility>
                 </TablixMember>
                 <TablixMember>
                   <Visibility>
-                    <Hidden>=iif(Parameters!TitleType.Value = "SHOW", false, true)</Hidden>
-                  </Visibility>
-                </TablixMember>
-                <TablixMember>
-                  <Visibility>
-                    <Hidden>=iif(Parameters!TitleType.Value = "SHOW", false, true)</Hidden>
+                    <Hidden>=IIF(Parameters!TitleType.Value = "Program", false, true)</Hidden>
                   </Visibility>
                 </TablixMember>
                 <TablixMember />
@@ -987,7 +983,7 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
             <NoRowsMessage>No Records Found</NoRowsMessage>
             <DataSetName>DS_Exception</DataSetName>
             <Height>0.48208in</Height>
-            <Width>10.63543in</Width>
+            <Width>10.81772in</Width>
             <Visibility>
               <Hidden>=IIF(First(Fields!Layout_Direction.Value, "DS_Direction") = "LTR", False, True)</Hidden>
             </Visibility>
@@ -1006,7 +1002,7 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
                   <Width>0.18848in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>7.30111in</Width>
+                  <Width>4.58757in</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -1515,7 +1511,7 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!EndDate.Value), "01-JAN-2000",Paramete
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Parameters!TitleType.Value</Value>
+                                  <Value>=IIF(Parameters!TitleType.Value= "Program","Program","Movie")</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -1630,6 +1626,214 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!EndDate.Value), "01-JAN-2000",Paramete
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox33</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Episode  From</Value>
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontSize>12pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox2">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>:</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox2</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox3">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=(Parameters!EpisodeFrom.Value)</Value>
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox3</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox6">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Episode To</Value>
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontSize>12pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox6</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox9">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>:</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox9</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox10">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=(Parameters!EpisodeTo.Value)</Value>
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox10</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -1879,6 +2083,16 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!EndDate.Value), "01-JAN-2000",Paramete
                     <Hidden>true</Hidden>
                   </Visibility>
                 </TablixMember>
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>=IIF(Parameters!TitleType.Value = "SHOW", false, true)</Hidden>
+                  </Visibility>
+                </TablixMember>
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>=IIF(Parameters!TitleType.Value = "SHOW", false, true)</Hidden>
+                  </Visibility>
+                </TablixMember>
                 <TablixMember />
                 <TablixMember />
               </TablixMembers>
@@ -1888,8 +2102,8 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!EndDate.Value), "01-JAN-2000",Paramete
               <BreakLocation>Start</BreakLocation>
             </PageBreak>
             <Top>1.10305in</Top>
-            <Height>2in</Height>
-            <Width>9.03126in</Width>
+            <Height>2.5in</Height>
+            <Width>6.31772in</Width>
             <ZIndex>1</ZIndex>
             <Visibility>
               <Hidden>=IIF(First(Fields!Layout_Direction.Value, "DS_Direction") = "LTR", False, True)</Hidden>
@@ -2417,7 +2631,7 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!EndDate.Value), "01-JAN-2000",Paramete
                   <Width>0.18848in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>7.30111in</Width>
+                  <Width>4.58757in</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -3339,9 +3553,9 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!EndDate.Value), "01-JAN-2000",Paramete
             <PageBreak>
               <BreakLocation>Start</BreakLocation>
             </PageBreak>
-            <Top>3.20284in</Top>
+            <Top>3.91117in</Top>
             <Height>2in</Height>
-            <Width>9.03126in</Width>
+            <Width>6.31772in</Width>
             <ZIndex>3</ZIndex>
             <Visibility>
               <Hidden>=IIF(First(Fields!Layout_Direction.Value, "DS_Direction") = "RTL", False, True)</Hidden>
@@ -3353,10 +3567,10 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!EndDate.Value), "01-JAN-2000",Paramete
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>5.56743in</Height>
+        <Height>6.50492in</Height>
         <Style />
       </Body>
-      <Width>10.76043in</Width>
+      <Width>10.92189in</Width>
       <Page>
         <LeftMargin>1in</LeftMargin>
         <RightMargin>1in</RightMargin>

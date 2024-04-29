@@ -21,6 +21,7 @@ namespace RightsU.API.BLL.Services
         private readonly Acq_Deal_Rights_DubbingRepositories objAcq_Deal_Rights_DubbingRepositories = new Acq_Deal_Rights_DubbingRepositories();
         private readonly TitleRepositories objTitleRepositories = new TitleRepositories();
         private readonly DealRepositories objDealRepositories = new DealRepositories();
+        private readonly SystemParameterServices objSystemParameterServices = new SystemParameterServices();
         public GenericReturn GetById(Int32 id)
         {
             GenericReturn _objRet = new GenericReturn();
@@ -115,6 +116,40 @@ namespace RightsU.API.BLL.Services
                 objInput.Actual_Right_Start_Date = objInput.Right_Start_Date;
                 objInput.Effective_Start_Date = objInput.Right_Start_Date;
                 objInput.Actual_Right_End_Date = objInput.Right_End_Date;
+
+                if(objInput.Right_Type == "M")
+                {
+                    objInput.Right_Start_Date = null;
+                    objInput.Right_End_Date = null;
+                    objInput.Effective_Start_Date = null;
+                    
+                }
+                else if(objInput.Right_Type == "U")
+                {
+                    objInput.Right_End_Date = null;
+                    objInput.Original_Right_Type = "U";
+
+                    var objNew = new
+                    {
+                        Parameter_Name = "Enabled_Perpetuity"
+                    };
+                    string IsPerpetuityEnabled = objSystemParameterServices.SearchFor(objNew).Select(x => (x.Parameter_Value)).SingleOrDefault();
+
+                    int termYear = 0;
+                    if (IsPerpetuityEnabled == "Y")
+                    {
+                        termYear = Convert.ToInt32(objSystemParameterServices.SearchFor( new { Parameter_Name = "Perpertuity_Term_In_Year" }).First().Parameter_Value);
+                        objInput.Actual_Right_End_Date = ((DateTime)objInput.Right_Start_Date).AddYears(Convert.ToInt32(termYear)).AddDays(-1);
+                    }
+                    else
+                    {
+                        objInput.Actual_Right_End_Date = null;
+                    }
+
+                    
+                }
+
+
                 if (!String.IsNullOrEmpty(objInput.rofr_date_str))
                 {
                     objInput.ROFR_Date = GlobalTool.LinuxToDate(Convert.ToDouble(objInput.rofr_date_str));

@@ -59,9 +59,24 @@ BEGIN
 					And ADMR.Acq_Deal_Movie_Code = DM.Acq_Deal_Movie_Code
 					AND ADRP.Platform_Code in
 					(
-						select platform_code from Platform (NOLOCK) where isnull(applicable_for_asrun_schedule,''N'') = ''Y''
+						select platform_code from Platform (NOLOCK) where isnull(Is_No_Of_Run,''N'') = ''Y''
 					)
-					AND ((Convert(date, ADR.Right_Start_Date, 103) >= Convert(date, GETDATE() , 103)) OR (Convert(date, isnull(ADR.Right_End_Date, GETDATE() ), 103) >= Convert(date, GETDATE() , 103)))
+					AND ((Convert(date, isnull(ADR.Right_End_Date, GETDATE() ), 103) <= Convert(date, GETDATE() , 103)))
+					)'
+		END
+		ELSE
+		BEGIN
+		SET @filter = @filter + ' AND Exists (SELECT * FROM Acq_Deal_Rights ADR (NOLOCK)
+					inner join Acq_Deal_Rights_Platform ADRP (NOLOCK) on ADRp.Acq_Deal_Rights_Code = ADR.Acq_Deal_Rights_Code
+					Inner Join Acq_Deal_Rights_Title ADRT (NOLOCK) on ADRT.Acq_Deal_Rights_Code = ADR.Acq_Deal_Rights_Code
+					Inner Join Acq_Deal_Movie ADMR (NOLOCK) On ADRT.Title_Code = ADMR.Title_Code WHERE
+					ADR.Acq_Deal_Code = D.Acq_Deal_Code
+					And ADMR.Acq_Deal_Movie_Code = DM.Acq_Deal_Movie_Code
+					AND ADRP.Platform_Code in
+					(
+						select platform_code from Platform (NOLOCK) where isnull(Is_No_Of_Run,''N'') = ''Y''
+					)
+					AND ((Convert(date, isnull(ADR.Right_Start_Date, GETDATE() ), 103) >= Convert(date, GETDATE() , 103)) OR (Convert(date, isnull(ADR.Right_End_Date, GETDATE() ), 103) >= Convert(date, GETDATE() , 103)))
 					)'
 		END
 		IF(@Channel != '')
@@ -120,9 +135,9 @@ BEGIN
 		D.Agreement_No, DM.title_code, DM.Acq_Deal_movie_code,
 		' + @TitleName + '
 		--DBO.UFN_GetTitleNameInFormat( dbo.UFN_GetDealTypeCondition(D.Deal_Type_Code), T.Title_Name, DM.Episode_Starts_From, DM.Episode_End_To) AS Title_Name, 
-		( select dbo.UFN_Get_DataFor_RightsUsageReport_New(DM.Acq_Deal_movie_code, ''RP'','''+@StartDate+''','''+@EndDate+''','''+@Channel+''','''+@RunType+''')),
-		ISNULL(( select dbo.UFN_Get_DataFor_RightsUsageReport_New(DM.Acq_Deal_movie_code, ''PR'','''+@StartDate+''','''+@EndDate+''','''+@Channel+''','''+@RunType+''')),0),
-		ISNULL(( select dbo.UFN_Get_DataFor_RightsUsageReport_New(DM.Acq_Deal_movie_code, ''AR'','''+@StartDate+''','''+@EndDate+''','''+@Channel+''','''+@RunType+''')),0), ttc.Episode_No, T.Title_Name
+		( select dbo.UFN_Get_DataFor_RightsUsageReport_New(DM.Acq_Deal_movie_code,  ttc.Title_Content_Code ,''RP'','''+@StartDate+''','''+@EndDate+''','''+@Channel+''','''+@RunType+''')),
+		ISNULL(( select dbo.UFN_Get_DataFor_RightsUsageReport_New(DM.Acq_Deal_movie_code, ttc.Title_Content_Code , ''PR'','''+@StartDate+''','''+@EndDate+''','''+@Channel+''','''+@RunType+''')),0),
+		ISNULL(( select dbo.UFN_Get_DataFor_RightsUsageReport_New(DM.Acq_Deal_movie_code, ttc.Title_Content_Code , ''AR'','''+@StartDate+''','''+@EndDate+''','''+@Channel+''','''+@RunType+''')),0), ttc.Episode_No, T.Title_Name
 		FROM Acq_Deal D   (NOLOCK)
 		INNER JOIN Acq_Deal_Movie DM (NOLOCK) ON DM.Acq_Deal_code = D.Acq_Deal_code
 		INNER JOIN Title_Content ttc (NOLOCK) ON ttc.Title_Code = DM.Title_Code 

@@ -78,7 +78,14 @@
                             {
                                 <td style="text-align:center;">@item.Defined_Runs</td>
                             }
-                            <td style="text-align:center;">@item.Schedule_Runs</td>
+                            @if (item.Schedule_Runs == null)
+                            {
+                                <td style="text-align:center;">0</td>
+                            }
+                            else
+                            {
+                                <td style="text-align:center;">@item.Schedule_Runs</td>
+                            }
                             @if (@item.Defined_Runs == null)
                             {
                                 <td></td>
@@ -96,10 +103,10 @@
                                         <td style="width:12%;text-align:center;">@item.Defined_Runs</td>
                                     }
                                 }
-                                @*else if (@item.Balanced_Runs == -1)
+                                else if (@item.Balanced_Runs == -1)
                                 {
                                     <td style="width:12%;text-align:center;"><span>Unlimited</span></td>
-                                }*@
+                                }
                                 else
                                 {
                                     <td style="width:12%;text-align:center;">@item.Balanced_Runs</td>
@@ -179,20 +186,20 @@
                             <td style="width:12%;text-align:center;">@item.Defined_Runs</td>
                             <td style="width:12%;text-align:center;">@item.Schedule_Runs</td>
                             @*@if (@item.Defined_Runs == null)
-                            {
-                                <td style="width:12%;"></td>
-                            }
-                            else
-                            {
-                                if (@item.Balanced_Runs == null)
                                 {
-                                    <td style="width:12%;text-align:center;">@item.Defined_Runs</td>
+                                    <td style="width:12%;"></td>
                                 }
                                 else
                                 {
-                                    <td style="width:12%;text-align:center;">@item.Balanced_Runs</td>
-                                }
-                            }*@
+                                    if (@item.Balanced_Runs == null)
+                                    {
+                                        <td style="width:12%;text-align:center;">@item.Defined_Runs</td>
+                                    }
+                                    else
+                                    {
+                                        <td style="width:12%;text-align:center;">@item.Balanced_Runs</td>
+                                    }
+                                }*@
                             @if (item.Defined_Runs == -1)
                             {
                                 <td style="text-align:center;"><span>Unlimited</span></td>
@@ -223,9 +230,9 @@
                                     {
                                         <td style="width:12%;text-align:center;"><span>Unlimited</span></td>
                                     }*@
-                            else
-                            {
-                                <td style="width:12%;text-align:center;">@item.Balanced_Runs</td>
+                                else
+                                {
+                                    <td style="width:12%;text-align:center;">@item.Balanced_Runs</td>
                                 }
                             }
                         </tr>
@@ -334,29 +341,29 @@
                                     }
                                 }
                                 @*else if (@item.Balanced_Runs == -1)
-                                {
-                                    <td style="width:12%;text-align:center;"><span>Unlimited</span></td>
-                                }*@
-                            else
-                            {
-                                <td style="width:12%;text-align:center;">@item.Balanced_Runs</td>
-                                }
-                            }
-                            @*@if (@item.Defined_Runs == null)
-                            {
-                                <td style="width:12%;"></td>
-                            }
-                            else
-                            {
-                                if (@item.Balanced_Runs == null)
-                                {
-                                    <td style="width:12%;text-align:center;">@item.Defined_Runs</td>
-                                }
+                                    {
+                                        <td style="width:12%;text-align:center;"><span>Unlimited</span></td>
+                                    }*@
                                 else
                                 {
                                     <td style="width:12%;text-align:center;">@item.Balanced_Runs</td>
                                 }
-                            }*@
+                            }
+                            @*@if (@item.Defined_Runs == null)
+                                {
+                                    <td style="width:12%;"></td>
+                                }
+                                else
+                                {
+                                    if (@item.Balanced_Runs == null)
+                                    {
+                                        <td style="width:12%;text-align:center;">@item.Defined_Runs</td>
+                                    }
+                                    else
+                                    {
+                                        <td style="width:12%;text-align:center;">@item.Balanced_Runs</td>
+                                    }
+                                }*@
                         </tr>
 
                     }

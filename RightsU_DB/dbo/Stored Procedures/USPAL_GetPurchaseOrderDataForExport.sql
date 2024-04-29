@@ -125,7 +125,9 @@ BEGIN
  WHERE apod.AL_Purchase_Order_Details_Code = @AL_Purchase_Order_Details_Code AND apod.Title_Code = @Title_Code AND apod.Title_Content_Code = @Title_Content_Code)) AS T   
   
  Select [Client_Name], [Vendor_Name], [Vendor_Address], [Vendor_Phone_No], [Vendor_Email], [Period], CAST(ISNULL([Period_Month],0) AS INT) + 1 AS [Period_Month], CONVERT(VARCHAR(11), [PO_Generate_Date], 106) AS [PO_Generate_Date], [Purchase_Order_No],   
-        [TitleName], [Airline], [Version], [Lang 1] AS [Lang1], [Embedded Subs], [Remarks], [File details], [PO Booking], [Estimated Screening Cost per flight USD],  
+        [TitleName], [Airline], [Version], (LEFT([Lang 1], 3) + CASE WHEN ISNULL(LEFT([Lang 2], 3),'') <> '' THEN ', ' + LEFT([Lang 2], 3) ELSE '' END  
+                          + CASE WHEN ISNULL(LEFT([Lang 3], 3),'') <> '' THEN ', ' + LEFT([Lang 3], 3) ELSE '' END  
+						  + CASE WHEN ISNULL(LEFT([Lang 4], 3),'') <> '' THEN ', ' + LEFT([Lang 4], 3) ELSE '' END ) AS [Lang1], [Embedded Subs], [Remarks], [File details], [PO Booking], [Estimated Screening Cost per flight USD],  
      [Estimated Screening Total USD],[Duplication Cost per flight USD],[Duplication Total USD],[Miscellaneous Items],[Miscellaneous Charges], [Master delivery date],  
      [Trailer delivery date],[Delivery and Payment remarks], 
 	 CAST(ISNULL(CASE WHEN ISNUMERIC([Estimated Screening Total USD]) = 0 THEN 0 ELSE [Estimated Screening Total USD] END, 0) AS DECIMAL(10,2)) + 
@@ -135,7 +137,7 @@ BEGIN
  From #TempPurchaseOrderData tpod   
  INNER JOIN  
  (Select * from ( Select tb.AL_Booking_Sheet_Code, tb.TitleName, tb.Columns_Name, tb.Columns_Value, tb.Title_Code  from #TempBookingData tb ) a  
- pivot (max(Columns_Value) for Columns_Name in ([Airline],[Version],[Lang 1],[Embedded Subs],[Remarks],[File details],[PO Booking],[Estimated Screening Cost per flight USD],  
+ pivot (max(Columns_Value) for Columns_Name in ([Airline],[Version],[Lang 1],[Lang 2],[Lang 3],[Lang 4],[Embedded Subs],[Remarks],[File details],[PO Booking],[Estimated Screening Cost per flight USD],  
                [Estimated Screening Total USD],[Duplication Cost per flight USD],[Duplication Total USD],[Miscellaneous Items],[Miscellaneous Charges],  
                [Master delivery date],[Trailer delivery date],[Delivery and Payment remarks])) p) AS T  
  ON tpod.AL_Booking_Sheet_Code = T.AL_Booking_Sheet_Code  
