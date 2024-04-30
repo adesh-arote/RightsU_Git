@@ -3145,6 +3145,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
           <Property Name="Inserted_On" Type="datetime" />
           <Property Name="Last_Updated_By" Type="int" />
           <Property Name="Last_Updated_On" Type="datetime" />
+          <Property Name="Event_Type" Type="char" MaxLength="1" />
         </EntityType>
         <EntityType Name="Email_Config_Detail">
           <Key>
@@ -35555,6 +35556,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Inserted_On" Type="DateTime" Precision="3" />
           <Property Name="Last_Updated_By" Type="Int32" />
           <Property Name="Last_Updated_On" Type="DateTime" Precision="3" />
+          <Property Name="Event_Type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
         </EntityType>
         <EntityType Name="Email_Config_Detail">
           <Key>
@@ -48127,6 +48129,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Email_Config">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Email_Config">
               <MappingFragment StoreEntitySet="Email_Config">
+                <ScalarProperty Name="Event_Type" ColumnName="Event_Type" />
                 <ScalarProperty Name="Last_Updated_On" ColumnName="Last_Updated_On" />
                 <ScalarProperty Name="Last_Updated_By" ColumnName="Last_Updated_By" />
                 <ScalarProperty Name="Inserted_On" ColumnName="Inserted_On" />
