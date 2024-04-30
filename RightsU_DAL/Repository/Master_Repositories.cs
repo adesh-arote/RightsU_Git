@@ -4049,4 +4049,30 @@ namespace RightsU_DAL
     {
         public User_Details_Repository(string conStr) : base(conStr) { }
     }
+
+    #region ----Event_Platform
+    public class Event_Platform_Repository : RightsU_Repository<Event_Platform>
+    {
+        public Event_Platform_Repository(string conStr) : base(conStr) { }
+        public override void Save(Event_Platform objEC)
+        {
+            if (objEC.EntityState == State.Added)
+            {
+                base.Save(objEC);
+            }
+            else if (objEC.EntityState == State.Modified)
+            {
+                base.Update(objEC);
+            }
+            else if (objEC.EntityState == State.Deleted)
+            {
+                base.Delete(objEC);
+            }
+        }
+        public override void Delete(Event_Platform objEC)
+        {
+            base.Delete(objEC);
+        }
+    }
+    #endregion
 }
