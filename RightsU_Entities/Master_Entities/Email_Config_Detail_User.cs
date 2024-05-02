@@ -41,7 +41,8 @@ namespace RightsU_Entities
         public string Security_Group_Names { get; set; }
         public string Channel_Names { get; set; }
         public int temp_Id { get; set; }
-
+        public Nullable<int> Event_Platform_Code { get; set; }
+        public string Event_Template_Type { get; set; }
         public virtual Email_Config_Detail Email_Config_Detail { get; set; }
         public string _Dummy_Guid { get; set; }
         public string Dummy_Guid

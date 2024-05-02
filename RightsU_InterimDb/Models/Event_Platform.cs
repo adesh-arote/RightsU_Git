@@ -24,5 +24,6 @@ namespace RightsU_InterimDb.Models
     	    public Nullable<System.DateTime> Last_UpDated_Time { get; set; }
     	    public Nullable<int> Last_Action_By { get; set; }
     	    public Nullable<System.DateTime> Lock_Time { get; set; }
+    	    public string Enable_CC_And_BCC { get; set; }
     }
 }

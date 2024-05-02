@@ -3189,6 +3189,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
           <Property Name="ToUser_MailID" Type="nvarchar(max)" />
           <Property Name="CCUser_MailID" Type="nvarchar(max)" />
           <Property Name="BCCUser_MailID" Type="nvarchar(max)" />
+          <Property Name="Event_Platform_Code" Type="int" />
+          <Property Name="Event_Template_Type" Type="char" MaxLength="1" />
         </EntityType>
         <EntityType Name="Email_Config_Template">
           <Key>
@@ -3443,6 +3445,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
           <Property Name="Last_UpDated_Time" Type="datetime" />
           <Property Name="Last_Action_By" Type="int" />
           <Property Name="Lock_Time" Type="datetime" />
+          <Property Name="Enable_CC_And_BCC" Type="char" MaxLength="1" />
         </EntityType>
         <EntityType Name="Event_Template_Keys">
           <Key>
@@ -35605,6 +35608,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="ToUser_MailID" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="CCUser_MailID" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="BCCUser_MailID" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Event_Platform_Code" Type="Int32" />
+          <Property Name="Event_Template_Type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
         </EntityType>
         <Association Name="FK_Email_Config_Detail_Email_Config">
           <End Type="RightsU_NeoModel.Email_Config" Role="Email_Config" Multiplicity="0..1" />
@@ -41144,6 +41149,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Last_UpDated_Time" Type="DateTime" Precision="3" />
           <Property Name="Last_Action_By" Type="Int32" />
           <Property Name="Lock_Time" Type="DateTime" Precision="3" />
+          <Property Name="Enable_CC_And_BCC" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
         </EntityType>
         <EntityType Name="Event_Template_Keys">
           <Key>
@@ -48178,6 +48184,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Email_Config_Detail_User">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Email_Config_Detail_User">
               <MappingFragment StoreEntitySet="Email_Config_Detail_User">
+                <ScalarProperty Name="Event_Template_Type" ColumnName="Event_Template_Type" />
+                <ScalarProperty Name="Event_Platform_Code" ColumnName="Event_Platform_Code" />
                 <ScalarProperty Name="BCCUser_MailID" ColumnName="BCCUser_MailID" />
                 <ScalarProperty Name="CCUser_MailID" ColumnName="CCUser_MailID" />
                 <ScalarProperty Name="ToUser_MailID" ColumnName="ToUser_MailID" />
@@ -51906,6 +51914,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Event_Platform">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Event_Platform">
               <MappingFragment StoreEntitySet="Event_Platform">
+                <ScalarProperty Name="Enable_CC_And_BCC" ColumnName="Enable_CC_And_BCC" />
                 <ScalarProperty Name="Lock_Time" ColumnName="Lock_Time" />
                 <ScalarProperty Name="Last_Action_By" ColumnName="Last_Action_By" />
                 <ScalarProperty Name="Last_UpDated_Time" ColumnName="Last_UpDated_Time" />
