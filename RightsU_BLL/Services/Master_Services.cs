@@ -9494,4 +9494,61 @@ namespace RightsU_BLL
         }
     }
     #endregion
+
+    #region  --- Email_Config_Template
+    public class Email_Config_Template_Service : BusinessLogic<Email_Config_Template>
+    {
+        private readonly Email_Config_Template_Repository objRepository;
+
+        public Email_Config_Template_Service(string Connection_Str)
+        {
+            this.objRepository = new Email_Config_Template_Repository(Connection_Str);
+        }
+        public IQueryable<Email_Config_Template> SearchFor(Expression<Func<Email_Config_Template, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+        public Email_Config_Template GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+        public bool Save(Email_Config_Template objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+        public bool Update(Email_Config_Template objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+        public bool Delete(Email_Config_Template objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+        public override bool Validate(Email_Config_Template objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(Email_Config_Template objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        public override bool ValidateDelete(Email_Config_Template objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+        private bool ValidateDuplicate(Email_Config_Template objToValidate, out dynamic resultSet)
+        {
+            //if (SearchFor(s => s.Event_Platform_Name == objToValidate.Event_Platform_Name && s.Event_Platform_Code != objToValidate.Event_Platform_Code).Count() > 0)
+            //{
+            //    resultSet = "Event Platform is already exists";
+            //    return false;
+            //}
+
+            resultSet = "";
+            return true;
+        }
+    }
+    #endregion
 }
