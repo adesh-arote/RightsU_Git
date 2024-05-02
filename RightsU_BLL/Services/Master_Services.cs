@@ -9437,4 +9437,61 @@ namespace RightsU_BLL
         }
 
     }
+
+    #region  --- Event_platform
+    public class Event_Platform_Service : BusinessLogic<Event_Platform>
+    {
+        private readonly Event_Platform_Repository objRepository;
+    
+        public Event_Platform_Service(string Connection_Str)
+        {
+            this.objRepository = new Event_Platform_Repository(Connection_Str);
+        }
+        public IQueryable<Event_Platform> SearchFor(Expression<Func<Event_Platform, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+        public Event_Platform GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+        public bool Save(Event_Platform objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+        public bool Update(Event_Platform objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+        public bool Delete(Event_Platform objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+        public override bool Validate(Event_Platform objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(Event_Platform objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        public override bool ValidateDelete(Event_Platform objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+        private bool ValidateDuplicate(Event_Platform objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.Event_Platform_Name == objToValidate.Event_Platform_Name && s.Event_Platform_Code != objToValidate.Event_Platform_Code).Count() > 0)
+            {
+                resultSet = "Event Platform is already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+    }
+    #endregion
 }

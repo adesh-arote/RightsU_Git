@@ -99,6 +99,7 @@
         });
     });
     function btnShow_OnClick() {
+        debugger;
         var titleList = $('#txtTitle').val();
         var ChannelCodes = $('#txtChannel').val();
         var str = "", strChannels = "", strYear = "", strSubDeal = "", strParamExpandOrCollapse = "", strRunType = "";
@@ -111,8 +112,8 @@
         if ( ChannelCodes == 0) {
             ChannelCodes = "";
         }
-
-        var year = $("input:radio:checked").val();
+       
+        var year = $(".YearCls:checked").val();
         if (year == 'CY') {
             strYear = 'N';
         }
@@ -494,8 +495,8 @@
                                             </td>
                                         }
                                             <td colspan="2">
-                                                <input type="radio" name="year" id="rbExpandAll" value="EA" checked="checked" /><text>&nbsp;&nbsp; <b>All Years</b> &nbsp;&nbsp;</text>
-                                                <input type="radio" name="year" id="rbCurrentYear" value="CY" /><text>&nbsp;&nbsp; <b>@objMessageKey.CurrentYear</b> &nbsp;&nbsp;</text>
+                                                <input type="radio" name="year" class="YearCls" id="rbExpandAll" value="EA" checked="checked" /><text>&nbsp;&nbsp; <b>All Years</b> &nbsp;&nbsp;</text>
+                                                <input type="radio" name="year" class="YearCls" id="rbCurrentYear" value="CY" /><text>&nbsp;&nbsp; <b>@objMessageKey.CurrentYear</b> &nbsp;&nbsp;</text>
                                                 @*<input type="radio" name="year" id="rbNA" checked="checked" value="N" />&nbsp;&nbsp; <b>@objMessageKey.NA</b> &nbsp;&nbsp;*@
                                             </td>
 

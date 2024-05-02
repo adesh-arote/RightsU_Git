@@ -42,5 +42,8 @@ namespace RightsU_Notification_Service
         public bool IsAutoEscalated { get; set; }
         public bool IsReminderMail { get; set; }
         public string Service_Response { get; set; }
+        public Nullable<int> Event_Platform_Code { get; set; }
+    
+        public virtual Event_Platform Event_Platform { get; set; }
     }
 }

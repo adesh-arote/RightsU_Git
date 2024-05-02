@@ -461,6 +461,9 @@ namespace RightsU_DAL
         public DbSet<Syn_Deal_Digital> Syn_Deal_Digital { get; set; }
         public DbSet<Syn_Deal_Digital_Detail> Syn_Deal_Digital_Detail { get; set; }
         public DbSet<Acq_Deal_Run_LP> Acq_Deal_Run_LP { get; set; }
+        public DbSet<Email_Config_Template> Email_Config_Template { get; set; }
+        public DbSet<Event_Platform> Event_Platform { get; set; }
+        public DbSet<Event_Template_Keys> Event_Template_Keys { get; set; }
 
         public virtual ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name, string IS_Sport_Right)
         {

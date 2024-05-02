@@ -32,7 +32,7 @@ namespace RightsU.API.Controllers
         /// Asset Details
         /// </summary>
         /// <remarks>This Api returns Asset Details</remarks>
-        /// <param name="since">Find assets updated after this date. Format is 'dd-MMM-yyyy'. If no value is given, the default value will be passed</param>
+        /// <param name="since">Find assets updated after this date. Format is 'dd-MMM-yyyy' or 'dd-MMM-yyyy hh:mm:ss'. If no value is given, the default value will be passed</param>
         /// <returns></returns>               
         //[SwaggerResponse(HttpStatusCode.OK, "Success", Type = typeof(List<AssetsResult>))]
         //[SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
@@ -156,7 +156,7 @@ namespace RightsU.API.Controllers
         /// Deal Details
         /// </summary>
         /// <remarks>This Api returns Deal Details</remarks>
-        /// <param name="since">Find deals updated after this date. Format is 'dd-MMM-yyyy'. If no value is given, the default value will be passed</param>
+        /// <param name="since">Find deals updated after this date. Format is 'dd-MMM-yyyy' or 'dd-MMM-yyyy hh:mm:ss'. If no value is given, the default value will be passed</param>
         /// <param name="assetId">AssetId used for fetching Deals Data for specific AssetId , Example:RUBMSA11</param>
         /// <returns></returns>
         //[SwaggerResponse(HttpStatusCode.OK, "Success", Type = typeof(List<DealResult>))]
@@ -343,7 +343,7 @@ namespace RightsU.API.Controllers
         /// Deal Contents Details
         /// </summary>
         /// <remarks>This Api returns Deal Content Details</remarks>
-        /// <param name="since">Find deal contents updated after this date. Format is 'dd-MMM-yyyy'. If no value is given, the default value will be passed</param>
+        /// <param name="since">Find deal contents updated after this date. Format is 'dd-MMM-yyyy' or 'dd-MMM-yyyy hh:mm:ss'. If no value is given, the default value will be passed</param>
         /// <param name="assetId">AssetId used for fetching deal contents Data for specific AssetId , Example:RUBMSA11</param>
         /// <param name="dealId">DealId used for fetching deal contents Data for specific DealId , Example:RUBMSD11</param>
         /// <returns></returns>
@@ -569,7 +569,7 @@ namespace RightsU.API.Controllers
         /// Deal Rights Details
         /// </summary>
         /// <remarks>This Api returns Deal Rights Details</remarks>
-        /// <param name="since">Find deal rights updated after this date. Format is 'dd-MMM-yyyy'. If no value is given, the default value will be passed</param>
+        /// <param name="since">Find deal rights updated after this date. Format is 'dd-MMM-yyyy' or 'dd-MMM-yyyy hh:mm:ss'. If no value is given, the default value will be passed</param>
         /// <param name="assetId">AssetId used for fetching deal rights Data for specific AssetId , Example:RUBMSA11</param>
         /// <param name="dealId">DealId used for fetching deal rights Data for specific DealId , Example:RUBMSD11</param>
         /// <returns></returns>
@@ -732,6 +732,10 @@ namespace RightsU.API.Controllers
                                 objLog.Record_Status = "E";
                                 objLog.Error_Description = _objRet.Message;
                             }
+                        }
+                        else
+                        {
+                            DealContentRightsInput.since = DateTime.Now.AddDays(-BMS_API_Since_Days).ToString("yyyy-MM-dd");
                         }
                     }
                     catch (Exception ex)

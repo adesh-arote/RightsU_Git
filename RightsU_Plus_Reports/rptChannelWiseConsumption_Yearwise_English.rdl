@@ -2608,6 +2608,7 @@
                     <GroupExpressions>
                       <GroupExpression>=Fields!Agreement_No.Value</GroupExpression>
                       <GroupExpression>=Fields!Episode_No.Value</GroupExpression>
+                      <GroupExpression>=Fields!Rights_Period.Value</GroupExpression>
                     </GroupExpressions>
                   </Group>
                   <SortExpressions>

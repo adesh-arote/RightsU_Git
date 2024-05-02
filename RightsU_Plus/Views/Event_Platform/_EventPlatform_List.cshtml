@@ -1,0 +1,113 @@
+﻿@model IEnumerable<RightsU_Entities.Event_Platform>
+
+<style>
+    td {
+        text-align: center;
+    }
+</style>
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th style="width: 30%">
+                Event Platform Name
+            </th>
+            <th style="width: 30%">
+                Event Platform Short Name
+            </th>
+            <th style="width: 30%">
+                Credentials
+            </th>
+            @if (ViewBag.CommandName != "ADD" && ViewBag.CommandName != "EDIT")
+            {
+                <th style="width: 30%">
+                    Status
+                </th>
+            }
+            <th style="width: 10%">
+                Action
+            </th>
+        </tr>
+    </thead>
+    @{
+        if (ViewBag.CommandName == "ADD")
+        {
+            <tr>
+                <td>
+                    <input autocomplete="off" placeholder="Enter PlatformName" type="text" id="EventPlatform_Name" style="width:75%" />
+                </td>
+                <td>
+                    <input autocomplete="off" placeholder="Enter Platform ShortName" type="text" id="EventPlatform_Short_Name" style="width:75%" />
+                </td>
+                <td>
+                    +
+                </td>
+                <td style="width:75%">
+                    <a title="Save" class="glyphicon glyphicon-ok-circle" onclick="SaveEvent_Platform(0)"></a>
+                    <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="AL_LabCancel()"></a>
+                </td>
+            </tr>
+        }
+    }
+
+    @foreach (var item in Model)
+    {
+
+        <tr>
+            @if (ViewBag.CommandName == "EDIT" && ViewBag.Event_PlatformCode == item.Event_Platform_Code)
+            {
+                <td style="display: none">
+                    <input autocomplete="off" type="text" id="AL_Lab_Code" value="@item.Event_Platform_Code" />
+                </td>
+
+                <td>
+                    <input autocomplete="off" type="text" id="EventPlatform_Name" value="@item.Event_Platform_Name" style="width:75%" />
+                </td>
+
+                <td>
+                    <input autocomplete="off" type="text" id="EventPlatform_Short_Name" value="@item.Short_Code" style="width:75%" />
+                </td>
+                <td>
+                    +
+                </td>
+               
+                <td>
+                    <a title="Save" class="glyphicon glyphicon-ok-circle" onclick="SaveEvent_Platform(@item.Event_Platform_Code)"></a>
+                    <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="AL_LabCancel()"></a>
+                </td>
+            }
+            else
+            {
+                <td>
+                    @Html.DisplayFor(modelItem => item.Event_Platform_Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Short_Code)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Credentials)
+                </td>
+                <td>
+                    @if (item.Is_Active == "Y")
+                    {
+                        <span>Active</span>
+                    }
+                    else
+                    {
+                        <span>Deactive</span>
+                    }
+                </td>
+                <td>
+                    <a title="Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer" onclick="CheckRecordLock('EDIT', '@item.Event_Platform_Code')"></a>
+                    <a title="Delete" class="glyphicon glyphicon-trash" style="cursor: pointer" onclick="DeleteAL_Lab('@item.Event_Platform_Code')"></a>
+                </td>
+
+            }
+        </tr>
+    }
+
+</table>
+
+
+
+

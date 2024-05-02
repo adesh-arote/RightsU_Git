@@ -30,6 +30,8 @@ namespace RightsU_InterimDb.Models
     	    public Nullable<System.DateTime> Inserted_On { get; set; }
     	    public Nullable<int> Last_Updated_By { get; set; }
     	    public Nullable<System.DateTime> Last_Updated_On { get; set; }
+    	    public Nullable<int> Event_Platform_Code { get; set; }
+    	    public string Event_Template_Type { get; set; }
     
         public virtual Email_Config Email_Config { get; set; }
         public virtual ICollection<Email_Config_Detail_Alert> Email_Config_Detail_Alert { get; set; }
