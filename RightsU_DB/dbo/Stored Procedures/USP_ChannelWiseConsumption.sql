@@ -96,7 +96,7 @@ BEGIN
 
 			SELECT X.Agreement_No,X.Business_Unit,X.ModeOfAcq,X.Deal_Type_Name,X.Genres_Name,X.Language_Name, 
 			X.Title_Name,X.Episode_No, X.Deal_Code, X.Title_Content_Code, X.Channel_Code, X.Channel_Name, X.Channels_Beam, X.Channel_Id, X.Run_Def_Type, X.Order_For_schedule,
-			X.Right_Rule_Name, CONVERT(VARCHAR(25),MIN(X.Rights_Start_Date),106) +' To '+ CONVERT(VARCHAR(25),MAX(Rights_End_Date), 106) Rights_Period, SUM(Defined_Runs) NoOfRuns, SUM(Provision_Runs) Provision_Runs,
+			X.Right_Rule_Name, CONVERT(VARCHAR(25),(X.Rights_Start_Date),106) +' To '+ CONVERT(VARCHAR(25),(X.Rights_End_Date), 106) Rights_Period, SUM(Defined_Runs) NoOfRuns, SUM(Provision_Runs) Provision_Runs,
 			SUM(Defined_Runs) - SUM(Provision_Runs) Balance_Runs, X.Deal_Type, Consume_Runs
 			FROM
 			(
@@ -154,7 +154,7 @@ BEGIN
 			) AS X
 			GROUP BY X.Agreement_No, 
 			X.Title_Name, X.Deal_Code, X.Title_Content_Code, X.Channel_Code, X.Channel_Name, X.Channels_Beam, X.Channel_Id, X.Run_Def_Type, X.Order_For_schedule,
-			X.Right_Rule_Name, X.Deal_Type,Consume_Runs,X.Business_Unit,X.Episode_No,X.Language_Name,X.Deal_Type_Name,X.Genres_Name,X.ModeOfAcq
+			X.Right_Rule_Name, X.Deal_Type,Consume_Runs,X.Business_Unit,X.Episode_No,X.Language_Name,X.Deal_Type_Name,X.Genres_Name,X.ModeOfAcq, X.Rights_Start_Date, X.Rights_End_Date
 			ORDER BY X.Episode_No
 		END
 		ELSE
