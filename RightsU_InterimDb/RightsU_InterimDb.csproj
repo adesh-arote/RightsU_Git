@@ -607,6 +607,9 @@
     <Compile Include="Models\Email_Config_Detail_User.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Email_Config_Template.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Email_Notification_AsRun.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
@@ -638,6 +641,12 @@
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Error_Code_Master.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Event_Platform.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Event_Template_Keys.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Extended_Columns.cs">

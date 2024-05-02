@@ -14,9 +14,19 @@ BEGIN
 
 	if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_BMS_GetAssets]', 'Step 1', 0, 'Started Procedure', 0, ''
 	
-	
+	DECLARE @BMS_API_Since_Days INT
+
+	SET @BMS_API_Since_Days = (SELECT top 1 Parameter_Value FROM System_Parameter_New Where Parameter_Name='BMS_API_Since_Days')
+
+	IF(ISNULL(@since,'')='')
+	BEGIN
+		SET @since = CAST(DATEADD(day,-@BMS_API_Since_Days,GETDATE()) as DATE)
+	END
+
+
 	SELECT 
-		'RUBMSA'+CAST(BA.BMS_Asset_Code as VARCHAR) as 'AssetId',
+		--'RUBMSA'+CAST(BA.BMS_Asset_Code as VARCHAR) as 'AssetId',
+		BA.BMS_Asset_Ref_Key as 'AssetId',
 		BA.Title,
 		CASE WHEN BA.Episode_Title IS NULL THEN BA.Title ELSE CONCAT(BA.Title ,' ep',BA.Episode_Number)  END as 'EpisodeTitle',
 		BA.Episode_Number as EpisodeNumber,
@@ -30,7 +40,7 @@ BEGIN
 	INNER JOIN Title T (NOLOCK) ON T.Title_Code=BA.RU_Title_Code
 	INNER JOIN Deal_Type DT (NOLOCK) ON T.Deal_Type_Code=DT.Deal_Type_Code
 	INNER JOIN Language L (NOLOCK) ON BA.Language_Code=L.Language_Code
-	WHERE ISNULL(Updated_On,Created_On) >= @since
+	WHERE ISNULL(BA.Updated_On,BA.Created_On) >= @since
 
 
 	if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_BMS_GetAssets]', 'Step 2', 0, 'Procedure Excution Completed', 0, ''

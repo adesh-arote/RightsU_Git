@@ -53,6 +53,10 @@ namespace RightsU_Entities
         [JsonProperty(Order = 8)]
         public Nullable<System.DateTime> Last_Updated_On { get; set; }
         [JsonIgnore]
+        public Nullable<int> Event_Platform_Code { get; set; }
+        [JsonIgnore]
+        public string Event_Template_Type { get; set; }
+        [JsonIgnore]
         public virtual Email_Config Email_Config { get; set; }
         [JsonIgnore]
         public virtual ICollection<Email_Config_Detail_Alert> Email_Config_Detail_Alert { get; set; }

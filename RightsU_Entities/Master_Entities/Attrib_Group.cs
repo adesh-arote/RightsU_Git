@@ -28,7 +28,7 @@ namespace RightsU_Entities
         public string Comment_Name { get; set; }
         public string Is_Multiple_Select { get; set; }
         public string Is_Active { get; set; }
-
+        public string Icon { get; set; }
         public virtual ICollection<Users_Detail> Users_Detail { get; set; }
         public virtual ICollection<Attrib_Report_Column> Attrib_Report_Column { get; set; }
         public virtual ICollection<Attrib_Report_Column> Attrib_Report_Column1 { get; set; }

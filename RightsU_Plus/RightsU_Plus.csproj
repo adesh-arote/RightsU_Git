@@ -223,6 +223,7 @@
     <Compile Include="Controllers\AL_OemController.cs" />
     <Compile Include="Controllers\BookingSheetController.cs" />
     <Compile Include="Controllers\DeliveryTrackingController.cs" />
+    <Compile Include="Controllers\Event_PlatformController.cs" />
     <Compile Include="Controllers\Extended_GroupController.cs" />
     <Compile Include="Controllers\BannerController.cs" />
     <Compile Include="Controllers\ExtendedColumn_MetadataController.cs" />
@@ -1363,7 +1364,7 @@
     <Content Include="Views\Acq_Deal\_Acq_Digital.cshtml" />
     <Content Include="Views\Acq_Deal\_Acq_Digital_Add.cshtml" />
     <Content Include="Views\_ViewStart.cshtml" />
-	<Content Include="Views\Attrib_Reports\Index.cshtml" />
+    <Content Include="Views\Attrib_Reports\Index.cshtml" />
     <Content Include="Views\Attrib_Reports\_BindList.cshtml" />
     <Content Include="Views\Attrib_Reports\Create.cshtml" />
     <Content Include="Views\Attrib_Reports\Delete.cshtml" />
@@ -1463,6 +1464,8 @@
     <Content Include="Views\DM_Title_Master_Import\BulkPosterUploadList.cshtml" />
     <Content Include="Views\DM_Title_Master_Import\_PosterTitleList.cshtml" />
     <Content Include="Views\Reports\AuditLogReport.cshtml" />
+    <Content Include="Views\Event_Platform\Index.cshtml" />
+    <Content Include="Views\Event_Platform\_EventPlatform_List.cshtml" />
     <!-- <Content Include="UploadFolder\BookingSheet\638168158002973682~EpisodeTitle_Import.xlsx" /> -->
     <!-- <Content Include="UploadFolder\BookingSheet\638168216183881734~EpisodeTitle_Import %281%29.xlsx" /> -->
     <!-- <Content Include="UploadFolder\BookingSheet\638169264219574161~TitleList.xls" /> -->

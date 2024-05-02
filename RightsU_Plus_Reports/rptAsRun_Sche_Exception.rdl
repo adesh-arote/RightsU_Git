@@ -2085,12 +2085,12 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!EndDate.Value), "01-JAN-2000",Paramete
                 </TablixMember>
                 <TablixMember>
                   <Visibility>
-                    <Hidden>=IIF(Parameters!TitleType.Value = "SHOW", false, true)</Hidden>
+                    <Hidden>=IIF(Parameters!TitleType.Value = "Program", false, true)</Hidden>
                   </Visibility>
                 </TablixMember>
                 <TablixMember>
                   <Visibility>
-                    <Hidden>=IIF(Parameters!TitleType.Value = "SHOW", false, true)</Hidden>
+                    <Hidden>=IIF(Parameters!TitleType.Value = "Program", false, true)</Hidden>
                   </Visibility>
                 </TablixMember>
                 <TablixMember />

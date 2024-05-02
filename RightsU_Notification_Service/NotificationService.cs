@@ -46,6 +46,7 @@ namespace RightsU_Notification_Service
 
         protected override void OnStart(string[] args)
         {
+            System.Diagnostics.Debugger.Launch();
             timer.Interval = Convert.ToInt32(ConfigurationSettings.AppSettings["Timer"]);
             timer.Elapsed += new System.Timers.ElapsedEventHandler(this.OnTimer);
             timer.Start();
@@ -167,7 +168,9 @@ namespace RightsU_Notification_Service
                                 TransType = x.TransType,
                                 TransCode = x.TransCode,
                                 ScheduleDateTime = x.ScheduleDateTime,
-                                UserCode = x.UserCode
+                                UserCode = x.UserCode,
+                                EventPlatformCode = x.Event_Platform.Short_Code,
+                                PlatformCredential = x.Event_Platform.Credentials
                             };
 
                             try
