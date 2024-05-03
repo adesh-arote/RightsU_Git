@@ -1,4 +1,5 @@
-﻿using RightsU_BLL;
+﻿using Newtonsoft.Json;
+using RightsU_BLL;
 using RightsU_Entities;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace RightsU_Plus.Controllers
 {
     public class Event_PlatformController : BaseController
     {
-        #region  Sessions
+        #region  Properties
         private List<RightsU_Entities.Event_Platform> lstEvent_Platform
         {
             get
@@ -22,10 +23,22 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstEvent_Platform"] = value; }
         }
+        private List<EventTemplateKeys> lstEventTemplateKeys
+        {
+            get
+            {
+                if (Session["lstEventTemplateKeys"] == null)
+                    Session["lstEventTemplateKeys"] = new List<EventTemplateKeys>();
+                return (List<EventTemplateKeys>)Session["lstEventTemplateKeys"];
+            }
+            set { Session["lstEventTemplateKeys"] = value; }
+        }
+
         private List<Event_Platform> lstEvent_Platform_Searched = new List<Event_Platform>();
 
         #endregion
 
+        #region UI Methods
         public ActionResult Index()
         {
             List<SelectListItem> lstSort = new List<SelectListItem>();
@@ -33,7 +46,6 @@ namespace RightsU_Plus.Controllers
             lstSort.Add(new SelectListItem { Text = "Event Platform Asc", Value = "NA" });
             lstSort.Add(new SelectListItem { Text = "Event Platform Desc", Value = "ND" });
             ViewBag.SortType = lstSort;
-
 
             return View();
         }
@@ -67,27 +79,13 @@ namespace RightsU_Plus.Controllers
                 {
                     lst = lstEvent_Platform_Searched.OrderByDescending(o => o.Event_Platform_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
                 }
-
             }
-
-            if (commandName == "ADD")
-            {
-                var lstAL_LabType = lstEvent_Platform.Select(s => s.Event_Platform_Name).Distinct().ToList();
-                ViewBag.AttribType = new SelectList(lstAL_LabType);
-
-                List<SelectListItem> lstMultiSelect = new List<SelectListItem>();
-                lstMultiSelect.Add(new SelectListItem { Text = "Yes", Value = "Y" });
-                lstMultiSelect.Add(new SelectListItem { Selected = true, Text = "No", Value = "N" });
-                ViewBag.MultiSelect = lstMultiSelect;
-            }
-            else if (commandName == "EDIT")
+            if (commandName == "EDIT")
             {
                 Event_Platform_Service objEvent_Platform_Service = new Event_Platform_Service(objLoginEntity.ConnectionStringName);
                 Event_Platform ObjEvent_Platform = new Event_Platform();
 
                 ObjEvent_Platform = objEvent_Platform_Service.GetById(Event_PlatformCode);
-                //   var lstAL_LabType = lstAL_Lab_Searched.Select(s => s.AL_Lab_Name).Distinct().ToList();
-                // ViewBag.AttribType = new SelectList(lstAL_LabType, lstAL_Lab.AL_Lab_Name);
             }
 
             return PartialView("_EventPlatform_List", lst);
@@ -137,19 +135,19 @@ namespace RightsU_Plus.Controllers
             lstEvent_Platform = lstEvent_Platform_Searched;
             return Json(obj);
         }
+        #endregion
 
-        public JsonResult SaveEventPlatform(int EventPlatform_Code, string EventPlatform_Name, string EventPlatform_short_name)
+        #region Event_Platform_Master
+        public JsonResult SaveEventPlatform(int EventPlatform_Code, string EventPlatform_Name, string EventPlatform_short_name, string EnableCCandBCC)
         {
-            string status = "S", message = "", Action = Convert.ToString(ActionType.C); // C = "Create";
+            string status = "S", message = "", Action = Convert.ToString(ActionType.C);
 
-            List<AL_Lab> tempLstAttribGrp = new AL_Lab_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).ToList().Where(a => (a.AL_Lab_Name == EventPlatform_Name) && (a.AL_Lab_Short_Name == EventPlatform_short_name) && (a.AL_Lab_Code != EventPlatform_Code)).ToList();
+            List<Event_Platform> tempPlatforms = new Event_Platform_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).ToList().Where(a => (a.Event_Platform_Name == EventPlatform_Name) && (a.Short_Code == EventPlatform_short_name) && (a.Event_Platform_Code != EventPlatform_Code)).ToList();
+            Event_Platform_Service objEvent_Platform_Service = new Event_Platform_Service(objLoginEntity.ConnectionStringName);
+            Event_Platform Objevent_Platform = new Event_Platform();
 
-            if (tempLstAttribGrp.Count == 0)
+            if (tempPlatforms.Count == 0)
             {
-                Event_Platform_Service objEvent_Platform_Service = new Event_Platform_Service(objLoginEntity.ConnectionStringName);
-                Event_Platform Objevent_Platform = new Event_Platform();
-               
-
                 if (EventPlatform_Code > 0)
                 {
                     Objevent_Platform = objEvent_Platform_Service.GetById(EventPlatform_Code);
@@ -164,6 +162,8 @@ namespace RightsU_Plus.Controllers
                 }
                 Objevent_Platform.Event_Platform_Name = EventPlatform_Name;
                 Objevent_Platform.Short_Code = EventPlatform_short_name;
+                Objevent_Platform.Is_Active = "Y";
+                Objevent_Platform.Enable_CC_And_BCC = EnableCCandBCC;
                 Objevent_Platform.Last_Action_By = objLoginUser.Users_Code;
                 Objevent_Platform.Last_UpDated_Time = DateTime.Now;
 
@@ -193,6 +193,34 @@ namespace RightsU_Plus.Controllers
                 message = "Entry for this record already Exists!";
             }
 
+
+            try
+            {
+                Objevent_Platform.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(Objevent_Platform.Inserted_By));
+                Objevent_Platform.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(Objevent_Platform.Last_Action_By));
+
+                string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(Objevent_Platform);
+                //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForALLab), Convert.ToInt32(lstAL_Lab.AL_Lab_Code), LogData, Action, objLoginUser.Users_Code);
+
+                MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                objAuditLog.moduleCode = GlobalParams.ModuleCodeForALLab;
+                objAuditLog.intCode = Objevent_Platform.Event_Platform_Code;
+                objAuditLog.logData = LogData;
+                objAuditLog.actionBy = objLoginUser.Login_Name;
+                objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(Objevent_Platform.Last_UpDated_Time));
+                objAuditLog.actionType = Action;
+                var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                {
+
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
             var obj = new
             {
                 RecordCount = lstEvent_Platform_Searched.Count,
@@ -201,15 +229,251 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
-        public JsonResult CheckRecordLock(int AL_LabCode)
+
+        public JsonResult ActivateDeactivate_EvePlatform(string ActiveAction, int EventPlatform_Code)
+        {
+            string Status = "", Message = "", Action = Convert.ToString(ActionType.A); 
+            Event_Platform_Service objEvent_Platform_Service = new Event_Platform_Service(objLoginEntity.ConnectionStringName);
+            Event_Platform objEP = new Event_Platform();
+
+            if (EventPlatform_Code != 0)
+            {
+                objEP = objEvent_Platform_Service.GetById(EventPlatform_Code);
+                objEP.Is_Active = ActiveAction;
+                objEP.EntityState = State.Modified;
+
+
+                dynamic resultSet;
+                if (!objEvent_Platform_Service.Save(objEP, out resultSet))
+                {
+                    Status = "E";
+                    if (ActiveAction == "Y")
+                    {
+                        Message = objMessageKey.CouldNotActivatedRecord;
+                    }
+                    else
+                    {
+                        Message = objMessageKey.CouldNotDeactivatedRecord;
+                    }
+                }
+                else
+                {
+                    Status = "S";
+                    if (ActiveAction == "Y")
+                    {
+                        Message = objMessageKey.Recordactivatedsuccessfully;
+                    }
+                    else
+                    {
+                        Message = objMessageKey.Recorddeactivatedsuccessfully;
+                        Action = Convert.ToString(ActionType.D);  //Deactivate
+                    }
+                }
+
+                try
+                {
+                    objEP.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objEP.Inserted_By));
+                    objEP.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objEP.Last_Action_By));
+                   
+                    string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objEP);
+                    //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForExtendedGroup, objExtended_Group.Extended_Group_Code, LogData, Action, objLoginUser.Users_Code);
+
+                    MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                    objAuditLog.moduleCode = GlobalParams.ModuleCodeForExtendedGroup;
+                    objAuditLog.intCode = objEP.Event_Platform_Code;
+                    objAuditLog.logData = LogData;
+                    objAuditLog.actionBy = objLoginUser.Login_Name;
+                    objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objEP.Last_UpDated_Time));
+                    objAuditLog.actionType = Action;
+                    var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                    var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                    if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                    {
+
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                }
+
+            }
+            var Obj = new
+            {
+                Status = Status,
+                Message = Message
+            };
+            return Json(Obj);
+        }
+        #endregion
+
+        #region  Event_Template_Keys
+        public PartialViewResult EventTemplateKeysPopUP(int EventPlatform_Code)
+        {
+            lstEventTemplateKeys = null;
+            Session["EventPlatformCode"] = EventPlatform_Code;
+            Event_Platform_Service objEvent_Platform_Service = new Event_Platform_Service(objLoginEntity.ConnectionStringName);
+            Event_Platform objEP = new Event_Platform();
+
+            if (EventPlatform_Code != 0)
+            {
+                objEP = objEvent_Platform_Service.GetById(EventPlatform_Code);
+                if (objEP.Credentials != null)
+                    lstEventTemplateKeys = JsonConvert.DeserializeObject<List<EventTemplateKeys>>(objEP.Credentials);
+            }
+
+            return PartialView("_EventTemplateKey_List", lstEventTemplateKeys);
+        }
+
+        public PartialViewResult AddEditEventKeys(int Id, string CommandName)
+        {
+            EventTemplateKeys objkey = new EventTemplateKeys();
+            Event_Template_Key_Service Objevent_Template_Key_Service = new Event_Template_Key_Service(objLoginEntity.ConnectionStringName);
+
+            List<string> UsedKeydata = lstEventTemplateKeys.Select(s => s.Key).ToList();
+
+            List<Event_Template_Keys> lstKeys = Objevent_Template_Key_Service.SearchFor(s => true).ToList();
+            ViewBag.ddlKeyData2 = lstKeys;
+            lstKeys = lstKeys.Where(w => !UsedKeydata.Any(a => a == w.Key_Name)).ToList();
+            ViewBag.ddlKeys = new SelectList(lstKeys, "Key_Name", "Key_Name");
+
+            if (CommandName == "ADD")
+            {
+                TempData["Action"] = "ADD";
+            }
+            if (CommandName == "EDIT")
+            {
+                objkey = lstEventTemplateKeys.Where(c => c.Code == Id).FirstOrDefault();
+                List<Event_Template_Keys> lstEditKeys = Objevent_Template_Key_Service.SearchFor(s => true).ToList();
+                ViewBag.ddlKeys = new SelectList(lstEditKeys, "Key_Name", "Key_Name", objkey.Key);
+
+                TempData["Action"] = "EDIT";
+                TempData["Id"] = objkey.Code;
+            }
+            return PartialView("_EventTemplateKey_List", lstEventTemplateKeys);
+        }
+
+        public ActionResult SaveEventKeys(int Id, string Key, string Value, int RowNumber)
+        {
+            int result = 1;
+            EventTemplateKeys objEk = new EventTemplateKeys();
+            Dictionary<string, object> obj = new Dictionary<string, object>();
+
+            result = Valid(Id, Key, Value);
+            if (result == 1)
+            {
+                if (Id == 0)
+                {
+                    objEk.Code = lstEventTemplateKeys.Count + 1;
+                    objEk.Key = Key;
+                    objEk.Value = Value;
+                    lstEventTemplateKeys.Add(objEk);
+                }
+                else
+                {
+                    objEk = lstEventTemplateKeys.Where(d => d.Code == Id).FirstOrDefault();
+                    objEk.Code = RowNumber;
+                    objEk.Key = Key;
+                    objEk.Value = Value;
+                    lstEventTemplateKeys.Append(objEk);
+                }
+            }
+            else
+            {
+                obj.Add("Error", "1");
+                return Json(obj);
+            }
+            obj.Add("Status", "S");
+            return Json(obj);
+        }
+
+        public ActionResult DeleteEventKeys(int Id)
+        {
+            Dictionary<string, object> obj = new Dictionary<string, object>();
+            EventTemplateKeys ObjEK = lstEventTemplateKeys.Where(d => d.Code == Id).FirstOrDefault();
+            lstEventTemplateKeys.Remove(ObjEK);
+            int i = 1;
+
+            foreach (EventTemplateKeys objKey in lstEventTemplateKeys)
+            {
+                objKey.Code = i;
+                i++;
+            }
+
+            obj.Add("Status", "S");
+            return Json(obj);
+        }
+        public int Valid(int Id, string Key, string Value)
+        {
+            int result = 0;
+            List<EventTemplateKeys> TempList = new List<EventTemplateKeys>();
+            if (Id == 0)
+            {
+                TempList = lstEventTemplateKeys.Where(x => x.Key.ToUpper() == Key.ToUpper()).ToList();
+            }
+            else
+            {
+                TempList = lstEventTemplateKeys.Where(x => (x.Key.ToUpper() == Key.ToUpper()) && (x.Code != Id)).ToList();
+            }
+            if (TempList.Count == 0)
+            {
+                result = 1;
+            }
+            else
+            {
+                result = 2;
+            }
+            return result;
+        }
+        #endregion
+
+        public ActionResult SaveEventKeyValuesInDb()
+        {
+            int PlatformCode = Convert.ToInt32(Session["EventPlatformCode"]);
+            string SearializeJsondata = "", status = "S", message = "";
+            Event_Platform_Service objEvent_Platform_Service = new Event_Platform_Service(objLoginEntity.ConnectionStringName);
+            Event_Platform objEP = new Event_Platform();
+
+            SearializeJsondata = JsonConvert.SerializeObject(lstEventTemplateKeys);
+
+            if (PlatformCode != 0)
+            {
+                objEP = objEvent_Platform_Service.GetById(PlatformCode);
+                objEP.Credentials = SearializeJsondata;
+                objEP.EntityState = State.Modified;
+
+                dynamic resultSet;
+                if (!objEvent_Platform_Service.Save(objEP, out resultSet))
+                {
+                    status = "E";
+                    message = resultSet;
+                }
+                else
+                {
+                    status = "S";
+                    message = objMessageKey.Recordupdatedsuccessfully;
+                }
+                Session["EventPlatformCode"] = null;
+            }
+            var obj = new
+            {
+                RecordCount = lstEvent_Platform_Searched.Count,
+                Status = status,
+                Message = message
+            };
+            return Json(obj);
+        }
+
+        public JsonResult CheckRecordLock(int EventPlatformCode)
         {
             string strMessage = "";
             int RLCode = 0;
             bool isLocked = true;
-            if (AL_LabCode > 0)
+            if (EventPlatformCode > 0)
             {
                 CommonUtil objCommonUtil = new CommonUtil();
-                isLocked = objCommonUtil.Lock_Record(AL_LabCode, GlobalParams.ModuleCodeForLanguage, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
+                isLocked = objCommonUtil.Lock_Record(EventPlatformCode, GlobalParams.ModuleCodeForLanguage, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
             }
 
             var obj = new
@@ -220,28 +484,14 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
-        public bool CheckIfLabIsUsed(int? LabCode)
-        {
-            List<Extended_Columns> lstExtColRefLab = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => (w.Ref_Table != null && w.Ref_Table.ToUpper() == "AL_Lab".ToUpper())).ToList();
-            int UsedCount = 0;
-            foreach (Extended_Columns eg in lstExtColRefLab)
-            {
-                UsedCount = eg.Map_Extended_Columns.Where(w => w.Columns_Value_Code == LabCode).Count();
-                if (UsedCount > 0)
-                {
-                    return false;
-                }
-                foreach (Map_Extended_Columns mec in eg.Map_Extended_Columns)
-                {
-                    UsedCount = mec.Map_Extended_Columns_Details.Where(w => w.Columns_Value_Code == LabCode).Count();
-                    if (UsedCount > 0)
-                    {
-                        return false;
-                    }
-                }
-            }
 
-            return true;
+        public class EventTemplateKeys
+        {
+            public int Code { get; set; }
+            public string Key { get; set; }
+            public string Value { get; set; }
+
         }
+
     }
 }

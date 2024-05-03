@@ -11,22 +11,18 @@
 
 <script>
       var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T";
-    var URL_Bind_EventPlatForm = '@Url.Action("Bind_EventPlatForm", "Event_Platform")';
-    var URL_Search_EventPlatform = '@Url.Action("Search_EventPlatform", "Event_Platform")';
-    var URL_SaveEventPlatform = '@Url.Action("SaveEventPlatform", "Event_Platform")';
-    var URL_ActivateDeactivate_EvePlatform = '@Url.Action("ActivateDeactivate_EvePlatform", "Event_Platform")';
-    var URL_EventTemplateKey = '@Url.Action("EventTemplateKeysPopUP", "Event_Platform")';
-    var URL_AddEditEventKeys = '@Url.Action("AddEditEventKeys", "Event_Platform")';
-    var URL_SaveEventKeys = '@Url.Action("SaveEventKeys", "Event_Platform")';
-    var Url_DeleteEventKeys = '@Url.Action("DeleteEventKeys", "Event_Platform")';
-     var Url_SaveMasterData = '@Url.Action("SaveEventKeyValuesInDb", "Event_Platform")';
-    
-    var URL_CheckRecordLock = '@Url.Action("CheckRecordLock", "Event_Platform")';
+
+    var URL_Bind_Email_Config_Template = '@Url.Action("Bind_Email_Config_Template", "Email_Config_Template")';
+    var URL_Search_Email_Config_Template = '@Url.Action("Search_Email_Config_Template", "Email_Config_Template")';
+    var URL_Save_Email_Config_Template = '@Url.Action("Save_Email_Config_Template", "Email_Config_Template")';
+    var URL_ActivateDeactivate = '@Url.Action("ActivateDeactivate", "Email_Config_Template")';
+
+    var URL_CheckRecordLock = '@Url.Action("CheckRecordLock", "Email_Config_Template")';
     var URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")';
     var URL_Release_Lock = '@Url.Action("Release_Lock", "Global")';
 
     $(document).ready(function () {
-        //debugger;
+        debugger;
         if (LayoutDirection_G == "RTL") {
             $('#btnUser').css("float", "right");
             $('#txtSort').css("text-align", "left");
@@ -37,8 +33,9 @@
             $('#txtSort').css("text-align", "right");
             $('#ddlSortType_chosen').css("text-align", "left");
         }
-        SearchEvent_Platform("");
+        Search_Email_Config_Template("");
         addNumeric();
+        //initializeChosen();
 
         $('#searchCommon').keypress(function (e) {
             if (e.keyCode == 13) {
@@ -50,14 +47,14 @@
             sort_Type = $('#ddlSortType').val();
             $('#hdnPageNo').val(1);
             var searchtext = $("#searchCommon").val();
-            SearchEvent_Platform(searchtext);
+            Search_Email_Config_Template(searchtext);
         })
     });
 
     //-----------------SEARCH-----------------------------
 
     function btnSearch_OnClick() {
-       // debugger;
+        debugger;
         $('.required').removeClass('required');
         $("[required='required']").removeAttr("required");
 
@@ -68,11 +65,11 @@
             $('#searchCommon').attr('required', true)
             return false;
         }
-        SearchEvent_Platform(searchText);
+        Search_Email_Config_Template(searchText);
     }
 
     function btnShowAll_OnClick() {
-     //   debugger;
+        debugger;
         if (!checkCurrentAction())
             return false;
         if (!ValidatePageSize())
@@ -83,16 +80,16 @@
         $('#hdnPageNo').val(1);
         $('#searchCommon').attr('required', false)
         $('#searchCommon').val('');
-        SearchEvent_Platform("");
+        Search_Email_Config_Template("");
     }
 
-    function SearchEvent_Platform(searchtext) {
-    //    debugger;
+    function Search_Email_Config_Template(searchtext) {
+        debugger;
         $('#searchCommon').val(searchtext);
         showLoading();
         $.ajax({
             type: "POST",
-            url: URL_Search_EventPlatform,
+            url: URL_Search_Email_Config_Template,
             traditional: true,
             enctype: 'multipart/form-data',
             contentType: "application/json; charset=utf-8",
@@ -105,7 +102,7 @@
                 $('#lblRecordCount').text(result.Record_Count);
                 $("#hdnRecordCount").val(result.Record_Count);
                 SetPaging();
-                Event_PatformList("", 0);
+                Email_Config_Template_List("", 0);
                 hideLoading();
             }
         });
@@ -114,7 +111,7 @@
     //-----------------PAGING------------------------------
 
     function addNumeric() {
-       // debugger;
+        debugger;
         $(".pagingSize").numeric({
             allowMinus: false,
             allowThouSep: false,
@@ -125,7 +122,7 @@
     }
 
     function SetPaging() {
-      //  debugger;
+        debugger;
         IsCall = 'N';
         var pageNo = parseInt($('#hdnPageNo').val());
         var recordCount = parseInt($('#hdnRecordCount').val());
@@ -159,7 +156,7 @@
     }
 
     function pageselectCallback(page_index, jq) {
-       // debugger;
+        debugger;
         if (checkCurrentAction()) {
             $('.required').removeClass('required');
 
@@ -169,25 +166,25 @@
             var pageNo = page_index + 1
             $('#hdnPageNo').val(pageNo);
             if (IsCall == 'Y')
-                Event_PatformList("", 0);
+                Email_Config_Template_List("", 0);
             else
                 IsCall = 'Y';
         }
     }
 
     function txtPageSize_OnChange() {
-     //   debugger;
+        debugger;
         $("[required='required']").removeAttr("required");
         $('.required').removeClass('required');
         if (!ValidatePageSize())
             return false;
 
-        Event_PatformList("", 0);
+        Email_Config_Template_List("", 0);
         SetPaging();
     }
 
     function ValidatePageSize() {
-       // debugger;
+        debugger;
         var recordPerPage = $('#txtPageSize').val();
         if ($.trim(recordPerPage) != '') {
             var pageSize = parseInt(recordPerPage);
@@ -199,15 +196,15 @@
     }
 
     function pageBinding() {
-       // debugger;
-        Event_PatformList("", 0);
+        debugger;
+        Email_Config_Template_List("", 0);
         SetPaging();
     }
 
     //-----------------VALIDATION--------------------------
 
     function checkCurrentAction() {
-       // debugger;
+        debugger;
         var action = $("#hdnAction").val();
         if (action == "ADD") {
             showAlert("E", "Complete Add Operation First");
@@ -222,14 +219,14 @@
 
     //-----------------MASTER-------------------------------
 
-    function Event_PatformList(commandName, Event_PlatformCode) {
+    function Email_Config_Template_List(commandName, Email_Config_Template_Code) {
         debugger;
         var pageNo = $('#hdnPageNo').val();
         var recordPerPage = $('#txtPageSize').val();
 
         $.ajax({
             type: "POST",
-            url: URL_Bind_EventPlatForm,
+            url: URL_Bind_Email_Config_Template,
             traditional: true,
             enctype: 'multipart/form-data',
             contentType: "application/json; charset=utf-8",
@@ -237,14 +234,14 @@
             data: JSON.stringify({
                 pageNo: pageNo,
                 recordPerPage: recordPerPage,
-                Event_PlatformCode: Event_PlatformCode,
+                Email_Config_Template_Code: Email_Config_Template_Code,
                 commandName: commandName,
                 sortType: sort_Type
             }),
             success: function (result) {
-               // debugger;
-                $('#divEventPlatformList').empty();
-                $('#divEventPlatformList').html(result);
+                debugger;
+                $('#divEmail_Config_Template_List').empty();
+                $('#divEmail_Config_Template_List').html(result);
                 initializeTooltip();
                 initializeExpander();
                 initializeChosen();
@@ -252,89 +249,61 @@
         })
     }
 
-    function AddEditEvent_Platform(commandName, Event_PlatformCode) {
-     //   debugger;
+    function AddEditEmail_Template(commandName, Email_Config_Template_Code) {
+        debugger;
         if (checkCurrentAction() && ValidatePageSize()) {
-            Event_PatformList(commandName, Event_PlatformCode);
+            Email_Config_Template_List(commandName, Email_Config_Template_Code);
             $('#hdnAction').val(commandName)
         }
     }
 
-    function SaveEvent_Platform(Event_PlatformCode) {
-       debugger;
+    function Save_Email_Config_Template(Email_Config_Template_Code) {
+        debugger;
         var returnVal = true;
-        var EventPlatform_Name = $.trim($("#EventPlatform_Name").val());
-        var EventPlatform_Short_Name = $.trim($("#EventPlatform_Short_Name").val());
-        var EnableCCAndBCC = ($('#EnableCCAndBCC').is(":checked"));
-        var IsEnableCCandBCC = "";
+        var Email_Config_Code = $.trim($("#ddlEmailConfig").val());
+        var Event_Template_Type = $.trim($("#ddlTemplateType").val());
+        var Event_Platform_Code = $.trim($("#ddlPlatform").val());
 
-        if (EnableCCAndBCC == true)
-            IsEnableCCandBCC = "Y";
-        else
-            IsEnableCCandBCC = "N";
-
-        if (EventPlatform_Name == "") {
-            $('#EventPlatform_Name').val('').attr('required', true);
+        if (Email_Config_Code == "") {
+            $('#ddlEmailConfig').val('').attr('required', true);
             returnVal = false;
         }
-        if (EventPlatform_Short_Name == "") {
-            $('#EventPlatform_Short_Name').val('').attr('required', true);
+        if (Event_Template_Type == "") {
+            $('#ddlTemplateType').val('').attr('required', true);
             returnVal = false;
         }
-       
-
+        if (Event_Platform_Code == "") {
+            $('#ddlPlatform').val('').attr('required', true);
+            returnVal = false;
+        }
+        
         if (returnVal) {
             $.ajax({
                 type: "POST",
-                url: URL_SaveEventPlatform,
+                url: URL_Save_Email_Config_Template,
                 traditional: true,
                 enctype: 'multipart/form-data',
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify({
-                    EventPlatform_Code: Event_PlatformCode,
-                    EventPlatform_Name: EventPlatform_Name,
-                    EventPlatform_short_name: EventPlatform_Short_Name,
-                    EnableCCandBCC: IsEnableCCandBCC
+                    Email_Config_Template_Code: Email_Config_Template_Code,
+                    Email_Config_Code: Email_Config_Code,
+                    Event_Template_Type: Event_Template_Type,
+                    Event_Platform_Code: Event_Platform_Code
                 }),
                 success: function (result) {
+                    debugger;
                     if (result.Status == "S") {
                         $('#lblRecordCount').text(result.RecordCount);
                         $('#hdnAction').val("")
                         showAlert("S", result.Message);
-                        SearchEvent_Platform("");
+                        Search_Email_Config_Template("");
 
                         if ($("#searchCommon").val() != "") {
-                            SearchEvent_Platform($("#searchCommon").val())
+                            Search_Email_Config_Template($("#searchCommon").val())
                         }
                         else {
-                            Event_PatformList("", 0);
+                            Email_Config_Template_List("", 0);
                         }
-                    }
-                    else {
-                        showAlert("E", result.Message);
-                    }
-                }
-            })
-        }
-    }
-    function ActivateDeactivate_EvePlatform(EventPlatform_Code, ActiveAction) {
-       // debugger;
-        if (checkCurrentAction()) {
-            $.ajax({
-                type: "POST",
-                url: URL_ActivateDeactivate_EvePlatform,
-                traditional: true,
-                enctype: 'multipart/form-data',
-                contentType: "application/json; charset=utf-8",
-                data: JSON.stringify({
-                    ActiveAction: ActiveAction,
-                    EventPlatform_Code: EventPlatform_Code
-                }),
-                success: function (result) {
-                    if (result.Status == "S") {
-                        showAlert("S", result.Message);
-                        //window.location.href = Url_Index;
-                        SearchEvent_Platform("");
                     }
                     else {
                         showAlert("E", result.Message);
@@ -344,18 +313,18 @@
         }
     }
 
-    function Event_PlatformCancel() {
-      //  debugger;
+    function Email_Config_Template_Cancel() {
+        debugger;
         var recordLockingCode = parseInt($('#hdnRecodLockingCode').val())
         if (recordLockingCode > 0)
             ReleaseRecordLock(recordLockingCode, URL_Release_Lock);
         $('#hdnAction').val("")
-        Event_PatformList("", 0);
+        Email_Config_Template_List("", 0);
     }
 
     //----------------Record Locking----------------------------
-    function CheckRecordLock(commandName, EventPlatform_Code) {
-       // debugger;
+    function CheckRecordLock(commandName, Email_Config_Template_Code) {
+        debugger;
         $.ajax({
             type: "POST",
             url: URL_CheckRecordLock,
@@ -363,17 +332,18 @@
             enctype: 'multipart/form-data',
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify({
-                EventPlatformCode: EventPlatform_Code
+                Email_Config_Template_Code: Email_Config_Template_Code,
+                commandName: commandName
             }),
             async: false,
             success: function (result) {
-             //   debugger;
+                debugger;
                 if (result == "true") {
                     redirectToLogin();
                 }
                 else {
                     if (result.Is_Locked == "Y") {
-                        AddEditEvent_Platform(commandName, EventPlatform_Code)
+                        AddEditEmail_Template(commandName, Email_Config_Template_Code)
                         $('#hdnRecodLockingCode').val(result.Record_Locking_Code); // This syntax must be after AddEditCountry() this
                         Call_RefreshRecordReleaseTime(result.Record_Locking_Code, URL_Refresh_Lock);
                     }
@@ -391,199 +361,37 @@
         });
     }
 
-    //---------------------------------KeysPopup
-    function EventTemplateKey(EventId) {
-        debugger;      
-        $.ajax({
-            type: "POST",
-            url: URL_EventTemplateKey,
-            traditional: true,
-            enctype: 'multipart/form-data',
-            contentType: "application/json; charset=utf-8",
-            dataType: "html",
-            data: JSON.stringify({
-                EventPlatform_Code: EventId
-            }),
-            success: function (result) {
-                $('#popup').modal();
-                $('#pupupHtml').empty();
-                $('#pupupHtml').html(result);
-                initializeChosen();
-                //if (CommandName != "VIEW")
-                  //  CommandName = "";                
-               // BindExtdGrpDetail(0, CommandName, ModuleCode);
-            },
-            error: function (result) {
-                alert('Error: ' + result.responseText);
-            }
-        });
-    }
+    //----------------Activate/Deactivate-----------------------
 
-    function ClosePopup() {
+    function ActivateDeactivate(Email_Config_Template_Code, Action) {
         debugger;
-        var recordLockingCode = parseInt($('#hdnRecodLockingCode').val())
-        if (recordLockingCode > 0)
-            ReleaseRecordLock(recordLockingCode, URL_Release_Lock);
-
-        if (!checkCurrentAction())
-            return false;
-
-        $('#hdnAction').val("");
-        $('#popup').modal('hide');
-        $('#pupupHtml').empty();
-
-        Event_PatformList("",0);
-    }
-
-    function AddEditKeys(Id, commandName) {
-        debugger;
-        if (!checkCurrentAction())
-            return false;
-        $.ajax({
-            type: "POST",
-            url: URL_AddEditEventKeys,
-            traditional: true,
-            enctype: 'multipart/form-data',
-            contentType: "application/json; charset=utf-8",
-            data: JSON.stringify({
-                Id: Id,
-                CommandName: commandName
-            }),
-            async: false,
-            success: function (data) {
-                debugger;
-                $('#pupupHtml').empty();
-                $('#pupupHtml').html(data);
-                $("#hdnAction").val(commandName);
-                initializeChosen();
-            },
-            error: function (data) {
-                alert('Error: ' + data.responseText);
-            }
-        });
-    }
-
-    function SaveTemplateKey(Id, rowNumber) {
-        debugger;
-        var Value = $.trim($("#Value_" + rowNumber).val());
-        var KeyName = $.trim($("#ddlKey_" + rowNumber + " :selected").text());
-        var EventTemplateCode = $.trim($("#ddlKey_" + rowNumber + " :selected").val());
-
-
-        $("#hdnAction").val("");
-        $.ajax({
-            type: "POST",
-            url: URL_SaveEventKeys,
-            traditional: true,
-            enctype: 'multipart/form-data',
-            contentType: "application/json; charset=utf-8",
-            data: JSON.stringify({
-                Id: Id,
-                Key : KeyName,
-                Value: Value,
-                RowNumber: rowNumber,
-                Event_Template_Keys_Code: EventTemplateCode
-            }),
-            async: false,
-            success: function (data) {
-                debugger;
-                if (data.Status == "S") {
-                    AddEditKeys('0', 'View');
-                }
-                if (data.Error == "1") {
-                    showAlert("E", "You have Entered Duplication Key Value", "OK");
-                }
-            },
-            error: function (data) {
-                alert('Error: ' + data.responseText);
-            }
-        });
-    }
-
-    function CancelTemplateKey() {
-        debugger;
-        $('#hdnAction').val("");
-        checkCurrentAction();
-        AddEditKeys(0, "",);
-    }
-
-    function Deletekeys(Id) {
-        debugger;
-        if (!checkCurrentAction())
-            return false;
-        $.ajax({
-            type: "POST",
-            url: Url_DeleteEventKeys,
-            traditional: true,
-            enctype: 'multipart/form-data',
-            contentType: "application/json; charset=utf-8",
-            data: JSON.stringify({
-                Id: Id
-            }),
-            async: false,
-            success: function (data) {
-                debugger;
-                if (data.Status == "S") {
-                    AddEditKeys('0', '');
-                }
-                if (data.Status == "E") {
-                    alert(data.Message);
-                }
-
-            },
-            error: function (data) {
-                alert('Error: ' + data.responseText);
-            }
-        });
-    }
-
-    function SaveMasterData() {
-        debugger;
-        var returnVal = true;
-        var length = $("table tr[id*='trKeys_']").length
-        if (length == 0) {
-
-            showAlert("E", "Please add Key Values", "OK");
-            returnVal = false;
-        }
-        if (returnVal) {
-            if (checkCurrentAction()) {
-                $.ajax({
-                    type: "POST",
-                    url: Url_SaveMasterData,
-                    traditional: true,
-                    enctype: 'multipart/form-data',
-                    contentType: "application/json; charset=utf-8",
-                    data: JSON.stringify({
-                    }),
-                    async: false,
-                    success: function (data) {
-                        debugger;
-                        if (data.Status == "S") {
-                            $('#popup').modal('hide');
-                            $('#pupupHtml').empty();
-                            Event_PatformList("", 0);
-                            showAlert("S", data.Message);
-                        }
-                        if (data.Status == "E") {
-                            showAlert("E", data.Message, "OK");
-                        }
-
-
-                    },
-                    error: function (data) {
-                        alert('Error: ' + data.responseText);
+        var ModuleCode = $("#ddlModule").val();
+        if (checkCurrentAction()) {
+            $.ajax({
+                type: "POST",
+                url: URL_ActivateDeactivate,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    Email_Config_Template_Code: Email_Config_Template_Code,
+                    Action: Action
+                }),
+                success: function (result) {
+                    if (result.Status == "S") {
+                        Email_Config_Template_List("", 0);
+                        showAlert("S", result.Message);
                     }
-                });
-            }
+                    else {
+                        showAlert("E", result.Message);
+                    }
+                }
+            })
         }
     }
-
-
 
 
 </script>
-
 
 <style>
     .search_area {
@@ -598,26 +406,18 @@
     }
 </style>
 
-
-
-
-
-
-
-
-
 <div class="main_section">
     <section class="rightsU_container clearfix">
         <div class="container acq main_col">
             <div class="">
                 <div class="title_block dotted_border clearfix">
                     <h2 class="pull-left">
-                        Event Platform
+                        Email Config Template
                     </h2>
                     <div class="right_nav pull-right">
                         <ul>
                             <li id="btnUser">
-                                <input autocomplete="off" type="button" class="btn btn-primary" value="@objMessageKey.Add" onclick="AddEditEvent_Platform('ADD', 0)" />
+                                <input autocomplete="off" type="button" class="btn btn-primary" value="@objMessageKey.Add" onclick="AddEditEmail_Template('ADD', 0)" />
                             </li>
                             <li>
                                 <a title="@objMessageKey.SaveToExcel" class="glyphicon glyphicon-floppy-save" style="cursor:pointer; text-decoration:underline; " onclick="ExportToExcel()"></a>
@@ -632,7 +432,7 @@
                                 @objMessageKey.SearchText :
                             </td>
                             <td style="width:25%; vertical-align:middle;">
-                                <input autocomplete="off" type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" placeholder="Event Platform Name" maxlength="100" />
+                                <input autocomplete="off" type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" placeholder="Email Config Template" maxlength="100" />
                             </td>
                             <td style="width:13%;vertical-align: middle; text-align:center;">
                                 <input autocomplete="off" type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearch_OnClick()">
@@ -667,7 +467,7 @@
                             <input autocomplete="off" type="hidden" id="hdnCategoryCode" value="0" />
                             <input autocomplete="off" type="hidden" id="hdnAction" name="hdnAction" value="" />
                             <input autocomplete="off" type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
-                            <div id="divEventPlatformList" class="deal clearfix">
+                            <div id="divEmail_Config_Template_List" class="deal clearfix">
 
                             </div>
                         </div>
@@ -677,13 +477,3 @@
         </div>
     </section>
 </div>
-<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog">
-        <div class="modal-content clearfix">
-            <div class="form_fields acq" id="pupupHtml">
-                
-            </div>
-        </div>
-    </div>
-</div>
-

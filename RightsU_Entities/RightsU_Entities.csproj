@@ -207,6 +207,7 @@
     <Compile Include="Master_Entities\Banner.cs" />
     <Compile Include="Master_Entities\Email_Config_Template.cs" />
     <Compile Include="Master_Entities\Event_Platform.cs" />
+    <Compile Include="Master_Entities\Event_Template.cs" />
     <Compile Include="Master_Entities\Event_Template_Keys.cs" />
     <Compile Include="Master_Entities\MasterAuditLogInput.cs" />
     <Compile Include="Master_Entities\Attrib_Report_Column.cs" />

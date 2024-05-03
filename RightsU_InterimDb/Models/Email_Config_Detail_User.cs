@@ -26,6 +26,8 @@ namespace RightsU_InterimDb.Models
     	    public string ToUser_MailID { get; set; }
     	    public string CCUser_MailID { get; set; }
     	    public string BCCUser_MailID { get; set; }
+    	    public Nullable<int> Event_Platform_Code { get; set; }
+    	    public string Event_Template_Type { get; set; }
     
         public virtual Email_Config_Detail Email_Config_Detail { get; set; }
     }

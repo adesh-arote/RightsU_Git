@@ -12,18 +12,17 @@ namespace RightsU_InterimDb.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Event_Platform
+    public partial class Event_Template
     {
-    	public State EntityState { get; set; }    public int Event_Platform_Code { get; set; }
-    	    public string Event_Platform_Name { get; set; }
-    	    public string Short_Code { get; set; }
-    	    public string Credentials { get; set; }
-    	    public string Is_Active { get; set; }
+    	public State EntityState { get; set; }    public int Event_Template_Code { get; set; }
+    	    public Nullable<int> Event_Template_Name { get; set; }
+    	    public string Event_Template_Type { get; set; }
+    	    public Nullable<int> Event_Platform_Code { get; set; }
+    	    public string Template { get; set; }
     	    public Nullable<int> Inserted_By { get; set; }
     	    public Nullable<System.DateTime> Inserted_On { get; set; }
     	    public Nullable<System.DateTime> Last_UpDated_Time { get; set; }
     	    public Nullable<int> Last_Action_By { get; set; }
     	    public Nullable<System.DateTime> Lock_Time { get; set; }
-    	    public string Enable_CC_And_BCC { get; set; }
     }
 }
