@@ -19,10 +19,10 @@ BEGIN
 		WHERE TC1.Title_Code = t.Title_Code  
 		FOR XML PATH('')), 1, 2, '') AS NVARCHAR(MAX)) AS Geners, 
 		ISNULL((SELECT TOP 1 Column_Value FROM Map_Extended_Columns WHERE Record_Code = t.Title_Code AND Table_Name = 'TITLE' AND Columns_Code = 37),'') AS [Airline_Release_Date],
-		CAST(STUFF((SELECT DISTINCT ', ' + CAST(TL.Talent_Name as NVARCHAR) FROM Title_Talent TC1 (NOLOCK)  
+		LTRIM(replace(CAST(STUFF((SELECT DISTINCT ', ' + CAST(TL.Talent_Name as NVARCHAR) FROM Title_Talent TC1 (NOLOCK)  
 			INNER JOIN Talent TL (NOLOCK) ON TC1.Talent_Code = TL.Talent_Code  
 		WHERE TC1.Title_Code = t.Title_Code AND TC1.Role_Code = 1 
-		FOR XML PATH('')), 1, 2, '') AS NVARCHAR(MAX)) AS Director, 
+		FOR XML PATH('')), 1, 2, '') AS NVARCHAR(MAX)),char(10),'')) AS Director, 
 		CAST(ISNULL(t.Duration_In_Min,'0') AS NVARCHAR(MAX)) AS Runtime, 
 		ISNULL((SELECT TOP 1 Column_Value FROM VWALTitleRecomExt WHERE Table_Name = 'TITLE' AND Record_Code = t.Title_Code AND Columns_Code = 41), '') AS Rating,
 		ISNULL((SELECT TOP 1 Column_Value FROM VWALTitleRecomExt WHERE Table_Name = 'TITLE' AND Record_Code = t.Title_Code AND Columns_Code = 38), '') AS IMDB_Rating, 

@@ -162,6 +162,16 @@ namespace RightsU_Plus.Controllers
                 ViewBag.lstBU = new MultiSelectList(new Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y"), "Business_Unit_Code", "Business_Unit_Name", objECUD.Business_Unit_Codes.Split(',')).OrderBy(x => x.Text).ToList();
                 if (objECD.Email_Config.IsChannel == "Y")
                     ViewBag.lstChannel = new MultiSelectList(new Channel_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y"), "Channel_Code", "Channel_Name", objECUD.Channel_Codes.Split(',')).OrderBy(x => x.Text).ToList();
+
+                List<Email_Config_Template> lstEmailConfigTemplate = new List<Email_Config_Template>();
+                lstEmailConfigTemplate = new Email_Config_Template_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Email_Config_Code == objECD.Email_Config_Code).ToList();
+
+                List<Event_Platform> lstEventPlatform = new Event_Platform_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").ToList();
+                lstEventPlatform = lstEventPlatform.Where(w => lstEmailConfigTemplate.Any(a => a.Event_Platform_Code == w.Event_Platform_Code)).ToList();
+                ViewBag.EventPlatform = new MultiSelectList(lstEventPlatform, "Event_Platform_Code", "Event_Platform_Name", Convert.ToString(objECUD.Event_Platform_Code).Split(',')).OrderBy(x => x.Text).ToList();
+
+                //ViewBag.EventPlatform = new MultiSelectList(new Event_Platform_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y"), "Event_Platform_Code", "Event_Platform_Name", Convert.ToString(objECUD.Event_Platform_Code).Split(',')).OrderBy(x => x.Text).ToList();
+                ViewBag.TextFormat = GetTextFormatList(lstEmailConfigTemplate, objECUD.Event_Template_Type);
             }
             if (CommandName == "ADD")
             {
@@ -170,7 +180,17 @@ namespace RightsU_Plus.Controllers
                 if (objECD.Email_Config.IsChannel == "Y")
                     ViewBag.lstChannel = new MultiSelectList(new Channel_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y"), "Channel_Code", "Channel_Name").OrderBy(x => x.Text).ToList();
                 if (objECD.Email_Config.IsBusinessUnit == "N")
-                    ViewBag.lstUsers = new MultiSelectList(new User_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y"), "Users_Code", "First_Name").OrderBy(x => x.Text).ToList();                  
+                    ViewBag.lstUsers = new MultiSelectList(new User_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y"), "Users_Code", "First_Name").OrderBy(x => x.Text).ToList();
+
+                List<Email_Config_Template> lstEmailConfigTemplate = new List<Email_Config_Template>();
+                lstEmailConfigTemplate = new Email_Config_Template_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Email_Config_Code == objECD.Email_Config_Code).ToList();
+
+                List<Event_Platform> lstEventPlatform = new Event_Platform_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").ToList();
+                lstEventPlatform = lstEventPlatform.Where(w => lstEmailConfigTemplate.Any(a => a.Event_Platform_Code == w.Event_Platform_Code)).ToList();
+                ViewBag.EventPlatform = new MultiSelectList(lstEventPlatform, "Event_Platform_Code", "Event_Platform_Name").OrderBy(x => x.Text).ToList();
+
+                //ViewBag.EventPlatform = new MultiSelectList(new Event_Platform_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y"), "Event_Platform_Code", "Event_Platform_Name").OrderBy(x => x.Text).ToList();
+                ViewBag.TextFormat = GetTextFormatList(lstEmailConfigTemplate, "");
             }
             ViewBag.IsChannel = objECD.Email_Config.IsChannel;
             ViewBag.IsBusinessUnit = objECD.Email_Config.IsBusinessUnit;
@@ -307,7 +327,7 @@ namespace RightsU_Plus.Controllers
             obj.Add("selectedCcBcclist", selectedCcBcclist);
             return Json(obj);
         }
-        public JsonResult UserSave(string Type, string[] BuCodes, string[] UsersCodes, string[] CcCodes, string[] BccCodes, string[] ChannelCodes, string DummyGuid, string[] UserEmails, string[] CcuserEmails, string[] BccuserEmails)
+        public JsonResult UserSave(string Type, string[] BuCodes, string[] UsersCodes, string[] CcCodes, string[] BccCodes, string[] ChannelCodes, string DummyGuid, string[] UserEmails, string[] CcuserEmails, string[] BccuserEmails, string EventPlatformCode, string EventTemplateType)
         {
             string status = "S", messsage = "Data Saved Successfully", BuCode = "", ChannelCode = "", UserEmail = "", CcuserEmail = "", BccuserEmail = "";
             if (!string.IsNullOrEmpty(DummyGuid))
@@ -387,6 +407,8 @@ namespace RightsU_Plus.Controllers
                 objECUD.BCC_User_Names = null;               
                 objECUD.Channel_Codes = ChannelCode;
                 objECUD.User_Type = Type;
+                objECUD.Event_Platform_Code = Convert.ToInt32(EventPlatformCode);
+                objECUD.Event_Template_Type = EventTemplateType;
                 FillCommaSeparateName(objECUD);
             }
             else
@@ -575,6 +597,7 @@ namespace RightsU_Plus.Controllers
             
             string[] arrBUCodes = objECDU.Business_Unit_Codes.Split(',');
             string[] arrChannelCodes = objECDU.Channel_Codes.Split(',');
+            string[] arrEventPlatformCodes = Convert.ToString(objECDU.Event_Platform_Code).Split(',');
 
             if (objECDU.CC_Users != "" && objECDU.CC_Users != null)
             {
@@ -616,6 +639,23 @@ namespace RightsU_Plus.Controllers
                && ((x.Users_Business_Unit.Where(y => arrBUCodes.Contains(y.Business_Unit_Code.ToString())).FirstOrDefault().Users_Code == x.Users_Code && objECDU.Business_Unit_Codes != "0") || objECDU.Business_Unit_Codes == "0")
                ).Select(x => x.First_Name).ToList()));
             }
+            if (objECDU.Event_Platform_Code != null)
+            {
+                objECDU.Event_Platform_Name = string.Join(", ", (new Event_Platform_Service(objLoginEntity.ConnectionStringName).SearchFor(x => arrEventPlatformCodes.Contains(x.Event_Platform_Code.ToString())).Select(x => x.Event_Platform_Name).ToList()));
+                //objECDU.Event_Platform_Name = string.Join(", ", (new Event_Platform_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Event_Platform_Code == Convert.ToInt32(objECDU.Event_Platform_Code)).Select(x => x.Event_Platform_Name).ToList()));
+            }
+            else
+                objECDU.Event_Platform_Name = "NA";
+
+            if (!string.IsNullOrEmpty(objECDU.Event_Template_Type))
+            {
+                if (objECDU.Event_Template_Type == "T")
+                    objECDU.Event_Template_Type_Format = "TXT";
+                else
+                    objECDU.Event_Template_Type_Format = "HTML";
+            }
+            else
+                objECDU.Event_Template_Type_Format = "NA";
         }
         private List<SelectListItem> GetEmail_Freq_List(string selectedValue = "N")
         {
@@ -637,6 +677,38 @@ namespace RightsU_Plus.Controllers
             lst_EmailFreqDays = new SelectList(lst_EmailFreqDays, "Value", "Text", selectedValue.ToString()).ToList();
             return lst_EmailFreqDays;
         }
+
+        private List<SelectListItem> GetTextFormatList(List<Email_Config_Template> EmailConfigTemplate, string selectedValue = "T")
+        {
+            List<SelectListItem> lst_TextFormat = new List<SelectListItem>();
+            int t = 0, h = 0;
+
+            foreach(var item in EmailConfigTemplate)
+            {
+                if(item.Event_Template_Type == "T" && t == 0)
+                {
+                    lst_TextFormat.Insert(0, new SelectListItem() { Value = "T", Text = "TXT" });
+                    t = 1;
+                }
+                if (item.Event_Template_Type == "H" && h == 0)
+                {
+                    lst_TextFormat.Insert(0, new SelectListItem() { Value = "H", Text = "HTML" });
+                    h = 1;
+                }
+            }
+
+            lst_TextFormat = new SelectList(lst_TextFormat, "Value", "Text", Convert.ToString(selectedValue)).ToList();
+            return lst_TextFormat;
+        }       
         #endregion
+
+        public JsonResult CheckEnableCCBCC(int EventPlatformValue)
+        {
+            Event_Platform objEventPlatform = new Event_Platform();
+            objEventPlatform = new Event_Platform_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Event_Platform_Code == EventPlatformValue).FirstOrDefault();
+            Dictionary<string, object> obj = new Dictionary<string, object>();
+            obj.Add("EnableStatus", objEventPlatform.Enable_CC_And_BCC);
+            return Json(obj);
+        }
     }
 }
