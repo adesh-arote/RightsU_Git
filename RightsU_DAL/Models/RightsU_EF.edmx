@@ -3447,6 +3447,21 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
           <Property Name="Lock_Time" Type="datetime" />
           <Property Name="Enable_CC_And_BCC" Type="char" MaxLength="1" />
         </EntityType>
+        <EntityType Name="Event_Template">
+          <Key>
+            <PropertyRef Name="Event_Template_Code" />
+          </Key>
+          <Property Name="Event_Template_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Event_Template_Name" Type="int" />
+          <Property Name="Event_Template_Type" Type="char" MaxLength="1" />
+          <Property Name="Event_Platform_Code" Type="int" />
+          <Property Name="Template" Type="varchar(max)" />
+          <Property Name="Inserted_By" Type="int" />
+          <Property Name="Inserted_On" Type="datetime" />
+          <Property Name="Last_UpDated_Time" Type="datetime" />
+          <Property Name="Last_Action_By" Type="int" />
+          <Property Name="Lock_Time" Type="datetime" />
+        </EntityType>
         <EntityType Name="Event_Template_Keys">
           <Key>
             <PropertyRef Name="Event_Template_Keys_Code" />
@@ -16281,6 +16296,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="ErrorOn_AsRun_Schedule" EntityType="Self.ErrorOn_AsRun_Schedule" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ErrorOn_SendMail_For_Workflow" EntityType="Self.ErrorOn_SendMail_For_Workflow" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Event_Platform" EntityType="Self.Event_Platform" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Event_Template" EntityType="Self.Event_Template" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Event_Template_Keys" EntityType="Self.Event_Template_Keys" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Extended_Columns" EntityType="Self.Extended_Columns" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Extended_Columns_Value" EntityType="Self.Extended_Columns_Value" Schema="dbo" store:Type="Tables" />
@@ -23982,6 +23998,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="Email_Config_Template" EntityType="RightsU_NeoModel.Email_Config_Template" />
           <EntitySet Name="Event_Platform" EntityType="RightsU_NeoModel.Event_Platform" />
           <EntitySet Name="Event_Template_Keys" EntityType="RightsU_NeoModel.Event_Template_Keys" />
+          <EntitySet Name="Event_Template" EntityType="RightsU_NeoModel.Event_Template" />
         </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -41159,6 +41176,21 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Key_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Is_Active" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
         </EntityType>
+        <EntityType Name="Event_Template">
+          <Key>
+            <PropertyRef Name="Event_Template_Code" />
+          </Key>
+          <Property Name="Event_Template_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Event_Template_Name" Type="Int32" />
+          <Property Name="Event_Template_Type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Event_Platform_Code" Type="Int32" />
+          <Property Name="Template" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Inserted_By" Type="Int32" />
+          <Property Name="Inserted_On" Type="DateTime" Precision="3" />
+          <Property Name="Last_UpDated_Time" Type="DateTime" Precision="3" />
+          <Property Name="Last_Action_By" Type="Int32" />
+          <Property Name="Lock_Time" Type="DateTime" Precision="3" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -51934,6 +51966,22 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="Is_Active" ColumnName="Is_Active" />
                 <ScalarProperty Name="Key_Name" ColumnName="Key_Name" />
                 <ScalarProperty Name="Event_Template_Keys_Code" ColumnName="Event_Template_Keys_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Event_Template">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Event_Template">
+              <MappingFragment StoreEntitySet="Event_Template">
+                <ScalarProperty Name="Lock_Time" ColumnName="Lock_Time" />
+                <ScalarProperty Name="Last_Action_By" ColumnName="Last_Action_By" />
+                <ScalarProperty Name="Last_UpDated_Time" ColumnName="Last_UpDated_Time" />
+                <ScalarProperty Name="Inserted_On" ColumnName="Inserted_On" />
+                <ScalarProperty Name="Inserted_By" ColumnName="Inserted_By" />
+                <ScalarProperty Name="Template" ColumnName="Template" />
+                <ScalarProperty Name="Event_Platform_Code" ColumnName="Event_Platform_Code" />
+                <ScalarProperty Name="Event_Template_Type" ColumnName="Event_Template_Type" />
+                <ScalarProperty Name="Event_Template_Name" ColumnName="Event_Template_Name" />
+                <ScalarProperty Name="Event_Template_Code" ColumnName="Event_Template_Code" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

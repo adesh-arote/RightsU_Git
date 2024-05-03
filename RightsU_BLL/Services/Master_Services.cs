@@ -9608,4 +9608,61 @@ namespace RightsU_BLL
         }
     }
     #endregion
+
+    #region  --- Event_Template
+    public class Event_Template_Service : BusinessLogic<Event_Template>
+    {
+        private readonly Event_Template_Repository objRepository;
+
+        public Event_Template_Service(string Connection_Str)
+        {
+            this.objRepository = new Event_Template_Repository(Connection_Str);
+        }
+        public IQueryable<Event_Template> SearchFor(Expression<Func<Event_Template, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+        public Event_Template GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+        public bool Save(Event_Template objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+        public bool Update(Event_Template objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+        public bool Delete(Event_Template objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+        public override bool Validate(Event_Template objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(Event_Template objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        public override bool ValidateDelete(Event_Template objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+        private bool ValidateDuplicate(Event_Template objToValidate, out dynamic resultSet)
+        {
+            //if (SearchFor(s => s.Email_Config_Code == objToValidate.Email_Config_Code && s.Event_Template_Type == objToValidate.Event_Template_Type && s.Event_Platform_Code == objToValidate.Event_Platform_Code && s.Email_Config_Template_Code != objToValidate.Email_Config_Template_Code).Count() > 0)
+            //{
+            //    resultSet = "Email Config Template is already exists";
+            //    return false;
+            //}
+
+            resultSet = "";
+            return true;
+        }
+    }
+    #endregion
 }
