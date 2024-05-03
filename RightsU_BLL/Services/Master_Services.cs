@@ -9494,4 +9494,175 @@ namespace RightsU_BLL
         }
     }
     #endregion
+
+    #region  --- Event_Template_Key
+    public class Event_Template_Key_Service : BusinessLogic<Event_Template_Keys>
+    {
+        private readonly Event_Template_Key_Repository objRepository;
+
+        public Event_Template_Key_Service(string Connection_Str)
+        {
+            this.objRepository = new Event_Template_Key_Repository(Connection_Str);
+        }
+        public IQueryable<Event_Template_Keys> SearchFor(Expression<Func<Event_Template_Keys, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+        public Event_Template_Keys GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+        public bool Save(Event_Template_Keys objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+        public bool Update(Event_Template_Keys objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+        public bool Delete(Event_Template_Keys objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+        public override bool Validate(Event_Template_Keys objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(Event_Template_Keys objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        public override bool ValidateDelete(Event_Template_Keys objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+        private bool ValidateDuplicate(Event_Template_Keys objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.Key_Name == objToValidate.Key_Name && s.Event_Template_Keys_Code != objToValidate.Event_Template_Keys_Code).Count() > 0)
+            {
+                resultSet = "Event Platform is already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+    }
+    #endregion
+
+    #region  --- Email_Config_Template
+    public class Email_Config_Template_Service : BusinessLogic<Email_Config_Template>
+    {
+        private readonly Email_Config_Template_Repository objRepository;
+
+        public Email_Config_Template_Service(string Connection_Str)
+        {
+            this.objRepository = new Email_Config_Template_Repository(Connection_Str);
+        }
+        public IQueryable<Email_Config_Template> SearchFor(Expression<Func<Email_Config_Template, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+        public Email_Config_Template GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+        public bool Save(Email_Config_Template objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+        public bool Update(Email_Config_Template objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+        public bool Delete(Email_Config_Template objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+        public override bool Validate(Email_Config_Template objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(Email_Config_Template objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        public override bool ValidateDelete(Email_Config_Template objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+        private bool ValidateDuplicate(Email_Config_Template objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.Email_Config_Code == objToValidate.Email_Config_Code && s.Event_Template_Type == objToValidate.Event_Template_Type && s.Event_Platform_Code == objToValidate.Event_Platform_Code && s.Email_Config_Template_Code != objToValidate.Email_Config_Template_Code).Count() > 0)
+            {
+                resultSet = "Email Config Template is already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+    }
+    #endregion
+
+    #region  --- Event_Template
+    public class Event_Template_Service : BusinessLogic<Event_Template>
+    {
+        private readonly Event_Template_Repository objRepository;
+
+        public Event_Template_Service(string Connection_Str)
+        {
+            this.objRepository = new Event_Template_Repository(Connection_Str);
+        }
+        public IQueryable<Event_Template> SearchFor(Expression<Func<Event_Template, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+        public Event_Template GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+        public bool Save(Event_Template objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+        public bool Update(Event_Template objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+        public bool Delete(Event_Template objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+        public override bool Validate(Event_Template objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(Event_Template objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        public override bool ValidateDelete(Event_Template objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+        private bool ValidateDuplicate(Event_Template objToValidate, out dynamic resultSet)
+        {
+            //if (SearchFor(s => s.Email_Config_Code == objToValidate.Email_Config_Code && s.Event_Template_Type == objToValidate.Event_Template_Type && s.Event_Platform_Code == objToValidate.Event_Platform_Code && s.Email_Config_Template_Code != objToValidate.Email_Config_Template_Code).Count() > 0)
+            //{
+            //    resultSet = "Email Config Template is already exists";
+            //    return false;
+            //}
+
+            resultSet = "";
+            return true;
+        }
+    }
+    #endregion
 }

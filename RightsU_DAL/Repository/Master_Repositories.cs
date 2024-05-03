@@ -4075,4 +4075,83 @@ namespace RightsU_DAL
         }
     }
     #endregion
+
+    #region ----Event_Template_Key
+    public class Event_Template_Key_Repository : RightsU_Repository<Event_Template_Keys>
+    {
+        public Event_Template_Key_Repository(string conStr) : base(conStr) { }
+        public override void Save(Event_Template_Keys objEC)
+        {
+            if (objEC.EntityState == State.Added)
+            {
+                base.Save(objEC);
+            }
+            else if (objEC.EntityState == State.Modified)
+            {
+                base.Update(objEC);
+            }
+            else if (objEC.EntityState == State.Deleted)
+            {
+                base.Delete(objEC);
+            }
+        }
+        public override void Delete(Event_Template_Keys objEC)
+        {
+            base.Delete(objEC);
+        }
+
+    }
+    #endregion
+
+    #region ----Email_Config_Template
+    public class Email_Config_Template_Repository : RightsU_Repository<Email_Config_Template>
+    {
+        public Email_Config_Template_Repository(string conStr) : base(conStr) { }
+        public override void Save(Email_Config_Template objEC)
+        {
+            if (objEC.EntityState == State.Added)
+            {
+                base.Save(objEC);
+            }
+            else if (objEC.EntityState == State.Modified)
+            {
+                base.Update(objEC);
+            }
+            else if (objEC.EntityState == State.Deleted)
+            {
+                base.Delete(objEC);
+            }
+        }
+        public override void Delete(Email_Config_Template objEC)
+        {
+            base.Delete(objEC);
+        }
+    }
+    #endregion
+
+    #region ----Event_Template
+    public class Event_Template_Repository : RightsU_Repository<Event_Template>
+    {
+        public Event_Template_Repository(string conStr) : base(conStr) { }
+        public override void Save(Event_Template objEC)
+        {
+            if (objEC.EntityState == State.Added)
+            {
+                base.Save(objEC);
+            }
+            else if (objEC.EntityState == State.Modified)
+            {
+                base.Update(objEC);
+            }
+            else if (objEC.EntityState == State.Deleted)
+            {
+                base.Delete(objEC);
+            }
+        }
+        public override void Delete(Event_Template objEC)
+        {
+            base.Delete(objEC);
+        }
+    }
+    #endregion
 }
