@@ -12,9 +12,10 @@
 <script>
       var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T";
 
-    var URL_Bind_EmailTemplate = '@Url.Action("Bind_EmailTemplate", "Email_Config_Template")';
-    var URL_Search_EmailTemplate = '@Url.Action("Search_EmailTemplate", "Email_Config_Template")';
-    var URL_Save_EmailTemplate = '@Url.Action("Save_EmailTemplate", "Email_Config_Template")';
+    var URL_Bind_Email_Config_Template = '@Url.Action("Bind_Email_Config_Template", "Email_Config_Template")';
+    var URL_Search_Email_Config_Template = '@Url.Action("Search_Email_Config_Template", "Email_Config_Template")';
+    var URL_Save_Email_Config_Template = '@Url.Action("Save_Email_Config_Template", "Email_Config_Template")';
+    var URL_ActivateDeactivate = '@Url.Action("ActivateDeactivate", "Email_Config_Template")';
 
     var URL_CheckRecordLock = '@Url.Action("CheckRecordLock", "Email_Config_Template")';
     var URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")';
@@ -32,9 +33,9 @@
             $('#txtSort').css("text-align", "right");
             $('#ddlSortType_chosen').css("text-align", "left");
         }
-        Search_EmailTemplate("");
+        Search_Email_Config_Template("");
         addNumeric();
-        initializeChosen();
+        //initializeChosen();
 
         $('#searchCommon').keypress(function (e) {
             if (e.keyCode == 13) {
@@ -46,7 +47,7 @@
             sort_Type = $('#ddlSortType').val();
             $('#hdnPageNo').val(1);
             var searchtext = $("#searchCommon").val();
-            Search_EmailTemplate(searchtext);
+            Search_Email_Config_Template(searchtext);
         })
     });
 
@@ -64,12 +65,12 @@
             $('#searchCommon').attr('required', true)
             return false;
         }
-        Search_EmailTemplate(searchText);
+        Search_Email_Config_Template(searchText);
     }
 
     function btnShowAll_OnClick() {
         debugger;
-        if (!checkCurrentActionAttribGroup())
+        if (!checkCurrentAction())
             return false;
         if (!ValidatePageSize())
             return false;
@@ -79,16 +80,16 @@
         $('#hdnPageNo').val(1);
         $('#searchCommon').attr('required', false)
         $('#searchCommon').val('');
-        Search_EmailTemplate("");
+        Search_Email_Config_Template("");
     }
 
-    function Search_EmailTemplate(searchtext) {
+    function Search_Email_Config_Template(searchtext) {
         debugger;
         $('#searchCommon').val(searchtext);
         showLoading();
         $.ajax({
             type: "POST",
-            url: URL_Search_EventPlatform,
+            url: URL_Search_Email_Config_Template,
             traditional: true,
             enctype: 'multipart/form-data',
             contentType: "application/json; charset=utf-8",
@@ -101,7 +102,7 @@
                 $('#lblRecordCount').text(result.Record_Count);
                 $("#hdnRecordCount").val(result.Record_Count);
                 SetPaging();
-                Email_TemplateList("", 0);
+                Email_Config_Template_List("", 0);
                 hideLoading();
             }
         });
@@ -156,7 +157,7 @@
 
     function pageselectCallback(page_index, jq) {
         debugger;
-        if (checkCurrentActionAttribGroup()) {
+        if (checkCurrentAction()) {
             $('.required').removeClass('required');
 
             if (!ValidatePageSize())
@@ -165,7 +166,7 @@
             var pageNo = page_index + 1
             $('#hdnPageNo').val(pageNo);
             if (IsCall == 'Y')
-                Event_PatformList("", 0);
+                Email_Config_Template_List("", 0);
             else
                 IsCall = 'Y';
         }
@@ -178,7 +179,7 @@
         if (!ValidatePageSize())
             return false;
 
-        Event_PatformList("", 0);
+        Email_Config_Template_List("", 0);
         SetPaging();
     }
 
@@ -196,13 +197,13 @@
 
     function pageBinding() {
         debugger;
-        Email_TemplateList("", 0);
+        Email_Config_Template_List("", 0);
         SetPaging();
     }
 
     //-----------------VALIDATION--------------------------
 
-    function checkCurrentActionAttribGroup() {
+    function checkCurrentAction() {
         debugger;
         var action = $("#hdnAction").val();
         if (action == "ADD") {
@@ -218,14 +219,14 @@
 
     //-----------------MASTER-------------------------------
 
-    function Email_TemplateList(commandName, Email_TemplateCode) {
+    function Email_Config_Template_List(commandName, Email_Config_Template_Code) {
         debugger;
         var pageNo = $('#hdnPageNo').val();
         var recordPerPage = $('#txtPageSize').val();
 
         $.ajax({
             type: "POST",
-            url: URL_Bind_EventPlatForm,
+            url: URL_Bind_Email_Config_Template,
             traditional: true,
             enctype: 'multipart/form-data',
             contentType: "application/json; charset=utf-8",
@@ -233,55 +234,61 @@
             data: JSON.stringify({
                 pageNo: pageNo,
                 recordPerPage: recordPerPage,
-                Email_TemplateCode: Email_TemplateCode,
+                Email_Config_Template_Code: Email_Config_Template_Code,
                 commandName: commandName,
                 sortType: sort_Type
             }),
             success: function (result) {
                 debugger;
-                $('#divEventPlatformList').empty();
-                $('#divEventPlatformList').html(result);
+                $('#divEmail_Config_Template_List').empty();
+                $('#divEmail_Config_Template_List').html(result);
                 initializeTooltip();
                 initializeExpander();
+                initializeChosen();
             }
         })
     }
 
-    function AddEditEmail_Template(commandName, Email_TemplateCode) {
+    function AddEditEmail_Template(commandName, Email_Config_Template_Code) {
         debugger;
-        if (checkCurrentActionAttribGroup() && ValidatePageSize()) {
-            Event_PatformList(commandName, Email_TemplateCode);
+        if (checkCurrentAction() && ValidatePageSize()) {
+            Email_Config_Template_List(commandName, Email_Config_Template_Code);
             $('#hdnAction').val(commandName)
         }
     }
 
-    function SaveEvent_Platform(Email_TemplateCode) {
+    function Save_Email_Config_Template(Email_Config_Template_Code) {
         debugger;
         var returnVal = true;
-        var EventPlatform_Name = $.trim($("#EventPlatform_Name").val());
-        var EventPlatform_Short_Name = $.trim($("#EventPlatform_Short_Name").val());
+        var Email_Config_Code = $.trim($("#ddlEmailConfig").val());
+        var Event_Template_Type = $.trim($("#ddlTemplateType").val());
+        var Event_Platform_Code = $.trim($("#ddlPlatform").val());
 
-        if (EventPlatform_Name == "") {
-            $('#EventPlatform_Name').val('').attr('required', true);
+        if (Email_Config_Code == "") {
+            $('#ddlEmailConfig').val('').attr('required', true);
             returnVal = false;
         }
-        if (EventPlatform_Short_Name == "") {
-            $('#AL_Lab_Short_Name').val('').attr('required', true);
+        if (Event_Template_Type == "") {
+            $('#ddlTemplateType').val('').attr('required', true);
             returnVal = false;
         }
-
-
+        if (Event_Platform_Code == "") {
+            $('#ddlPlatform').val('').attr('required', true);
+            returnVal = false;
+        }
+        
         if (returnVal) {
             $.ajax({
                 type: "POST",
-                url: URL_SaveEventPlatform,
+                url: URL_Save_Email_Config_Template,
                 traditional: true,
                 enctype: 'multipart/form-data',
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify({
-                    EventPlatform_Code: Event_PlatformCode,
-                    EventPlatform_Name: EventPlatform_Name,
-                    EventPlatform_short_name: EventPlatform_Short_Name
+                    Email_Config_Template_Code: Email_Config_Template_Code,
+                    Email_Config_Code: Email_Config_Code,
+                    Event_Template_Type: Event_Template_Type,
+                    Event_Platform_Code: Event_Platform_Code
                 }),
                 success: function (result) {
                     debugger;
@@ -289,13 +296,13 @@
                         $('#lblRecordCount').text(result.RecordCount);
                         $('#hdnAction').val("")
                         showAlert("S", result.Message);
-                        SearchEvent_Platform("");
+                        Search_Email_Config_Template("");
 
                         if ($("#searchCommon").val() != "") {
-                            SearchEvent_Platform($("#searchCommon").val())
+                            Search_Email_Config_Template($("#searchCommon").val())
                         }
                         else {
-                            Event_PatformList("", 0);
+                            Email_Config_Template_List("", 0);
                         }
                     }
                     else {
@@ -306,17 +313,17 @@
         }
     }
 
-    function Event_PlatformCancel() {
+    function Email_Config_Template_Cancel() {
         debugger;
         var recordLockingCode = parseInt($('#hdnRecodLockingCode').val())
         if (recordLockingCode > 0)
             ReleaseRecordLock(recordLockingCode, URL_Release_Lock);
         $('#hdnAction').val("")
-        Event_PatformList("", 0);
+        Email_Config_Template_List("", 0);
     }
 
     //----------------Record Locking----------------------------
-    function CheckRecordLock(commandName, Email_TemplateCode) {
+    function CheckRecordLock(commandName, Email_Config_Template_Code) {
         debugger;
         $.ajax({
             type: "POST",
@@ -325,7 +332,7 @@
             enctype: 'multipart/form-data',
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify({
-                Email_TemplateCode: Email_TemplateCode,
+                Email_Config_Template_Code: Email_Config_Template_Code,
                 commandName: commandName
             }),
             async: false,
@@ -336,7 +343,7 @@
                 }
                 else {
                     if (result.Is_Locked == "Y") {
-                        AddEditEmail_Template(commandName, Email_TemplateCode)
+                        AddEditEmail_Template(commandName, Email_Config_Template_Code)
                         $('#hdnRecodLockingCode').val(result.Record_Locking_Code); // This syntax must be after AddEditCountry() this
                         Call_RefreshRecordReleaseTime(result.Record_Locking_Code, URL_Refresh_Lock);
                     }
@@ -352,6 +359,35 @@
                 hideLoading();
             }
         });
+    }
+
+    //----------------Activate/Deactivate-----------------------
+
+    function ActivateDeactivate(Email_Config_Template_Code, Action) {
+        debugger;
+        var ModuleCode = $("#ddlModule").val();
+        if (checkCurrentAction()) {
+            $.ajax({
+                type: "POST",
+                url: URL_ActivateDeactivate,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    Email_Config_Template_Code: Email_Config_Template_Code,
+                    Action: Action
+                }),
+                success: function (result) {
+                    if (result.Status == "S") {
+                        Email_Config_Template_List("", 0);
+                        showAlert("S", result.Message);
+                    }
+                    else {
+                        showAlert("E", result.Message);
+                    }
+                }
+            })
+        }
     }
 
 
@@ -396,7 +432,7 @@
                                 @objMessageKey.SearchText :
                             </td>
                             <td style="width:25%; vertical-align:middle;">
-                                <input autocomplete="off" type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" placeholder="Event Platform Name" maxlength="100" />
+                                <input autocomplete="off" type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" placeholder="Email Config Template" maxlength="100" />
                             </td>
                             <td style="width:13%;vertical-align: middle; text-align:center;">
                                 <input autocomplete="off" type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearch_OnClick()">
@@ -423,7 +459,7 @@
                         </div>
                         <span class="pull-right">
                             @objMessageKey.PageSize:
-                            <input autocomplete="off" type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="txtPageSize_OnChange()" onfocus="checkCurrentActionAttribGroup()" onblur="setDefaultPaging('txtPageSize')">
+                            <input autocomplete="off" type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="txtPageSize_OnChange()" onfocus="checkCurrentAction()" onblur="setDefaultPaging('txtPageSize')">
                         </span>
                     </div>
                     <div class="tab-content clearfix table-wrapper scale_table_container">
@@ -431,7 +467,7 @@
                             <input autocomplete="off" type="hidden" id="hdnCategoryCode" value="0" />
                             <input autocomplete="off" type="hidden" id="hdnAction" name="hdnAction" value="" />
                             <input autocomplete="off" type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
-                            <div id="divEventPlatformList" class="deal clearfix">
+                            <div id="divEmail_Config_Template_List" class="deal clearfix">
 
                             </div>
                         </div>

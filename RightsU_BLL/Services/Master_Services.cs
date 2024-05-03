@@ -9540,11 +9540,11 @@ namespace RightsU_BLL
         }
         private bool ValidateDuplicate(Email_Config_Template objToValidate, out dynamic resultSet)
         {
-            //if (SearchFor(s => s.Event_Platform_Name == objToValidate.Event_Platform_Name && s.Event_Platform_Code != objToValidate.Event_Platform_Code).Count() > 0)
-            //{
-            //    resultSet = "Event Platform is already exists";
-            //    return false;
-            //}
+            if (SearchFor(s => s.Email_Config_Code == objToValidate.Email_Config_Code && s.Event_Template_Type == objToValidate.Event_Template_Type && s.Event_Platform_Code == objToValidate.Event_Platform_Code && s.Email_Config_Template_Code != objToValidate.Email_Config_Template_Code).Count() > 0)
+            {
+                resultSet = "Email Config Template is already exists";
+                return false;
+            }
 
             resultSet = "";
             return true;
