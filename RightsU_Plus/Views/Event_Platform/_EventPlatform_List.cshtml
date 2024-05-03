@@ -1,4 +1,13 @@
 ﻿@model IEnumerable<RightsU_Entities.Event_Platform>
+@using UTOFrameWork.FrameworkClasses
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
 
 <style>
     td {
@@ -9,22 +18,22 @@
 <table class="table table-bordered table-hover">
     <thead>
         <tr>
-            <th style="width: 30%">
+            <th style="width: 20%">
                 Event Platform Name
             </th>
-            <th style="width: 30%">
-                Event Platform Short Name
+            <th style="width: 20%">
+                Event Short Name
             </th>
-            <th style="width: 30%">
+            <th style="width: 10%">
                 Credentials
             </th>
-            @if (ViewBag.CommandName != "ADD" && ViewBag.CommandName != "EDIT")
-            {
-                <th style="width: 30%">
-                    Status
-                </th>
-            }
-            <th style="width: 10%">
+            <th style="width: 20%">
+                Enable CC And BCC
+            </th>
+            <th style="width: 20%">
+                Status
+            </th>
+            <th style="width: 20%">
                 Action
             </th>
         </tr>
@@ -33,18 +42,24 @@
         if (ViewBag.CommandName == "ADD")
         {
             <tr>
-                <td>
-                    <input autocomplete="off" placeholder="Enter PlatformName" type="text" id="EventPlatform_Name" style="width:75%" />
+                <td style="width: 20%">
+                    <input autocomplete="off" placeholder="Enter PlatformName" type="text" id="EventPlatform_Name" />
                 </td>
-                <td>
-                    <input autocomplete="off" placeholder="Enter Platform ShortName" type="text" id="EventPlatform_Short_Name" style="width:75%" />
+                <td style="width: 20%">
+                    <input autocomplete="off" placeholder="Enter ShortName" type="text" id="EventPlatform_Short_Name" />
                 </td>
-                <td>
-                    +
+                <td style="width:10%">
+                    <button class="btn btn-primary" title="Add Record First">+</button>
                 </td>
-                <td style="width:75%">
+                <td style="width:20%">
+                    <input id="EnableCCAndBCC" type="checkbox" />
+                </td>
+                <td style="width:20%">
+                    Active
+                </td>
+                <td style="width:20%">
                     <a title="Save" class="glyphicon glyphicon-ok-circle" onclick="SaveEvent_Platform(0)"></a>
-                    <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="AL_LabCancel()"></a>
+                    <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="Event_PlatformCancel()"></a>
                 </td>
             </tr>
         }
@@ -57,23 +72,41 @@
             @if (ViewBag.CommandName == "EDIT" && ViewBag.Event_PlatformCode == item.Event_Platform_Code)
             {
                 <td style="display: none">
-                    <input autocomplete="off" type="text" id="AL_Lab_Code" value="@item.Event_Platform_Code" />
+                    <input autocomplete="off" type="text" id="EventPlatform_Code" value="@item.Event_Platform_Code" />
                 </td>
 
-                <td>
-                    <input autocomplete="off" type="text" id="EventPlatform_Name" value="@item.Event_Platform_Name" style="width:75%" />
+                <td style="width:20%">
+                    <input autocomplete="off" type="text" id="EventPlatform_Name" value="@item.Event_Platform_Name" />
                 </td>
-
-                <td>
-                    <input autocomplete="off" type="text" id="EventPlatform_Short_Name" value="@item.Short_Code" style="width:75%" />
+                <td style="width:20%">
+                    <input autocomplete="off" type="text" id="EventPlatform_Short_Name" value="@item.Short_Code" />
                 </td>
-                <td>
-                    +
+                <td style="width:10%">
+                    <button class="btn btn-primary" title="Edit Record First">+</button>
                 </td>
-               
-                <td>
+                <td style="width:20%">
+                    @if (item.Enable_CC_And_BCC == "Y")
+                    {
+                        <input id="EnableCCAndBCC" type="checkbox" checked />
+                    }
+                    else
+                    {
+                        <input id="EnableCCAndBCC" type="checkbox" />
+                    }
+                </td>
+                <td style="width:20%">
+                    @if (item.Is_Active == "Y")
+                    {
+                        <span>Active</span>
+                    }
+                    else
+                    {
+                        <span>Deactive</span>
+                    }
+                </td>
+                <td style="width:20%">
                     <a title="Save" class="glyphicon glyphicon-ok-circle" onclick="SaveEvent_Platform(@item.Event_Platform_Code)"></a>
-                    <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="AL_LabCancel()"></a>
+                    <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="Event_PlatformCancel()"></a>
                 </td>
             }
             else
@@ -85,7 +118,17 @@
                     @Html.DisplayFor(modelItem => item.Short_Code)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Credentials)
+                    <button onclick="EventTemplateKey(@item.Event_Platform_Code)" class="btn btn-primary">+</button>
+                </td>
+                <td>
+                    @if (item.Enable_CC_And_BCC == "Y")
+                    {
+                        <input type="checkbox" checked disabled/>
+                    }
+                    else
+                    {
+                        <input type="checkbox" disabled />
+                    }
                 </td>
                 <td>
                     @if (item.Is_Active == "Y")
@@ -98,8 +141,19 @@
                     }
                 </td>
                 <td>
-                    <a title="Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer" onclick="CheckRecordLock('EDIT', '@item.Event_Platform_Code')"></a>
-                    <a title="Delete" class="glyphicon glyphicon-trash" style="cursor: pointer" onclick="DeleteAL_Lab('@item.Event_Platform_Code')"></a>
+                    @if (item.Is_Active == "Y")
+                    {
+                        <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer" onclick="CheckRecordLock('EDIT', '@item.Event_Platform_Code')"></a>
+                        @*<a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="AddEditViewExtdGrp(@item.Extended_Group_Code, 'VIEW', '@item.Module_Code')"></a>*@
+                        <a title="@objMessageKey.Deactivate" class="glyphicon glyphicon-thumbs-down" style="cursor: pointer;" onclick="ActivateDeactivate_EvePlatform(@item.Event_Platform_Code, 'N')"></a>
+                    }
+                    else
+                    {
+                        <a title="Cannot edit this event as it is deactivated" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
+                        @*<a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="AddEditViewExtdGrp(@item.Extended_Group_Code, 'VIEW', '@item.Module_Code')"></a>*@
+                        <a title="@objMessageKey.Activate" class="glyphicon glyphicon-thumbs-up" style="cursor: pointer;" onclick="ActivateDeactivate_EvePlatform(@item.Event_Platform_Code, 'Y')"></a>
+                    }
+
                 </td>
 
             }

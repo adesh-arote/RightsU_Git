@@ -24,5 +24,9 @@ namespace RightsU_Entities
         public Nullable<int> Last_Action_By { get; set; }
         public Nullable<System.DateTime> Lock_Time { get; set; }
         public string Enable_CC_And_BCC { get; set; }
+        [NotMapped]
+        public string Inserted_By_User { get; set; }
+        [NotMapped]
+        public string Last_Action_By_User { get; set; }
     }
 }
