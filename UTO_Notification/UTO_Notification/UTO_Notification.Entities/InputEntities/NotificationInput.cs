@@ -24,9 +24,8 @@ namespace UTO_Notification.Entities
 
         public long NECode { get; set; }
 
-        public string NEDetailCode  { get; set; }
-       public string UpdatedStatus { get; set; }
+        public string NEDetailCode { get; set; }
+        public string UpdatedStatus { get; set; }
         public string ReadDateTime { get; set; }
-
     }
 }

@@ -25,7 +25,6 @@ namespace RightsU_Notification_Service
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<Notification> Notifications { get; set; }
-        public virtual DbSet<Event_Platform> Event_Platform { get; set; }
+        public virtual DbSet<Notifications> Notifications { get; set; }
     }
 }

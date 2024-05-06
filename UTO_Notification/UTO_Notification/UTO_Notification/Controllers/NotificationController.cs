@@ -13,6 +13,8 @@ using UTO_Notification.Entities;
 using System.Configuration;
 using System.IO;
 using System.Web.Hosting;
+using UTO_Notification.Entities.InputEntities;
+using UTO_Notification.Entities.ProcedureEntities;
 
 namespace UTO_Notification.Controllers
 {
@@ -508,7 +510,55 @@ namespace UTO_Notification.Controllers
             return Request.CreateResponse(HttpStatusCode.Created, httpResponses);
         }
 
+        [HttpPost]
+        [ActionName("NESaveNotificationType")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
 
+        public HttpResponseMessage NESaveNotificationType(NotificationTypeInput obj)
+        {
+            logObj.ApplicationName = "Notification Engine";
+            Boolean isSuccess = false; double TimeTaken;
+            DateTime startTime;
+            startTime = DateTime.Now;
+            HttpResponses httpResponses = new HttpResponses();
+            IHttpResponseMapper httpResponseMapper = new HttpResponseMapper();
+            USPInsertNotificationType objUSPInsertNotificationType = objUspService.USPInsertNotificationType(obj.NotificationType, obj.SystemName, obj.Platform_Name, obj.Credentials, obj.Is_Active);
+
+            httpResponses = httpResponseMapper.GetHttpSuccessResponse(objUSPInsertNotificationType);
+            //httpResponses.NECode = objUSPInsertNotificationType.NotificationTypeCode;
+            TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+            if (httpResponses != null)
+            {
+                isSuccess = true;
+                httpResponses.Message = "Ok";
+            }
+            if (Convert.ToInt16((HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogLevel"]) <= 2)
+            {
+
+                if ((HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogURL"] != "" && (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogURL"] != null)
+                {
+                    logObj.RequestId = Convert.ToString(objUSPInsertNotificationType.NotificationTypeCode);
+                    logObj.RequestUri = Request.RequestUri.AbsoluteUri;
+                    logObj.RequestMethod = "api/Notification/NESaveNotificationType";
+                    logObj.RequestContent = "NotificationType: " + obj.NotificationType + " <br/> SystemName: " + obj.SystemName + " <br/> PlatformName:" + obj.Platform_Name + " <br/> Credentials:" + obj.Credentials + " <br/> IsActive:" + obj.Is_Active;
+                    logObj.RequestDateTime = DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss");
+                    logObj.ResponseDateTime = DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss");
+                    logObj.ResponseContent = httpResponses.Message;
+                    logObj.ResponseLength = Convert.ToString(httpResponses.Message.Length);
+                    logObj.ServerName = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["strHostName"].ToString();
+                    logObj.UserAgent = "Notification API";
+                    logObj.Method = "Post";
+                    logObj.ClientIpAddress = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["ipAddress"].ToString();
+                    logObj.IsSuccess = isSuccess.ToString();
+                    logObj.TimeTaken = Convert.ToString(TimeTaken);
+                    logObj.HttpStatusCode = httpResponses.ResponseCode;
+                    logObj.HttpStatusDescription = httpResponses.Message;
+                    string GlobalAuthKey = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["AuthKey"].ToString();
+                    HostingEnvironment.QueueBackgroundWorkItem(ctx => AuthAttribute.LogService(logObj, GlobalAuthKey));
+                }
+            }
+            return Request.CreateResponse(HttpStatusCode.Created, httpResponses);
+        }
     }
 }
 

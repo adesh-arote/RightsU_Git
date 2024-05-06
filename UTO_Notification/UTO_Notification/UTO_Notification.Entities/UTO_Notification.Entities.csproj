@@ -32,16 +32,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Dapper, Version=1.40.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Dapper.1.42\lib\net45\Dapper.dll</HintPath>
+      <HintPath>..\..\..\packages\Dapper.1.42\lib\net45\Dapper.dll</HintPath>
     </Reference>
     <Reference Include="Dapper.SimpleSave, Version=1.0.187.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Dapper.SimpleSave.1.0.187\lib\net451\Dapper.SimpleSave.dll</HintPath>
+      <HintPath>..\..\..\packages\Dapper.SimpleSave.1.0.187\lib\net451\Dapper.SimpleSave.dll</HintPath>
     </Reference>
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
+      <HintPath>..\..\..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -60,6 +60,7 @@
     <Compile Include="InputEntities\GetMessagesInput.cs" />
     <Compile Include="InputEntities\GetSummarisedMessageStatus.cs" />
     <Compile Include="InputEntities\NotificationInput.cs" />
+    <Compile Include="InputEntities\NotificationTypeInput.cs" />
     <Compile Include="InputEntities\Recipient.cs" />
     <Compile Include="InputEntities\UTOLog.cs" />
     <Compile Include="ProcedureEntities\USPEventCategoryMsgCount.cs" />
@@ -68,13 +69,14 @@
     <Compile Include="ProcedureEntities\USPGetMessages.cs" />
     <Compile Include="ProcedureEntities\USPGetMessageStatus.cs" />
     <Compile Include="ProcedureEntities\USPInsertNotification.cs" />
+    <Compile Include="ProcedureEntities\USPInsertNotificationType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <Folder Include="MasterEntities\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="MasterEntities\" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

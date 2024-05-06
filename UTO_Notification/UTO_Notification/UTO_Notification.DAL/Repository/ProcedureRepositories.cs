@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using UTO_Notification.Entities;
+using UTO_Notification.Entities.ProcedureEntities;
+
 namespace UTO_Notification.DAL
 {
 
@@ -25,7 +27,7 @@ namespace UTO_Notification.DAL
             param.Add("@TransCode", TransCode);
             param.Add("@ScheduleDateTime", ScheduleDateTime);
             param.Add("@UserCode", UserCode);
-
+            
             return base.ExecuteSQLProcedure<USPInsertNotification>("USPInsertNotification", param);
         }
 
@@ -132,6 +134,18 @@ namespace UTO_Notification.DAL
             var param = new DynamicParameters();
             param.Add("@UserEMail", UserEmail);
             return ExecuteSQLProcedure<USPEventCategoryMsgCount>("USPEventCategoryMsgCount", param);
+        }
+
+        public IEnumerable<USPInsertNotificationType> USPInsertNotificationType(string NotificationType, string SystemName, string PlatformName, string Credentials, string IsActive)
+        {
+            var param = new DynamicParameters();
+            param.Add("@NotificationType", NotificationType);
+            param.Add("@SystemName", SystemName);
+            param.Add("@PlatformName", PlatformName);
+            param.Add("@Credentials", Credentials);
+            param.Add("@IsActive", IsActive);
+            
+            return base.ExecuteSQLProcedure<USPInsertNotificationType>("USPInsertNotificationType", param);
         }
 
     }

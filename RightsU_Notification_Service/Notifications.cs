@@ -12,7 +12,7 @@ namespace RightsU_Notification_Service
     using System;
     using System.Collections.Generic;
     
-    public partial class Notification
+    public partial class Notifications
     {
         public long NotificationsCode { get; set; }
         public string NotificationType { get; set; }
@@ -42,8 +42,5 @@ namespace RightsU_Notification_Service
         public bool IsAutoEscalated { get; set; }
         public bool IsReminderMail { get; set; }
         public string Service_Response { get; set; }
-        public Nullable<int> Event_Platform_Code { get; set; }
-    
-        public virtual Event_Platform Event_Platform { get; set; }
     }
 }

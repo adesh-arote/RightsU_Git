@@ -4,10 +4,8 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="48107023579a462e8b76624b26bc1b66" Name="Diagram1" ZoomLevel="88">
-        <EntityTypeShape EntityType="RightsU_Plus_TestingModel.Notification" Width="1.5" PointX="0.75" PointY="0.75" />
-        <EntityTypeShape EntityType="RightsU_Plus_TestingModel.Event_Platform" Width="1.5" PointX="0.75" PointY="8.625" />
-        <AssociationConnector Association="RightsU_Plus_TestingModel.FK__Notificat__Event__516845DB" />
+      <Diagram DiagramId="48107023579a462e8b76624b26bc1b66" Name="Diagram1" ZoomLevel="84">
+        <EntityTypeShape EntityType="RightsU_Plus_TestingModel.Notifications" Width="1.5" PointX="0.75" PointY="0.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
