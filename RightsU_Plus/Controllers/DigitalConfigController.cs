@@ -498,10 +498,16 @@ namespace RightsU_Plus.Controllers
             //int VendorCode_AddEdit = Convert.ToInt32(Session["VendorCode_AddEdit"]);
 
             if (lstDigital_Config_Searched.Where(x => x.Dummy_Guid != str_DummyGuid)
-                .Where(s => s.Digital_Code.ToString() == str_digital && s.EntityState != State.Deleted).Count() > 0)
+                .Where(s => s.Digital_Code.ToString() == str_digital && s.Control_Field_Order.ToString() != str_controlFieldOrder && s.EntityState != State.Deleted).Count() > 0)
             {
                 status = "E";
-                message = objMessageKey.RecordAlreadyExists;
+                message = "Order in column should be Same";
+            }
+            else if (lstDigital_Config_Searched.Where(x => x.Dummy_Guid != str_DummyGuid)
+                .Where(s => s.Digital_Code.ToString() == str_digital && s.Page_Control_Order.ToString() == str_pageControlOrder && s.EntityState != State.Deleted).Count() > 0)
+            {
+                status = "E";
+                message = "Column order should not be Same";
             }
             else
             {
@@ -565,10 +571,15 @@ namespace RightsU_Plus.Controllers
 
             //int VendorCode_AddEdit = Convert.ToInt32(Session["VendorCode_AddEdit"]);
 
-            if (lstDigital_Config_Searched.Where(s => s.Digital_Code.ToString() == str_digital && s.EntityState != State.Deleted).Count() > 0)
+            if (lstDigital_Config_Searched.Where(s => s.Digital_Code.ToString() == str_digital && s.Control_Field_Order.ToString() != str_controlFieldOrder && s.EntityState != State.Deleted).Count() > 0)
             {
                 status = "E";
-                message = objMessageKey.RecordAlreadyExists;
+                message = "Order in column should be Same";
+            }
+            else if(lstDigital_Config_Searched.Where(s => s.Digital_Code.ToString() == str_digital && s.Page_Control_Order.ToString() == str_pageControlOrder && s.EntityState != State.Deleted).Count() > 0)
+            {
+                status = "E";
+                message = "Column order should not be Same";
             }
             else
             {
@@ -665,7 +676,7 @@ namespace RightsU_Plus.Controllers
             {
                 lst = new Digital_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
             }
-            
+
 
             if (MasterMode == "EDIT")
             {
@@ -729,7 +740,7 @@ namespace RightsU_Plus.Controllers
             else
             {
                 lst = new Digital_Data_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
-            }            
+            }
 
             if (MasterMode == "EDIT")
             {
@@ -934,7 +945,7 @@ namespace RightsU_Plus.Controllers
             if (Key_Config_Code > 0)
             {
                 objDigital_Config = objDigitalTab.Digital_Config.Where(x => x.Digital_Config_Code == Key_Config_Code).SingleOrDefault();
-            }            
+            }
 
             if (str_DisplayLevel == "TL")
             {

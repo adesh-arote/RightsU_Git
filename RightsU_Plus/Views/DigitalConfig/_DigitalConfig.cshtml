@@ -293,7 +293,7 @@
         }
 
         var Digital_Tab_Code = $("#hdnTabCode").val();
-        var DisplayLevel = $('input[name="DisplayLevel"]:checked').val();
+        var DisplayLevel = $('input[name="DisplayLevel2"]:checked').val();
         var Key_Config_Code = $("#ddlKeyConfig").val();
         var LP_Digital_Data_Code = $("#ddlDigitalData").val();
         var LP_Digital_Value_Config_Code = $("#ddlDigitalValueConfig").val();
@@ -335,8 +335,9 @@
     }
 
     function Validate_TabListViewConfig() {
+        debugger;
         var returnVal = true;
-        var displayVal = $('input[name="DisplayLevel"]:checked').val();
+        var displayVal = $('input[name="DisplayLevel2"]:checked').val();
 
         if (displayVal) {
             if (displayVal=="TL") {

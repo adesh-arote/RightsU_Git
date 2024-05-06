@@ -194,6 +194,7 @@ namespace UTOFrameWork.FrameworkClasses
         public const int ModuleCodeForALOEM = 260;
         public const int ModuleCodeForExtendedGroup = 256;
         public const int ModuleCodeForExtendedMetadata = 257;
+        public const int ModuleCodeForEventPlatform = 323;
 
         #endregion
 
