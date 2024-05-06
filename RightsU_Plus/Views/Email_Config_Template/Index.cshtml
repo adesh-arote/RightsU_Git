@@ -8,6 +8,7 @@
     }
 }
 <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js" integrity="sha512-F8fV4+wpHYl9zul08Soff9H9fCx6OMIFfgbQcy+2v2gV7PdbT0OgM1LFwujQmwlLGWWKNbOFZ13uWP+Cbe0Ngw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <script>
       var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T";
@@ -16,6 +17,8 @@
     var URL_Search_Email_Config_Template = '@Url.Action("Search_Email_Config_Template", "Email_Config_Template")';
     var URL_Save_Email_Config_Template = '@Url.Action("Save_Email_Config_Template", "Email_Config_Template")';
     var URL_ActivateDeactivate = '@Url.Action("ActivateDeactivate", "Email_Config_Template")';
+    var URL_Bind_Config_Template_PopUp = '@Url.Action("Bind_Config_Template_PopUp", "Email_Config_Template")';
+    var URL_Save_Config_Template = '@Url.Action("Save_Config_Template", "Email_Config_Template")';
 
     var URL_CheckRecordLock = '@Url.Action("CheckRecordLock", "Email_Config_Template")';
     var URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")';
@@ -390,6 +393,91 @@
         }
     }
 
+    //----------------Config Template Popup----------------------
+
+    function ConfigureTemplate(Email_Config_Template_Code, Email_Config_Code, Event_Template_Code, Event_Platform_Code, Event_Template_Type) {
+        debugger;
+        
+        $.ajax({
+            type: "POST",
+            url: URL_Bind_Config_Template_PopUp,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                Email_Config_Template_Code: Email_Config_Template_Code,
+                Email_Config_Code: Email_Config_Code,
+                Event_Template_Code: Event_Template_Code,
+                Event_Platform_Code: Event_Platform_Code,
+                Event_Template_Type: Event_Template_Type
+            }),
+            success: function (result) {
+                debugger;
+                $('#popup').modal();
+                $('#pupupHtml').empty();
+                $('#pupupHtml').html(result);
+                initializeTooltip();
+                initializeExpander();
+                initializeChosen();
+            }
+        })
+    }
+
+    function ClosePopup() {
+        $('#hdnAction').val("");
+        $('#popup').modal('hide');
+        $('#pupupHtml').empty();
+    }
+
+    function Save_Config_Template(Config_Template_Code) {
+        debugger;
+        var returnVal = true;
+        var editorData = $.trim($("#texteditor").val());
+
+        //var Subject = $.trim($("#TemplateName").val());
+
+        if (editorData == "") {
+            $('#texteditor').val('').attr('required', true);
+            returnVal = false;
+        }
+
+        var TemplateName = "";
+        var ExistingName = "";
+        if ($('.configTemplate').val() == "AddNew") {
+            TemplateName = $.trim($("#TemplateName").val());
+            ExistingName = "";
+        }
+        else {
+            ExistingName = $.trim($("#TemplateName").val());
+            TemplateName = "";
+        }
+
+        if (returnVal) {
+            $.ajax({
+                type: "POST",
+                url: URL_Save_Config_Template,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    Config_Template_Code: Config_Template_Code,
+                    TemplateName: TemplateName,
+                    ExistingName: ExistingName,
+                    editorData: editorData
+                }),
+                success: function (result) {
+                    debugger;
+                    if (result.Status == "S") {
+                       
+                    }
+                    else {
+                        showAlert("E", result.Message);
+                    }
+                }
+            })
+        }
+    }
 
 </script>
 
@@ -476,4 +564,13 @@
             </div>
         </div>
     </section>
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <div class="form_fields acq" id="pupupHtml">
+
+            </div>
+        </div>
+    </div>
 </div>

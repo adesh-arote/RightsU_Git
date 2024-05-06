@@ -24,6 +24,7 @@ namespace RightsU_Plus.Controllers
         }
 
         private List<Email_Config_Template> lstEmail_Template_Searched = new List<Email_Config_Template>();
+        private List<Event_Template> lstEvent_Template_Searched = new List<Event_Template>();
         #endregion
 
         #region Master save
@@ -70,7 +71,7 @@ namespace RightsU_Plus.Controllers
             Event_Platform_Service objEvent_Platform_Service = new Event_Platform_Service(objLoginEntity.ConnectionStringName);
 
             List<SelectListItem> lstTemplateType = new List<SelectListItem>();
-            lstTemplateType.Add(new SelectListItem { Selected = true, Text = "Text", Value = "T" });
+            lstTemplateType.Add(new SelectListItem { Selected = true, Text = "TEXT", Value = "T" });
             lstTemplateType.Add(new SelectListItem { Text = "HTML", Value = "H" });
 
             var lstEmailConfig = objEmail_Config_Service.SearchFor(s => true).ToList();
@@ -276,8 +277,51 @@ namespace RightsU_Plus.Controllers
 
         #region Template configuration
 
+        public PartialViewResult Bind_Config_Template_PopUp(int Email_Config_Template_Code, int Email_Config_Code, int Event_Platform_Code, string Event_Template_Type, int Event_Template_Code = 0)
+        {
+            Event_Template_Service objEvent_Template_Service = new Event_Template_Service(objLoginEntity.ConnectionStringName);
+            Email_Config_Service objEmail_Config_Service = new Email_Config_Service(objLoginEntity.ConnectionStringName);
+            Event_Platform_Service objEvent_Platform_Service = new Event_Platform_Service(objLoginEntity.ConnectionStringName);
+            Event_Template_Key_Service objEvent_Template_Key_Service = new Event_Template_Key_Service(objLoginEntity.ConnectionStringName);
+            Event_Template objEv_Template = new Event_Template();
 
+            var lstEventTemplate = objEvent_Template_Service.SearchFor(s => true).ToList();
+            objEv_Template = lstEventTemplate.Where(w => w.Event_Template_Code == Event_Template_Code).FirstOrDefault();
+            ViewBag.Email_Type = objEmail_Config_Service.SearchFor(w => w.Email_Config_Code == Email_Config_Code).Select(s => s.Email_Type).FirstOrDefault();
+            ViewBag.Platform = objEvent_Platform_Service.SearchFor(w => w.Event_Platform_Code == Event_Platform_Code).Select(s => s.Event_Platform_Name).FirstOrDefault();
+            if(Event_Template_Type == "H")
+                ViewBag.Template_Type = "HTML";
+            else
+                ViewBag.Template_Type = "TEXT";        
 
+            if (Event_Template_Code != 0)
+            {
+                ViewBag.lst_EventTemplate = new SelectList(lstEventTemplate, "Event_Template_Code", "Event_Template_Name", objEv_Template.Event_Template_Code);
+            }
+            else
+            {
+                ViewBag.lst_EventTemplate = new SelectList(lstEventTemplate, "Event_Template_Code", "Event_Template_Name");
+            }
+            ViewBag.Event_Template_Code = Event_Template_Code;
+            ViewBag.Platform_Code = Event_Platform_Code;
+
+            var lstEventTemplateKeys = objEvent_Template_Key_Service.SearchFor(s => true).ToList();
+            ViewBag.lst_EventTemplateKeys = new SelectList(lstEventTemplateKeys, "Event_Template_Keys_Code", "Key_Name");
+
+            return PartialView("_Config_Template_PopUp", objEv_Template);
+        }
+
+        public JsonResult Save_Config_Template(int Config_Template_Code, string TemplateName, string ExistingName, string editorData, string subject = "")
+        {
+            string status = "S", message = "";
+
+            var obj = new
+            {
+                Status = status,
+                Message = message
+            };
+            return Json(obj);
+        }
 
         #endregion
 

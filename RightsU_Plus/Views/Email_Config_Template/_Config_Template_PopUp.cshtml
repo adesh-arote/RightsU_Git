@@ -1,0 +1,191 @@
+﻿@model RightsU_Entities.Event_Template
+
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+ 
+    var EventTemplateKeys = ViewBag.lst_EventTemplateKeys as List<SelectListItem>; 
+
+}
+
+@*<script src="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js" integrity="sha512-F8fV4+wpHYl9zul08Soff9H9fCx6OMIFfgbQcy+2v2gV7PdbT0OgM1LFwujQmwlLGWWKNbOFZ13uWP+Cbe0Ngw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>*@
+
+<script>
+    $(document).ready(function () {
+        debugger;
+        if ('@objMessageKey.LayoutDirection' == "RTL") {
+            $('.lblExchangeRate').css("padding-right", "2%");
+        }
+        else {
+            $('.lblExchangeRate').css("padding-left", "2%");
+        }
+
+        $('.configTemplate').on("change", function () {
+            debugger;
+
+            if ($(".configTemplate:checked").val() == "AddNew") {
+                $('#divInputField').empty();
+                var input = $('<input>').attr({
+                    type: 'text',
+                    id: 'TemplateName',
+                    name: 'TemplateName',
+                    autocomplete: 'off'
+                });
+                input.css('width', '80%');
+                $('#divInputField').html(input);
+            }
+            else
+            {
+                $('#divInputField').empty();
+                var select = $('<select>').attr({
+                    id: 'TemplateName',
+                    name: 'TemplateName'
+                }).addClass('form_input chosen-select');
+
+                var options = @Html.Raw(Json.Encode(ViewBag.lst_EventTemplate));
+
+                if (options && options.length > 0) {
+                    options.forEach(function (option) {
+                        select.append($('<option>').attr('value', '0').text('Please Select'));
+                        select.append($('<option>').attr('value', option.Value).text(option.Text));
+                    });
+                }
+                else {
+                        select.append($('<option>').attr('value', '0').text('Please Select'));
+                }
+                $('#divInputField').append(select);
+                initializeChosen();
+                $('#ExistingtTemplate_chosen').prop('style', 'width:80% !important');
+            }
+        });
+        $('.configTemplate').trigger("change");
+
+        CKEDITOR.replace('texteditor');
+    });
+
+    document.getElementById("searchInput").addEventListener("input", function () {
+        debugger;
+        var filter, ul, li, txtValue;
+        filter = this.value.toUpperCase();
+        ul = document.getElementById("itemList");
+        li = ul.getElementsByTagName("li");
+        for (var i = 0; i < li.length; i++) {
+            txtValue = li[i].textContent || li[i].innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                li[i].style.display = "";
+            } else {
+                li[i].style.display = "none";
+            }
+        }
+    });
+
+    //function goToTextarea(text) {
+    //    debugger;
+    //    var textarea = document.getElementById('cke_1_contents');
+    //    textarea.focus(); // Focus on the textarea
+
+    //    // Get the current cursor position
+    //    var cursorPos = textarea.selectionStart;
+
+    //    // Insert the text at the cursor position
+    //    var newText = textarea.value.substring(0, cursorPos) + text + textarea.value.substring(cursorPos);
+    //    textarea.value = newText;
+
+    //    // Move the cursor position to the end of the inserted text
+    //    textarea.selectionStart = cursorPos + text.length;
+    //    textarea.selectionEnd = cursorPos + text.length;
+
+    //    return false; // Prevent the default link behavior
+    //}
+</script>
+
+<script>
+    function allowDrop(ev) {
+        ev.preventDefault(); // Allow dropping
+    }
+
+    function drag(ev, text) {
+        ev.dataTransfer.setData("text", text); // Set the data to be transferred
+    }
+
+    function drop(ev) {
+        ev.preventDefault(); // Prevent the default action
+
+        var text = ev.dataTransfer.getData("text"); // Get the text data
+
+        var textarea = document.getElementById('cke_1_contents');
+        textarea.focus(); // Focus on the textarea
+
+        // Get the current cursor position
+        var cursorPos = textarea.selectionStart;
+
+        // Insert the text at the cursor position
+        var newText = textarea.value.substring(0, cursorPos) + text + textarea.value.substring(cursorPos);
+        textarea.value = newText;
+
+        // Move the cursor position to the end of the inserted text
+        textarea.selectionStart = cursorPos + text.length;
+        textarea.selectionEnd = cursorPos + text.length;
+    }
+</script>
+
+
+<div class="modal_block modal_header">
+    <a class="close" onclick="ClosePopup()">
+        <span>X</span>
+        <span class="sr-only">Close</span>
+    </a>
+
+    <h4>@ViewBag.Email_Type - @ViewBag.Template_Type - @ViewBag.Platform - Template</h4>
+
+</div>
+<div class="grid_area" style="margin: 0 auto; width: 98%;">
+    <div class="paging_area clearfix" style="height:50px !important;">
+        <div class="col-md-6" style="margin-top: 14px;">
+            <input type="radio" name="configTemplate" class="configTemplate" value="AddNew" checked="checked" /><text>&nbsp;&nbsp; <b>Add New Template</b> &nbsp;&nbsp;</text>
+            <input type="radio" name="configTemplate" class="configTemplate" value="Exists" /><text>&nbsp;&nbsp; <b>Use Existing Template</b> &nbsp;&nbsp;</text>
+        </div>
+        <div class="col-md-6" id="divInputField" style="margin-top: 1%;">
+
+        </div>
+    </div>
+    <div class="paging_area clearfix" style="height:50px !important;">
+        <div class="col-md-2" style="margin-top: 8px;">
+            <span class="pull-left">Subject : </span>
+        </div>
+        <div class="col-md-10" id="divSubjectField" style="margin-top: 1%;">
+            <input autocomplete="off" type="text" name="Subject" id="Subject" style="width:88%" placeholder="Add a subject"/>
+        </div>
+    </div>
+    <div class="tab-content clearfix table-wrapper scale_table_container">
+        <div class="scale_table_block col-md-9" id="divRichTextArea" style="height: 315px !important; overflow-y:scroll;">
+            <textarea id="texteditor" name="texteditor"></textarea>
+        </div>
+        @*<div class="vertical-line" style="border-left: 1px solid black; height: 315px; margin-left: 10px;"></div>*@
+        <div class="scale_table_block col-md-3" id="divPlaceholder" style="height: 315px !important; overflow-y: scroll;">
+            <input type="text" class="form_input" id="searchInput" placeholder="Search...">
+            <ul id="itemList">
+                @foreach (var item in ViewBag.lst_EventTemplateKeys)
+                {
+                    @*<li value="@item.Value">{@item.Text}</li>*@
+                    @*<li><a href="#" onclick="goToTextarea('{@item.Text}')"> {@item.Text} </a></li>*@
+                    <li draggable="true" ondragstart="drag(event, '{@item.Text}')"> {@item.Text} </li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="modal_block_full" style="margin-top: 10px;">
+    <div class="form_links">
+        <ul class="modal_block clearfix" style="padding-left:10px; padding-top: 10px;">
+            <li>
+                <input type="button" class="btn btn-primary" value="@objMessageKey.Save" onclick="Save_Config_Template(@ViewBag.Event_Template_Code, @ViewBag.Template_Type, @ViewBag.Platform_Code)" />
+                <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="ClosePopup()" />
+            </li>
+        </ul>
+    </div>
+</div>
+
