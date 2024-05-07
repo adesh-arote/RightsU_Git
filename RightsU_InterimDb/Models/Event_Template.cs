@@ -15,7 +15,7 @@ namespace RightsU_InterimDb.Models
     public partial class Event_Template
     {
     	public State EntityState { get; set; }    public int Event_Template_Code { get; set; }
-    	    public Nullable<int> Event_Template_Name { get; set; }
+    	    public string Event_Template_Name { get; set; }
     	    public string Event_Template_Type { get; set; }
     	    public Nullable<int> Event_Platform_Code { get; set; }
     	    public string Template { get; set; }

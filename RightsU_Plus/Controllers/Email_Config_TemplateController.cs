@@ -1,4 +1,5 @@
-﻿using RightsU_BLL;
+﻿using Newtonsoft.Json;
+using RightsU_BLL;
 using RightsU_Entities;
 using System;
 using System.Collections.Generic;
@@ -36,7 +37,18 @@ namespace RightsU_Plus.Controllers
             lstSort.Add(new SelectListItem { Text = "Email Template Desc", Value = "ND" });
             ViewBag.SortType = lstSort;
 
+            ViewBag.UserModuleRights = GetUserModuleRights();
+
             return View();
+        }
+        private string GetUserModuleRights()
+        {
+            List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForEmailConfigTemplate), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
+            string rights = "";
+            if (lstRights.FirstOrDefault() != null)
+                rights = lstRights.FirstOrDefault();
+
+            return rights;
         }
 
         public PartialViewResult Bind_Email_Config_Template(int pageNo, int recordPerPage, int Email_Config_Template_Code, string commandName, string sortType)
@@ -96,8 +108,9 @@ namespace RightsU_Plus.Controllers
 
                 string SelectedTemplateTypeValue = lstTemplateType.Where(w => Detail.Event_Template_Type.Any(a => w.Value == a.ToString())).Select(s => s.Value).FirstOrDefault();
                 ViewBag.lst_TemplateType = new SelectList(lstTemplateType, "Value", "Text", SelectedTemplateTypeValue);
-                
             }
+
+            ViewBag.UserModuleRights = GetUserModuleRights();
 
             return PartialView("_EmailTemplate_List", lst);
         }
@@ -151,13 +164,11 @@ namespace RightsU_Plus.Controllers
         public JsonResult Save_Email_Config_Template(int Email_Config_Template_Code, int Email_Config_Code, string Event_Template_Type, int Event_Platform_Code)
         {
             string status = "S", message = "", Action = Convert.ToString(ActionType.C); // C = "Create";
-
-            Email_Config_Template_Service objEmail_Config_Template_Service = new Email_Config_Template_Service(objLoginEntity.ConnectionStringName);
             Email_Config_Template ObjEmail_Config_Template = new Email_Config_Template();
 
             if (Email_Config_Template_Code > 0)
             {
-                ObjEmail_Config_Template = objEmail_Config_Template_Service.GetById(Email_Config_Template_Code);
+                ObjEmail_Config_Template = new Email_Config_Template_Service(objLoginEntity.ConnectionStringName).GetById(Email_Config_Template_Code);
                 ObjEmail_Config_Template.EntityState = State.Modified;
             }
             else
@@ -176,7 +187,7 @@ namespace RightsU_Plus.Controllers
             ObjEmail_Config_Template.Last_UpDated_Time = DateTime.Now;
 
             dynamic resultSet;
-            if (!objEmail_Config_Template_Service.Save(ObjEmail_Config_Template, out resultSet))
+            if (!new Email_Config_Template_Service(objLoginEntity.ConnectionStringName).Save(ObjEmail_Config_Template, out resultSet))
             {
                 status = "E";
                 message = resultSet;
@@ -193,7 +204,37 @@ namespace RightsU_Plus.Controllers
                     message = objMessageKey.Recordsavedsuccessfully;
                 }
                 status = "S";
-                lstEmail_Template_Searched = objEmail_Config_Template_Service.SearchFor(s => true).ToList();
+                lstEmail_Template_Searched = new Email_Config_Template_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).ToList();
+
+                try
+                {
+                    ObjEmail_Config_Template.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(ObjEmail_Config_Template.Inserted_By));
+                    ObjEmail_Config_Template.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(ObjEmail_Config_Template.Last_Action_By));
+                    ObjEmail_Config_Template.Email_Type = new Email_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Email_Config_Code == ObjEmail_Config_Template.Email_Config_Code).Select(w => w.Email_Type).FirstOrDefault();
+                    //ObjEmail_Config_Template.Event_Template_Name = new Event_Template_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Event_Template_Code == ObjEmail_Config_Template.Event_Template_Code).Select(w => w.Event_Template_Name).FirstOrDefault();
+                    ObjEmail_Config_Template.Event_Platform_Name = new Event_Platform_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Event_Platform_Code == ObjEmail_Config_Template.Event_Platform_Code).Select(w => w.Event_Platform_Name).FirstOrDefault();
+
+                    string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(ObjEmail_Config_Template);
+
+                    MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                    objAuditLog.moduleCode = GlobalParams.ModuleCodeForEmailConfigTemplate;
+                    objAuditLog.intCode = ObjEmail_Config_Template.Email_Config_Template_Code;
+                    objAuditLog.logData = LogData;
+                    objAuditLog.actionBy = objLoginUser.Login_Name;
+                    objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(ObjEmail_Config_Template.Last_UpDated_Time));
+                    objAuditLog.actionType = Action;
+                    var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                    var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                    if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                    {
+
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                }
             }
 
             var obj = new
@@ -213,7 +254,7 @@ namespace RightsU_Plus.Controllers
             if (Email_Config_Template_Code > 0)
             {
                 CommonUtil objCommonUtil = new CommonUtil();
-                isLocked = objCommonUtil.Lock_Record(Email_Config_Template_Code, GlobalParams.ModuleCodeForLanguage, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
+                isLocked = objCommonUtil.Lock_Record(Email_Config_Template_Code, GlobalParams.ModuleCodeForEmailConfigTemplate, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
             }
 
             var obj = new
@@ -227,21 +268,21 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult ActivateDeactivate(int Email_Config_Template_Code, string Action)
         {
-            string status = "", message = "";
+            string status = "", message = "", RecordAction = Convert.ToString(ActionType.A); // A = "Active";
+             
             Dictionary<string, object> obj = new Dictionary<string, object>();
-            Email_Config_Template_Service objEmail_Config_Template_Service = new Email_Config_Template_Service(objLoginEntity.ConnectionStringName);
             Email_Config_Template ObjEmail_Config_Template = new Email_Config_Template();
 
             if (Email_Config_Template_Code != 0)
             {
-                ObjEmail_Config_Template = objEmail_Config_Template_Service.GetById(Email_Config_Template_Code);
+                ObjEmail_Config_Template = new Email_Config_Template_Service(objLoginEntity.ConnectionStringName).GetById(Email_Config_Template_Code);
                 ObjEmail_Config_Template.EntityState = State.Modified;
                 ObjEmail_Config_Template.Is_Active = Action;
                 ObjEmail_Config_Template.Last_Action_By = objLoginUser.Users_Code;
                 ObjEmail_Config_Template.Last_UpDated_Time = DateTime.Now;
 
                 dynamic resultSet;
-                if (!objEmail_Config_Template_Service.Save(ObjEmail_Config_Template, out resultSet))
+                if (!new Email_Config_Template_Service(objLoginEntity.ConnectionStringName).Save(ObjEmail_Config_Template, out resultSet))
                 {
                     status = "E";
                     if (Action == "Y")
@@ -262,10 +303,44 @@ namespace RightsU_Plus.Controllers
                     }
                     else
                     {
+                        RecordAction = Convert.ToString(ActionType.D); // D = "Deactive";
                         message = objMessageKey.Recorddeactivatedsuccessfully;
+                    }
+
+                    try
+                    {
+                        ObjEmail_Config_Template.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(ObjEmail_Config_Template.Inserted_By));
+                        ObjEmail_Config_Template.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(ObjEmail_Config_Template.Last_Action_By));
+                        ObjEmail_Config_Template.Email_Type = new Email_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Email_Config_Code == ObjEmail_Config_Template.Email_Config_Code).Select(w => w.Email_Type).FirstOrDefault();
+                        //ObjEmail_Config_Template.Event_Template_Name = new Event_Template_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Event_Template_Code == ObjEmail_Config_Template.Event_Template_Code).Select(w => w.Event_Template_Name).FirstOrDefault();
+                        ObjEmail_Config_Template.Event_Platform_Name = new Event_Platform_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Event_Platform_Code == ObjEmail_Config_Template.Event_Platform_Code).Select(w => w.Event_Platform_Name).FirstOrDefault();
+
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(ObjEmail_Config_Template);
+
+                        MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                        objAuditLog.moduleCode = GlobalParams.ModuleCodeForEmailConfigTemplate;
+                        objAuditLog.intCode = ObjEmail_Config_Template.Email_Config_Template_Code;
+                        objAuditLog.logData = LogData;
+                        objAuditLog.actionBy = objLoginUser.Login_Name;
+                        objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(ObjEmail_Config_Template.Last_UpDated_Time));
+                        objAuditLog.actionType = RecordAction;
+                        var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                        var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                        if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                        {
+
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+
                     }
                 }
             }
+
+
+
             var Obj = new
             {
                 Status = status,
@@ -277,18 +352,14 @@ namespace RightsU_Plus.Controllers
 
         #region Template configuration
 
-        public PartialViewResult Bind_Config_Template_PopUp(int Email_Config_Template_Code, int Email_Config_Code, int Event_Platform_Code, string Event_Template_Type, int Event_Template_Code = 0)
+        public PartialViewResult Bind_Event_Template_PopUp(int Email_Config_Template_Code, int Email_Config_Code, int Event_Platform_Code, string Event_Template_Type, int Event_Template_Code = 0)
         {
-            Event_Template_Service objEvent_Template_Service = new Event_Template_Service(objLoginEntity.ConnectionStringName);
-            Email_Config_Service objEmail_Config_Service = new Email_Config_Service(objLoginEntity.ConnectionStringName);
-            Event_Platform_Service objEvent_Platform_Service = new Event_Platform_Service(objLoginEntity.ConnectionStringName);
-            Event_Template_Key_Service objEvent_Template_Key_Service = new Event_Template_Key_Service(objLoginEntity.ConnectionStringName);
             Event_Template objEv_Template = new Event_Template();
 
-            var lstEventTemplate = objEvent_Template_Service.SearchFor(s => true).ToList();
+            var lstEventTemplate = new Event_Template_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).ToList();
             objEv_Template = lstEventTemplate.Where(w => w.Event_Template_Code == Event_Template_Code).FirstOrDefault();
-            ViewBag.Email_Type = objEmail_Config_Service.SearchFor(w => w.Email_Config_Code == Email_Config_Code).Select(s => s.Email_Type).FirstOrDefault();
-            ViewBag.Platform = objEvent_Platform_Service.SearchFor(w => w.Event_Platform_Code == Event_Platform_Code).Select(s => s.Event_Platform_Name).FirstOrDefault();
+            ViewBag.Email_Type = new Email_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Email_Config_Code == Email_Config_Code).Select(s => s.Email_Type).FirstOrDefault();
+            ViewBag.Platform = new Event_Platform_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Event_Platform_Code == Event_Platform_Code).Select(s => s.Event_Platform_Name).FirstOrDefault();
             if(Event_Template_Type == "H")
                 ViewBag.Template_Type = "HTML";
             else
@@ -304,16 +375,95 @@ namespace RightsU_Plus.Controllers
             }
             ViewBag.Event_Template_Code = Event_Template_Code;
             ViewBag.Platform_Code = Event_Platform_Code;
+            ViewBag.Email_Config_Template_Code = Email_Config_Template_Code;
 
-            var lstEventTemplateKeys = objEvent_Template_Key_Service.SearchFor(s => true).ToList();
+            var lstEventTemplateKeys = new Event_Template_Key_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).ToList();
             ViewBag.lst_EventTemplateKeys = new SelectList(lstEventTemplateKeys, "Event_Template_Keys_Code", "Key_Name");
 
             return PartialView("_Config_Template_PopUp", objEv_Template);
         }
 
-        public JsonResult Save_Config_Template(int Config_Template_Code, string TemplateName, string ExistingName, string editorData, string subject = "")
+        public JsonResult Save_Event_Template(int Email_Config_Template_Code, int Event_Template_Code, string Template_Type, int Platform_Code, string editorData, string subject, string TemplateName = "")
         {
-            string status = "S", message = "";
+            string status = "S", message = "", Action = Convert.ToString(ActionType.C); // C = "Create";
+            Event_Template_Service ObjEvent_Template_Service = new Event_Template_Service(objLoginEntity.ConnectionStringName);
+            Event_Template ObjEvent_Template = new Event_Template();
+
+            if (Event_Template_Code > 0)
+            {
+                ObjEvent_Template = new Event_Template_Service(objLoginEntity.ConnectionStringName).GetById(Event_Template_Code);
+                ObjEvent_Template.EntityState = State.Modified;
+            }
+            else
+            {
+                ObjEvent_Template = new Event_Template();
+                ObjEvent_Template.EntityState = State.Added;
+                //ObjEvent_Template.Event_Template_Name = TemplateName;
+                ObjEvent_Template.Inserted_By = objLoginUser.Users_Code;
+                ObjEvent_Template.Inserted_On = DateTime.Now;
+            }
+            
+            ObjEvent_Template.Event_Template_Type = Template_Type;
+            ObjEvent_Template.Event_Platform_Code = Platform_Code;
+            ObjEvent_Template.Template = editorData;
+            ObjEvent_Template.Last_Action_By = objLoginUser.Users_Code;
+            ObjEvent_Template.Last_UpDated_Time = DateTime.Now;
+
+            dynamic resultSet;
+            if (!new Event_Template_Service(objLoginEntity.ConnectionStringName).Save(ObjEvent_Template, out resultSet))
+            {
+                status = "E";
+                message = resultSet;
+            }
+            else
+            {
+                if (Event_Template_Code > 0)
+                {
+                    Action = Convert.ToString(ActionType.U); // U = "Update";
+                    message = objMessageKey.Recordupdatedsuccessfully;
+                }
+                else
+                {
+                    message = objMessageKey.Recordsavedsuccessfully;
+                }
+
+                Email_Config_Template ObjEmail_Config_Template = new Email_Config_Template();
+                ObjEmail_Config_Template = new Email_Config_Template_Service(objLoginEntity.ConnectionStringName).GetById(Email_Config_Template_Code);
+                ObjEmail_Config_Template.EntityState = State.Modified;
+                ObjEmail_Config_Template.Event_Template_Code = ObjEvent_Template.Event_Template_Code;
+
+                new Email_Config_Template_Service(objLoginEntity.ConnectionStringName).Save(ObjEmail_Config_Template, out resultSet);
+
+                status = "S";
+
+                try
+                {
+                    ObjEvent_Template.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(ObjEvent_Template.Inserted_By));
+                    ObjEvent_Template.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(ObjEvent_Template.Last_Action_By));
+                    ObjEvent_Template.Event_Platform_Name = new Event_Platform_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Event_Platform_Code == ObjEmail_Config_Template.Event_Platform_Code).Select(w => w.Event_Platform_Name).FirstOrDefault();
+
+                    string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(ObjEvent_Template);
+
+                    MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                    objAuditLog.moduleCode = GlobalParams.ModuleCodeForEmailConfigTemplate;
+                    objAuditLog.intCode = ObjEvent_Template.Event_Template_Code;
+                    objAuditLog.logData = LogData;
+                    objAuditLog.actionBy = objLoginUser.Login_Name;
+                    objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(ObjEvent_Template.Last_UpDated_Time));
+                    objAuditLog.actionType = Action;
+                    var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                    var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                    if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                    {
+
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                }
+            }
 
             var obj = new
             {

@@ -3452,7 +3452,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
             <PropertyRef Name="Event_Template_Code" />
           </Key>
           <Property Name="Event_Template_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Event_Template_Name" Type="int" />
+          <Property Name="Event_Template_Name" Type="varchar" MaxLength="50" />
           <Property Name="Event_Template_Type" Type="char" MaxLength="1" />
           <Property Name="Event_Platform_Code" Type="int" />
           <Property Name="Template" Type="varchar(max)" />
@@ -4500,6 +4500,46 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
           <Property Name="Music_Type_Name" Type="varchar" MaxLength="100" />
           <Property Name="Is_Active" Type="char" MaxLength="1" />
           <Property Name="Type" Type="varchar" MaxLength="3" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'RightsU_EF_Plus.dbo.Notifications' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="Notifications">
+          <Key>
+            <PropertyRef Name="NotificationsCode" />
+            <PropertyRef Name="UserCode" />
+            <PropertyRef Name="IsSend" />
+            <PropertyRef Name="IsRead" />
+            <PropertyRef Name="IsAutoEscalated" />
+            <PropertyRef Name="IsReminderMail" />
+          </Key>
+          <Property Name="NotificationsCode" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="NotificationType" Type="nvarchar(max)" />
+          <Property Name="EventCategory" Type="nvarchar(max)" />
+          <Property Name="UserCode" Type="bigint" Nullable="false" />
+          <Property Name="TransType" Type="bigint" />
+          <Property Name="TransCode" Type="bigint" />
+          <Property Name="Email" Type="nvarchar(max)" />
+          <Property Name="Mobile" Type="nvarchar(max)" />
+          <Property Name="IsSend" Type="bit" Nullable="false" />
+          <Property Name="IsRead" Type="bit" Nullable="false" />
+          <Property Name="CC" Type="nvarchar(max)" />
+          <Property Name="BCC" Type="nvarchar(max)" />
+          <Property Name="Subject" Type="nvarchar" MaxLength="1000" />
+          <Property Name="HtmlBody" Type="nvarchar(max)" />
+          <Property Name="TextBody" Type="nvarchar(max)" />
+          <Property Name="ScheduleDateTime" Type="datetime" />
+          <Property Name="NoOfRetry" Type="int" />
+          <Property Name="MsgStatusCode" Type="int" />
+          <Property Name="SentOrReadDateTime" Type="datetime" />
+          <Property Name="API_Status" Type="nvarchar" MaxLength="1000" />
+          <Property Name="ErrorDetails" Type="nvarchar(max)" />
+          <Property Name="CreatedOn" Type="datetime" />
+          <Property Name="CreatedBy" Type="bigint" />
+          <Property Name="ModifiedOn" Type="datetime" />
+          <Property Name="ModifiedBy" Type="bigint" />
+          <Property Name="IsAutoEscalated" Type="bit" Nullable="false" />
+          <Property Name="IsReminderMail" Type="bit" Nullable="false" />
+          <Property Name="Service_Response" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="Paf">
           <Key>
@@ -17076,6 +17116,38 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
     [DM_Title].[Original_Language] AS [Original_Language]
     FROM [dbo].[DM_Title] AS [DM_Title]</DefiningQuery>
           </EntitySet>
+          <EntitySet Name="Notifications" EntityType="Self.Notifications" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [Notifications].[NotificationsCode] AS [NotificationsCode], 
+    [Notifications].[NotificationType] AS [NotificationType], 
+    [Notifications].[EventCategory] AS [EventCategory], 
+    [Notifications].[UserCode] AS [UserCode], 
+    [Notifications].[TransType] AS [TransType], 
+    [Notifications].[TransCode] AS [TransCode], 
+    [Notifications].[Email] AS [Email], 
+    [Notifications].[Mobile] AS [Mobile], 
+    [Notifications].[IsSend] AS [IsSend], 
+    [Notifications].[IsRead] AS [IsRead], 
+    [Notifications].[CC] AS [CC], 
+    [Notifications].[BCC] AS [BCC], 
+    [Notifications].[Subject] AS [Subject], 
+    [Notifications].[HtmlBody] AS [HtmlBody], 
+    [Notifications].[TextBody] AS [TextBody], 
+    [Notifications].[ScheduleDateTime] AS [ScheduleDateTime], 
+    [Notifications].[NoOfRetry] AS [NoOfRetry], 
+    [Notifications].[MsgStatusCode] AS [MsgStatusCode], 
+    [Notifications].[SentOrReadDateTime] AS [SentOrReadDateTime], 
+    [Notifications].[API_Status] AS [API_Status], 
+    [Notifications].[ErrorDetails] AS [ErrorDetails], 
+    [Notifications].[CreatedOn] AS [CreatedOn], 
+    [Notifications].[CreatedBy] AS [CreatedBy], 
+    [Notifications].[ModifiedOn] AS [ModifiedOn], 
+    [Notifications].[ModifiedBy] AS [ModifiedBy], 
+    [Notifications].[IsAutoEscalated] AS [IsAutoEscalated], 
+    [Notifications].[IsReminderMail] AS [IsReminderMail], 
+    [Notifications].[Service_Response] AS [Service_Response]
+    FROM [dbo].[Notifications] AS [Notifications]</DefiningQuery>
+          </EntitySet>
           <EntitySet Name="Paf_Details" EntityType="Self.Paf_Details" store:Type="Tables" store:Schema="dbo">
             <DefiningQuery>SELECT 
     [Paf_Details].[Id] AS [Id], 
@@ -24000,6 +24072,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="Event_Platform" EntityType="RightsU_NeoModel.Event_Platform" />
           <EntitySet Name="Event_Template_Keys" EntityType="RightsU_NeoModel.Event_Template_Keys" />
           <EntitySet Name="Event_Template" EntityType="RightsU_NeoModel.Event_Template" />
+          <EntitySet Name="Notifications" EntityType="RightsU_NeoModel.Notifications" />
         </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -41182,7 +41255,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <PropertyRef Name="Event_Template_Code" />
           </Key>
           <Property Name="Event_Template_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Event_Template_Name" Type="Int32" />
+          <Property Name="Event_Template_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Event_Template_Type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
           <Property Name="Event_Platform_Code" Type="Int32" />
           <Property Name="Template" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
@@ -41192,6 +41265,44 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Last_Action_By" Type="Int32" />
           <Property Name="Lock_Time" Type="DateTime" Precision="3" />
           <Property Name="Subject" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Notifications">
+          <Key>
+            <PropertyRef Name="NotificationsCode" />
+            <PropertyRef Name="UserCode" />
+            <PropertyRef Name="IsSend" />
+            <PropertyRef Name="IsRead" />
+            <PropertyRef Name="IsAutoEscalated" />
+            <PropertyRef Name="IsReminderMail" />
+          </Key>
+          <Property Name="NotificationsCode" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NotificationType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="EventCategory" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="UserCode" Type="Int64" Nullable="false" />
+          <Property Name="TransType" Type="Int64" />
+          <Property Name="TransCode" Type="Int64" />
+          <Property Name="Email" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Mobile" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsSend" Type="Boolean" Nullable="false" />
+          <Property Name="IsRead" Type="Boolean" Nullable="false" />
+          <Property Name="CC" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="BCC" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Subject" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="HtmlBody" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="TextBody" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ScheduleDateTime" Type="DateTime" Precision="3" />
+          <Property Name="NoOfRetry" Type="Int32" />
+          <Property Name="MsgStatusCode" Type="Int32" />
+          <Property Name="SentOrReadDateTime" Type="DateTime" Precision="3" />
+          <Property Name="API_Status" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="ErrorDetails" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedOn" Type="DateTime" Precision="3" />
+          <Property Name="CreatedBy" Type="Int64" />
+          <Property Name="ModifiedOn" Type="DateTime" Precision="3" />
+          <Property Name="ModifiedBy" Type="Int64" />
+          <Property Name="IsAutoEscalated" Type="Boolean" Nullable="false" />
+          <Property Name="IsReminderMail" Type="Boolean" Nullable="false" />
+          <Property Name="Service_Response" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -51985,6 +52096,40 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="Event_Template_Type" ColumnName="Event_Template_Type" />
                 <ScalarProperty Name="Event_Template_Name" ColumnName="Event_Template_Name" />
                 <ScalarProperty Name="Event_Template_Code" ColumnName="Event_Template_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Notifications">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Notifications">
+              <MappingFragment StoreEntitySet="Notifications">
+                <ScalarProperty Name="Service_Response" ColumnName="Service_Response" />
+                <ScalarProperty Name="IsReminderMail" ColumnName="IsReminderMail" />
+                <ScalarProperty Name="IsAutoEscalated" ColumnName="IsAutoEscalated" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="ErrorDetails" ColumnName="ErrorDetails" />
+                <ScalarProperty Name="API_Status" ColumnName="API_Status" />
+                <ScalarProperty Name="SentOrReadDateTime" ColumnName="SentOrReadDateTime" />
+                <ScalarProperty Name="MsgStatusCode" ColumnName="MsgStatusCode" />
+                <ScalarProperty Name="NoOfRetry" ColumnName="NoOfRetry" />
+                <ScalarProperty Name="ScheduleDateTime" ColumnName="ScheduleDateTime" />
+                <ScalarProperty Name="TextBody" ColumnName="TextBody" />
+                <ScalarProperty Name="HtmlBody" ColumnName="HtmlBody" />
+                <ScalarProperty Name="Subject" ColumnName="Subject" />
+                <ScalarProperty Name="BCC" ColumnName="BCC" />
+                <ScalarProperty Name="CC" ColumnName="CC" />
+                <ScalarProperty Name="IsRead" ColumnName="IsRead" />
+                <ScalarProperty Name="IsSend" ColumnName="IsSend" />
+                <ScalarProperty Name="Mobile" ColumnName="Mobile" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="TransCode" ColumnName="TransCode" />
+                <ScalarProperty Name="TransType" ColumnName="TransType" />
+                <ScalarProperty Name="UserCode" ColumnName="UserCode" />
+                <ScalarProperty Name="EventCategory" ColumnName="EventCategory" />
+                <ScalarProperty Name="NotificationType" ColumnName="NotificationType" />
+                <ScalarProperty Name="NotificationsCode" ColumnName="NotificationsCode" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

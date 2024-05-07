@@ -17,7 +17,7 @@
     var URL_Search_Email_Config_Template = '@Url.Action("Search_Email_Config_Template", "Email_Config_Template")';
     var URL_Save_Email_Config_Template = '@Url.Action("Save_Email_Config_Template", "Email_Config_Template")';
     var URL_ActivateDeactivate = '@Url.Action("ActivateDeactivate", "Email_Config_Template")';
-    var URL_Bind_Config_Template_PopUp = '@Url.Action("Bind_Config_Template_PopUp", "Email_Config_Template")';
+    var URL_Bind_Event_Template_PopUp = '@Url.Action("Bind_Event_Template_PopUp", "Email_Config_Template")';
     var URL_Save_Config_Template = '@Url.Action("Save_Config_Template", "Email_Config_Template")';
 
     var URL_CheckRecordLock = '@Url.Action("CheckRecordLock", "Email_Config_Template")';
@@ -400,7 +400,7 @@
         
         $.ajax({
             type: "POST",
-            url: URL_Bind_Config_Template_PopUp,
+            url: URL_Bind_Event_Template_PopUp,
             traditional: true,
             enctype: 'multipart/form-data',
             contentType: "application/json; charset=utf-8",
@@ -430,28 +430,31 @@
         $('#pupupHtml').empty();
     }
 
-    function Save_Config_Template(Config_Template_Code) {
+    function Save_Config_Template(Email_Config_Template_Code, Event_Template_Code, Template_Type, Platform_Code) {
         debugger;
         var returnVal = true;
-        var editorData = $.trim($("#texteditor").val());
+        var TemplateName = "";
+        //var ExistingName = "";
 
-        //var Subject = $.trim($("#TemplateName").val());
+        var editorData = CKEDITOR.instances['texteditor'].getData();
+
+        var Subject = $.trim($("#TemplateName").val());
 
         if (editorData == "") {
             $('#texteditor').val('').attr('required', true);
             returnVal = false;
         }
 
-        var TemplateName = "";
-        var ExistingName = "";
-        if ($('.configTemplate').val() == "AddNew") {
-            TemplateName = $.trim($("#TemplateName").val());
-            ExistingName = "";
-        }
-        else {
-            ExistingName = $.trim($("#TemplateName").val());
-            TemplateName = "";
-        }
+        TemplateName = $.trim($("#TemplateName").val());
+
+        //if ($('.configTemplate').val() == "AddNew") {
+        //    TemplateName = $.trim($("#TemplateName").val());
+        //    ExistingName = 0;
+        //}
+        //else {
+        //    ExistingName = $.trim($("#TemplateName").val());
+        //    TemplateName = "";
+        //}
 
         if (returnVal) {
             $.ajax({
@@ -461,10 +464,14 @@
                 enctype: 'multipart/form-data',
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify({
-                    Config_Template_Code: Config_Template_Code,
+                    Email_Config_Template_Code: Email_Config_Template_Code,
+                    Event_Template_Code: Event_Template_Code,
+                    Template_Type: Template_Type,
+                    Platform_Code: Platform_Code,
                     TemplateName: TemplateName,
-                    ExistingName: ExistingName,
-                    editorData: editorData
+                    //ExistingName: ExistingName,
+                    editorData: editorData,
+                    Subject: Subject
                 }),
                 success: function (result) {
                     debugger;
@@ -505,10 +512,16 @@
                     <div class="right_nav pull-right">
                         <ul>
                             <li id="btnUser">
-                                <input autocomplete="off" type="button" class="btn btn-primary" value="@objMessageKey.Add" onclick="AddEditEmail_Template('ADD', 0)" />
+                                @if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForAdd + "~"))
+                                {
+                                    <input autocomplete="off" type="button" class="btn btn-primary" value="@objMessageKey.Add" onclick="AddEditEmail_Template('ADD', 0)" />
+                                }
                             </li>
                             <li>
-                                <a title="@objMessageKey.SaveToExcel" class="glyphicon glyphicon-floppy-save" style="cursor:pointer; text-decoration:underline; " onclick="ExportToExcel()"></a>
+                                @if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForExportToExcel.ToString() + "~"))
+                                {
+                                    <a title="@objMessageKey.SaveToExcel" class="glyphicon glyphicon-floppy-save" style="cursor:pointer; text-decoration:underline; " onclick="ExportToExcel()"></a>
+                                }
                             </li>
                         </ul>
                     </div>

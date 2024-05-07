@@ -11,8 +11,6 @@
 
 }
 
-@*<script src="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js" integrity="sha512-F8fV4+wpHYl9zul08Soff9H9fCx6OMIFfgbQcy+2v2gV7PdbT0OgM1LFwujQmwlLGWWKNbOFZ13uWP+Cbe0Ngw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>*@
-
 <script>
     $(document).ready(function () {
         debugger;
@@ -82,24 +80,6 @@
         }
     });
 
-    //function goToTextarea(text) {
-    //    debugger;
-    //    var textarea = document.getElementById('cke_1_contents');
-    //    textarea.focus(); // Focus on the textarea
-
-    //    // Get the current cursor position
-    //    var cursorPos = textarea.selectionStart;
-
-    //    // Insert the text at the cursor position
-    //    var newText = textarea.value.substring(0, cursorPos) + text + textarea.value.substring(cursorPos);
-    //    textarea.value = newText;
-
-    //    // Move the cursor position to the end of the inserted text
-    //    textarea.selectionStart = cursorPos + text.length;
-    //    textarea.selectionEnd = cursorPos + text.length;
-
-    //    return false; // Prevent the default link behavior
-    //}
 </script>
 
 <script>
@@ -132,15 +112,12 @@
     }
 </script>
 
-
 <div class="modal_block modal_header">
     <a class="close" onclick="ClosePopup()">
         <span>X</span>
         <span class="sr-only">Close</span>
     </a>
-
     <h4>@ViewBag.Email_Type - @ViewBag.Template_Type - @ViewBag.Platform - Template</h4>
-
 </div>
 <div class="grid_area" style="margin: 0 auto; width: 98%;">
     <div class="paging_area clearfix" style="height:50px !important;">
@@ -165,16 +142,16 @@
             <textarea id="texteditor" name="texteditor"></textarea>
         </div>
         @*<div class="vertical-line" style="border-left: 1px solid black; height: 315px; margin-left: 10px;"></div>*@
-        <div class="scale_table_block col-md-3" id="divPlaceholder" style="height: 315px !important; overflow-y: scroll;">
-            <input type="text" class="form_input" id="searchInput" placeholder="Search...">
-            <ul id="itemList">
-                @foreach (var item in ViewBag.lst_EventTemplateKeys)
-                {
-                    @*<li value="@item.Value">{@item.Text}</li>*@
-                    @*<li><a href="#" onclick="goToTextarea('{@item.Text}')"> {@item.Text} </a></li>*@
-                    <li draggable="true" ondragstart="drag(event, '{@item.Text}')"> {@item.Text} </li>
-                }
-            </ul>
+        <div class="scale_table_block col-md-3">
+            <div><input type="text" class="form_input" id="searchInput" placeholder="Search..." style="width: 100%;"></div>
+            <div id="divPlaceholder" style="height: 270px !important; overflow-y: scroll; margin-top: 10px;">
+                <ul id="itemList">
+                    @foreach (var item in ViewBag.lst_EventTemplateKeys)
+                    {
+                        <li draggable="true" ondragstart="drag(event, '@item.Text')"> @item.Text </li>
+                    }
+                </ul>
+            </div>
         </div>
     </div>
 </div>
@@ -182,7 +159,7 @@
     <div class="form_links">
         <ul class="modal_block clearfix" style="padding-left:10px; padding-top: 10px;">
             <li>
-                <input type="button" class="btn btn-primary" value="@objMessageKey.Save" onclick="Save_Config_Template(@ViewBag.Event_Template_Code, @ViewBag.Template_Type, @ViewBag.Platform_Code)" />
+                <input type="button" class="btn btn-primary" value="@objMessageKey.Save" onclick="Save_Event_Template('@ViewBag.Email_Config_Template_Code', '@ViewBag.Event_Template_Code', '@ViewBag.Template_Type', '@ViewBag.Platform_Code')" />
                 <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="ClosePopup()" />
             </li>
         </ul>

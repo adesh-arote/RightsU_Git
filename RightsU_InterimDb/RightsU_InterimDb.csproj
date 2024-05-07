@@ -898,6 +898,9 @@
     <Compile Include="Models\Music_Type.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Notifications.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Paf.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>

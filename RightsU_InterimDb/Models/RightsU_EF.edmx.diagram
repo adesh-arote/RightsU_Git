@@ -1121,7 +1121,8 @@
         <EntityTypeShape EntityType="RightsU_NeoModel.Email_Config_Template" Width="1.5" PointX="36.625" PointY="35.75" />
         <EntityTypeShape EntityType="RightsU_NeoModel.Event_Platform" Width="1.5" PointX="48.625" PointY="11.75" />
         <EntityTypeShape EntityType="RightsU_NeoModel.Event_Template_Keys" Width="1.5" PointX="49.625" PointY="21.75" />
-        <EntityTypeShape EntityType="RightsU_NeoModel.Event_Template" Width="1.5" PointX="49.75" PointY="44.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Event_Template" Width="1.5" PointX="49.625" PointY="44.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Notifications" Width="1.5" PointX="49.625" PointY="48.75" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

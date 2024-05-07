@@ -195,6 +195,8 @@ namespace UTOFrameWork.FrameworkClasses
         public const int ModuleCodeForExtendedGroup = 256;
         public const int ModuleCodeForExtendedMetadata = 257;
         public const int ModuleCodeForEventPlatform = 323;
+        public const int ModuleCodeForEmailConfigTemplate = 324;
+        public const int ModuleCodeForLoginToRop = 325;
 
         #endregion
 

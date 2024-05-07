@@ -486,6 +486,7 @@ namespace RightsU_InterimDb.Models
         public DbSet<Event_Platform> Event_Platform { get; set; }
         public DbSet<Event_Template_Keys> Event_Template_Keys { get; set; }
         public DbSet<Event_Template> Event_Template { get; set; }
+        public DbSet<Notifications> Notifications { get; set; }
     
         public virtual ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name, string iS_Sport_Rights)
         {
