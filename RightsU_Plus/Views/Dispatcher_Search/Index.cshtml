@@ -1,0 +1,234 @@
+﻿@{
+    ViewBag.Title = "Dispatcher_Search";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+
+<style>
+    #divFilter {
+        background: #eee;
+        padding: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    #divResult {
+        margin-top: 10px;
+    }
+
+    .SumoSelect {
+        width: 220px;
+    }
+
+    #ddlDealTypeAd_chosen {
+        width: 89% !important;
+    }
+
+
+
+    table.tblFormat {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+
+    th.tblHead {
+        border: 1px solid black;
+        color: #ffffff;
+        background-color: #585858;
+        font-family: verdana;
+        font-size: 12px;
+    }
+
+    td.tblData {
+        border: 1px solid black;
+        vertical-align: top;
+        font-family: verdana;
+        font-size: 12px;
+    }
+
+    .textFont {
+        color: black;
+        font-family: verdana;
+        font-size: 12px;
+    }
+
+    #divFooter {
+        color: gray;
+    }
+</style>
+
+<script>
+   var URL_GetNotifications = '@Url.Action("GetNotifications", "Dispatcher_Search")';
+    var URL_MessagePopUpBody = '@Url.Action("MessagePopUpBody", "Dispatcher_Search")';
+
+    function GetNotifications(btnType) {
+        debugger;
+        var returnVal = true;
+        var StartDate = $('#StartDate').val();
+        var EndDate = $('#EndDate').val();
+        var EventType = $('#ddlEventType').val();
+        var Platform = $('#ddlPlatform').val();
+        var MessageType = $('#ddlMessageType').val();
+        var MessageTo = $('#txtMessageTo').val();
+        if (btnType == "AR") {
+             StartDate = "";
+            EndDate = "";
+            $('#StartDate').val('');
+            $('#EndDate').val('');
+        }
+
+
+        if (returnVal) {
+            showLoading();
+            $.ajax({
+                type: "POST",
+                url: URL_GetNotifications,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    StartDate: StartDate,
+                    EndDate: EndDate,
+                    EventType : EventType,
+                    Platform : Platform,
+                    MessageType: MessageType,
+                    MessageTo: MessageTo,
+                    BtnType: btnType
+                }),
+               // async: false,
+                success: function (result) {
+                    debugger;
+                    hideLoading();
+                    $('#divResult').empty();
+                    $('#divResult').html(result);
+                    if (result.Status == "E") {
+                        showAlert("E", result.Message, "OK");
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    }
+    function MessagePopup(Id, MsgType) {
+        debugger;
+            $.ajax({
+                type: "POST",
+                url: URL_MessagePopUpBody,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                data: JSON.stringify({
+                    NotificationCode: Id,
+                    MsgType: MsgType
+                }),
+                async: false,
+                success: function (result) {
+                    debugger;
+                    $('#popup').modal();
+                    //var decodedHtml = result.replace(/\\u([0-9a-fA-F]{4})/g, function (match, grp) {
+                    //    return String.fromCharCode(parseInt(grp, 16));
+                    //});
+                    //var decodedHtml1 = decodedHtml.replace('"','');
+                    //$('#MsgpupupHtml').empty();
+                //    $('#MsgpupupHtml').html((decodedHtml1));
+
+                     $('#MsgpupupHtml').empty();
+                    $('#MsgpupupHtml').html(result);
+
+                    if (result.Status == "E") {
+                        showAlert("E", result.Message, "OK")
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+        });
+
+    }
+    function ClosePopup() {
+        debugger;
+        $('#popup').modal('hide');
+        $('#MsgpupupHtml').empty();
+
+    }
+</script>
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="title_block dotted_border clearfix">
+                <h2>Notifications</h2>
+            </div>
+            <div id="divFilter">
+                <table border="0" style="border-spacing: 5px;border-collapse: separate;padding: 0px;">
+                    <tr>
+                        <td style="width:10%"><label style="font-weight:bold">Event Type:</label></td>
+                        <td>
+                            @Html.DropDownList("EventType", (List<SelectListItem>)ViewBag.EventType, new { @id = "ddlEventType", @class = "form_input chosen-select" })
+                        </td>
+                        <td style="width:12%"><label style="font-weight:bold"> Start Date:</label></td>
+                        <td>
+                            <input type="text" id="StartDate" class="isDatepicker shortDate common" autocomplete="off" style="width:95%" placeholder="From" />
+                        </td>
+                        <td style="width:10%"><label style="font-weight:bold"> End Date:</label></td>
+                        <td>
+                            <input type="text" id="EndDate" class="isDatepicker shortDate common" autocomplete="off" style="width:95%" placeholder="To" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label style="font-weight:bold"> Platform:</label></td>
+                        <td>
+                            @Html.DropDownList("Platform", (List<SelectListItem>)ViewBag.EventPlatform, new { @id = "ddlPlatform", @class = "form_input chosen-select" })
+                        </td>
+                        <td><label style="font-weight:bold"> Message Type:</label></td>
+                        <td>
+                            <select class="form_input chosen-select" id="ddlMessageType">
+                                <option value="HTML">HTML</option>
+                                <option value="TEXT">TEXT</option>
+                            </select>
+                        </td>
+                        <td><label style="font-weight:bold"> Message To:</label></td>
+                        <td>
+                            <input type="text" id="txtMessageTo" placeholder="Please Enter Sent User Id" style="width:95%" />
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="6">
+                            <div class="pull-right" style="padding-right: 19px;">
+                                <input type="button" id="btnShow" class="btn btn-primary " value="Search" onclick="GetNotifications('NA')"> &nbsp; &nbsp;
+                                <input type="button" id="btnReset" class="btn btn-primary " value="Search in Archive" onclick="GetNotifications('AR')">
+                            </div>
+                        </td>
+                    </tr>
+
+                </table>
+            </div>
+            <div class="title_block dotted_border clearfix">
+            </div>
+            <br />
+            <div id="divResult" class="deal clearfix">
+
+            </div>
+        </div>
+    </section>
+</div>
+
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <div class="form_fields acq" id="MsgpupupHtml">
+
+            </div>
+        </div>
+    </div>
+</div>
+

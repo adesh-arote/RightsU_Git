@@ -223,6 +223,7 @@
     <Compile Include="Controllers\AL_OemController.cs" />
     <Compile Include="Controllers\BookingSheetController.cs" />
     <Compile Include="Controllers\DeliveryTrackingController.cs" />
+    <Compile Include="Controllers\Dispatcher_SearchController.cs" />
     <Compile Include="Controllers\Email_Config_TemplateController.cs" />
     <Compile Include="Controllers\Event_PlatformController.cs" />
     <Compile Include="Controllers\Extended_GroupController.cs" />
@@ -1471,6 +1472,9 @@
     <Content Include="Views\Email_Config_Template\_EmailTemplate_List.cshtml" />
     <Content Include="Views\Event_Platform\_EventTemplateKey_List.cshtml" />
     <Content Include="Views\Email_Config_Template\_Config_Template_PopUp.cshtml" />
+    <Content Include="Views\Dispatcher_Search\Index.cshtml" />
+    <Content Include="Views\Dispatcher_Search\_Dispatcher_List.cshtml" />
+    <Content Include="Views\Dispatcher_Search\_MessageViewPopUp.cshtml" />
     <!-- <Content Include="UploadFolder\BookingSheet\638168158002973682~EpisodeTitle_Import.xlsx" /> -->
     <!-- <Content Include="UploadFolder\BookingSheet\638168216183881734~EpisodeTitle_Import %281%29.xlsx" /> -->
     <!-- <Content Include="UploadFolder\BookingSheet\638169264219574161~TitleList.xls" /> -->

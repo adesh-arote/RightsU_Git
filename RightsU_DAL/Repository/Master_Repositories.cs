@@ -4180,4 +4180,30 @@ namespace RightsU_DAL
         }
     }
     #endregion
+
+    #region ----Notifications
+    public class Notification_Repository : RightsU_Repository<Notifications>
+    {
+        public Notification_Repository(string conStr) : base(conStr) { }
+        public override void Save(Notifications objEC)
+        {
+            if (objEC.EntityState == State.Added)
+            {
+                base.Save(objEC);
+            }
+            else if (objEC.EntityState == State.Modified)
+            {
+                base.Update(objEC);
+            }
+            else if (objEC.EntityState == State.Deleted)
+            {
+                base.Delete(objEC);
+            }
+        }
+        public override void Delete(Notifications objEC)
+        {
+            base.Delete(objEC);
+        }
+    }
+    #endregion
 }
