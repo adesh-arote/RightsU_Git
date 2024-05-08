@@ -41,6 +41,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Notifications\Email.cs" />
+    <Compile Include="Notifications\Notification.cs" />
+    <Compile Include="Notifications\ShortMessage.cs" />
+    <Compile Include="Notifications\Teams.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\USPService.cs" />
   </ItemGroup>
@@ -56,6 +60,9 @@
       <Project>{a310fbbc-6fbc-4ab4-92e0-f4916272f8f4}</Project>
       <Name>UTO_Notification.Entities</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

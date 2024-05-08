@@ -4,13 +4,13 @@
 AS
 BEGIN
 --Select top 1 AL_Vendor_Rule_Code from AL_Recommendation_Content WHERE Al_Recommendation_Code = 1450--@AL_Recommendation_Code
-	
-	SELECT DISTINCT alrc.AL_Recommendation_Code, ISNULL(t.Title_Name,'') AS Title_Name, ISNULL(mec.Column_Value,'') AS ARD, ISNULL(mec1.Column_Value,'') AS TheatricalRelease, ISNULL(vwale_mpaa.Column_Value, '') AS MPAARating,
+	SELECT * FROM
+	(SELECT DISTINCT alrc.AL_Recommendation_Code, ISNULL(t.Title_Name,'') AS Title_Name, ISNULL(mec.Column_Value,'') AS ARD, ISNULL(mec1.Column_Value,'') AS TheatricalRelease, ISNULL(vwale_mpaa.Column_Value, '') AS MPAARating,
 	ISNULL(vwal.Genre,'') AS Genre, ISNULL(vwale_stud.Column_Value, '') AS Studio, ISNULL(vwale_v.Column_Value, '') AS Version, ISNULL(vwal.Language_Name,'') AS Title_Language, ISNULL(vwale_sub.Column_Value,'') AS Subtitles,
 	ISNULL(vwal.Runtime,'') AS Duration, ISNULL(vwal.Director,'') AS Director, ISNULL(vwal.Star_Cast,'') AS Cast, ISNULL(vwal.Synopsis,'') AS Synopsis, ISNULL(vwale_rat.Column_Value, '') AS IMDB_Rating, 
 	ISNULL(vwale_pop.Column_Value,'') AS IMDB_Popularity, ISNULL(vwale_up.Column_Value,'') AS IMDB_UpDown, ISNULL(vwale_Tom1.Column_Value,'') AS RottenTomatoes_Tamotmeter, 
 	ISNULL(vwale_Tom2.Column_Value,'') AS RottenTomatoes_Rating, '' AS Rights, ISNULL(vwale_aw.Column_Value,'') AS Awards, ISNULL(vwale_nom.Column_Value,'') AS Nominations, 
-	ISNULL(vwale_box.Column_Value,'') AS BoxOffice, '' AS GeneralRemarks, alrc.Content_Type, alrc.Content_Status 
+	ISNULL(vwale_box.Column_Value,'') AS BoxOffice, '' AS GeneralRemarks, alrc.Content_Type, alrc.Content_Status, alrc.AL_Recommendation_Content_Code 
 	FROM AL_Proposal alp
 	INNER JOIN AL_Recommendation  alr ON alp.AL_Proposal_Code = alr.AL_Proposal_Code
 	INNER JOIN AL_Recommendation_Content alrc ON alrc.AL_Recommendation_Code = alrc.AL_Recommendation_Code 
@@ -31,6 +31,7 @@ BEGIN
 	LEFT JOIN VWALTitleRecomExt vwale_box ON vwale_box.Record_Code = t.Title_Code AND vwale_box.Table_Name = 'TITLE' AND vwale_box.Columns_Code = 49
 	LEFT JOIN VWALTitleRecomExt vwale_mpaa ON vwale_mpaa.Record_Code = t.Title_Code AND vwale_mpaa.Table_Name = 'TITLE' AND vwale_mpaa.Columns_Code = 41
 	LEFT JOIN VWALTitleRecomExt vwale_stud ON vwale_stud.Record_Code = t.Title_Code AND vwale_stud.Table_Name = 'TITLE' AND vwale_stud.Columns_Code = 32
-	WHERE alrc.AL_Recommendation_Code = @AL_Recommendation_Code AND alrc.AL_Vendor_Rule_Code = @AL_Vendor_Rule_Code
+	WHERE alrc.AL_Recommendation_Code = @AL_Recommendation_Code AND alrc.AL_Vendor_Rule_Code = @AL_Vendor_Rule_Code) AS TT
+	ORDER BY TT.AL_Recommendation_Content_Code ASC
 
 END

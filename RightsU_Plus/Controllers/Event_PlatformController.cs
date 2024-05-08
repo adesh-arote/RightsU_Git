@@ -41,17 +41,24 @@ namespace RightsU_Plus.Controllers
         #region UI Methods
         public ActionResult Index()
         {
+            string moduleCode = GlobalParams.ModuleCodeForCurrency.ToString();
+            string SysLanguageCode = objLoginUser.System_Language_Code.ToString();
+            ViewBag.Code = moduleCode;
+            ViewBag.LangCode = SysLanguageCode;
+
             List<SelectListItem> lstSort = new List<SelectListItem>();
             lstSort.Add(new SelectListItem { Text = objMessageKey.LatestModified, Value = "T" });
             lstSort.Add(new SelectListItem { Text = "Event Platform Asc", Value = "NA" });
             lstSort.Add(new SelectListItem { Text = "Event Platform Desc", Value = "ND" });
             ViewBag.SortType = lstSort;
 
+            ViewBag.UserModuleRights = GetUserModuleRights();
             return View();
         }
 
         public PartialViewResult Bind_EventPlatForm(int pageNo, int recordPerPage, int Event_PlatformCode, string commandName, string sortType)
         {
+            ViewBag.UserModuleRights = GetUserModuleRights();
             lstEvent_Platform_Searched = new Event_Platform_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).ToList();
             ViewBag.Event_PlatformCode = Event_PlatformCode;
             ViewBag.CommandName = commandName;
@@ -135,6 +142,16 @@ namespace RightsU_Plus.Controllers
             lstEvent_Platform = lstEvent_Platform_Searched;
             return Json(obj);
         }
+
+        private string GetUserModuleRights()
+        {
+            List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForEventPlatform), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
+            string rights = "";
+            if (lstRights.FirstOrDefault() != null)
+                rights = lstRights.FirstOrDefault();
+
+            return rights;
+        }
         #endregion
 
         #region Event_Platform_Master
@@ -142,7 +159,7 @@ namespace RightsU_Plus.Controllers
         {
             string status = "S", message = "", Action = Convert.ToString(ActionType.C);
 
-            List<Event_Platform> tempPlatforms = new Event_Platform_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).ToList().Where(a => (a.Event_Platform_Name == EventPlatform_Name) && (a.Short_Code == EventPlatform_short_name) && (a.Event_Platform_Code != EventPlatform_Code)).ToList();
+            List<Event_Platform> tempPlatforms = new Event_Platform_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).ToList().Where(a => (a.Short_Code.Trim().ToUpper() == EventPlatform_short_name.Trim().ToUpper()) && (a.Event_Platform_Code != EventPlatform_Code)).ToList();
             Event_Platform_Service objEvent_Platform_Service = new Event_Platform_Service(objLoginEntity.ConnectionStringName);
             Event_Platform Objevent_Platform = new Event_Platform();
 

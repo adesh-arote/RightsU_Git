@@ -10,7 +10,7 @@
 <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
 
 <script>
-      var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T";
+      var IsCall = 'Y', sort_Type = "T", Module_Code_G = @ViewBag.Code, SysLanguageCode_G = @ViewBag.LangCode;;
     var URL_Bind_EventPlatForm = '@Url.Action("Bind_EventPlatForm", "Event_Platform")';
     var URL_Search_EventPlatform = '@Url.Action("Search_EventPlatform", "Event_Platform")';
     var URL_SaveEventPlatform = '@Url.Action("SaveEventPlatform", "Event_Platform")';
@@ -465,39 +465,48 @@
 
     function SaveTemplateKey(Id, rowNumber) {
         debugger;
+        var returnVal = true;
         var Value = $.trim($("#Value_" + rowNumber).val());
         var KeyName = $.trim($("#ddlKey_" + rowNumber + " :selected").text());
-        var EventTemplateCode = $.trim($("#ddlKey_" + rowNumber + " :selected").val());
 
+        if (Value == "") {
+            $("#Value_" + rowNumber).val('').attr('required', true);
+            returnVal = false;
+        }
+        if (KeyName == "Please Select") {
+            $("#ddlKey_" + rowNumber).val('').attr('required', true);
+            returnVal = false;
+        }
 
         $("#hdnAction").val("");
-        $.ajax({
-            type: "POST",
-            url: URL_SaveEventKeys,
-            traditional: true,
-            enctype: 'multipart/form-data',
-            contentType: "application/json; charset=utf-8",
-            data: JSON.stringify({
-                Id: Id,
-                Key : KeyName,
-                Value: Value,
-                RowNumber: rowNumber,
-                Event_Template_Keys_Code: EventTemplateCode
-            }),
-            async: false,
-            success: function (data) {
-                debugger;
-                if (data.Status == "S") {
-                    AddEditKeys('0', 'View');
+        if (returnVal) {
+            $.ajax({
+                type: "POST",
+                url: URL_SaveEventKeys,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    Id: Id,
+                    Key: KeyName,
+                    Value: Value,
+                    RowNumber: rowNumber
+                }),
+                async: false,
+                success: function (data) {
+                    debugger;
+                    if (data.Status == "S") {
+                        AddEditKeys('0', 'View');
+                    }
+                    if (data.Error == "1") {
+                        showAlert("E", "You have Entered Duplication Key Value", "OK");
+                    }
+                },
+                error: function (data) {
+                    alert('Error: ' + data.responseText);
                 }
-                if (data.Error == "1") {
-                    showAlert("E", "You have Entered Duplication Key Value", "OK");
-                }
-            },
-            error: function (data) {
-                alert('Error: ' + data.responseText);
-            }
-        });
+            });
+        }
     }
 
     function CancelTemplateKey() {
@@ -579,6 +588,17 @@
         }
     }
 
+    function ExportToExcel() {
+
+        debugger;
+        var type = "";
+        var Module_Name = "Event Platform";
+        type = $('#ddlSortType').val();
+        var StrSearchCriteria = $.trim($('#searchCommon').val());
+
+        window.location.href = '@Url.Action("ExportToExcel", "Global")?Module_Code=' + Module_Code_G + '&SysLanguageCode=' + SysLanguageCode_G + '&Module_Name=' + Module_Name + '&sortColumnOrder=' + type + '&StrSearchCriteria=' + StrSearchCriteria;
+
+    }
 
 
 
@@ -617,10 +637,16 @@
                     <div class="right_nav pull-right">
                         <ul>
                             <li id="btnUser">
-                                <input autocomplete="off" type="button" class="btn btn-primary" value="@objMessageKey.Add" onclick="AddEditEvent_Platform('ADD', 0)" />
+                                @if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForAdd + "~"))
+                                {
+                                    <input autocomplete="off" type="button" class="btn btn-primary" value="@objMessageKey.Add" onclick="AddEditEvent_Platform('ADD', 0)" />
+                                }
                             </li>
                             <li>
-                                <a title="@objMessageKey.SaveToExcel" class="glyphicon glyphicon-floppy-save" style="cursor:pointer; text-decoration:underline; " onclick="ExportToExcel()"></a>
+                                @if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForExportToExcel.ToString() + "~"))
+                                {
+                                    <a title="@objMessageKey.SaveToExcel" class="glyphicon glyphicon-floppy-save" style="cursor:pointer; text-decoration:underline; " onclick="ExportToExcel()"></a>
+                                }
                             </li>
                         </ul>
                     </div>

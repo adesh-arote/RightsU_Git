@@ -4154,4 +4154,56 @@ namespace RightsU_DAL
         }
     }
     #endregion
+
+    #region ----Email_Config_Keys
+    public class Email_Config_Keys_Repository : RightsU_Repository<Email_Config_Keys>
+    {
+        public Email_Config_Keys_Repository(string conStr) : base(conStr) { }
+        public override void Save(Email_Config_Keys objEC)
+        {
+            if (objEC.EntityState == State.Added)
+            {
+                base.Save(objEC);
+            }
+            else if (objEC.EntityState == State.Modified)
+            {
+                base.Update(objEC);
+            }
+            else if (objEC.EntityState == State.Deleted)
+            {
+                base.Delete(objEC);
+            }
+        }
+        public override void Delete(Email_Config_Keys objEC)
+        {
+            base.Delete(objEC);
+        }
+    }
+    #endregion
+
+    #region ----Notifications
+    public class Notification_Repository : RightsU_Repository<Notifications>
+    {
+        public Notification_Repository(string conStr) : base(conStr) { }
+        public override void Save(Notifications objEC)
+        {
+            if (objEC.EntityState == State.Added)
+            {
+                base.Save(objEC);
+            }
+            else if (objEC.EntityState == State.Modified)
+            {
+                base.Update(objEC);
+            }
+            else if (objEC.EntityState == State.Deleted)
+            {
+                base.Delete(objEC);
+            }
+        }
+        public override void Delete(Notifications objEC)
+        {
+            base.Delete(objEC);
+        }
+    }
+    #endregion
 }

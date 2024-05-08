@@ -13,6 +13,9 @@ using UTO_Notification.Entities;
 using System.Configuration;
 using System.IO;
 using System.Web.Hosting;
+using UTO_Notification.Entities.InputEntities;
+using UTO_Notification.Entities.ProcedureEntities;
+using UTO_Notification.BLL.Notifications;
 
 namespace UTO_Notification.Controllers
 {
@@ -31,151 +34,64 @@ namespace UTO_Notification.Controllers
         {
 
             logObj.ApplicationName = "Notification Engine";
-            Boolean isSuccess = false; double TimeTaken;
+            Boolean isSuccess = false; double TimeTaken = 0;
             DateTime startTime;
             startTime = DateTime.Now;
-
             HttpResponses httpResponses = new HttpResponses();
-            IHttpResponseMapper httpResponseMapper = new HttpResponseMapper();
+
             if (obj.NotificationType == "email_ntf")
             {
-                if (obj.TO != null && obj.TO != "")
+                Email objEmail = new Email();
+
+                httpResponses = objEmail.SaveNotification(obj);
+                if (!httpResponses.Status)
                 {
-                    string[] to;
-                    string Toemails = "";
-                    if (Convert.ToString(obj.TO).IndexOf(';') > 0)
-                        to = obj.TO.Split(';');
-                    else
-                        to = obj.TO.Split(',');
-
-                    foreach (string str in to)
-                    {
-                        if (str != "")
-                            Toemails = str.Trim();
-                        Regex regex = new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$");
-                        Match match = regex.Match(Toemails);
-
-                        if (match.Success == false)
-                        {
-                            httpResponses.Message = "Email Id is not valid";
-
-                            return Request.CreateResponse(HttpStatusCode.InternalServerError, httpResponses);
-                        }
-                    }
-                }
-                else
-                {
-                    httpResponses.Message = "Email Id is mandatory";
-
                     return Request.CreateResponse(HttpStatusCode.InternalServerError, httpResponses);
                 }
+                TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
 
-                if (obj.CC != null && obj.CC != "")
-                {
-
-                    string[] C;
-                    string ccemails = "";
-                    if (Convert.ToString(obj.CC).IndexOf(';') > 0)
-                        C = obj.CC.Split(';');
-                    else
-                        C = obj.CC.Split(',');
-
-                    foreach (string str in C)
-                    {
-                        if (str != "")
-                            ccemails = str.Trim();
-                        Regex regex = new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$");
-                        Match match = regex.Match(ccemails);
-
-                        if (match.Success == false)
-                        {
-                            httpResponses.Message = "Email Id is not valid";
-                            return Request.CreateResponse(HttpStatusCode.InternalServerError, httpResponses);
-
-                        }
-
-                    }
-                }
-
-                if (obj.BCC != null && obj.BCC != "")
-                {
-                    string[] B;
-                    string bccemails = "";
-
-                    if (Convert.ToString(obj.BCC).IndexOf(';') > 0)
-                        B = obj.BCC.Split(';');
-                    else
-                        B = obj.BCC.Split(',');
-
-                    foreach (string str in B)
-                    {
-                        if (str != "")
-
-                            bccemails = str.Trim();
-                        Regex regex = new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$");
-                        Match match = regex.Match(bccemails);
-
-                        if (match.Success == false)
-                        {
-                            httpResponses.Message = "Email Id is not valid";
-                            return Request.CreateResponse(HttpStatusCode.InternalServerError, httpResponses);
-
-                        }
-                    }
-                }
+                logObj.RequestContent = "To: " + obj.TO + " <br/> CC: " + obj.CC + " <br/> Bcc:" + obj.BCC;
+                logObj.RequestContent = logObj.RequestContent + " Subject: " + obj.Subject + " <br/><br/>" + obj.HTMLMessage;
             }
 
             if (obj.NotificationType == "SMS_NTF" || obj.NotificationType == "Whatsapp_ntf")
             {
-                if (obj.TO != null && obj.TO != "")
+                ShortMessage objShortMessage = new ShortMessage();
+
+                httpResponses = objShortMessage.SaveNotification(obj);
+                if (!httpResponses.Status)
                 {
-                    string[] to;
-                    string Toemails = "";
-                    to = obj.TO.Split(';');
-                    foreach (string str in to)
-                    {
-                        if (str != "")
-                            Toemails = str.Trim();
-                        Regex regex = new Regex(@"^(\+?\d{1,4}[\s-])?(?!0+\s+,?$)\d{10}\s*,?$");
-                        Match match = regex.Match(Toemails);
-
-                        if (match.Success == false)
-                        {
-                            httpResponses.Message = "Mobile number is not valid";
-
-                            return Request.CreateResponse(HttpStatusCode.InternalServerError, httpResponses);
-                        }
-                    }
-
-                }
-                else
-                {
-                    httpResponses.Message = "Mobile number is mandatory";
-
                     return Request.CreateResponse(HttpStatusCode.InternalServerError, httpResponses);
                 }
+                TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+
+                logObj.RequestContent = "To: " + obj.TO;
+                logObj.RequestContent = logObj.RequestContent + " Subject: " + obj.Subject + " <br/><br/>" + obj.HTMLMessage;
             }
 
-            USPInsertNotification objOutput = objUspService.USPInsertNotification(obj.EventCategory, obj.NotificationType, obj.TO, obj.CC, obj.BCC, obj.Subject, obj.HTMLMessage, obj.TextMessage, obj.TransType, obj.TransCode, obj.ScheduleDateTime, obj.UserCode);
-
-            httpResponses = httpResponseMapper.GetHttpSuccessResponse(objOutput);
-            httpResponses.NECode = objOutput.NotificationsCode;
-            TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-            if (httpResponses.NECode > 0)
+            if (obj.NotificationType == "TM")
             {
-                isSuccess = true;
-                httpResponses.Message = "Request Queued Successfully";
+                Teams objTeams = new Teams();
+
+                httpResponses = objTeams.SaveNotification(obj);
+                if (!httpResponses.Status)
+                {
+                    return Request.CreateResponse(HttpStatusCode.InternalServerError, httpResponses);
+                }
+                TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+
+                logObj.RequestContent = "To: " + obj.TO;
+                logObj.RequestContent = logObj.RequestContent + " Subject: " + obj.Subject + " <br/><br/>" + obj.HTMLMessage;
             }
+
             if (Convert.ToInt16((HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogLevel"]) <= 2)
             {
                 if ((HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogURL"] != "" && (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogURL"] != null)
                 {
-                    logObj.RequestId = Convert.ToString(obj.NECode);
+                    logObj.RequestId = Convert.ToString(httpResponses.NECode);
                     logObj.UserId = Convert.ToString(obj.UserCode);
                     logObj.RequestUri = Request.RequestUri.AbsoluteUri;
                     logObj.RequestMethod = "api/Notification/NESendMessage";
-                    logObj.RequestContent = "To: " + obj.TO + " <br/> CC: " + obj.CC + " <br/> Bcc:" + obj.BCC;
-                    logObj.RequestContent = logObj.RequestContent + " Subject: " + obj.Subject + " <br/><br/>" + obj.HTMLMessage;
                     logObj.RequestLength = Convert.ToString(logObj.RequestContent.ToString().Length);
                     logObj.RequestDateTime = DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss");
                     logObj.ResponseDateTime = DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss");
@@ -185,16 +101,16 @@ namespace UTO_Notification.Controllers
                     logObj.UserAgent = "Notification API";
                     logObj.Method = "Post";
                     logObj.ClientIpAddress = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["ipAddress"].ToString();
-                    logObj.IsSuccess = isSuccess.ToString();
+                    logObj.IsSuccess = httpResponses.Status.ToString();
                     logObj.TimeTaken = Convert.ToString(TimeTaken);
                     logObj.HttpStatusCode = httpResponses.ResponseCode;
                     logObj.HttpStatusDescription = httpResponses.Message;
                     string GlobalAuthKey = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["AuthKey"].ToString();
 
                     HostingEnvironment.QueueBackgroundWorkItem(ctx => AuthAttribute.LogService(logObj, GlobalAuthKey));
-
                 }
             }
+
             return Request.CreateResponse(HttpStatusCode.Created, httpResponses);
         }
 
@@ -508,7 +424,55 @@ namespace UTO_Notification.Controllers
             return Request.CreateResponse(HttpStatusCode.Created, httpResponses);
         }
 
+        [HttpPost]
+        [ActionName("NESaveNotificationType")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
 
+        public HttpResponseMessage NESaveNotificationType(NotificationTypeInput obj)
+        {
+            logObj.ApplicationName = "Notification Engine";
+            Boolean isSuccess = false; double TimeTaken;
+            DateTime startTime;
+            startTime = DateTime.Now;
+            HttpResponses httpResponses = new HttpResponses();
+            IHttpResponseMapper httpResponseMapper = new HttpResponseMapper();
+            USPInsertNotificationType objUSPInsertNotificationType = objUspService.USPInsertNotificationType(obj.NotificationType, obj.ClientName, obj.Platform_Name, obj.Credentials, obj.Is_Active);
+
+            httpResponses = httpResponseMapper.GetHttpSuccessResponse(objUSPInsertNotificationType);
+            //httpResponses.NECode = objUSPInsertNotificationType.NotificationTypeCode;
+            TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+            if (httpResponses != null)
+            {
+                isSuccess = true;
+                httpResponses.Message = "Ok";
+            }
+            if (Convert.ToInt16((HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogLevel"]) <= 2)
+            {
+
+                if ((HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogURL"] != "" && (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogURL"] != null)
+                {
+                    logObj.RequestId = Convert.ToString(objUSPInsertNotificationType.NotificationTypeCode);
+                    logObj.RequestUri = Request.RequestUri.AbsoluteUri;
+                    logObj.RequestMethod = "api/Notification/NESaveNotificationType";
+                    logObj.RequestContent = "NotificationType: " + obj.NotificationType + " <br/> ClientName: " + obj.ClientName + " <br/> PlatformName:" + obj.Platform_Name + " <br/> Credentials:" + obj.Credentials + " <br/> IsActive:" + obj.Is_Active;
+                    logObj.RequestDateTime = DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss");
+                    logObj.ResponseDateTime = DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss");
+                    logObj.ResponseContent = httpResponses.Message;
+                    logObj.ResponseLength = Convert.ToString(httpResponses.Message.Length);
+                    logObj.ServerName = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["strHostName"].ToString();
+                    logObj.UserAgent = "Notification API";
+                    logObj.Method = "Post";
+                    logObj.ClientIpAddress = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["ipAddress"].ToString();
+                    logObj.IsSuccess = isSuccess.ToString();
+                    logObj.TimeTaken = Convert.ToString(TimeTaken);
+                    logObj.HttpStatusCode = httpResponses.ResponseCode;
+                    logObj.HttpStatusDescription = httpResponses.Message;
+                    string GlobalAuthKey = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["AuthKey"].ToString();
+                    HostingEnvironment.QueueBackgroundWorkItem(ctx => AuthAttribute.LogService(logObj, GlobalAuthKey));
+                }
+            }
+            return Request.CreateResponse(HttpStatusCode.Created, httpResponses);
+        }
     }
 }
 

@@ -12,9 +12,9 @@ namespace UTO_Notification.DAL
     public class MainRepository<T> : ProcRepository
     {
         private readonly DBConnection dbConnection;
-        public MainRepository()
+        public MainRepository(string connectionStr) : base(connectionStr)
         {
-            this.dbConnection = new DBConnection();
+            this.dbConnection = new DBConnection(connectionStr);
         }
         public void AddEntity(T Obj)
         {
@@ -43,7 +43,7 @@ namespace UTO_Notification.DAL
                 connection.Close();
             }
         }
-        public  T1 GetById<T1>(object param)
+        public T1 GetById<T1>(object param)
         {
             using (var connection = dbConnection.Connection())
             {
@@ -53,7 +53,7 @@ namespace UTO_Notification.DAL
                 return obj;
             }
         }
-        public  T1 GetById<T1, T2>(object param)
+        public T1 GetById<T1, T2>(object param)
         {
             using (var connection = dbConnection.Connection())
             {
@@ -63,7 +63,7 @@ namespace UTO_Notification.DAL
                 return obj;
             }
         }
-        public  T1 GetById<T1, T2, T3>(object param)
+        public T1 GetById<T1, T2, T3>(object param)
         {
             using (var connection = dbConnection.Connection())
             {
@@ -73,7 +73,7 @@ namespace UTO_Notification.DAL
                 return obj;
             }
         }
-        public  T1 GetById<T1, T2, T3, T4>(object param)
+        public T1 GetById<T1, T2, T3, T4>(object param)
         {
             using (var connection = dbConnection.Connection())
             {
@@ -83,7 +83,7 @@ namespace UTO_Notification.DAL
                 return obj;
             }
         }
-        public  IEnumerable<T> GetAll<T1>()
+        public IEnumerable<T> GetAll<T1>()
         {
             using (var connection = dbConnection.Connection())
             {

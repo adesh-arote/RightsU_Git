@@ -3,14 +3,18 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using UTO_Notification.Entities;
+using UTO_Notification.Entities.ProcedureEntities;
+
 namespace UTO_Notification.DAL
 {
 
     public class ProcedureRepositories : ProcRepository
     {
+        public ProcedureRepositories(string connectionStr) : base(connectionStr) { }
+
         HttpResponses httpResponses = new HttpResponses();
 
-        public IEnumerable<USPInsertNotification> USPInsertNotification(string EventCategory, string NotificationType, string TO, string CC, string BCC, string Subject, string HTMLMessage, string TextMessage, string TransType, long TransCode, string ScheduleDateTime, long UserCode)
+        public IEnumerable<USPInsertNotification> USPInsertNotification(string EventCategory, string NotificationType, string TO, string CC, string BCC, string Subject, string HTMLMessage, string TextMessage, string TransType, long TransCode, string ScheduleDateTime, long UserCode, string ClientName, long ForeignId)
         {
             var param = new DynamicParameters();
             param.Add("@EventCategory", EventCategory);
@@ -25,8 +29,31 @@ namespace UTO_Notification.DAL
             param.Add("@TransCode", TransCode);
             param.Add("@ScheduleDateTime", ScheduleDateTime);
             param.Add("@UserCode", UserCode);
+            param.Add("@ClientName", ClientName);
+            param.Add("@ForeignId", ForeignId);
 
             return base.ExecuteSQLProcedure<USPInsertNotification>("USPInsertNotification", param);
+        }
+
+        public IEnumerable<USPInsertNotification> USPInsertNotification_Teams(string EventCategory, string NotificationType, string TO, string CC, string BCC, string Subject, string HTMLMessage, string TextMessage, string TransType, long TransCode, string ScheduleDateTime, long UserCode, string ClientName, long ForeignId)
+        {
+            var param = new DynamicParameters();
+            param.Add("@EventCategory", EventCategory);
+            param.Add("@NotificationType", NotificationType);
+            param.Add("@TO", TO);
+            param.Add("@CC", CC);
+            param.Add("@BCC", BCC);
+            param.Add("@Subject", Subject);
+            param.Add("@HTMLMessage", HTMLMessage);
+            param.Add("@TextMessage", TextMessage);
+            param.Add("@TransType", TransType);
+            param.Add("@TransCode", TransCode);
+            param.Add("@ScheduleDateTime", ScheduleDateTime);
+            param.Add("@UserCode", UserCode);
+            param.Add("@ClientName", ClientName);
+            param.Add("@ForeignId", ForeignId);
+
+            return base.ExecuteSQLProcedure<USPInsertNotification>("USPInsertNotification_Teams", param);
         }
 
 
@@ -132,6 +159,18 @@ namespace UTO_Notification.DAL
             var param = new DynamicParameters();
             param.Add("@UserEMail", UserEmail);
             return ExecuteSQLProcedure<USPEventCategoryMsgCount>("USPEventCategoryMsgCount", param);
+        }
+
+        public IEnumerable<USPInsertNotificationType> USPInsertNotificationType(string NotificationType, string SystemName, string PlatformName, string Credentials, string IsActive)
+        {
+            var param = new DynamicParameters();
+            param.Add("@NotificationType", NotificationType);
+            param.Add("@SystemName", SystemName);
+            param.Add("@PlatformName", PlatformName);
+            param.Add("@Credentials", Credentials);
+            param.Add("@IsActive", IsActive);
+            
+            return base.ExecuteSQLProcedure<USPInsertNotificationType>("USPInsertNotificationType", param);
         }
 
     }

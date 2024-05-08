@@ -43,10 +43,10 @@
         {
             <tr>
                 <td style="width: 20%">
-                    <input autocomplete="off" placeholder="Enter PlatformName" type="text" id="EventPlatform_Name" />
+                    <input autocomplete="off" placeholder="Enter Platform Name" type="text" id="EventPlatform_Name" />
                 </td>
                 <td style="width: 20%">
-                    <input autocomplete="off" placeholder="Enter ShortName" type="text" id="EventPlatform_Short_Name" />
+                    <input autocomplete="off" placeholder="Enter Short Name" type="text" id="EventPlatform_Short_Name" />
                 </td>
                 <td style="width:10%">
                     <button class="btn btn-primary" title="Add Record First">+</button>
@@ -123,7 +123,7 @@
                 <td>
                     @if (item.Enable_CC_And_BCC == "Y")
                     {
-                        <input type="checkbox" checked disabled/>
+                        <input type="checkbox" checked disabled />
                     }
                     else
                     {
@@ -143,15 +143,25 @@
                 <td>
                     @if (item.Is_Active == "Y")
                     {
-                        <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer" onclick="CheckRecordLock('EDIT', '@item.Event_Platform_Code')"></a>
-                        @*<a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="AddEditViewExtdGrp(@item.Extended_Group_Code, 'VIEW', '@item.Module_Code')"></a>*@
-                        <a title="@objMessageKey.Deactivate" class="glyphicon glyphicon-thumbs-down" style="cursor: pointer;" onclick="ActivateDeactivate_EvePlatform(@item.Event_Platform_Code, 'N')"></a>
+                        if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForEdit.ToString() + "~"))
+                        {
+                            <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer" onclick="CheckRecordLock('EDIT', '@item.Event_Platform_Code')"></a>
+                        }
+                        if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForDeactivate + "~"))
+                        {
+                            <a title="@objMessageKey.Deactivate" class="glyphicon glyphicon-thumbs-down" style="cursor: pointer;" onclick="ActivateDeactivate_EvePlatform(@item.Event_Platform_Code, 'N')"></a>
+                        }
                     }
                     else
                     {
-                        <a title="Cannot edit this event as it is deactivated" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
-                        @*<a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="AddEditViewExtdGrp(@item.Extended_Group_Code, 'VIEW', '@item.Module_Code')"></a>*@
-                        <a title="@objMessageKey.Activate" class="glyphicon glyphicon-thumbs-up" style="cursor: pointer;" onclick="ActivateDeactivate_EvePlatform(@item.Event_Platform_Code, 'Y')"></a>
+                        if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForEdit.ToString() + "~"))
+                        {
+                            <a title="Cannot edit this event as it is deactivated" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
+                        }
+                        if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForActivate + "~"))
+                        {
+                            <a title="@objMessageKey.Activate" class="glyphicon glyphicon-thumbs-up" style="cursor: pointer;" onclick="ActivateDeactivate_EvePlatform(@item.Event_Platform_Code, 'Y')"></a>
+                        }
                     }
 
                 </td>

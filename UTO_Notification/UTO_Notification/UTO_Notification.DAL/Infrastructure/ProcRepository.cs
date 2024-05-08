@@ -11,9 +11,9 @@ namespace UTO_Notification.DAL
     public class ProcRepository
     {
         private readonly DBConnection dbConnection;
-        public ProcRepository()
+        public ProcRepository(string connectionStr)
         {
-            this.dbConnection = new DBConnection();
+            this.dbConnection = new DBConnection(connectionStr);
         }
         public IEnumerable<T> ExecuteSQLStmt<T>(string query)
         {

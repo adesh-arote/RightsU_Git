@@ -42,6 +42,7 @@ namespace RightsU_Recommendation_Export
 
         public void Working()
         {
+            string IsError = "N";
             try
             {
                 while (true)
@@ -50,6 +51,7 @@ namespace RightsU_Recommendation_Export
                     RecommendationExport();
 
                     Thread.Sleep(TimeInSec * 1000);
+                    IsError = "N";
                 }
 
                 
@@ -60,14 +62,22 @@ namespace RightsU_Recommendation_Export
                 while (ex.InnerException != null)
                 {
                     ex = ex.InnerException;
-                    sb.Append(" | Inner Exception : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : " + ex.Message);
+                    sb.Append(" | Inner Exception : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : " + ex.Message);                    
                 }
-
+                IsError = "Y";
                 Error.WriteLog_Conditional(sb.ToString(), addSeperater: true);
             }
             finally
             {
                 Error.WriteLog("EXE Ended", includeTime: true, addSeperater: true);
+                if (IsError == "Y")
+                {
+                    Thread.Sleep(120000);
+                    ThreadStart start = new ThreadStart(Working);
+                    Worker = new Thread(start);
+                    Error.WriteLog("Service Started - Finally block", includeTime: true, addSeperater: true);
+                    Worker.Start();
+                }
             }
         }
         protected override void OnStop()

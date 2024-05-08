@@ -147,7 +147,7 @@ namespace RightsU_Plus.Controllers
 
         private string GetUserModuleRights()
         {
-            List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForCurrency), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
+            List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForExtendedMetadata), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
             string rights = "";
             if (lstRights.FirstOrDefault() != null)
                 rights = lstRights.FirstOrDefault();
