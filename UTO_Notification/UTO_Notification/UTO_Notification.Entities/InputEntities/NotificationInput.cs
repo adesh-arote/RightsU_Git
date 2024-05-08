@@ -27,5 +27,7 @@ namespace UTO_Notification.Entities
         public string NEDetailCode { get; set; }
         public string UpdatedStatus { get; set; }
         public string ReadDateTime { get; set; }
+        public string ClientName { get; set; }
+        public long ForeignId { get; set; }
     }
 }

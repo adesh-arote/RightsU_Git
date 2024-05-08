@@ -26,5 +26,6 @@ namespace RightsU_Notification_Service
         }
     
         public virtual DbSet<Notifications> Notifications { get; set; }
+        public virtual DbSet<System_Parameter> System_Parameter { get; set; }
     }
 }

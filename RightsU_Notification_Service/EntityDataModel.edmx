@@ -38,8 +38,28 @@
           <Property Name="IsReminderMail" Type="bit" Nullable="false" />
           <Property Name="Service_Response" Type="nvarchar(max)" />
         </EntityType>
+        <EntityType Name="System_Parameter">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Parameter_Name" Type="varchar" MaxLength="1000" />
+          <Property Name="Parameter_Value" Type="varchar" MaxLength="1000" />
+          <Property Name="Inserted_On" Type="datetime" />
+          <Property Name="Inserted_By" Type="int" />
+          <Property Name="Lock_Time" Type="datetime" />
+          <Property Name="Last_Updated_Time" Type="datetime" />
+          <Property Name="Last_Action_By" Type="int" />
+          <Property Name="Channel_Code" Type="int" />
+          <Property Name="Type" Type="char" MaxLength="1" />
+          <Property Name="IsActive" Type="char" MaxLength="1" />
+          <Property Name="Description" Type="nvarchar" MaxLength="4000" />
+          <Property Name="IS_System_Admin" Type="char" MaxLength="1" />
+          <Property Name="Client_Name" Type="nvarchar(max)" />
+        </EntityType>
         <EntityContainer Name="RightsU_Plus_TestingModelStoreContainer">
           <EntitySet Name="Notifications" EntityType="Self.Notifications" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="System_Parameter" EntityType="Self.System_Parameter" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
@@ -47,6 +67,7 @@
       <Schema Namespace="RightsU_Plus_TestingModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityContainer Name="RightsU_Plus_Entities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Notifications" EntityType="RightsU_Plus_TestingModel.Notifications" />
+          <EntitySet Name="System_Parameter" EntityType="RightsU_Plus_TestingModel.System_Parameter" />
         </EntityContainer>
         <EntityType Name="Notifications">
           <Key>
@@ -80,6 +101,25 @@
           <Property Name="IsAutoEscalated" Type="Boolean" Nullable="false" />
           <Property Name="IsReminderMail" Type="Boolean" Nullable="false" />
           <Property Name="Service_Response" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="System_Parameter">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Parameter_Name" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="Parameter_Value" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="Inserted_On" Type="DateTime" Precision="3" />
+          <Property Name="Inserted_By" Type="Int32" />
+          <Property Name="Lock_Time" Type="DateTime" Precision="3" />
+          <Property Name="Last_Updated_Time" Type="DateTime" Precision="3" />
+          <Property Name="Last_Action_By" Type="Int32" />
+          <Property Name="Channel_Code" Type="Int32" />
+          <Property Name="Type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="IsActive" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Description" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
+          <Property Name="IS_System_Admin" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Client_Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -118,6 +158,26 @@
                 <ScalarProperty Name="EventCategory" ColumnName="EventCategory" />
                 <ScalarProperty Name="NotificationType" ColumnName="NotificationType" />
                 <ScalarProperty Name="NotificationsCode" ColumnName="NotificationsCode" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="System_Parameter">
+            <EntityTypeMapping TypeName="RightsU_Plus_TestingModel.System_Parameter">
+              <MappingFragment StoreEntitySet="System_Parameter">
+                <ScalarProperty Name="Client_Name" ColumnName="Client_Name" />
+                <ScalarProperty Name="IS_System_Admin" ColumnName="IS_System_Admin" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="Channel_Code" ColumnName="Channel_Code" />
+                <ScalarProperty Name="Last_Action_By" ColumnName="Last_Action_By" />
+                <ScalarProperty Name="Last_Updated_Time" ColumnName="Last_Updated_Time" />
+                <ScalarProperty Name="Lock_Time" ColumnName="Lock_Time" />
+                <ScalarProperty Name="Inserted_By" ColumnName="Inserted_By" />
+                <ScalarProperty Name="Inserted_On" ColumnName="Inserted_On" />
+                <ScalarProperty Name="Parameter_Value" ColumnName="Parameter_Value" />
+                <ScalarProperty Name="Parameter_Name" ColumnName="Parameter_Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

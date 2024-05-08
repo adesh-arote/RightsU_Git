@@ -91,6 +91,7 @@ BEGIN
 		
 		CREATE TABLE #BVScheduleTransaction		----- BV_Schedule_Transaction Data 
 		(
+			RowNo NUMERIC(18,0),
 			BV_Schedule_Transaction_Code NUMERIC(18,0),
 			Program_Episode_ID NVARCHAR(1000),
 			Program_Episode_Title NVARCHAR(250),
@@ -158,11 +159,12 @@ BEGIN
 			-----2.0-----
 			INSERT INTO #BVScheduleTransaction 
 			(
-				BV_Schedule_Transaction_Code,Program_Episode_ID, Program_Episode_Title, Program_Episode_Number, Program_Title, Program_Category,
+				RowNo,BV_Schedule_Transaction_Code,Program_Episode_ID, Program_Episode_Title, Program_Episode_Number, Program_Title, Program_Category,
 				Schedule_Item_Log_Date, Schedule_Item_Log_Time,Schedule_Item_Log_DateTime, Schedule_Item_Duration, Scheduled_Version_House_Number_List,
 				Found_Status, File_Code, Title_Code, IsProcessed, IsException,IsDealApproved,Deal_Movie_Code,Acq_Deal_Code
 			)
-			SELECT  BV_Schedule_Transaction_Code,Program_Episode_ID, Program_Episode_Title, Program_Episode_Number, Program_Title, Program_Category, 
+			SELECT  ROW_NUMBER() OVER (Partition by Program_Episode_ID ORDER BY CONVERT(datetime,(CONVERT(DATE,Schedule_Item_Log_Date)+CAST(Schedule_Item_Log_Time as datetime)),101) asc),
+			BV_Schedule_Transaction_Code,Program_Episode_ID, Program_Episode_Title, Program_Episode_Number, Program_Title, Program_Category, 
 			CONVERT(date, Schedule_Item_Log_Date, 103), Schedule_Item_Log_Time,CONVERT(datetime,(CONVERT(DATE,Schedule_Item_Log_Date)+CAST(Schedule_Item_Log_Time as datetime)),101), Schedule_Item_Duration, Scheduled_Version_House_Number_List, 
 			Found_Status, File_Code, Title_Code, IsProcessed, IsException,IsDealApproved,Deal_Movie_Code,Deal_Code
 			FROM BV_Schedule_Transaction WHERE File_Code = @File_Code AND ISNULL(IsProcessed,'N') = 'N' AND ISNULL(Found_Status,'N') = 'Y' AND ISNULL(IsException,'N') = 'N'		
@@ -248,8 +250,7 @@ BEGIN
 			AND BST.Channel_Code = @Channel_Code
 
 	END
-
-		
+				
 		--select * from #BVScheduleTransaction
 		------------Update Title_Code_HouseID----------------------------------------------------
 		
@@ -289,6 +290,13 @@ BEGIN
 		INNER JOIN Acq_Deal_Rights ADRS ON ADRS.Acq_Deal_Code = BVST.Acq_Deal_Code
 		WHERE BVST.Schedule_Item_Log_Date BETWEEN BDCR.Start_Date AND BDCR.End_Date --AND BVST.Deal_Count = 1
 		
+		UPDATE BVST SET BVST.RowNo = BVdata.RowNum
+		FROM #BVScheduleTransaction BVST
+		INNER JOIN (
+			SELECT BV_Schedule_Transaction_Code, ROW_NUMBER() OVER (Partition by Program_Episode_ID, BMS_Deal_Content_Rights_Code ORDER BY CONVERT(datetime,(CONVERT(DATE,Schedule_Item_Log_Date)+CAST(Schedule_Item_Log_Time as datetime)),101) asc) RowNum
+			FROM #BVScheduleTransaction
+		) AS BVdata ON BVST.BV_Schedule_Transaction_Code = BVdata.BV_Schedule_Transaction_Code
+
 		--UPDATE BVST SET BVST.Acq_Deal_Code = BD1.Acq_Deal_Code,BVST.BMS_Deal_Content_Rights_Code=BDCR1.BMS_Deal_Content_Rights_Code
 		--,BVST.Acq_Deal_Run_Code = BDCR1.Acq_Deal_Run_Code,BVST.Business_Unit_Code = AD.Business_Unit_Code,
 		--BVST.Is_Yearwise_Definition = ADR.Is_Yearwise_Definition,BVST.Run_Type = ADR.Run_Type,BVST.Run_Definition_Type = ADR.Run_Definition_Type 
@@ -603,46 +611,6 @@ BEGIN
 
 		------------------------------RULE RIGHT CHECK ------------------------------------------------------------
 
-		---------------------- Update Schedule Count for IsIgnoreUpdateRun ='N' ------------------------------------
-				
-		UPDATE BDCR SET BDCR.Utilised_Run = (ISNULL(BDCR.Utilised_Run,0) + New_Utilised_Run)
-		FROM (
-			SELECT BMS_Deal_Content_Rights_Code, COUNT(*) New_Utilised_Run 
-			FROM #BVScheduleTransaction WHERE IsIgnoreUpdateRun='N'
-			GROUP BY BMS_Deal_Content_Rights_Code
-		) BVST
-		INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code = BVST.BMS_Deal_Content_Rights_Code
-		--WHERE BVST.IsIgnoreUpdateRun='N'
-
-		----------------------Update Schedule Count for Non Channel wise Run definition--------------------------------
-
-		--SELECT Acq_Deal_Run_Code, Schedule_Item_Log_DateTime, COUNT(*) New_Utilised_Run 
-		--FROM #BVScheduleTransaction 
-		--WHERE IsIgnoreUpdateRun='N' AND Run_Definition_Type NOT IN ('C')
-		--GROUP BY Acq_Deal_Run_Code, Schedule_Item_Log_DateTime
-
-		--SELECT bvin.Acq_Deal_Run_Code, COUNT(*) New_Utilised_Run 
-		--FROM #BVScheduleTransaction bvin
-		--INNER JOIN BMS_Deal_Content_Rights BDCRin ON BDCRin.Acq_Deal_Run_Code = bvin.Acq_Deal_Run_Code AND BDCRin.Is_Active='Y'
-		--WHERE IsIgnoreUpdateRun='N' AND Run_Definition_Type NOT IN ('C')
-		--AND CAST(bvin.Schedule_Item_Log_DateTime as Date) BETWEEN BDCRin.Start_Date AND BDCRin.End_Date
-		--GROUP BY bvin.Acq_Deal_Run_Code, Schedule_Item_Log_DateTime
-
-		UPDATE BDCR SET BDCR.Utilised_Run = (ISNULL(BDCR.Utilised_Run,0) + BVST.New_Utilised_Run)
-		FROM (
-			SELECT bvin.Acq_Deal_Run_Code, COUNT(*) New_Utilised_Run 
-			FROM #BVScheduleTransaction bvin
-			INNER JOIN BMS_Deal_Content_Rights BDCRin ON BDCRin.Acq_Deal_Run_Code = bvin.Acq_Deal_Run_Code AND BDCRin.Is_Active='Y'
-			WHERE IsIgnoreUpdateRun='N' AND Run_Definition_Type NOT IN ('C')
-			AND CAST(bvin.Schedule_Item_Log_DateTime as Date) BETWEEN BDCRin.Start_Date AND BDCRin.End_Date
-			GROUP BY bvin.Acq_Deal_Run_Code, Schedule_Item_Log_DateTime
-		) BVST
-		INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.Acq_Deal_Run_Code = BVST.Acq_Deal_Run_Code AND BDCR.IS_Active='Y'
-		WHERE BDCR.RU_Channel_Code NOT IN (@Channel_Code) --AND BVST.IsIgnoreUpdateRun='N' --AND BVST.Run_Definition_Type NOT IN ('C')
-		--AND CAST(BVST.Schedule_Item_Log_DateTime as Date) BETWEEN BDCR.Start_Date AND BDCR.End_Date
-		
-		----------------------Update Schedule Count for Non Channel wise Run definition--------------------------------
-
 		-----SET PrimeStartTime,PrimeEndTime,OffPrimeStartTime,OffPrimeEndTime-------------------START--------------------------------
 		PRINT '-----SET PrimeStartTime,PrimeEndTime,OffPrimeStartTime,OffPrimeEndTime------------START---------------------------------------'
 
@@ -747,21 +715,6 @@ BEGIN
 
 		-------------------- IsPrime = N --------------------START----------------------------
 
-		UPDATE ADR SET ADR.Off_Prime_Time_Provisional_Run_Count = ISNULL(ADR.Off_Prime_Time_Provisional_Run_Count,0) + New_Utilised_Run
-		FROM (
-			SELECT BDCRin.Acq_Deal_Run_Code, COUNT(*) New_Utilised_Run 
-			FROM #BVScheduleTransaction BVSTin
-			INNER JOIN BMS_Deal_Content_Rights BDCRin ON BDCRin.BMS_Deal_Content_Rights_Code = BVSTin.BMS_Deal_Content_Rights_Code AND BDCRin.Is_Active = 'Y'
-			WHERE IsIgnoreUpdateRun='N' AND IsPrime = 'N' AND Business_Unit_Code IN (SELECT Business_Unit_Code FROM Business_Unit WHERE Business_Unit_Name like '%English Movies%')
-			AND CAST(BVSTin.Schedule_Item_Log_DateTime AS DATE) BETWEEN BDCRin.Start_Date AND BDCRin.End_Date		
-			GROUP BY BDCRin.Acq_Deal_Run_Code
-		) BVST
-		INNER JOIN Acq_Deal_Run ADR ON ADR.Acq_Deal_Run_Code = BVST.Acq_Deal_Run_Code
-		--INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code AND BDCR.IS_Active='Y'
-		--WHERE --BVST.IsIgnoreUpdateRun='N' AND BVST.Business_Unit_Code IN (SELECT Business_Unit_Code FROM Business_Unit WHERE Business_Unit_Name like '%English Movies%')
-		--AND BVST.IsPrime = 'N' AND 
-		--CAST(BVST.Schedule_Item_Log_DateTime AS DATE) BETWEEN BDCR.Start_Date AND BDCR.End_Date		
-
 		UPDATE BVST SET BVST.Schedule_Run =ISNULL(ADR.Off_Prime_Time_Provisional_Run_Count,0),BVST.Allocated_Run = ISNULL(ADR.Off_Prime_Run,0),
 		BVST.Balance_Run = ISNULL(ADR.Off_Prime_Run,0) - ISNULL(ADR.Off_Prime_Time_Provisional_Run_Count,0) 
 		FROM #BVScheduleTransaction BVST
@@ -771,12 +724,13 @@ BEGIN
 		AND BVST.IsPrime = 'N'
 		AND CAST(BVST.Schedule_Item_Log_DateTime AS DATE) BETWEEN BDCR.Start_Date AND BDCR.End_Date		
 
-		UPDATE BVST SET BVST.Email_Msg_For = 'OffPrimeTime_Over_Run',BVST.IsException = 'Y'			
+		UPDATE BVST SET BVST.Email_Msg_For = 'OffPrimeTime_Over_Run',BVST.IsException = 'Y',BVST.IsIgnoreUpdateRun = 'N'			
 		FROM #BVScheduleTransaction BVST 			
 		INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
 		WHERE IsIgnoreUpdateRun='N' AND BVST.Business_Unit_Code IN (SELECT Business_Unit_Code FROM Business_Unit WHERE Business_Unit_Name like '%English Movies%')
 		AND BVST.IsPrime = 'N'
-		AND BVST.Balance_Run < 0
+		--AND BVST.Balance_Run < 0
+		AND BVST.RowNo > BVST.Balance_Run
 		AND CAST(BVST.Schedule_Item_Log_DateTime AS DATE) BETWEEN BDCR.Start_Date AND BDCR.End_Date		
 
 		----- Insert Email Notification for OffPrimeTime_Over_Run -------------------------------
@@ -795,9 +749,26 @@ BEGIN
 		INNER JOIN Email_Notification_Msg ENM ON LTRIM(RTRIM(ENM.Email_Msg_For)) COLLATE SQL_Latin1_General_CP1_CI_AS = LTRIM(RTRIM(BVST.Email_Msg_For)) COLLATE SQL_Latin1_General_CP1_CI_AS AND [Type] = 'S'
 		WHERE IsIgnoreUpdateRun='N' AND Business_Unit_Code IN (SELECT Business_Unit_Code FROM Business_Unit WHERE Business_Unit_Name like '%English Movies%')
 		AND BVST.IsPrime = 'N'
-		AND BVST.Balance_Run < 0
+		--AND BVST.Balance_Run < 0
 		AND BVST.Email_Msg_For = 'OffPrimeTime_Over_Run'
 		AND CAST(BVST.Schedule_Item_Log_DateTime AS DATE) BETWEEN BDCR.Start_Date AND BDCR.End_Date		
+
+		/* Update Off_Prime_Time_Provisional_Run_Count */
+		UPDATE ADR SET ADR.Off_Prime_Time_Provisional_Run_Count = ISNULL(ADR.Off_Prime_Time_Provisional_Run_Count,0) + New_Utilised_Run
+		FROM (
+			SELECT BDCRin.Acq_Deal_Run_Code, COUNT(*) New_Utilised_Run 
+			FROM #BVScheduleTransaction BVSTin
+			INNER JOIN BMS_Deal_Content_Rights BDCRin ON BDCRin.BMS_Deal_Content_Rights_Code = BVSTin.BMS_Deal_Content_Rights_Code AND BDCRin.Is_Active = 'Y'
+			WHERE IsIgnoreUpdateRun='N' AND IsPrime = 'N' AND Business_Unit_Code IN (SELECT Business_Unit_Code FROM Business_Unit WHERE Business_Unit_Name like '%English Movies%')
+			AND CAST(BVSTin.Schedule_Item_Log_DateTime AS DATE) BETWEEN BDCRin.Start_Date AND BDCRin.End_Date		
+			GROUP BY BDCRin.Acq_Deal_Run_Code
+		) BVST
+		INNER JOIN Acq_Deal_Run ADR ON ADR.Acq_Deal_Run_Code = BVST.Acq_Deal_Run_Code
+		--INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code AND BDCR.IS_Active='Y'
+		--WHERE --BVST.IsIgnoreUpdateRun='N' AND BVST.Business_Unit_Code IN (SELECT Business_Unit_Code FROM Business_Unit WHERE Business_Unit_Name like '%English Movies%')
+		--AND BVST.IsPrime = 'N' AND 
+		--CAST(BVST.Schedule_Item_Log_DateTime AS DATE) BETWEEN BDCR.Start_Date AND BDCR.End_Date		
+
 
 		----- Insert Email Notification for OffPrimeTime_Over_Run -------------------------------
 
@@ -805,6 +776,45 @@ BEGIN
 
 		-------------------- IsPrime = Y --------------------START----------------------------
 
+		UPDATE BVST SET BVST.Schedule_Run =ISNULL(ADR.Prime_Time_Provisional_Run_Count,0),BVST.Allocated_Run = ISNULL(ADR.Prime_Run,0),
+		BVST.Balance_Run = ISNULL(ADR.Prime_Run,0) - ISNULL(ADR.Prime_Time_Provisional_Run_Count,0) 
+		FROM #BVScheduleTransaction BVST
+		INNER JOIN Acq_Deal_Run ADR ON ADR.Acq_Deal_Run_Code=BVST.Acq_Deal_Run_Code
+		INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code AND BDCR.IS_Active='Y'
+		WHERE BVST.IsIgnoreUpdateRun='N' AND BVST.Business_Unit_Code IN (SELECT Business_Unit_Code FROM Business_Unit WHERE Business_Unit_Name like '%English Movies%')
+		AND BVST.IsPrime = 'Y'
+		AND CAST(BVST.Schedule_Item_Log_DateTime AS DATE) BETWEEN BDCR.Start_Date AND BDCR.End_Date		
+
+		UPDATE BVST SET BVST.Email_Msg_For = 'PrimeTime_Over_Run',BVST.IsException = 'Y',BVST.IsIgnoreUpdateRun = 'N'			
+		FROM #BVScheduleTransaction BVST 			
+		INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
+		WHERE IsIgnoreUpdateRun='N' AND BVST.Business_Unit_Code IN (SELECT Business_Unit_Code FROM Business_Unit WHERE Business_Unit_Name like '%English Movies%')
+		AND BVST.IsPrime = 'Y'
+		--AND BVST.Balance_Run < 0
+		AND BVST.RowNo > BVST.Balance_Run
+		AND CAST(BVST.Schedule_Item_Log_DateTime AS DATE) BETWEEN BDCR.Start_Date AND BDCR.End_Date		
+
+		----- Insert Email Notification for OffPrimeTime_Over_Run -------------------------------
+		INSERT INTO Email_Notification_Schedule 
+		(
+			BV_Schedule_Transaction_Code, Program_Episode_Title, Program_Episode_Number, Program_Title, Program_Category,
+			Schedule_Item_Log_Date, Schedule_Item_Log_Time, Schedule_Item_Duration, Scheduled_Version_House_Number_List,
+			File_Code, Channel_Code, Inserted_On, Deal_Movie_Code, Deal_Movie_Rights_Code, 
+			Email_Notification_Msg, IsMailSent, IsRunCountCalculate, Title_Code, Allocated_Runs, Consumed_Runs,IsPrimeException
+		)
+		SELECT BV_Schedule_Transaction_Code,Program_Episode_Title,Program_Episode_Number,Program_Title,Program_Category,Schedule_Item_Log_Date,Schedule_Item_Log_Time,
+		Schedule_Item_Duration,Scheduled_Version_House_Number_List,File_Code,@Channel_Code,GETDATE(), NULL, NULL,ENM.Email_Msg,'N','Y',BVST.Title_Code,
+		BVST.Allocated_Run,BVST.Schedule_Run,'Y'
+		FROM #BVScheduleTransaction BVST
+		INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
+		INNER JOIN Email_Notification_Msg ENM ON LTRIM(RTRIM(ENM.Email_Msg_For)) COLLATE SQL_Latin1_General_CP1_CI_AS = LTRIM(RTRIM(BVST.Email_Msg_For)) COLLATE SQL_Latin1_General_CP1_CI_AS AND [Type] = 'S'
+		WHERE IsIgnoreUpdateRun='N' AND Business_Unit_Code IN (SELECT Business_Unit_Code FROM Business_Unit WHERE Business_Unit_Name like '%English Movies%')
+		AND BVST.IsPrime = 'Y'
+		--AND BVST.Balance_Run < 0		
+		AND BVST.Email_Msg_For = 'PrimeTime_Over_Run'
+		AND CAST(BVST.Schedule_Item_Log_DateTime AS DATE) BETWEEN BDCR.Start_Date AND BDCR.End_Date		
+
+		/*Update Prime_Time_Provisional_Run_Count */
 		UPDATE ADR SET ADR.Prime_Time_Provisional_Run_Count =ISNULL(ADR.Prime_Time_Provisional_Run_Count,0) + New_Utilised_Run
 		FROM (
 			SELECT BDCRin.Acq_Deal_Run_Code, COUNT(*) New_Utilised_Run 
@@ -821,43 +831,6 @@ BEGIN
 		--AND BVST.IsPrime = 'Y' AND
 		--CAST(BVST.Schedule_Item_Log_DateTime AS DATE) BETWEEN BDCR.Start_Date AND BDCR.End_Date		
 
-		UPDATE BVST SET BVST.Schedule_Run =ISNULL(ADR.Prime_Time_Provisional_Run_Count,0),BVST.Allocated_Run = ISNULL(ADR.Prime_Run,0),
-		BVST.Balance_Run = ISNULL(ADR.Prime_Run,0) - ISNULL(ADR.Prime_Time_Provisional_Run_Count,0) 
-		FROM #BVScheduleTransaction BVST
-		INNER JOIN Acq_Deal_Run ADR ON ADR.Acq_Deal_Run_Code=BVST.Acq_Deal_Run_Code
-		INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code AND BDCR.IS_Active='Y'
-		WHERE BVST.IsIgnoreUpdateRun='N' AND BVST.Business_Unit_Code IN (SELECT Business_Unit_Code FROM Business_Unit WHERE Business_Unit_Name like '%English Movies%')
-		AND BVST.IsPrime = 'Y'
-		AND CAST(BVST.Schedule_Item_Log_DateTime AS DATE) BETWEEN BDCR.Start_Date AND BDCR.End_Date		
-
-		UPDATE BVST SET BVST.Email_Msg_For = 'PrimeTime_Over_Run',BVST.IsException = 'Y'			
-		FROM #BVScheduleTransaction BVST 			
-		INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
-		WHERE IsIgnoreUpdateRun='N' AND BVST.Business_Unit_Code IN (SELECT Business_Unit_Code FROM Business_Unit WHERE Business_Unit_Name like '%English Movies%')
-		AND BVST.IsPrime = 'Y'
-		AND BVST.Balance_Run < 0
-		AND CAST(BVST.Schedule_Item_Log_DateTime AS DATE) BETWEEN BDCR.Start_Date AND BDCR.End_Date		
-
-		----- Insert Email Notification for OffPrimeTime_Over_Run -------------------------------
-		INSERT INTO Email_Notification_Schedule 
-		(
-			BV_Schedule_Transaction_Code, Program_Episode_Title, Program_Episode_Number, Program_Title, Program_Category,
-			Schedule_Item_Log_Date, Schedule_Item_Log_Time, Schedule_Item_Duration, Scheduled_Version_House_Number_List,
-			File_Code, Channel_Code, Inserted_On, Deal_Movie_Code, Deal_Movie_Rights_Code, 
-			Email_Notification_Msg, IsMailSent, IsRunCountCalculate, Title_Code, Allocated_Runs, Consumed_Runs,IsPrimeException
-		)
-		SELECT BV_Schedule_Transaction_Code,Program_Episode_Title,Program_Episode_Number,Program_Title,Program_Category,Schedule_Item_Log_Date,Schedule_Item_Log_Time,
-		Schedule_Item_Duration,Scheduled_Version_House_Number_List,File_Code,@Channel_Code,GETDATE(), NULL, NULL,ENM.Email_Msg,'N','Y',BVST.Title_Code,
-		BVST.Allocated_Run,BVST.Schedule_Run,'Y'
-		FROM #BVScheduleTransaction BVST
-		INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
-		INNER JOIN Email_Notification_Msg ENM ON LTRIM(RTRIM(ENM.Email_Msg_For)) COLLATE SQL_Latin1_General_CP1_CI_AS = LTRIM(RTRIM(BVST.Email_Msg_For)) COLLATE SQL_Latin1_General_CP1_CI_AS AND [Type] = 'S'
-		WHERE IsIgnoreUpdateRun='N' AND Business_Unit_Code IN (SELECT Business_Unit_Code FROM Business_Unit WHERE Business_Unit_Name like '%English Movies%')
-		AND BVST.IsPrime = 'Y'
-		AND BVST.Balance_Run < 0
-		AND BVST.Email_Msg_For = 'PrimeTime_Over_Run'
-		AND CAST(BVST.Schedule_Item_Log_DateTime AS DATE) BETWEEN BDCR.Start_Date AND BDCR.End_Date		
-
 		----- Insert Email Notification for OffPrimeTime_Over_Run -------------------------------
 
 		-------------------- IsPrime = Y --------------------END----------------------------
@@ -866,7 +839,7 @@ BEGIN
 
 		-------------------- Prime_exceptionType = P --------------------START----------------------------
 
-		UPDATE BVST SET BVST.Email_Msg_For = 'Outside Prime Time',BVST.IsException = 'Y'
+		UPDATE BVST SET BVST.Email_Msg_For = 'Outside Prime Time',BVST.IsException = 'Y',BVST.IsIgnoreUpdateRun = 'N'
 		FROM #BVScheduleTransaction BVST 			
 		INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
 		WHERE IsIgnoreUpdateRun='N' AND BVST.Business_Unit_Code IN (SELECT Business_Unit_Code FROM Business_Unit WHERE Business_Unit_Name like '%English Movies%')
@@ -900,7 +873,7 @@ BEGIN
 
 		-------------------- Prime_exceptionType = O --------------------START----------------------------
 
-		UPDATE BVST SET BVST.Email_Msg_For = 'Outside Off Prime Time',BVST.IsException = 'Y'			
+		UPDATE BVST SET BVST.Email_Msg_For = 'Outside Off Prime Time',BVST.IsException = 'Y',BVST.IsIgnoreUpdateRun = 'N'			
 		FROM #BVScheduleTransaction BVST 			
 		INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
 		WHERE IsIgnoreUpdateRun='N' AND BVST.Business_Unit_Code IN (SELECT Business_Unit_Code FROM Business_Unit WHERE Business_Unit_Name like '%English Movies%')
@@ -937,20 +910,28 @@ BEGIN
 		PRINT '-------------------- Update Prime/Off Prime Schedule Count --------------------END----------------------------'
 		-------------------- Update Prime/Off Prime Schedule Count --------------------END----------------------------
 
-		------------------------ Year Wise Definition Check -----------------START------------------------------------------
+		------------------------ Year Wise - Channelwise Definition Check -----------------START------------------------------------------
 
 		UPDATE BVST SET BVST.Schedule_Run =ISNULL(BDCR.Utilised_Run,0),BVST.Allocated_Run = ISNULL(BDCR.Total_Runs,0),
 		BVST.Balance_Run = CASE WHEN BVST.Run_Type = 'U' THEN 1000 WHEN BVST.Run_Type = '' THEN 2000 ELSE (ISNULL(BDCR.Total_Runs,0) - ISNULL(BDCR.Utilised_Run,0)) END
 		FROM #BVScheduleTransaction BVST		
 		INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
-		WHERE IsIgnoreUpdateRun='N' AND BVST.Is_Yearwise_Definition = 'Y'		
+		WHERE IsIgnoreUpdateRun='N' AND BVST.Is_Yearwise_Definition = 'Y'
 		AND CAST(BVST.Schedule_Item_Log_DateTime AS DATE) BETWEEN BDCR.Start_Date AND BDCR.End_Date		
 
-		UPDATE BVST SET BVST.Email_Msg_For = 'Yearwise_Over_Run',BVST.IsException = 'Y'
+		UPDATE BVST SET BVST.Email_Msg_For = 'Yearwise_Channelwise_Over_Run',BVST.IsException = 'Y',BVST.IsIgnoreUpdateRun = 'N'
 		FROM #BVScheduleTransaction BVST 			
 		INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code = BVST.BMS_Deal_Content_Rights_Code
-		WHERE IsIgnoreUpdateRun='N' AND BVST.Is_Yearwise_Definition = 'Y'
-		AND BVST.Balance_Run < 0 
+		WHERE IsIgnoreUpdateRun='N' AND BVST.Is_Yearwise_Definition = 'Y' AND BVST.Run_Definition_Type = 'C'		
+		AND BVST.RowNo > BVST.Balance_Run
+		AND BVST.IsMailSent_ForOnePlatform = 'N'
+		AND CAST(BVST.Schedule_Item_Log_DateTime AS DATE) BETWEEN BDCR.Start_Date AND BDCR.End_Date		
+
+		UPDATE BVST SET BVST.Email_Msg_For = 'Yearwise_Over_Run',BVST.IsException = 'Y',BVST.IsIgnoreUpdateRun = 'N'
+		FROM #BVScheduleTransaction BVST 			
+		INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code = BVST.BMS_Deal_Content_Rights_Code
+		WHERE IsIgnoreUpdateRun='N' AND BVST.Is_Yearwise_Definition = 'Y' AND BVST.Run_Definition_Type <> 'C'
+		AND BVST.RowNo > BVST.Balance_Run
 		AND BVST.IsMailSent_ForOnePlatform = 'N'
 		AND CAST(BVST.Schedule_Item_Log_DateTime AS DATE) BETWEEN BDCR.Start_Date AND BDCR.End_Date		
 
@@ -969,8 +950,8 @@ BEGIN
 		INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
 		INNER JOIN Email_Notification_Msg ENM ON LTRIM(RTRIM(ENM.Email_Msg_For)) COLLATE SQL_Latin1_General_CP1_CI_AS = LTRIM(RTRIM(BVST.Email_Msg_For)) COLLATE SQL_Latin1_General_CP1_CI_AS AND [Type] = 'S'
 		WHERE IsIgnoreUpdateRun='N' AND BVST.Is_Yearwise_Definition = 'Y'
-		AND BVST.Email_Msg_For = 'Yearwise_Over_Run'
-		AND BVST.Balance_Run < 0 AND BVST.IsMailSent_ForOnePlatform = 'N'
+		AND BVST.Email_Msg_For IN ('Yearwise_Channelwise_Over_Run','Yearwise_Over_Run')		
+		AND BVST.IsMailSent_ForOnePlatform = 'N'
 		AND CAST(BVST.Schedule_Item_Log_DateTime AS DATE) BETWEEN BDCR.Start_Date AND BDCR.End_Date		
 
 		----- Insert Email Notification for Yearwise_Over_Run -------------------------------
@@ -978,13 +959,13 @@ BEGIN
 		UPDATE BVST SET BVST.IsMailSent_ForOnePlatform = 'Y'			
 		FROM #BVScheduleTransaction BVST 			
 		INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code = BVST.BMS_Deal_Content_Rights_Code
-		WHERE IsIgnoreUpdateRun='N' AND BVST.Is_Yearwise_Definition = 'Y'
-		AND BVST.Balance_Run < 0 
+		WHERE IsIgnoreUpdateRun='N' AND BVST.Is_Yearwise_Definition = 'Y'		
+		AND BVST.RowNo > BVST.Balance_Run
 		AND BVST.IsMailSent_ForOnePlatform = 'N'
 		AND CAST(BVST.Schedule_Item_Log_DateTime AS DATE) BETWEEN BDCR.Start_Date AND BDCR.End_Date		
 
-		------------------------ Year Wise Definition Check -----------------END------------------------------------------
-
+		------------------------ Year Wise - Channelwise Definition Check -----------------END------------------------------------------
+		
 		------------------------------START ONLY IF Shared, Not Applicable -----------------START--------------------------------
 		-------===============8.3 Send an exception email on OVER_RUN ===============--
 
@@ -997,12 +978,13 @@ BEGIN
 		AND BVST.IsMailSent_ForOnePlatform = 'N'
 		AND CAST(BVST.Schedule_Item_Log_DateTime AS DATE) BETWEEN BDCR.Start_Date AND BDCR.End_Date
 
-		UPDATE BVST SET BVST.Email_Msg_For = 'Total_Over_Run',BVST.IsException = 'Y'			
+		UPDATE BVST SET BVST.Email_Msg_For = 'Total_Over_Run',BVST.IsException = 'Y',BVST.IsIgnoreUpdateRun = 'N'			
 		FROM #BVScheduleTransaction BVST 			
 		INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code = BVST.BMS_Deal_Content_Rights_Code
 		WHERE IsIgnoreUpdateRun='N' AND (BVST.Run_Definition_Type = 'S' OR BVST.Run_Definition_Type = 'N')
 		AND BVST.IsMailSent_ForOnePlatform = 'N'
-		AND BVST.Balance_Run < 0
+		--AND BVST.Balance_Run < 0
+		AND BVST.RowNo > BVST.Balance_Run
 		AND CAST(BVST.Schedule_Item_Log_DateTime AS DATE) BETWEEN BDCR.Start_Date AND BDCR.End_Date
 
 		INSERT INTO Email_Notification_Schedule 
@@ -1020,7 +1002,7 @@ BEGIN
 		INNER JOIN Email_Notification_Msg ENM ON LTRIM(RTRIM(ENM.Email_Msg_For)) COLLATE SQL_Latin1_General_CP1_CI_AS = LTRIM(RTRIM(BVST.Email_Msg_For)) COLLATE SQL_Latin1_General_CP1_CI_AS AND [Type] = 'S'
 		WHERE IsIgnoreUpdateRun='N' AND (BVST.Run_Definition_Type = 'S' OR BVST.Run_Definition_Type = 'N')
 		AND BVST.IsMailSent_ForOnePlatform = 'N'
-		AND BVST.Balance_Run < 0
+		--AND BVST.Balance_Run < 0
 		AND BVST.Email_Msg_For = 'Total_Over_Run'
 		AND CAST(BVST.Schedule_Item_Log_DateTime AS DATE) BETWEEN BDCR.Start_Date AND BDCR.End_Date
 
@@ -1029,7 +1011,8 @@ BEGIN
 		INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code = BVST.BMS_Deal_Content_Rights_Code
 		WHERE IsIgnoreUpdateRun='N' AND (BVST.Run_Definition_Type = 'S' OR BVST.Run_Definition_Type = 'N')
 		AND BVST.IsMailSent_ForOnePlatform = 'N'
-		AND BVST.Balance_Run < 0
+		AND BVST.Email_Msg_For = 'Total_Over_Run'
+		--AND BVST.Balance_Run < 0
 		AND CAST(BVST.Schedule_Item_Log_DateTime AS DATE) BETWEEN BDCR.Start_Date AND BDCR.End_Date
 
 		-------===============8.3 Send an exception email on OVER_RUN ===============--
@@ -1046,12 +1029,13 @@ BEGIN
 		AND BVST.IsMailSent_ForOnePlatform = 'N'
 		AND CAST(BVST.Schedule_Item_Log_DateTime AS DATE) BETWEEN BDCR.Start_Date AND BDCR.End_Date
 
-		UPDATE BVST SET BVST.Email_Msg_For = 'ChannelWise_Over_Run',BVST.IsException = 'Y'			
+		UPDATE BVST SET BVST.Email_Msg_For = 'ChannelWise_Over_Run',BVST.IsException = 'Y',BVST.IsIgnoreUpdateRun = 'N'			
 		FROM #BVScheduleTransaction BVST 			
 		INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code = BVST.BMS_Deal_Content_Rights_Code
 		WHERE IsIgnoreUpdateRun='N' AND (BVST.Run_Definition_Type = 'C' OR BVST.Run_Definition_Type = 'CS' OR BVST.Run_Definition_Type = 'A')
 		AND BVST.IsMailSent_ForOnePlatform = 'N'
-		AND BVST.Balance_Run < 0
+		--AND BVST.Balance_Run < 0
+		AND BVST.RowNo > BVST.Balance_Run
 		AND CAST(BVST.Schedule_Item_Log_DateTime AS DATE) BETWEEN BDCR.Start_Date AND BDCR.End_Date
 
 		INSERT INTO Email_Notification_Schedule 
@@ -1069,7 +1053,7 @@ BEGIN
 		INNER JOIN Email_Notification_Msg ENM ON LTRIM(RTRIM(ENM.Email_Msg_For)) COLLATE SQL_Latin1_General_CP1_CI_AS = LTRIM(RTRIM(BVST.Email_Msg_For)) COLLATE SQL_Latin1_General_CP1_CI_AS AND [Type] = 'S'
 		WHERE IsIgnoreUpdateRun='N' AND (BVST.Run_Definition_Type = 'C' OR BVST.Run_Definition_Type = 'CS' OR BVST.Run_Definition_Type = 'A')
 		AND BVST.IsMailSent_ForOnePlatform = 'N'
-		AND BVST.Balance_Run < 0
+		--AND BVST.Balance_Run < 0
 		AND BVST.Email_Msg_For = 'ChannelWise_Over_Run'
 		AND CAST(BVST.Schedule_Item_Log_DateTime AS DATE) BETWEEN BDCR.Start_Date AND BDCR.End_Date
 
@@ -1078,8 +1062,12 @@ BEGIN
 		INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code = BVST.BMS_Deal_Content_Rights_Code
 		WHERE IsIgnoreUpdateRun='N' AND (BVST.Run_Definition_Type = 'C' OR BVST.Run_Definition_Type = 'CS' OR BVST.Run_Definition_Type = 'A')
 		AND BVST.IsMailSent_ForOnePlatform = 'N'
-		AND BVST.Balance_Run < 0
+		AND BVST.Email_Msg_For = 'ChannelWise_Over_Run'
+		--AND BVST.Balance_Run < 0
 		AND CAST(BVST.Schedule_Item_Log_DateTime AS DATE) BETWEEN BDCR.Start_Date AND BDCR.End_Date
+
+
+		--select * FROM #BVScheduleTransaction
 
 		--===============8.4 Send an exception email on CHANNELWISE_OVER_RUN ===============--
 
@@ -1150,9 +1138,52 @@ BEGIN
 
 		--===============8.5 Send an exception email on INVALID_CHANNEL ===============--		
 
+		---------------------- Update Schedule Count for IsIgnoreUpdateRun ='N' ------------------------------------
+		
+		UPDATE BDCR SET BDCR.Utilised_Run = (ISNULL(BDCR.Utilised_Run,0) + New_Utilised_Run)
+		FROM (
+			SELECT BMS_Deal_Content_Rights_Code, COUNT(*) New_Utilised_Run 
+			FROM #BVScheduleTransaction WHERE IsIgnoreUpdateRun='N'
+			GROUP BY BMS_Deal_Content_Rights_Code
+		) BVST
+		INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code = BVST.BMS_Deal_Content_Rights_Code
+		--WHERE BVST.IsIgnoreUpdateRun='N'
+
+		----------------------Update Schedule Count for Non Channel wise Run definition--------------------------------
+
+		--UPDATE BDCR SET BDCR.Utilised_Run = (ISNULL(BDCR.Utilised_Run,0) + BVST.New_Utilised_Run)
+		--FROM (
+		--	SELECT bvin.Acq_Deal_Run_Code, COUNT(*) New_Utilised_Run 
+		--	FROM #BVScheduleTransaction bvin
+		--	INNER JOIN BMS_Deal_Content_Rights BDCRin ON BDCRin.Acq_Deal_Run_Code = bvin.Acq_Deal_Run_Code AND BDCRin.Is_Active='Y'
+		--	WHERE IsIgnoreUpdateRun='N' AND Run_Definition_Type NOT IN ('C')
+		--	AND CAST(bvin.Schedule_Item_Log_DateTime as Date) BETWEEN BDCRin.Start_Date AND BDCRin.End_Date
+		--	GROUP BY bvin.Acq_Deal_Run_Code, Schedule_Item_Log_DateTime
+		--) BVST
+		--INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.Acq_Deal_Run_Code = BVST.Acq_Deal_Run_Code AND BDCR.IS_Active='Y'
+		--WHERE BDCR.RU_Channel_Code NOT IN (@Channel_Code)
+		
+		
+		UPDATE BDCR SET BDCR.Utilised_Run = (ISNULL(BDCR.Utilised_Run,0) + BVST.New_Utilised_Run)
+		FROM (
+			SELECT bvin.Acq_Deal_Run_Code, bvin.Program_Episode_ID, BDCRin.RU_Channel_Code,BDCRin.Start_Date,BDCRin.End_Date, COUNT(*) New_Utilised_Run
+			FROM #BVScheduleTransaction bvin
+			INNER JOIN BMS_Deal_Content_Rights BDCRin ON BDCRin.Acq_Deal_Run_Code = bvin.Acq_Deal_Run_Code AND bvin.Program_Episode_ID = BDCRin.BMS_Asset_Ref_Key AND BDCRin.Is_Active='Y'
+			WHERE IsIgnoreUpdateRun='N' AND Run_Definition_Type NOT IN ('C')
+				  AND CAST(bvin.Schedule_Item_Log_DateTime as Date) BETWEEN BDCRin.Start_Date AND BDCRin.End_Date	
+			GROUP BY bvin.Acq_Deal_Run_Code,bvin.Program_Episode_ID, BDCRin.RU_Channel_Code,BDCRin.Start_Date,BDCRin.End_Date
+		) BVST		
+		INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.Acq_Deal_Run_Code = BVST.Acq_Deal_Run_Code
+				   AND BDCR.BMS_Asset_Ref_Key = BVST.Program_Episode_ID AND BDCR.RU_Channel_Code = BVST.RU_Channel_Code AND BDCR.IS_Active='Y'
+				   AND BDCR.Start_Date=BVST.Start_Date AND BDCR.End_Date=BVST.End_Date
+		WHERE BDCR.RU_Channel_Code NOT IN (@Channel_Code)
+		
+		----------------------Update Schedule Count for Non Channel wise Run definition--------------------------------
+
+
 		-- Update No_OF_Runs_Sched of Acq_Deal_Run----------------------
 
-		UPDATE ADR SET ADR.No_Of_Runs_Sched = T2.Run_Count
+		UPDATE ADR SET ADR.No_Of_Runs_Sched = T2.Run_Count		
 		FROM Acq_Deal_Run ADR
 		INNER JOIN
 		(
@@ -1171,8 +1202,8 @@ BEGIN
 		FROM Acq_Deal_Run ADR
 		INNER JOIN
 		(
-			--SELECT SUM(ISNULL(BDRC.Utilised_Run,0)) Run_Count,BDRC.Acq_Deal_Run_Code
-			SELECT MAX(ISNULL(BDRC.Utilised_Run,0)) Run_Count,BDRC.Acq_Deal_Run_Code
+			SELECT SUM(ISNULL(BDRC.Utilised_Run,0)) Run_Count,BDRC.Acq_Deal_Run_Code
+			--SELECT MAX(ISNULL(BDRC.Utilised_Run,0)) Run_Count,BDRC.Acq_Deal_Run_Code
 			FROM #BVScheduleTransaction bst 
 			INNER JOIN BMS_Deal_Content_Rights BDRC ON BDRC.BMS_Deal_Content_Rights_Code = bst.BMS_Deal_Content_Rights_Code 
 			--INNER JOIN Acq_Deal_Run ADR ON ADR.Acq_Deal_Run_Code = BDRC.Acq_Deal_Run_Code AND ADR.Run_Definition_Type = 'C'
@@ -1201,8 +1232,8 @@ BEGIN
 		FROM Acq_Deal_Run_Channel ADRC
 		INNER JOIN
 		(
-			--SELECT SUM(ISNULL(BDRC.Utilised_Run,0)) Run_Count,BDRC.Acq_Deal_Run_Code,RU_Channel_Code
-			SELECT MAX(ISNULL(BDRC.Utilised_Run,0)) Run_Count,BDRC.Acq_Deal_Run_Code,RU_Channel_Code
+			SELECT SUM(ISNULL(BDRC.Utilised_Run,0)) Run_Count,BDRC.Acq_Deal_Run_Code,RU_Channel_Code
+			--SELECT MAX(ISNULL(BDRC.Utilised_Run,0)) Run_Count,BDRC.Acq_Deal_Run_Code,RU_Channel_Code
 			FROM #BVScheduleTransaction bst 
 			INNER JOIN BMS_Deal_Content_Rights BDRC ON BDRC.BMS_Deal_Content_Rights_Code = bst.BMS_Deal_Content_Rights_Code 
 			--INNER JOIN Acq_Deal_Run ADR ON ADR.Acq_Deal_Run_Code = BDRC.Acq_Deal_Run_Code AND ADR.Run_Definition_Type = 'C'
@@ -1231,8 +1262,8 @@ BEGIN
 		FROM Acq_Deal_Run_Yearwise_Run ADRY
 		INNER JOIN
 		(
-			--SELECT SUM(ISNULL(BDRC.Utilised_Run,0)) Run_Count,BDRC.Acq_Deal_Run_Code,BDRC.Start_Date,BDRC.End_Date
-			SELECT MAX(ISNULL(BDRC.Utilised_Run,0)) Run_Count,BDRC.Acq_Deal_Run_Code,BDRC.Start_Date,BDRC.End_Date
+			SELECT SUM(ISNULL(BDRC.Utilised_Run,0)) Run_Count,BDRC.Acq_Deal_Run_Code,BDRC.Start_Date,BDRC.End_Date
+			--SELECT MAX(ISNULL(BDRC.Utilised_Run,0)) Run_Count,BDRC.Acq_Deal_Run_Code,BDRC.Start_Date,BDRC.End_Date
 			FROM #BVScheduleTransaction bst 
 			INNER JOIN BMS_Deal_Content_Rights BDRC ON BDRC.BMS_Deal_Content_Rights_Code = bst.BMS_Deal_Content_Rights_Code 
 			--INNER JOIN Acq_Deal_Run ADR ON ADR.Acq_Deal_Run_Code = BDRC.Acq_Deal_Run_Code AND ADR.Run_Definition_Type = 'C'
@@ -1244,10 +1275,7 @@ BEGIN
 		UPDATE BV SET BV.IsProcessed = 'Y',IsIgnore = BVST.IsIgnoreUpdateRun,BV.IsException = CASE WHEN BVST.IsException = 'Y' THEN 'Y' ELSE BV.IsException END,
 		BV.IsPrime = BVST.IsPrime,BV.BMS_Deal_Content_Rights_Code = BVST.BMS_Deal_Content_Rights_Code,BV.Acq_Deal_Run_Code = BVST.Acq_Deal_Run_Code
 		FROM BV_Schedule_Transaction BV 			
-		INNER JOIN #BVScheduleTransaction BVST ON BVST.BV_Schedule_Transaction_Code = BV.BV_Schedule_Transaction_Code
-		--INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
-		--WHERE IsIgnoreUpdateRun='N'
-		--AND CAST(BVST.Schedule_Item_Log_DateTime AS DATE) BETWEEN BDCR.Start_Date AND BDCR.End_Date
+		INNER JOIN #BVScheduleTransaction BVST ON BVST.BV_Schedule_Transaction_Code = BV.BV_Schedule_Transaction_Code		
 
 		UPDATE UF SET UF.Err_YN = 'Y'			
 		FROM Upload_Files UF 			

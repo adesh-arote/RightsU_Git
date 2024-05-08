@@ -10,9 +10,11 @@ namespace UTO_Notification.DAL
 
     public class ProcedureRepositories : ProcRepository
     {
+        public ProcedureRepositories(string connectionStr) : base(connectionStr) { }
+
         HttpResponses httpResponses = new HttpResponses();
 
-        public IEnumerable<USPInsertNotification> USPInsertNotification(string EventCategory, string NotificationType, string TO, string CC, string BCC, string Subject, string HTMLMessage, string TextMessage, string TransType, long TransCode, string ScheduleDateTime, long UserCode)
+        public IEnumerable<USPInsertNotification> USPInsertNotification(string EventCategory, string NotificationType, string TO, string CC, string BCC, string Subject, string HTMLMessage, string TextMessage, string TransType, long TransCode, string ScheduleDateTime, long UserCode, string ClientName, long ForeignId)
         {
             var param = new DynamicParameters();
             param.Add("@EventCategory", EventCategory);
@@ -27,8 +29,31 @@ namespace UTO_Notification.DAL
             param.Add("@TransCode", TransCode);
             param.Add("@ScheduleDateTime", ScheduleDateTime);
             param.Add("@UserCode", UserCode);
-            
+            param.Add("@ClientName", ClientName);
+            param.Add("@ForeignId", ForeignId);
+
             return base.ExecuteSQLProcedure<USPInsertNotification>("USPInsertNotification", param);
+        }
+
+        public IEnumerable<USPInsertNotification> USPInsertNotification_Teams(string EventCategory, string NotificationType, string TO, string CC, string BCC, string Subject, string HTMLMessage, string TextMessage, string TransType, long TransCode, string ScheduleDateTime, long UserCode, string ClientName, long ForeignId)
+        {
+            var param = new DynamicParameters();
+            param.Add("@EventCategory", EventCategory);
+            param.Add("@NotificationType", NotificationType);
+            param.Add("@TO", TO);
+            param.Add("@CC", CC);
+            param.Add("@BCC", BCC);
+            param.Add("@Subject", Subject);
+            param.Add("@HTMLMessage", HTMLMessage);
+            param.Add("@TextMessage", TextMessage);
+            param.Add("@TransType", TransType);
+            param.Add("@TransCode", TransCode);
+            param.Add("@ScheduleDateTime", ScheduleDateTime);
+            param.Add("@UserCode", UserCode);
+            param.Add("@ClientName", ClientName);
+            param.Add("@ForeignId", ForeignId);
+
+            return base.ExecuteSQLProcedure<USPInsertNotification>("USPInsertNotification_Teams", param);
         }
 
 

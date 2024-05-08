@@ -12,9 +12,9 @@ namespace UTO_Notification.DAL
     {
         private static string ConnectionName;
 
-        public DBConnection()
+        public DBConnection(string conStr)
         {
-            ConnectionName = ConfigurationManager.ConnectionStrings[1].Name; //"DTAppCon";
+            ConnectionName = conStr; //ConfigurationManager.ConnectionStrings[1].Name; //"DTAppCon";
         }
         public SqlConnection Connection()
         {

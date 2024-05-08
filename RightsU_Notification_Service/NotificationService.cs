@@ -95,6 +95,8 @@ namespace RightsU_Notification_Service
                 var result = (dynamic)null;
                 List<Notifications> lstNotification = context.Notifications.Where(x => x.API_Status == "E").ToList();
 
+                string strClientName = context.System_Parameter.Where(x => x.Parameter_Name == "Notification_ClientName").Select(x => x.Parameter_Value).FirstOrDefault();
+
                 if (lstNotification.Count > 0)
                 {
                     foreach (var x in lstNotification)
@@ -118,7 +120,9 @@ namespace RightsU_Notification_Service
                                 TransType = x.TransType,
                                 TransCode = x.TransCode,
                                 ScheduleDateTime = x.ScheduleDateTime,
-                                UserCode = x.UserCode
+                                UserCode = x.UserCode,
+                                ClientName = strClientName,
+                                ForeignId = x.NotificationsCode
                             };
 
                             if (x.NoOfRetry >= Max_Retry_Limit)
@@ -142,6 +146,8 @@ namespace RightsU_Notification_Service
             {
                 var result = (dynamic)null;
                 List<Notifications> lstNotification = context.Notifications.Where(x => x.API_Status == "P").ToList();
+
+                string strClientName = context.System_Parameter.Where(x => x.Parameter_Name == "Notification_ClientName").Select(x => x.Parameter_Value).FirstOrDefault();
 
                 Error.WriteLog("List Found - " + lstNotification.Count().ToString(), includeTime: true, addSeperater: true);
 
@@ -168,7 +174,11 @@ namespace RightsU_Notification_Service
                                 TransType = x.TransType,
                                 TransCode = x.TransCode,
                                 ScheduleDateTime = x.ScheduleDateTime,
-                                UserCode = x.UserCode
+                                UserCode = x.UserCode,
+                                ClientName = strClientName,
+                                ForeignId = x.NotificationsCode
+
+
                             };
 
                             try

@@ -41,6 +41,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Notifications\Email.cs" />
+    <Compile Include="Notifications\Notification.cs" />
+    <Compile Include="Notifications\ShortMessage.cs" />
+    <Compile Include="Notifications\Teams.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\USPService.cs" />
   </ItemGroup>
