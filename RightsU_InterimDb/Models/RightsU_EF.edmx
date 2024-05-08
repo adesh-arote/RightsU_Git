@@ -3192,6 +3192,14 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
           <Property Name="Event_Platform_Code" Type="int" />
           <Property Name="Event_Template_Type" Type="char" MaxLength="1" />
         </EntityType>
+        <EntityType Name="Email_Config_Keys">
+          <Key>
+            <PropertyRef Name="Email_Config_Keys_Code" />
+          </Key>
+          <Property Name="Email_Config_Keys_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Email_Config_Code" Type="int" />
+          <Property Name="Event_Template_Keys_Code" Type="int" />
+        </EntityType>
         <EntityType Name="Email_Config_Template">
           <Key>
             <PropertyRef Name="Email_Config_Template_Code" />
@@ -9914,6 +9922,30 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Email_Config_Keys_Email_Config">
+          <End Role="Email_Config" Type="Self.Email_Config" Multiplicity="0..1" />
+          <End Role="Email_Config_Keys" Type="Self.Email_Config_Keys" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Email_Config">
+              <PropertyRef Name="Email_Config_Code" />
+            </Principal>
+            <Dependent Role="Email_Config_Keys">
+              <PropertyRef Name="Email_Config_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Email_Config_Keys_Event_Template_Keys">
+          <End Role="Event_Template_Keys" Type="Self.Event_Template_Keys" Multiplicity="0..1" />
+          <End Role="Email_Config_Keys" Type="Self.Email_Config_Keys" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Event_Template_Keys">
+              <PropertyRef Name="Event_Template_Keys_Code" />
+            </Principal>
+            <Dependent Role="Email_Config_Keys">
+              <PropertyRef Name="Event_Template_Keys_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Email_Notification_Log_Email_Config">
           <End Role="Email_Config" Type="Self.Email_Config" Multiplicity="0..1" />
           <End Role="Email_Notification_Log" Type="Self.Email_Notification_Log" Multiplicity="*" />
@@ -16324,6 +16356,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="Email_Config_Detail" EntityType="Self.Email_Config_Detail" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Email_Config_Detail_Alert" EntityType="Self.Email_Config_Detail_Alert" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Email_Config_Detail_User" EntityType="Self.Email_Config_Detail_User" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Email_Config_Keys" EntityType="Self.Email_Config_Keys" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Email_Config_Template" EntityType="Self.Email_Config_Template" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Email_Notification_AsRun" EntityType="Self.Email_Notification_AsRun" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Email_Notification_AsRun_Shows" EntityType="Self.Email_Notification_AsRun_Shows" Schema="dbo" store:Type="Tables" />
@@ -18236,6 +18269,14 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <AssociationSet Name="FK_Email_Config_Detail_User_Email_Config_Detail" Association="Self.FK_Email_Config_Detail_User_Email_Config_Detail">
             <End Role="Email_Config_Detail" EntitySet="Email_Config_Detail" />
             <End Role="Email_Config_Detail_User" EntitySet="Email_Config_Detail_User" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Email_Config_Keys_Email_Config" Association="Self.FK_Email_Config_Keys_Email_Config">
+            <End Role="Email_Config" EntitySet="Email_Config" />
+            <End Role="Email_Config_Keys" EntitySet="Email_Config_Keys" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Email_Config_Keys_Event_Template_Keys" Association="Self.FK_Email_Config_Keys_Event_Template_Keys">
+            <End Role="Event_Template_Keys" EntitySet="Event_Template_Keys" />
+            <End Role="Email_Config_Keys" EntitySet="Email_Config_Keys" />
           </AssociationSet>
           <AssociationSet Name="FK_Email_Notification_Log_Email_Config" Association="Self.FK_Email_Notification_Log_Email_Config">
             <End Role="Email_Config" EntitySet="Email_Config" />
@@ -24073,6 +24114,15 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="Event_Template_Keys" EntityType="RightsU_NeoModel.Event_Template_Keys" />
           <EntitySet Name="Event_Template" EntityType="RightsU_NeoModel.Event_Template" />
           <EntitySet Name="Notifications" EntityType="RightsU_NeoModel.Notifications" />
+          <EntitySet Name="Email_Config_Keys" EntityType="RightsU_NeoModel.Email_Config_Keys" />
+          <AssociationSet Name="FK_Email_Config_Keys_Email_Config" Association="RightsU_NeoModel.FK_Email_Config_Keys_Email_Config">
+            <End Role="Email_Config" EntitySet="Email_Config" />
+            <End Role="Email_Config_Keys" EntitySet="Email_Config_Keys" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Email_Config_Keys_Event_Template_Keys" Association="RightsU_NeoModel.FK_Email_Config_Keys_Event_Template_Keys">
+            <End Role="Event_Template_Keys" EntitySet="Event_Template_Keys" />
+            <End Role="Email_Config_Keys" EntitySet="Email_Config_Keys" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -35651,6 +35701,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Last_Updated_By" Type="Int32" />
           <Property Name="Last_Updated_On" Type="DateTime" Precision="3" />
           <Property Name="Event_Type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <NavigationProperty Name="Email_Config_Keys" Relationship="RightsU_NeoModel.FK_Email_Config_Keys_Email_Config" FromRole="Email_Config" ToRole="Email_Config_Keys" />
         </EntityType>
         <EntityType Name="Email_Config_Detail">
           <Key>
@@ -41249,6 +41300,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Event_Template_Keys_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Key_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Is_Active" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <NavigationProperty Name="Email_Config_Keys" Relationship="RightsU_NeoModel.FK_Email_Config_Keys_Event_Template_Keys" FromRole="Event_Template_Keys" ToRole="Email_Config_Keys" />
         </EntityType>
         <EntityType Name="Event_Template">
           <Key>
@@ -41304,6 +41356,40 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="IsReminderMail" Type="Boolean" Nullable="false" />
           <Property Name="Service_Response" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
+        <EntityType Name="Email_Config_Keys">
+          <Key>
+            <PropertyRef Name="Email_Config_Keys_Code" />
+          </Key>
+          <Property Name="Email_Config_Keys_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Email_Config_Code" Type="Int32" />
+          <Property Name="Event_Template_Keys_Code" Type="Int32" />
+          <NavigationProperty Name="Email_Config" Relationship="RightsU_NeoModel.FK_Email_Config_Keys_Email_Config" FromRole="Email_Config_Keys" ToRole="Email_Config" />
+          <NavigationProperty Name="Event_Template_Keys" Relationship="RightsU_NeoModel.FK_Email_Config_Keys_Event_Template_Keys" FromRole="Email_Config_Keys" ToRole="Event_Template_Keys" />
+        </EntityType>
+        <Association Name="FK_Email_Config_Keys_Email_Config">
+          <End Type="RightsU_NeoModel.Email_Config" Role="Email_Config" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Email_Config_Keys" Role="Email_Config_Keys" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Email_Config">
+              <PropertyRef Name="Email_Config_Code" />
+            </Principal>
+            <Dependent Role="Email_Config_Keys">
+              <PropertyRef Name="Email_Config_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Email_Config_Keys_Event_Template_Keys">
+          <End Type="RightsU_NeoModel.Event_Template_Keys" Role="Event_Template_Keys" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Email_Config_Keys" Role="Email_Config_Keys" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Event_Template_Keys">
+              <PropertyRef Name="Event_Template_Keys_Code" />
+            </Principal>
+            <Dependent Role="Email_Config_Keys">
+              <PropertyRef Name="Event_Template_Keys_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -52130,6 +52216,15 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="EventCategory" ColumnName="EventCategory" />
                 <ScalarProperty Name="NotificationType" ColumnName="NotificationType" />
                 <ScalarProperty Name="NotificationsCode" ColumnName="NotificationsCode" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Email_Config_Keys">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Email_Config_Keys">
+              <MappingFragment StoreEntitySet="Email_Config_Keys">
+                <ScalarProperty Name="Event_Template_Keys_Code" ColumnName="Event_Template_Keys_Code" />
+                <ScalarProperty Name="Email_Config_Code" ColumnName="Email_Config_Code" />
+                <ScalarProperty Name="Email_Config_Keys_Code" ColumnName="Email_Config_Keys_Code" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

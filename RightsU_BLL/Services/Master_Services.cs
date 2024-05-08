@@ -9665,4 +9665,24 @@ namespace RightsU_BLL
         }
     }
     #endregion
+
+    #region  --- Email_Config_Keys
+    public class Email_Config_Keys_Service 
+    {
+        private readonly Email_Config_Keys_Repository objRepository;
+
+        public Email_Config_Keys_Service(string Connection_Str)
+        {
+            this.objRepository = new Email_Config_Keys_Repository(Connection_Str);
+        }
+        public IQueryable<Email_Config_Keys> SearchFor(Expression<Func<Email_Config_Keys, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+        public Email_Config_Keys GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }  
+    }
+    #endregion
 }

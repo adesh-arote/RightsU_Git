@@ -607,6 +607,9 @@
     <Compile Include="Models\Email_Config_Detail_User.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Email_Config_Keys.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Email_Config_Template.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>

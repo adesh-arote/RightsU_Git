@@ -12,17 +12,13 @@ namespace RightsU_InterimDb.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Event_Template_Keys
+    public partial class Email_Config_Keys
     {
-        public Event_Template_Keys()
-        {
-            this.Email_Config_Keys = new HashSet<Email_Config_Keys>();
-        }
+    	public State EntityState { get; set; }    public int Email_Config_Keys_Code { get; set; }
+    	    public Nullable<int> Email_Config_Code { get; set; }
+    	    public Nullable<int> Event_Template_Keys_Code { get; set; }
     
-    	public State EntityState { get; set; }    public int Event_Template_Keys_Code { get; set; }
-    	    public string Key_Name { get; set; }
-    	    public string Is_Active { get; set; }
-    
-        public virtual ICollection<Email_Config_Keys> Email_Config_Keys { get; set; }
+        public virtual Email_Config Email_Config { get; set; }
+        public virtual Event_Template_Keys Event_Template_Keys { get; set; }
     }
 }
