@@ -161,11 +161,11 @@ namespace UTO_Notification.DAL
             return ExecuteSQLProcedure<USPEventCategoryMsgCount>("USPEventCategoryMsgCount", param);
         }
 
-        public IEnumerable<USPInsertNotificationType> USPInsertNotificationType(string NotificationType, string SystemName, string PlatformName, string Credentials, string IsActive)
+        public IEnumerable<USPInsertNotificationType> USPInsertNotificationType(string NotificationType, string ClientName, string PlatformName, string Credentials, string IsActive)
         {
             var param = new DynamicParameters();
             param.Add("@NotificationType", NotificationType);
-            param.Add("@SystemName", SystemName);
+            param.Add("@ClientName", ClientName);
             param.Add("@PlatformName", PlatformName);
             param.Add("@Credentials", Credentials);
             param.Add("@IsActive", IsActive);
