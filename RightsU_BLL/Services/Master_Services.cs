@@ -9665,4 +9665,85 @@ namespace RightsU_BLL
         }
     }
     #endregion
+
+    #region  --- Email_Config_Keys
+    public class Email_Config_Keys_Service 
+    {
+        private readonly Email_Config_Keys_Repository objRepository;
+
+        public Email_Config_Keys_Service(string Connection_Str)
+        {
+            this.objRepository = new Email_Config_Keys_Repository(Connection_Str);
+        }
+        public IQueryable<Email_Config_Keys> SearchFor(Expression<Func<Email_Config_Keys, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+        public Email_Config_Keys GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }  
+    }
+    #endregion
+
+
+    #region  --- Notification
+    public class Notification_Service : BusinessLogic<Notifications>
+    {
+        private readonly Notification_Repository objRepository;
+
+        public Notification_Service(string Connection_Str)
+        {
+            this.objRepository = new Notification_Repository(Connection_Str);
+        }
+        public IQueryable<Notifications> SearchFor(Expression<Func<Notifications, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+        public Notifications GetById(long id)
+        {
+            return objRepository.GetById(id);
+        }
+        public bool Save(Notifications objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+        public bool Update(Notifications objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+        public bool Delete(Notifications objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+        public override bool Validate(Notifications objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(Notifications objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        public override bool ValidateDelete(Notifications objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+        private bool ValidateDuplicate(Notifications objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.NotificationType == objToValidate.NotificationType && s.NotificationsCode != objToValidate.NotificationsCode).Count() > 0)
+            {
+                resultSet = "Event Notification is already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+
+    }
+    #endregion
+
+
 }

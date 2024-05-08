@@ -7,14 +7,14 @@ BEGIN
 --@AL_Recommendation_Code INT = 4130,
 --@AL_Vendor_Rule_Code INT = 19
 --Select top 1 AL_Vendor_Rule_Code from AL_Recommendation_Content WHERE Al_Recommendation_Code = 1450--@AL_Recommendation_Code
-	
-	SELECT DISTINCT alrc.AL_Recommendation_Code, vwal.Title_Content_Code , ISNULL(t.Title_Name,'') AS Title_Name,ISNULL(vwal.Year_Of_Production,'') AS YOR, ISNULL(vwale_mpaa.Column_Value, '') AS MPAARating,
+	SELECT * FROM
+	(SELECT DISTINCT alrc.AL_Recommendation_Code, vwal.Title_Content_Code , ISNULL(t.Title_Name,'') AS Title_Name,ISNULL(vwal.Year_Of_Production,'') AS YOR, ISNULL(vwale_mpaa.Column_Value, '') AS MPAARating,
 	ISNULL(vwal.Genre,'') AS Genre, ISNULL(vwale_stud.Column_Value, '') AS Studio, ISNULL(vwale_seas.Column_Value, '') AS Season,
 	(Select COUNT(tc.Episode_No) FROM Title_Content tc WHERE tc.Title_Code = t.Title_Code) AS TotalNumberOfEpisodes, 
 	ISNULL(vwal.Episode_Title,'') AS Episode_Name, ISNULL(vwal.Episode_No,0) AS Episode_Number,
 	ISNULL(vwal.Runtime,0) AS Episode_Duration, ISNULL(vwal.Episode_Synopsis,'') AS Episode_Synopsis, ISNULL(vwal.Synopsis,'') AS Synopsis, ISNULL(vwal.Language_Name,'') AS Title_Language,
 	ISNULL(vwale_sub.Column_Value,'') AS Subtitles, ISNULL(vwal.Runtime,'') AS Duration, ISNULL(vwal.Director,'') AS Director, ISNULL(vwal.Star_Cast,'') AS Cast,
-	ISNULL(vwale_rat.Column_Value, '') AS IMDB_Rating, '' AS GeneralRemarks, alrc.Content_Type, alrc.Content_Status 
+	ISNULL(vwale_rat.Column_Value, '') AS IMDB_Rating, '' AS GeneralRemarks, alrc.Content_Type, alrc.Content_Status, alrc.AL_Recommendation_Content_Code 
 	FROM AL_Proposal alp
 	INNER JOIN AL_Recommendation  alr ON alp.AL_Proposal_Code = alr.AL_Proposal_Code
 	INNER JOIN AL_Recommendation_Content alrc ON alrc.AL_Recommendation_Code = alrc.AL_Recommendation_Code 
@@ -31,6 +31,6 @@ BEGIN
 	LEFT JOIN VWALTitleRecomExt vwale_mpaa ON vwale_mpaa.Record_Code = t.Title_Code AND vwale_mpaa.Table_Name = 'TITLE' AND vwale_mpaa.Columns_Code = 41
 	LEFT JOIN VWALTitleRecomExt vwale_stud ON vwale_stud.Record_Code = t.Title_Code AND vwale_stud.Table_Name = 'TITLE' AND vwale_stud.Columns_Code = 32
 	LEFT JOIN VWALTitleRecomExt vwale_seas ON vwale_seas.Record_Code = t.Title_Code AND vwale_seas.Table_Name = 'TITLE' AND vwale_seas.Columns_Code = 31
-	WHERE alrc.AL_Recommendation_Code = @AL_Recommendation_Code AND alrc.AL_Vendor_Rule_Code = @AL_Vendor_Rule_Code
-
+	WHERE alrc.AL_Recommendation_Code = @AL_Recommendation_Code AND alrc.AL_Vendor_Rule_Code = @AL_Vendor_Rule_Code) AS TT
+	ORDER BY TT.AL_Recommendation_Content_Code ASC
 END

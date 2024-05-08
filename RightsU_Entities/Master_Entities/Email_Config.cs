@@ -17,6 +17,7 @@ namespace RightsU_Entities
         public Email_Config()
         {
             this.Email_Config_Detail = new HashSet<Email_Config_Detail>();
+            this.Email_Config_Keys = new HashSet<Email_Config_Keys>();
         }
     
     	public State EntityState { get; set; }
@@ -40,5 +41,6 @@ namespace RightsU_Entities
         public string Event_Type { get; set; }
         public virtual ICollection<Email_Config_Detail> Email_Config_Detail { get; set; }
         public virtual ICollection<Email_Notification_Log> Email_Notification_Log { get; set; }
+        public virtual ICollection<Email_Config_Keys> Email_Config_Keys { get; set; }
     }
 }

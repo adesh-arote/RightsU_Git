@@ -18,6 +18,7 @@ namespace RightsU_InterimDb.Models
         {
             this.Email_Config_Detail = new HashSet<Email_Config_Detail>();
             this.Email_Notification_Log = new HashSet<Email_Notification_Log>();
+            this.Email_Config_Keys = new HashSet<Email_Config_Keys>();
         }
     
     	public State EntityState { get; set; }    public int Email_Config_Code { get; set; }
@@ -38,5 +39,6 @@ namespace RightsU_InterimDb.Models
     
         public virtual ICollection<Email_Config_Detail> Email_Config_Detail { get; set; }
         public virtual ICollection<Email_Notification_Log> Email_Notification_Log { get; set; }
+        public virtual ICollection<Email_Config_Keys> Email_Config_Keys { get; set; }
     }
 }

@@ -5,21 +5,6 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="RightsU_Plus_TestingModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-        <EntityType Name="Event_Platform">
-          <Key>
-            <PropertyRef Name="Event_Platform_Code" />
-          </Key>
-          <Property Name="Event_Platform_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Event_Platform_Name" Type="varchar" MaxLength="100" />
-          <Property Name="Short_Code" Type="varchar" MaxLength="20" />
-          <Property Name="Credentials" Type="varchar(max)" />
-          <Property Name="Is_Active" Type="char" MaxLength="1" />
-          <Property Name="Inserted_By" Type="int" />
-          <Property Name="Inserted_On" Type="datetime" />
-          <Property Name="Last_UpDated_Time" Type="datetime" />
-          <Property Name="Last_Action_By" Type="int" />
-          <Property Name="Lock_Time" Type="datetime" />
-        </EntityType>
         <EntityType Name="Notifications">
           <Key>
             <PropertyRef Name="NotificationsCode" />
@@ -52,41 +37,39 @@
           <Property Name="IsAutoEscalated" Type="bit" Nullable="false" />
           <Property Name="IsReminderMail" Type="bit" Nullable="false" />
           <Property Name="Service_Response" Type="nvarchar(max)" />
-          <Property Name="Event_Platform_Code" Type="int" />
         </EntityType>
-        <Association Name="FK__Notificat__Event__516845DB">
-          <End Role="Event_Platform" Type="Self.Event_Platform" Multiplicity="0..1" />
-          <End Role="Notifications" Type="Self.Notifications" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Event_Platform">
-              <PropertyRef Name="Event_Platform_Code" />
-            </Principal>
-            <Dependent Role="Notifications">
-              <PropertyRef Name="Event_Platform_Code" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
+        <EntityType Name="System_Parameter">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Parameter_Name" Type="varchar" MaxLength="1000" />
+          <Property Name="Parameter_Value" Type="varchar" MaxLength="1000" />
+          <Property Name="Inserted_On" Type="datetime" />
+          <Property Name="Inserted_By" Type="int" />
+          <Property Name="Lock_Time" Type="datetime" />
+          <Property Name="Last_Updated_Time" Type="datetime" />
+          <Property Name="Last_Action_By" Type="int" />
+          <Property Name="Channel_Code" Type="int" />
+          <Property Name="Type" Type="char" MaxLength="1" />
+          <Property Name="IsActive" Type="char" MaxLength="1" />
+          <Property Name="Description" Type="nvarchar" MaxLength="4000" />
+          <Property Name="IS_System_Admin" Type="char" MaxLength="1" />
+          <Property Name="Client_Name" Type="nvarchar(max)" />
+        </EntityType>
         <EntityContainer Name="RightsU_Plus_TestingModelStoreContainer">
-          <EntitySet Name="Event_Platform" EntityType="Self.Event_Platform" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Notifications" EntityType="Self.Notifications" Schema="dbo" store:Type="Tables" />
-          <AssociationSet Name="FK__Notificat__Event__516845DB" Association="Self.FK__Notificat__Event__516845DB">
-            <End Role="Event_Platform" EntitySet="Event_Platform" />
-            <End Role="Notifications" EntitySet="Notifications" />
-          </AssociationSet>
+          <EntitySet Name="System_Parameter" EntityType="Self.System_Parameter" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="RightsU_Plus_TestingModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityContainer Name="RightsU_Plus_Entities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="Notifications" EntityType="RightsU_Plus_TestingModel.Notification" />
-          <EntitySet Name="Event_Platform" EntityType="RightsU_Plus_TestingModel.Event_Platform" />
-          <AssociationSet Name="FK__Notificat__Event__516845DB" Association="RightsU_Plus_TestingModel.FK__Notificat__Event__516845DB">
-            <End Role="Event_Platform" EntitySet="Event_Platform" />
-            <End Role="Notification" EntitySet="Notifications" />
-          </AssociationSet>
+          <EntitySet Name="Notifications" EntityType="RightsU_Plus_TestingModel.Notifications" />
+          <EntitySet Name="System_Parameter" EntityType="RightsU_Plus_TestingModel.System_Parameter" />
         </EntityContainer>
-        <EntityType Name="Notification">
+        <EntityType Name="Notifications">
           <Key>
             <PropertyRef Name="NotificationsCode" />
           </Key>
@@ -118,37 +101,26 @@
           <Property Name="IsAutoEscalated" Type="Boolean" Nullable="false" />
           <Property Name="IsReminderMail" Type="Boolean" Nullable="false" />
           <Property Name="Service_Response" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Event_Platform_Code" Type="Int32" />
-          <NavigationProperty Name="Event_Platform" Relationship="RightsU_Plus_TestingModel.FK__Notificat__Event__516845DB" FromRole="Notification" ToRole="Event_Platform" />
         </EntityType>
-        <EntityType Name="Event_Platform">
+        <EntityType Name="System_Parameter">
           <Key>
-            <PropertyRef Name="Event_Platform_Code" />
+            <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Event_Platform_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Event_Platform_Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Short_Code" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="Credentials" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="Is_Active" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
-          <Property Name="Inserted_By" Type="Int32" />
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Parameter_Name" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="Parameter_Value" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
           <Property Name="Inserted_On" Type="DateTime" Precision="3" />
-          <Property Name="Last_UpDated_Time" Type="DateTime" Precision="3" />
-          <Property Name="Last_Action_By" Type="Int32" />
+          <Property Name="Inserted_By" Type="Int32" />
           <Property Name="Lock_Time" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="Notifications" Relationship="RightsU_Plus_TestingModel.FK__Notificat__Event__516845DB" FromRole="Event_Platform" ToRole="Notification" />
+          <Property Name="Last_Updated_Time" Type="DateTime" Precision="3" />
+          <Property Name="Last_Action_By" Type="Int32" />
+          <Property Name="Channel_Code" Type="Int32" />
+          <Property Name="Type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="IsActive" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Description" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
+          <Property Name="IS_System_Admin" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Client_Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
-        <Association Name="FK__Notificat__Event__516845DB">
-          <End Type="RightsU_Plus_TestingModel.Event_Platform" Role="Event_Platform" Multiplicity="0..1" />
-          <End Type="RightsU_Plus_TestingModel.Notification" Role="Notification" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Event_Platform">
-              <PropertyRef Name="Event_Platform_Code" />
-            </Principal>
-            <Dependent Role="Notification">
-              <PropertyRef Name="Event_Platform_Code" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -156,9 +128,8 @@
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="RightsU_Plus_TestingModelStoreContainer" CdmEntityContainer="RightsU_Plus_Entities">
           <EntitySetMapping Name="Notifications">
-            <EntityTypeMapping TypeName="RightsU_Plus_TestingModel.Notification">
+            <EntityTypeMapping TypeName="RightsU_Plus_TestingModel.Notifications">
               <MappingFragment StoreEntitySet="Notifications">
-                <ScalarProperty Name="Event_Platform_Code" ColumnName="Event_Platform_Code" />
                 <ScalarProperty Name="Service_Response" ColumnName="Service_Response" />
                 <ScalarProperty Name="IsReminderMail" ColumnName="IsReminderMail" />
                 <ScalarProperty Name="IsAutoEscalated" ColumnName="IsAutoEscalated" />
@@ -190,19 +161,23 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Event_Platform">
-            <EntityTypeMapping TypeName="RightsU_Plus_TestingModel.Event_Platform">
-              <MappingFragment StoreEntitySet="Event_Platform">
-                <ScalarProperty Name="Lock_Time" ColumnName="Lock_Time" />
+          <EntitySetMapping Name="System_Parameter">
+            <EntityTypeMapping TypeName="RightsU_Plus_TestingModel.System_Parameter">
+              <MappingFragment StoreEntitySet="System_Parameter">
+                <ScalarProperty Name="Client_Name" ColumnName="Client_Name" />
+                <ScalarProperty Name="IS_System_Admin" ColumnName="IS_System_Admin" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="Channel_Code" ColumnName="Channel_Code" />
                 <ScalarProperty Name="Last_Action_By" ColumnName="Last_Action_By" />
-                <ScalarProperty Name="Last_UpDated_Time" ColumnName="Last_UpDated_Time" />
-                <ScalarProperty Name="Inserted_On" ColumnName="Inserted_On" />
+                <ScalarProperty Name="Last_Updated_Time" ColumnName="Last_Updated_Time" />
+                <ScalarProperty Name="Lock_Time" ColumnName="Lock_Time" />
                 <ScalarProperty Name="Inserted_By" ColumnName="Inserted_By" />
-                <ScalarProperty Name="Is_Active" ColumnName="Is_Active" />
-                <ScalarProperty Name="Credentials" ColumnName="Credentials" />
-                <ScalarProperty Name="Short_Code" ColumnName="Short_Code" />
-                <ScalarProperty Name="Event_Platform_Name" ColumnName="Event_Platform_Name" />
-                <ScalarProperty Name="Event_Platform_Code" ColumnName="Event_Platform_Code" />
+                <ScalarProperty Name="Inserted_On" ColumnName="Inserted_On" />
+                <ScalarProperty Name="Parameter_Value" ColumnName="Parameter_Value" />
+                <ScalarProperty Name="Parameter_Name" ColumnName="Parameter_Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

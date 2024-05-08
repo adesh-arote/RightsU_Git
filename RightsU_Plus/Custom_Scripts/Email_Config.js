@@ -61,6 +61,7 @@ function BindUserGrid(commandName, dummyGuid) {
         if ((commandName == 'ADD' || commandName == 'EDIT') && $("#IsAddEdit").val() != 'Y') {
             $("#IsAddEdit").val('Y');
         }
+        $("#hdnCommandName").val(commandName);
         showLoading();
         $.ajax({
             type: "POST",
@@ -92,6 +93,14 @@ function BindUserGrid(commandName, dummyGuid) {
                         $('#lstBusinessUnit')[0].sumo.reload();
                     if ($('#lstChannel')[0] != undefined)
                         $('#lstChannel')[0].sumo.reload();
+                    if ((commandName == 'ADD')) {                        
+                        OnChangeOfPlatform(0);
+                        hideLoading();
+                    }
+                    if ((commandName == 'EDIT')) {
+                        OnChangeOfPlatform(1);
+                        hideLoading();
+                    }
                     hideLoading();
                 }
                 initializeTooltip();
@@ -246,6 +255,7 @@ function PopulateUser(dummyGuid) {
     }
     var type = $('#Type:checked').val();
     showLoading();
+    var commandname = $("#hdnCommandName").val();
     $.ajax({
         type: "POST",
         url: URL_PopulateUsers,
@@ -262,7 +272,7 @@ function PopulateUser(dummyGuid) {
         ,
         async: false,
         success: function (result) {
-            var commandname = $("#hdnCommandName").val();
+            //var commandname = $("#hdnCommandName").val();
             if (type == 'U') {
                 debugger;
                 $('#lstUser,#lstCcUser,#lstBccUser').SumoSelect();
@@ -285,6 +295,14 @@ function PopulateUser(dummyGuid) {
                 $('#lstCcUser')[0].sumo.reload();
                 $('#lstBccUser')[0].sumo.reload();
                 $("#lstGroup_chosen").hide();
+                if ((commandname == 'ADD')) {
+                    OnChangeOfPlatform(0);
+                    hideLoading();
+                }
+                if ((commandname == 'EDIT')) {
+                    OnChangeOfPlatform(1);
+                    hideLoading();
+                }
             }
             else if (type == "G") {
                 debugger;
@@ -313,6 +331,15 @@ function PopulateUser(dummyGuid) {
                 $("#lstGroup_chosen").show();
                 initializeChosen();
                 $("#lstUser").hide();
+                hideLoading();
+                if ((commandname == 'ADD')) {
+                    OnChangeOfPlatform(0);
+                    hideLoading();
+                }
+                if ((commandName == 'EDIT')) {
+                    OnChangeOfPlatform(1);
+                    hideLoading();
+                }
             }
             else {
                 debugger;
@@ -323,7 +350,16 @@ function PopulateUser(dummyGuid) {
                   $("#divUser,#divGrp").hide();
                   $('#divCc,#divBcc').hide();
                   $("#divUserEmail,#divCcuserEmail,#divBccuserEmail").show();
-                  $('#txtuseremail,#txtccuseremail,#txtbccuseremail').show();                               
+                $('#txtuseremail,#txtccuseremail,#txtbccuseremail').show();  
+                hideLoading();
+                if ((commandname == 'ADD')) {
+                    OnChangeOfPlatform(0);
+                    hideLoading();
+                }
+                if ((commandName == 'EDIT')) {
+                    OnChangeOfPlatform(1);
+                    hideLoading();
+                }
             }      
             hideLoading();
         },
@@ -436,6 +472,44 @@ function SaveUser(dummyGuid) {
         else
             $("#divUser").removeClass('required');
     }
+
+    var EventPlatformCode = $("#lstEventPlatform").val();
+    if (EventPlatformCode == '' || EventPlatformCode == null) {
+        IsValid = false;
+        //$("#divEventPlatform").addClass("required");
+    }
+    //else
+    //    $("#divEventPlatform").removeClass('required');
+
+    var EventTemplateType = $("#lstTextFormat").val();
+    if (EventTemplateType == '' || EventTemplateType == null) {
+        IsValid = false;
+        //$("#divBusinessUnit").addClass("required");
+    }
+    //else
+    //    $("#divBusinessUnit").removeClass('required');
+
+    var commandname = $("#hdnCommandName").val();
+    if (commandname == "ADD") {
+        var EventPlatform = $(".lstEventPlatform0").val();
+        
+        if (EventPlatform == '' || EventPlatform == null) {
+            IsValid = false;
+            $("#divEventPlatform").addClass("required");
+        }
+        else
+            $("#divEventPlatform").removeClass('required');
+
+        var TextFormat = $(".lstTextFormat0").val();
+        
+        if (TextFormat == '' || TextFormat == null) {
+            IsValid = false;
+            $("#divTextFormat").addClass("required");
+        }
+        else
+            $("#divTextFormat").removeClass('required');
+    }
+    
     
     if (IsValid) {
         $("#IsAddEdit").val('N');
@@ -456,7 +530,9 @@ function SaveUser(dummyGuid) {
                 DummyGuid: dummyGuid,
                 UserEmails:arruseremail,   
                 CcuserEmails:arrccuseremail ,
-                BccuserEmails:arrbccuseremail
+                BccuserEmails: arrbccuseremail,
+                EventPlatformCode: EventPlatformCode,
+                EventTemplateType: EventTemplateType
             }),
             async: false,
             success: function (result) {
@@ -512,4 +588,49 @@ function DeleteUser(dummyGuid) {
         });
         BindUserGrid('', '');
     }
+}
+function OnChangeOfPlatform(rowIndex) {
+    debugger;
+    hideLoading();
+    var ddlValue = $('.lstEventPlatform' + rowIndex).val();
+    $.ajax({
+        type: "POST",
+        url: URL_CheckEnableCCBCC,
+        traditional: true,
+        enctype: 'multipart/form-data',
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify({
+            EventPlatformValue: ddlValue
+        }),
+        async: false,
+        success: function (result) {
+            if (result.EnableStatus == "Y") {
+                $('.clstxtccuseremail_' + rowIndex).SumoSelect();
+                $('.clstxtccuseremail_' + rowIndex).attr('disabled', false);
+                $('.clstxtccuseremail_' + rowIndex)[0].sumo.reload();
+
+                $('.clstxtbccuseremail_' + rowIndex).SumoSelect();
+                $('.clstxtbccuseremail_' + rowIndex).attr('disabled', false);
+                $('.clstxtbccuseremail_' + rowIndex)[0].sumo.reload();
+                hideLoading();
+            }
+            else {
+                $('.clstxtccuseremail_' + rowIndex).SumoSelect();
+                $('.clstxtccuseremail_' + rowIndex).attr('disabled', true);
+                $('.clstxtccuseremail_' + rowIndex)[0].sumo.reload();
+                $('.clstxtccuseremail_' + rowIndex).val('0');
+                $('.clstxtccuseremail_' + rowIndex)[0].sumo.reload();
+
+                $('.clstxtbccuseremail_' + rowIndex).SumoSelect();
+                $('.clstxtbccuseremail_' + rowIndex).attr('disabled', true);
+                $('.clstxtbccuseremail_' + rowIndex)[0].sumo.reload();
+                $('.clstxtbccuseremail_' + rowIndex).val('0');
+                $('.clstxtbccuseremail_' + rowIndex)[0].sumo.reload();
+                hideLoading();
+            }
+        },
+        error: function (result) {
+            alert('Error: ' + result.responseText);
+        }
+    });
 }

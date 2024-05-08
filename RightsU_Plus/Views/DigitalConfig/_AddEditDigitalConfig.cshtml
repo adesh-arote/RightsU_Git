@@ -303,16 +303,19 @@
     }
 
     function Validate_Save_TabConfig() {
+        debugger;
         var returnVal = true;
         var pattern = /^\b[A-Z0-9._%-]+@@[A-Z0-9.-]+\.[A-Z]{2,4}\b$/i;
 
         if ($.trim($('#ddlDigital').val()) == "") {
             showAlert("E", "Please select Column in Tab Field Value");
             returnVal = false;
-        } else if ($.trim($('#ddlControlType').val()) == "") {
+        }
+        else if ($.trim($('#ddlControlType').val()) == "") {
             showAlert("E", "Please select Control Field Value");
             returnVal = false;
-        }else if ($.trim($('#ddlControlType').val()) == 'TXTDDL') {
+        }
+        else if ($.trim($('#ddlControlType').val()) == 'TXTDDL') {
             if ($.trim($('#txtPage_Control_Order').val()) == "") {
                 showAlert("E", "Please Enter Column Order Value");
                 returnVal = false;
@@ -332,7 +335,17 @@
                 showAlert("E", "Please select Additional Condition Value");
                 returnVal = false;
             }
-        } else {
+        }
+        else if ($.trim($('#ddlControlType').val()) == 'CHK') {
+            if ($.trim($('#txtPage_Control_Order').val()) == "") {
+                showAlert("E", "Please Enter Column Order Value");
+                returnVal = false;
+            } else if ($.trim($('#txtControl_Field_Order').val()) == "") {
+                showAlert("E", "Please Enter Order in Column Value");
+                returnVal = false;
+            }
+        }
+        else {
             if ($.trim($('#txtMax_Length').val()) == "") {
                 showAlert("E", "Please Enter Column Length Value");
                 returnVal = false;

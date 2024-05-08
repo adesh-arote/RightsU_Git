@@ -207,12 +207,33 @@ BEGIN
 		SET @MAXNo = 0
 	END
 
+	DECLARE @AL_DealType_Movies VARCHAR(100), @AL_DealType_Show VARCHAR(100)
+
+	SELECT @AL_DealType_Movies = Parameter_Value FROM System_Parameter WHERE Parameter_Name = 'AL_DealType_Movies'
+
+	SELECT @AL_DealType_Show = Parameter_Value FROM System_Parameter WHERE Parameter_Name = 'AL_DealType_Show'
+
 	UPDATE tmp2 SET tmp2.IncrementNo = a.IncNo, tmp2.IncrementNo5Digit =  RIGHT('00000'+ CONVERT(VARCHAR,a.IncNo),5)
 	FROM (
 		SELECT Title_Content_Code, Additional_Condition, RIGHT('0000' + CAST((@MAXNo + ROW_NUMBER() OVER(ORDER BY Title_Content_Code ASC)) AS VARCHAR), 5) AS IncNo
-		FROM #TempFileName tmp WHERE tmp.Additional_Condition LIKE '%increment%' AND tmp.Title_Type <> 'T'
+		FROM #TempFileName tmp 
+		INNER JOIN Title t ON tmp.Title_Code = t.Title_Code
+		WHERE tmp.Additional_Condition LIKE '%increment%' AND tmp.Title_Type = 'M' AND t.Deal_Type_Code IN (select LTRIM(RTRIM(number)) from DBO.FN_Split_WithDelemiter(@AL_DealType_Movies, ','))
 	) AS a
 	INNER JOIN #TempFileName tmp2 ON a.Title_Content_Code = tmp2.Title_Content_Code AND a.Additional_Condition = tmp2.Additional_Condition
+
+	SELECT @MAXNo = MAX(CAST(ISNULL(IncrementNo, 0) AS INT)) FROM #TempFileName WHERE CAST(ISNULL(IncrementNo, 0) AS INT) > 0
+
+	UPDATE tmp2 SET tmp2.IncrementNo = a.IncNo, tmp2.IncrementNo5Digit =  RIGHT('00000'+ CONVERT(VARCHAR,a.IncNo),5)
+	FROM (
+		SELECT Title_Content_Code, Additional_Condition, RIGHT('0000' + CAST((@MAXNo + ROW_NUMBER() OVER(ORDER BY Title_Content_Code ASC)) AS VARCHAR), 5) AS IncNo
+		FROM #TempFileName tmp 
+		INNER JOIN Title t ON tmp.Title_Code = t.Title_Code
+		WHERE tmp.Additional_Condition LIKE '%increment%' AND tmp.Title_Type = 'S' AND t.Deal_Type_Code IN (select LTRIM(RTRIM(number)) from DBO.FN_Split_WithDelemiter(@AL_DealType_Show, ','))
+	) AS a
+	INNER JOIN #TempFileName tmp2 ON a.Title_Content_Code = tmp2.Title_Content_Code AND a.Additional_Condition = tmp2.Additional_Condition
+
+	SELECT @MAXNo = MAX(CAST(ISNULL(IncrementNo, 0) AS INT)) FROM #TempFileName WHERE CAST(ISNULL(IncrementNo, 0) AS INT) > 0
 
 	UPDATE t1 SET t1.IncrementNo = t2.IncrementNo, t1.IncrementNo5Digit = t2.IncrementNo5Digit 
 	FROM #TempFileName t1 
@@ -221,7 +242,7 @@ BEGIN
 	AND t1.Title_Type = 'T' AND t2.Title_Type = 'M'
 	AND t1.Target_Column = t2.Columns_Code 
 	
-	SELECT @MAXNo = MAX(CAST(ISNULL(IncrementNo, 0) AS INT)) FROM #TempFileName WHERE CAST(ISNULL(IncrementNo, 0) AS INT) > 0
+	--SELECT @MAXNo = MAX(CAST(ISNULL(IncrementNo, 0) AS INT)) FROM #TempFileName WHERE CAST(ISNULL(IncrementNo, 0) AS INT) > 0
 
 	IF NOT EXISTS(SELECT TOP 1 * FROM MHRequestIds WHERE RequestType = 'BS' AND VendorCode = @VendorCode)
 	BEGIN

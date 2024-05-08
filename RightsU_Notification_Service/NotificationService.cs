@@ -93,7 +93,9 @@ namespace RightsU_Notification_Service
             using (var context = new RightsU_Plus_Entities())
             {
                 var result = (dynamic)null;
-                List<Notification> lstNotification = context.Notifications.Where(x => x.API_Status == "E").ToList();
+                List<Notifications> lstNotification = context.Notifications.Where(x => x.API_Status == "E").ToList();
+
+                string strClientName = context.System_Parameter.Where(x => x.Parameter_Name == "Notification_ClientName").Select(x => x.Parameter_Value).FirstOrDefault();
 
                 if (lstNotification.Count > 0)
                 {
@@ -118,7 +120,9 @@ namespace RightsU_Notification_Service
                                 TransType = x.TransType,
                                 TransCode = x.TransCode,
                                 ScheduleDateTime = x.ScheduleDateTime,
-                                UserCode = x.UserCode
+                                UserCode = x.UserCode,
+                                ClientName = strClientName,
+                                ForeignId = x.NotificationsCode
                             };
 
                             if (x.NoOfRetry >= Max_Retry_Limit)
@@ -141,13 +145,15 @@ namespace RightsU_Notification_Service
             using (var context = new RightsU_Plus_Entities())
             {
                 var result = (dynamic)null;
-                List<Notification> lstNotification = context.Notifications.Where(x => x.API_Status == "P").ToList();
+                List<Notifications> lstNotification = context.Notifications.Where(x => x.API_Status == "P").ToList();
+
+                string strClientName = context.System_Parameter.Where(x => x.Parameter_Name == "Notification_ClientName").Select(x => x.Parameter_Value).FirstOrDefault();
 
                 Error.WriteLog("List Found - " + lstNotification.Count().ToString(), includeTime: true, addSeperater: true);
 
                 if (lstNotification.Count > 0)
                 {
-                    foreach (Notification x in lstNotification)
+                    foreach (Notifications x in lstNotification)
                     {
                         using (var client = new WebClient())
                         {
@@ -169,8 +175,10 @@ namespace RightsU_Notification_Service
                                 TransCode = x.TransCode,
                                 ScheduleDateTime = x.ScheduleDateTime,
                                 UserCode = x.UserCode,
-                                EventPlatformCode = x.Event_Platform.Short_Code,
-                                PlatformCredential = x.Event_Platform.Credentials
+                                ClientName = strClientName,
+                                ForeignId = x.NotificationsCode
+
+
                             };
 
                             try
@@ -196,7 +204,7 @@ namespace RightsU_Notification_Service
                 Error.WriteLog(Response, includeTime: true, addSeperater: true);
                 ResponseMessage objResponseMessage = JsonConvert.DeserializeObject<ResponseMessage>(Response);
 
-                Notification objNotification = context.Notifications.Where(x => x.NotificationsCode == NotificationsCode).FirstOrDefault();
+                Notifications objNotification = context.Notifications.Where(x => x.NotificationsCode == NotificationsCode).FirstOrDefault();
                 objNotification.Service_Response = Convert.ToString(Response);
                 objNotification.API_Status = objResponseMessage.Status == true ? "C" : "E";
                 objNotification.ErrorDetails = objResponseMessage.ErrorMessage == "" ? null : Response.ErrorMessage;
