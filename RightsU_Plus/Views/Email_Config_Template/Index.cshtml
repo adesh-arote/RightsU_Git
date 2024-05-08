@@ -18,7 +18,7 @@
     var URL_Save_Email_Config_Template = '@Url.Action("Save_Email_Config_Template", "Email_Config_Template")';
     var URL_ActivateDeactivate = '@Url.Action("ActivateDeactivate", "Email_Config_Template")';
     var URL_Bind_Event_Template_PopUp = '@Url.Action("Bind_Event_Template_PopUp", "Email_Config_Template")';
-    var URL_Save_Config_Template = '@Url.Action("Save_Config_Template", "Email_Config_Template")';
+    var URL_Save_Event_Template = '@Url.Action("Save_Event_Template", "Email_Config_Template")';
 
     var URL_CheckRecordLock = '@Url.Action("CheckRecordLock", "Email_Config_Template")';
     var URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")';
@@ -430,53 +430,73 @@
         $('#pupupHtml').empty();
     }
 
-    function Save_Config_Template(Email_Config_Template_Code, Event_Template_Code, Template_Type, Platform_Code) {
+    function Save_Event_Template(Email_Config_Template_Code, Template_Type, Platform_Code) {
         debugger;
         var returnVal = true;
         var TemplateName = "";
-        //var ExistingName = "";
+        var IsNewTemplate = "";
+        var TemplateCode = "";
 
         var editorData = CKEDITOR.instances['texteditor'].getData();
 
-        var Subject = $.trim($("#TemplateName").val());
+        if ($(".configTemplate:checked").val() == "AddNew") {
+            TemplateName = $.trim($("#TemplateName").val());
+            IsNewTemplate = "Y";
+            TemplateCode = 0;
+
+            if (TemplateName == "") {
+                $('#TemplateName').val('').attr('required', true);
+                returnVal = false;
+            }
+        }
+        else {
+            TemplateName = "";
+            IsNewTemplate = "N";
+            TemplateCode = $('#ExistingTemplate').val();
+        }
+
+        var Subject = $.trim($("#Subject").val());
+        if (Subject == "") {
+            $('#Subject').val('').attr('required', true);
+            returnVal = false;
+        }
 
         if (editorData == "") {
             $('#texteditor').val('').attr('required', true);
             returnVal = false;
         }
 
-        TemplateName = $.trim($("#TemplateName").val());
-
-        //if ($('.configTemplate').val() == "AddNew") {
-        //    TemplateName = $.trim($("#TemplateName").val());
-        //    ExistingName = 0;
-        //}
-        //else {
-        //    ExistingName = $.trim($("#TemplateName").val());
-        //    TemplateName = "";
-        //}
+        if (Template_Type == "HTML") {
+            Template_Type = "H";
+        }
+        else {
+            Template_Type = "T";
+        }
 
         if (returnVal) {
             $.ajax({
                 type: "POST",
-                url: URL_Save_Config_Template,
+                url: URL_Save_Event_Template,
                 traditional: true,
                 enctype: 'multipart/form-data',
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify({
                     Email_Config_Template_Code: Email_Config_Template_Code,
-                    Event_Template_Code: Event_Template_Code,
+                    Event_Template_Code: TemplateCode,
                     Template_Type: Template_Type,
                     Platform_Code: Platform_Code,
                     TemplateName: TemplateName,
-                    //ExistingName: ExistingName,
                     editorData: editorData,
-                    Subject: Subject
+                    Subject: Subject,
+                    IsNewTemplate: IsNewTemplate
                 }),
                 success: function (result) {
                     debugger;
                     if (result.Status == "S") {
-                       
+                        ClosePopup();
+                        Email_Config_Template_List("", 0);
+                        showAlert("S", result.Message);
+                        //window.location.href = URL_Index;
                     }
                     else {
                         showAlert("E", result.Message);
@@ -517,12 +537,12 @@
                                     <input autocomplete="off" type="button" class="btn btn-primary" value="@objMessageKey.Add" onclick="AddEditEmail_Template('ADD', 0)" />
                                 }
                             </li>
-                            <li>
+                            @*<li>
                                 @if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForExportToExcel.ToString() + "~"))
                                 {
                                     <a title="@objMessageKey.SaveToExcel" class="glyphicon glyphicon-floppy-save" style="cursor:pointer; text-decoration:underline; " onclick="ExportToExcel()"></a>
                                 }
-                            </li>
+                            </li>*@
                         </ul>
                     </div>
                 </div>
@@ -533,7 +553,7 @@
                                 @objMessageKey.SearchText :
                             </td>
                             <td style="width:25%; vertical-align:middle;">
-                                <input autocomplete="off" type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" placeholder="Email Config Template" maxlength="100" />
+                                <input autocomplete="off" type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" placeholder="Template Name" maxlength="100" />
                             </td>
                             <td style="width:13%;vertical-align: middle; text-align:center;">
                                 <input autocomplete="off" type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearch_OnClick()">

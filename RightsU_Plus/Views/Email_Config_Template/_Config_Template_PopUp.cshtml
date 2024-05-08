@@ -6,12 +6,24 @@
     {
         objMessageKey = (MessageKey)Session["objMessageKey"];
     }
- 
-    var EventTemplateKeys = ViewBag.lst_EventTemplateKeys as List<SelectListItem>; 
 
+    var Subject = ViewBag.Subject;
+
+    int Event_Template_Code = 0;
+    string AddChecked = "checked=\"checked\"";
+    string ExistChecked = "";
+    if (Model != null)
+    {
+        Event_Template_Code = Model.Event_Template_Code;
+        ExistChecked = "checked=\"checked\"";
+        AddChecked = "";
+    }
 }
 
 <script>
+    var URL_Bind_Template = '@Url.Action("Bind_Template_Data", "Email_Config_Template")';
+    var SelectedValue = "@ViewBag.lst_EventTemplate.SelectedValue";
+
     $(document).ready(function () {
         debugger;
         if ('@objMessageKey.LayoutDirection' == "RTL") {
@@ -23,7 +35,7 @@
 
         $('.configTemplate').on("change", function () {
             debugger;
-
+            
             if ($(".configTemplate:checked").val() == "AddNew") {
                 $('#divInputField').empty();
                 var input = $('<input>').attr({
@@ -39,24 +51,30 @@
             {
                 $('#divInputField').empty();
                 var select = $('<select>').attr({
-                    id: 'TemplateName',
-                    name: 'TemplateName'
+                    id: 'ExistingTemplate',
+                    name: 'ExistingTemplate',
+                    onchange: 'BindEditorDataOnChange()'
                 }).addClass('form_input chosen-select');
 
                 var options = @Html.Raw(Json.Encode(ViewBag.lst_EventTemplate));
-
-                if (options && options.length > 0) {
+                
+                select.append($('<option>').attr('value', '0').text('Please Select'));
+                if (options && options.length > 0) {                   
                     options.forEach(function (option) {
-                        select.append($('<option>').attr('value', '0').text('Please Select'));
-                        select.append($('<option>').attr('value', option.Value).text(option.Text));
+                        //select.append($('<option>').attr('value', option.Value).text(option.Text));
+                        var $option = $('<option>').attr('value', option.Value).text(option.Text);
+                        
+                        if (option.Value == SelectedValue) {
+                            $option.prop('selected', true);
+                        }
+                        select.append($option);
                     });
                 }
-                else {
-                        select.append($('<option>').attr('value', '0').text('Please Select'));
-                }
+
                 $('#divInputField').append(select);
                 initializeChosen();
                 $('#ExistingtTemplate_chosen').prop('style', 'width:80% !important');
+                BindEditorDataOnChange();
             }
         });
         $('.configTemplate').trigger("change");
@@ -80,6 +98,31 @@
         }
     });
 
+    function BindEditorDataOnChange() {
+        debugger;
+        var ExistingValue = $('#ExistingTemplate').val();
+
+        if (ExistingValue == 0) {
+            CKEDITOR.instances.texteditor.setData();
+            return false;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: URL_Bind_Template,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                ExistingValue: ExistingValue
+            }),
+            success: function (result) {
+                debugger;
+                CKEDITOR.instances.texteditor.setData(result);
+            }
+        })
+    }
+    
 </script>
 
 <script>
@@ -117,31 +160,28 @@
         <span>X</span>
         <span class="sr-only">Close</span>
     </a>
-    <h4>@ViewBag.Email_Type - @ViewBag.Template_Type - @ViewBag.Platform - Template</h4>
+    <h4>@ViewBag.Email_Type - @ViewBag.Platform (@ViewBag.Template_Type) - Template</h4>
 </div>
 <div class="grid_area" style="margin: 0 auto; width: 98%;">
     <div class="paging_area clearfix" style="height:50px !important;">
-        <div class="col-md-6" style="margin-top: 14px;">
-            <input type="radio" name="configTemplate" class="configTemplate" value="AddNew" checked="checked" /><text>&nbsp;&nbsp; <b>Add New Template</b> &nbsp;&nbsp;</text>
-            <input type="radio" name="configTemplate" class="configTemplate" value="Exists" /><text>&nbsp;&nbsp; <b>Use Existing Template</b> &nbsp;&nbsp;</text>
+        <div class="col-md-6" style="margin-top: 14px; width: 45%;">
+            <input type="radio" name="configTemplate" class="configTemplate" id="rbAdd" value="AddNew" @AddChecked /><text>&nbsp;&nbsp; <b>Add New Template</b> &nbsp;&nbsp;</text>
+            <input type="radio" name="configTemplate" class="configTemplate" id="rbExist" value="Exists" @ExistChecked /><text>&nbsp;&nbsp; <b>Use Existing Template</b> &nbsp;&nbsp;</text>
         </div>
         <div class="col-md-6" id="divInputField" style="margin-top: 1%;">
 
         </div>
     </div>
     <div class="paging_area clearfix" style="height:50px !important;">
-        <div class="col-md-2" style="margin-top: 8px;">
-            <span class="pull-left">Subject : </span>
-        </div>
-        <div class="col-md-10" id="divSubjectField" style="margin-top: 1%;">
-            <input autocomplete="off" type="text" name="Subject" id="Subject" style="width:88%" placeholder="Add a subject"/>
+        <div class="col-md-12" style="margin-top: 12px;">
+            <span class="pull-left">Subject : </span>&nbsp;&nbsp;&nbsp;&nbsp;
+            <input autocomplete="off" type="text" name="Subject" id="Subject" value="@Subject" style="width:83%" placeholder="Add a subject" />
         </div>
     </div>
     <div class="tab-content clearfix table-wrapper scale_table_container">
         <div class="scale_table_block col-md-9" id="divRichTextArea" style="height: 315px !important; overflow-y:scroll;">
             <textarea id="texteditor" name="texteditor"></textarea>
         </div>
-        @*<div class="vertical-line" style="border-left: 1px solid black; height: 315px; margin-left: 10px;"></div>*@
         <div class="scale_table_block col-md-3">
             <div><input type="text" class="form_input" id="searchInput" placeholder="Search..." style="width: 100%;"></div>
             <div id="divPlaceholder" style="height: 270px !important; overflow-y: scroll; margin-top: 10px;">
@@ -159,7 +199,7 @@
     <div class="form_links">
         <ul class="modal_block clearfix" style="padding-left:10px; padding-top: 10px;">
             <li>
-                <input type="button" class="btn btn-primary" value="@objMessageKey.Save" onclick="Save_Event_Template('@ViewBag.Email_Config_Template_Code', '@ViewBag.Event_Template_Code', '@ViewBag.Template_Type', '@ViewBag.Platform_Code')" />
+                <input type="button" class="btn btn-primary" value="@objMessageKey.Save" onclick="Save_Event_Template('@ViewBag.Email_Config_Template_Code', '@ViewBag.Template_Type', '@ViewBag.Platform_Code')" />
                 <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="ClosePopup()" />
             </li>
         </ul>
