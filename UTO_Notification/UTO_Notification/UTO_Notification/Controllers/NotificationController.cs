@@ -473,6 +473,66 @@ namespace UTO_Notification.Controllers
             }
             return Request.CreateResponse(HttpStatusCode.Created, httpResponses);
         }
+
+        [HttpPost]
+        [ActionName("NEGetNotificationByForeignId")]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+
+        public HttpResponseMessage NEGetNotificationByForeignId(GetNotificationInput obj)
+        {
+            logObj.ApplicationName = "Notification Engine";
+            Boolean isSuccess = false; double TimeTaken;
+            DateTime startTime;
+            startTime = DateTime.Now;
+
+            HttpResponses httpResponses = new HttpResponses();
+            IHttpResponseMapper httpResponseMapper = new HttpResponseMapper();
+
+            USPGetNotificationByForeignId objNotification = new USPGetNotificationByForeignId();
+
+            if (obj.NotificationType.ToUpper() == "EMAIL_NTF")
+            {
+                objNotification = objUspService.USPGetEmailNotificationByForeignId(obj.ForeignId, obj.ClientName);
+            }
+            else if (obj.NotificationType.ToUpper() == "TM")
+            {
+                objNotification = objUspService.USPGetTeamsNotificationByForeignId(obj.ForeignId, obj.ClientName);
+            }
+
+            httpResponses = httpResponseMapper.GetHttpSuccessResponse(objNotification);
+
+            TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+            if (objNotification != null || objNotification.NotificationsCode > 0)
+            {
+                isSuccess = true;
+                httpResponses.Message = "Ok";
+            }
+            if (Convert.ToInt16((HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogLevel"]) <= 2)
+            {
+
+                if ((HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogURL"] != "" && (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogURL"] != null)
+                {
+                    logObj.RequestUri = Request.RequestUri.AbsoluteUri;
+                    logObj.RequestMethod = "api/Notification/NEGetNotificationByForeignId";
+                    logObj.RequestContent = "ForeignId: " + obj.ForeignId + " <br/> ClientName: " + obj.ClientName + " <br/> NotificationType:" + obj.NotificationType;
+                    logObj.RequestDateTime = DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss");
+                    logObj.ResponseDateTime = DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss");
+                    logObj.ResponseContent = httpResponses.Message;
+                    logObj.ResponseLength = Convert.ToString(httpResponses.Message.Length);
+                    logObj.ServerName = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["strHostName"].ToString();
+                    logObj.UserAgent = "Notification API";
+                    logObj.Method = "Post";
+                    logObj.ClientIpAddress = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["ipAddress"].ToString();
+                    logObj.IsSuccess = isSuccess.ToString();
+                    logObj.TimeTaken = Convert.ToString(TimeTaken);
+                    logObj.HttpStatusCode = httpResponses.ResponseCode;
+                    logObj.HttpStatusDescription = httpResponses.Message;
+                    string GlobalAuthKey = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["AuthKey"].ToString();
+                    HostingEnvironment.QueueBackgroundWorkItem(ctx => AuthAttribute.LogService(logObj, GlobalAuthKey));
+                }
+            }
+            return Request.CreateResponse(HttpStatusCode.Created, httpResponses);
+        }
     }
 }
 

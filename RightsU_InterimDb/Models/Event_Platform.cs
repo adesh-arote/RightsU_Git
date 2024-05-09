@@ -14,6 +14,11 @@ namespace RightsU_InterimDb.Models
     
     public partial class Event_Platform
     {
+        public Event_Platform()
+        {
+            this.Notifications = new HashSet<Notifications>();
+        }
+    
     	public State EntityState { get; set; }    public int Event_Platform_Code { get; set; }
     	    public string Event_Platform_Name { get; set; }
     	    public string Short_Code { get; set; }
@@ -25,5 +30,7 @@ namespace RightsU_InterimDb.Models
     	    public Nullable<int> Last_Action_By { get; set; }
     	    public Nullable<System.DateTime> Lock_Time { get; set; }
     	    public string Enable_CC_And_BCC { get; set; }
+    
+        public virtual ICollection<Notifications> Notifications { get; set; }
     }
 }

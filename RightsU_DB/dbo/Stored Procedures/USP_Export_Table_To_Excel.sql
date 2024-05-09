@@ -1978,6 +1978,41 @@ BEGIN
 		END       
 	--END Objection Type----------
 
+	--Email Config Template------------------------------------------------------------------------------------------------------------------------------------------------------------    
+	   IF(@Module_Code = 324)                                
+	   BEGIN                                                           
+			INSERT INTO #tmpExportToExcel (Col01, Col02, Col03, Col04) 
+			SELECT [Template Name], [Template Type], [Platform], [Status] FROM(    
+				SELECT     
+				Sorter = 1,    
+				CAST(ECT.Email_Config_Template_Code AS VARCHAR(500)) AS [Email_Config_Template_Code], EC.Email_Type  AS [Template Name],
+				CASE WHEN ECT.Event_Template_Type = 'H' THEN 'HTML' ELSE 'TEXT' END AS [Template Type],
+				EP.Event_Platform_Name AS [Platform],
+				CASE WHEN ECT.Is_Active = 'N' THEN @Deactive ELSE @Active END AS [Status], ECT.Last_UpDated_Time
+				FROM Email_Config_Template ECT  (NOLOCK) 
+				INNER JOIN Email_Config EC ON EC.Email_Config_Code = ECT.Email_Config_Code
+				INNER JOIN Event_Platform EP ON EP.Event_Platform_Code = ECT.Event_Platform_Code
+				Where @StrSearchCriteria = '' OR EC.Email_Type LIKE '%'+@StrSearchCriteria+'%'          
+					) X                         
+				ORDER BY CASE WHEN @Sort_Column = 'NAME' AND  @Sort_Order  = 'ASC' THEN [Template Name] END ASC,            
+				CASE WHEN @Sort_Column = 'NAME' AND @Sort_Order = 'DSC' THEN [Template Name] END DESC,            
+				CASE WHEN @Sort_Column= 'TIME' AND @Sort_Order = 'DSC' THEN Last_UpDated_Time END DESC      
+					
+				SET @Col_Head01 = 'Template Name';
+				SET @Col_Head02 = 'Template Type';    
+				SET @Col_Head03 = 'Platform';  
+				SET @Col_Head04 = 'Status';
+
+				INSERT INTO #tmpMulExportToExcel   
+				SELECT  @Col_Head01 as Col01 ,@Col_Head02 as Col02 ,@Col_Head03 as Col03, @Col_Head04 as Col04,'' as Col05,'' as Col06,''as Col07,''as Col08,''as Col09  
+				 ,''as Col10,''as Col11,''as Col12,''as Col13,''as Col14,''as Col15,''as Col16,''as Col17,''as Col18,''as Col19,''as Col20,''as Col21,''as Col22,''as Col23,''as Col24,  
+				 ''as Col25,''as Col26,''as Col27,''as Col28,''as Col29,''as Col30  
+					UNION ALL  
+			SELECT * FROM #tmpExportToExcel   
+	   END    
+	
+	--END Email Config Template--------------------------------------------------------------------------------------------------------------------------------------------------------
+
   
 	  SELECT @Column_Count =                               
 		LEN(COALESCE(LEFT(Col01,1),''))   + LEN(COALESCE(LEFT(Col02,1),''))  + LEN(COALESCE(LEFT(Col03,1),''))                               

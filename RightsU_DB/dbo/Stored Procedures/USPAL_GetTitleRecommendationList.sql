@@ -12,7 +12,8 @@ CREATE PROCEDURE [dbo].[USPAL_GetTitleRecommendationList]
 	@Talent_Code NVARCHAR(MAX),
 	@AL_Recommendation_Code int,
 	@SearchWithinRule CHAR(1),
-	@Banner_Code NVARCHAR(MAX) 
+	@Banner_Code NVARCHAR(MAX),
+	@AirlineRelDate NVARCHAR(MAX) = ''
 )
 AS
 BEGIN
@@ -152,6 +153,18 @@ CREATE TABLE #TempOutput
 	FROM Map_Extended_Columns_Details mecd 
 	INNER JOIN Map_Extended_Columns mec ON mec.Map_Extended_Columns_Code = mecd.Map_Extended_Columns_Code
 	WHERE mecd.Columns_Value_Code IN (Select number From dbo.fn_Split_withdelemiter(@Banner_Code,',')) AND Columns_Code = 32 AND mec.Table_Name = 'TITLE'
+
+	CREATE TABLE #TempARD
+		(
+			Record_Code INT,
+			ARD INT,
+			AirlineRelDt VARCHAR(100)
+		)
+
+	INSERT INTO #TempARD(Record_Code, ARD, AirlineRelDt)
+	SELECT Record_Code, DATEDIFF(D, CAST(Column_Value AS DATE), GETDATE()) AS ARD, CAST(Column_Value AS DATE)  
+	FROM Map_Extended_Columns 
+	WHERE Table_Name = 'TITLE' AND Columns_Code = '37' AND ISDATE(Column_Value) = 1
 	
 	IF(@SkipRule = 'N')
 	BEGIN
@@ -210,16 +223,17 @@ CREATE TABLE #TempOutput
 		--				AND Title_Code NOT IN (SELECT number from dbo.fn_Split_withdelemiter(ISNULL('''+@NotInTitles+''', ''''), '','')) AND 1=1 '
 		--END
 	
-		CREATE TABLE #TempARD
-		(
-			Record_Code INT,
-			ARD INT
-		)
+		--CREATE TABLE #TempARD
+		--(
+		--	Record_Code INT,
+		--	ARD INT,
+		--	AirlineRelDt VARCHAR(100)
+		--)
 
-		INSERT INTO #TempARD(Record_Code, ARD)
-		SELECT Record_Code, DATEDIFF(D, CAST(Column_Value AS DATE), GETDATE()) AS ARD 
-		FROM Map_Extended_Columns 
-		WHERE Table_Name = 'TITLE' AND Columns_Code = '37' AND ISDATE(Column_Value) = 1
+		--INSERT INTO #TempARD(Record_Code, ARD, AirlineRelDt)
+		--SELECT Record_Code, DATEDIFF(D, CAST(Column_Value AS DATE), GETDATE()) AS ARD, CAST(Column_Value AS DATE)  
+		--FROM Map_Extended_Columns 
+		--WHERE Table_Name = 'TITLE' AND Columns_Code = '37' AND ISDATE(Column_Value) = 1
 
 		DECLARE @ColumnsCode INT, @ColumnsValue NVARCHAR(MAX), @AdditionalCondition NVARCHAR(MAX)
 
@@ -416,13 +430,32 @@ CREATE TABLE #TempOutput
 		ALTER TABLE #tempTitle DROP COLUMN Season
 		ALTER TABLE #tempTitle DROP COLUMN Synopsis
 		
-		INSERT INTO #TempOutput(COL1, COL2, COL3,COL4,Col5,COL6,COL7)
-		SELECT * FROM #tempTitle
+		IF(@AirlineRelDate <> '')
+		BEGIN
+			INSERT INTO #TempOutput(COL1, COL2, COL3,COL4,Col5,COL6,COL7)
+			SELECT Title_Code, Title_Content_Code, Title, [Star Cast],	Genres,	Info, Rule_Type FROM #tempTitle tt
+			INNER JOIN #TempARD ta ON tt.Title_Code = ta.Record_Code WHERE CAST(AirlineRelDt AS DATE) BETWEEN CAST((CONVERT(VARCHAR(10), CONVERT(date, @AirlineRelDate, 105), 23)) AS DATE) AND CAST((CONVERT(VARCHAR(10), CONVERT(date, @AirlineRelDate, 105), 23)) AS DATE)
+		END
+		ELSE
+		BEGIN
+			INSERT INTO #TempOutput(COL1, COL2, COL3,COL4,Col5,COL6,COL7)
+			SELECT * FROM #tempTitle
+		END	
+
 	END
 	ELSE
-	BEGIN
-		INSERT INTO #TempOutput(COL1, COL2, COL3,COL4,Col5,COL6,COL7,COL8,COL9)
-		SELECT * FROM #tempTitle
+	BEGIN		
+		IF(@AirlineRelDate <> '')
+		BEGIN
+			INSERT INTO #TempOutput(COL1, COL2, COL3,COL4,Col5,COL6,COL7,COL8,COL9)
+			SELECT Title_Code, Title_Content_Code, Title, Season, [Star Cast],	Genres,	Synopsis, Info, Rule_Type FROM #tempTitle tt
+			INNER JOIN #TempARD ta ON tt.Title_Code = ta.Record_Code WHERE CAST(AirlineRelDt AS DATE) BETWEEN CAST((CONVERT(VARCHAR(10), CONVERT(date, @AirlineRelDate, 105), 23)) AS DATE) AND CAST((CONVERT(VARCHAR(10), CONVERT(date, @AirlineRelDate, 105), 23)) AS DATE)
+		END
+		ELSE
+		BEGIN
+			INSERT INTO #TempOutput(COL1, COL2, COL3,COL4,Col5,COL6,COL7,COL8,COL9)
+			SELECT * FROM #tempTitle
+		END	
 	END
 
 	Select * from #TempOutput

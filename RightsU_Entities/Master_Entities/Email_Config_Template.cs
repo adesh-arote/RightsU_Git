@@ -40,5 +40,8 @@ namespace RightsU_Entities
         [NotMapped]
         public string Last_Action_By_User { get; set; }
         public Nullable<System.DateTime> Lock_Time { get; set; }
+        [NotMapped]
+        public string AllowEdit { get; set; } = "Y";
+
     }
 }

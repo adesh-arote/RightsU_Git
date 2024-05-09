@@ -941,7 +941,7 @@
                     }
                     else {
                         if (JSON.parse(result).Message == "Locked") {
-                            showAlert("E", "User ALready Logged In. Do you wnt to release account?", "OKCANCEL");
+                            showAlert("E", "User already logged in. Do you want to release account?", "OKCANCEL");
                         }
                         else {
                             var uniqueKey = 'key_' + Date.now();
@@ -1185,7 +1185,7 @@
                                     <a class="glyphicon glyphicon-cog" href="#"></a>
                                 </li>
                             }
-                            if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForSystemSetting))
+                            if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForLoginToRop))
                             {
                                 <li title="ROP" class="showhidetooltip menu_margin" onclick="RedirectToROP(@objLoginUser.Users_Code, '@objLoginUser.Login_Name', '@objLoginUser.Password')" data-placement="@dataPlacement">
                                     <a class="glyphicon glyphicon-home" href="#"></a>

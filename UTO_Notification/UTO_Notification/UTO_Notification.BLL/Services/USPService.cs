@@ -12,11 +12,11 @@ namespace UTO_Notification.BLL
 {
     public class USPService
     {
-        public USPInsertNotification USPInsertNotification(string EventCategory, string NotificationType, string TO, string CC, string BCC, string Subject, string HTMLMessage, string TextMessage, string TransType, long TransCode, string ScheduleDateTime, long UserCode,string ClientName,long ForeignId)
+        public USPInsertNotification USPInsertNotification(string EventCategory, string NotificationType, string TO, string CC, string BCC, string Subject, string HTMLMessage, string TextMessage, string TransType, long TransCode, string ScheduleDateTime, long UserCode, string ClientName, long ForeignId)
         {
             ProcedureRepositories objProcedureRepositories = new ProcedureRepositories("EmailConnection");
 
-            USPInsertNotification objUSPInsertNotification = objProcedureRepositories.USPInsertNotification(EventCategory, NotificationType, TO, CC, BCC, Subject, HTMLMessage, TextMessage, TransType, TransCode, ScheduleDateTime, UserCode,ClientName,ForeignId).FirstOrDefault();
+            USPInsertNotification objUSPInsertNotification = objProcedureRepositories.USPInsertNotification(EventCategory, NotificationType, TO, CC, BCC, Subject, HTMLMessage, TextMessage, TransType, TransCode, ScheduleDateTime, UserCode, ClientName, ForeignId).FirstOrDefault();
             return objUSPInsertNotification;
         }
 
@@ -86,6 +86,24 @@ namespace UTO_Notification.BLL
             USPInsertNotificationType objUSPInsertNotificationType = objProcedureRepositories.USPInsertNotificationType(NotificationType, ClientName, PlatformName, Credentials, IsActive).FirstOrDefault();
 
             return objUSPInsertNotificationType;
+        }
+
+        public USPGetNotificationByForeignId USPGetEmailNotificationByForeignId(long ForeignId, string ClientName)
+        {
+            ProcedureRepositories objProcedureRepositories = new ProcedureRepositories("EmailConnection");
+
+            USPGetNotificationByForeignId objUSPGetNotificationByForeignId = objProcedureRepositories.USPGetEmailNotificationByForeignId(ForeignId, ClientName).FirstOrDefault();
+
+            return objUSPGetNotificationByForeignId;
+        }
+
+        public USPGetNotificationByForeignId USPGetTeamsNotificationByForeignId(long ForeignId, string ClientName)
+        {
+            ProcedureRepositories objProcedureRepositories = new ProcedureRepositories("TeamsConnection");
+
+            USPGetNotificationByForeignId objUSPGetNotificationByForeignId = objProcedureRepositories.USPGetTeamsNotificationByForeignId(ForeignId, ClientName).FirstOrDefault();
+
+            return objUSPGetNotificationByForeignId;
         }
     }
 }
