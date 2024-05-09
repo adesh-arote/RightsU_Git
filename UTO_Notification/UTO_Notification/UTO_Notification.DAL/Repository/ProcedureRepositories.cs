@@ -173,6 +173,24 @@ namespace UTO_Notification.DAL
             return base.ExecuteSQLProcedure<USPInsertNotificationType>("USPInsertNotificationType", param);
         }
 
+        public IEnumerable<USPGetNotificationByForeignId> USPGetEmailNotificationByForeignId(long foreignId, string ClientName)
+        {
+            var param = new DynamicParameters();
+            param.Add("@ForeignId", foreignId);
+            param.Add("@ClientName", ClientName);            
+
+            return base.ExecuteSQLProcedure<USPGetNotificationByForeignId>("USPGetEmailNotificationByForeignId", param);
+        }
+
+        public IEnumerable<USPGetNotificationByForeignId> USPGetTeamsNotificationByForeignId(long foreignId, string ClientName)
+        {
+            var param = new DynamicParameters();
+            param.Add("@ForeignId", foreignId);
+            param.Add("@ClientName", ClientName);
+
+            return base.ExecuteSQLProcedure<USPGetNotificationByForeignId>("USPGetTeamsNotificationByForeignId", param);
+        }
+
     }
 
 

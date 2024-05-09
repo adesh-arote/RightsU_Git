@@ -58,6 +58,7 @@
     <Compile Include="HTTP\HttpResponseMapper.cs" />
     <Compile Include="HTTP\IHttpResponseMapper.cs" />
     <Compile Include="InputEntities\GetMessagesInput.cs" />
+    <Compile Include="InputEntities\GetNotificationInput.cs" />
     <Compile Include="InputEntities\GetSummarisedMessageStatus.cs" />
     <Compile Include="InputEntities\NotificationInput.cs" />
     <Compile Include="InputEntities\NotificationTypeInput.cs" />
@@ -68,6 +69,7 @@
     <Compile Include="ProcedureEntities\USPGetMasters.cs" />
     <Compile Include="ProcedureEntities\USPGetMessages.cs" />
     <Compile Include="ProcedureEntities\USPGetMessageStatus.cs" />
+    <Compile Include="ProcedureEntities\USPGetNotificationByForeignId.cs" />
     <Compile Include="ProcedureEntities\USPInsertNotification.cs" />
     <Compile Include="ProcedureEntities\USPInsertNotificationType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
