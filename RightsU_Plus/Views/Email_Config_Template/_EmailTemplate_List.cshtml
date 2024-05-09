@@ -49,13 +49,13 @@
         if (ViewBag.CommandName == "ADD")
         {
             <tr>
-                <td>
+                <td style="text-align:left;">
                     @Html.DropDownList("lstEmailConfig", (IEnumerable<SelectListItem>)ViewBag.lst_EmailConfig, "Please Select", htmlAttributes: new { @id = "ddlEmailConfig", @class = "form_input chosen-select" })
                 </td>
-                <td>
+                <td style="text-align:left;">
                     @Html.DropDownList("lstTemplateType", (IEnumerable<SelectListItem>)ViewBag.lst_TemplateType, "Please Select", htmlAttributes: new { @id = "ddlTemplateType", @class = "form_input chosen-select" })
                 </td>
-                <td>
+                <td style="text-align:left;">
                     @Html.DropDownList("lstPlatform", (IEnumerable<SelectListItem>)ViewBag.lst_Platform, "Please Select", htmlAttributes: new { @id = "ddlPlatform", @class = "form_input chosen-select" })
                 </td>
                 <td>New</td>
@@ -73,15 +73,15 @@
             <tr>
                 @if (ViewBag.CommandName == "EDIT" && ViewBag.Email_Config_Template_Code == item.Email_Config_Template_Code)
                 {
-                <td>
+                <td style="text-align:left;">
                     @Html.DropDownList("lstEmailConfig", (IEnumerable<SelectListItem>)ViewBag.lst_EmailConfig, "Please Select", htmlAttributes: new { @id = "ddlEmailConfig", @class = "form_input chosen-select" })
                 </td>
 
-                <td>
+                <td style="text-align:left;">
                     @Html.DropDownList("lstTemplateType", (IEnumerable<SelectListItem>)ViewBag.lst_TemplateType, "Please Select", htmlAttributes: new { @id = "ddlTemplateType", @class = "form_input chosen-select" })
                 </td>
 
-                <td>
+                <td style="text-align:left;">
                     @Html.DropDownList("lstPlatform", (IEnumerable<SelectListItem>)ViewBag.lst_Platform, "Please Select", htmlAttributes: new { @id = "ddlPlatform", @class = "form_input chosen-select" })
                 </td>
                     <td>
@@ -189,7 +189,7 @@
                             }
                             if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForEdit.ToString() + "~"))
                             {
-                                <a title="Cannot configure template as it is deactivated" class="glyphicon glyphicon-cog" onclick="return false;"></a>
+                                <a title="Cannot configure template as record is deactivated" class="glyphicon glyphicon-cog disabled" onclick="return false;"></a>
                             }
                         }
 

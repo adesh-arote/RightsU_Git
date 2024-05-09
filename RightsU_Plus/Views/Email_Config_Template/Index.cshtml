@@ -88,6 +88,10 @@
 
     function Search_Email_Config_Template(searchtext) {
         debugger;
+
+        if (!checkCurrentAction())
+            return false;
+
         $('#searchCommon').val(searchtext);
         showLoading();
         $.ajax({
@@ -397,6 +401,9 @@
 
     function ConfigureTemplate(Email_Config_Template_Code, Email_Config_Code, Event_Template_Code, Event_Platform_Code, Event_Template_Type) {
         debugger;
+
+        if (!checkCurrentAction())
+            return false;
         
         $.ajax({
             type: "POST",
@@ -538,7 +545,7 @@
             <div class="">
                 <div class="title_block dotted_border clearfix">
                     <h2 class="pull-left">
-                        Email Config Template
+                        Event Config Template
                     </h2>
                     <div class="right_nav pull-right">
                         <ul>
