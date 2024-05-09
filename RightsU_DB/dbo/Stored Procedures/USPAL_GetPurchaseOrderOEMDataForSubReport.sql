@@ -141,7 +141,7 @@ BEGIN
 		From #TempPurchaseOrderData tpod 
 			INNER JOIN
 		(Select * from ( Select tb.AL_Booking_Sheet_Code, tb.TitleName, tb.Columns_Name, tb.Columns_Value, tb.Title_Code  from #TempBookingData tb ) a
-			pivot (max(Columns_Value) for Columns_Name in ([Airline],[Version],[Lang 1],[Embedded Subs],[Remarks],[File details],[PO Booking],[Estimated Screening Cost per flight USD],
+			pivot (max(Columns_Value) for Columns_Name in ([Airline],[Version],[Lang 1],[Lang 2],[Lang 3],[Lang 4],[Embedded Subs],[Remarks],[File details],[PO Booking],[Estimated Screening Cost per flight USD],
 												   [Estimated Screening Total USD],[Duplication Cost per flight USD],[Duplication Total USD],[Miscellaneous Items],[Miscellaneous Charges],
 												   [Master delivery date],[Trailer delivery date],[Delivery and Payment remarks], [Lab], [PAC MPEG], [PAC Aspect Ratio], [PAC Filename], [PAC ex 1], [PAC ex 2], [PAC ex 3])) p) AS T
 		ON tpod.AL_Booking_Sheet_Code = T.AL_Booking_Sheet_Code
@@ -175,7 +175,7 @@ BEGIN
 		From #TempPurchaseOrderData tpod 
 			INNER JOIN
 		(Select * from ( Select tb.AL_Booking_Sheet_Code, tb.TitleName, tb.Columns_Name, tb.Columns_Value, tb.Title_Code  from #TempBookingData tb ) a
-			pivot (max(Columns_Value) for Columns_Name in ([Airline],[Version],[Lang 1],[Embedded Subs],[Remarks],[File details],[PO Booking],[Estimated Screening Cost per flight USD],
+			pivot (max(Columns_Value) for Columns_Name in ([Airline],[Version],[Lang 1],[Lang 2],[Lang 3],[Lang 4],[Embedded Subs],[Remarks],[File details],[PO Booking],[Estimated Screening Cost per flight USD],
 												   [Estimated Screening Total USD],[Duplication Cost per flight USD],[Duplication Total USD],[Miscellaneous Items],[Miscellaneous Charges],
 												   [Master delivery date],[Trailer delivery date],[Delivery and Payment remarks], [Lab], [Moment (Wireless IFE)], [Moment MPEG], [Moment Aspect Ratio], [Moment Filename])) p) AS T
 		ON tpod.AL_Booking_Sheet_Code = T.AL_Booking_Sheet_Code
@@ -194,7 +194,7 @@ BEGIN
 		From #TempPurchaseOrderData tpod 
 			INNER JOIN
 		(Select * from ( Select tb.AL_Booking_Sheet_Code, tb.TitleName, tb.Columns_Name, tb.Columns_Value, tb.Title_Code  from #TempBookingData tb ) a
-			pivot (max(Columns_Value) for Columns_Name in ([Airline],[Version],[Lang 1],[Embedded Subs],[Remarks],[File details],[PO Booking],[Estimated Screening Cost per flight USD],
+			pivot (max(Columns_Value) for Columns_Name in ([Airline],[Version],[Lang 1],[Lang 2],[Lang 3],[Lang 4],[Embedded Subs],[Remarks],[File details],[PO Booking],[Estimated Screening Cost per flight USD],
 												   [Estimated Screening Total USD],[Duplication Cost per flight USD],[Duplication Total USD],[Miscellaneous Items],[Miscellaneous Charges],
 												   [Master delivery date],[Trailer delivery date],[Delivery and Payment remarks], [Lab], [Moment (Wireless IFE)], [Thales MPEG], [Thales Aspect Ratio], [Thales Filename], [Thales Avant], [Thales i4000], [Thales i5000], [Thales i8000] )) p) AS T
 		ON tpod.AL_Booking_Sheet_Code = T.AL_Booking_Sheet_Code
@@ -212,7 +212,7 @@ BEGIN
 		From #TempPurchaseOrderData tpod 
 			INNER JOIN
 		(Select * from ( Select tb.AL_Booking_Sheet_Code, tb.TitleName, tb.Columns_Name, tb.Columns_Value, tb.Title_Code  from #TempBookingData tb ) a
-			pivot (max(Columns_Value) for Columns_Name in ([Airline],[Version],[Lang 1],[Embedded Subs],[Remarks],[File details],[PO Booking],[Estimated Screening Cost per flight USD],
+			pivot (max(Columns_Value) for Columns_Name in ([Airline],[Version],[Lang 1],[Lang 2],[Lang 3],[Lang 4],[Embedded Subs],[Remarks],[File details],[PO Booking],[Estimated Screening Cost per flight USD],
 												   [Estimated Screening Total USD],[Duplication Cost per flight USD],[Duplication Total USD],[Miscellaneous Items],[Miscellaneous Charges],
 												   [Master delivery date],[Trailer delivery date],[Delivery and Payment remarks], [Lab], [Moment (Wireless IFE)], [Moment MPEG], [Moment Aspect Ratio], [Moment Filename])) p) AS T
 		ON tpod.AL_Booking_Sheet_Code = T.AL_Booking_Sheet_Code
@@ -230,7 +230,7 @@ BEGIN
 		From #TempPurchaseOrderData tpod 
 			INNER JOIN
 		(Select * from ( Select tb.AL_Booking_Sheet_Code, tb.TitleName, tb.Columns_Name, tb.Columns_Value, tb.Title_Code  from #TempBookingData tb ) a
-			pivot (max(Columns_Value) for Columns_Name in ([Airline],[Version],[Lang 1],[Embedded Subs],[Remarks],[File details],[PO Booking],[Estimated Screening Cost per flight USD],
+			pivot (max(Columns_Value) for Columns_Name in ([Airline],[Version],[Lang 1],[Lang 2],[Lang 3],[Lang 4],[Embedded Subs],[Remarks],[File details],[PO Booking],[Estimated Screening Cost per flight USD],
 												   [Estimated Screening Total USD],[Duplication Cost per flight USD],[Duplication Total USD],[Miscellaneous Items],[Miscellaneous Charges],
 												   [Master delivery date],[Trailer delivery date],[Delivery and Payment remarks], [Lab], [Viasat], [Viasat MPEG], [Viasat Aspect Ratio], [Viasat Filename])) p) AS T
 		ON tpod.AL_Booking_Sheet_Code = T.AL_Booking_Sheet_Code
@@ -248,7 +248,7 @@ BEGIN
 		From #TempPurchaseOrderData tpod 
 			INNER JOIN
 		(Select * from ( Select tb.AL_Booking_Sheet_Code, tb.TitleName, tb.Columns_Name, tb.Columns_Value, tb.Title_Code  from #TempBookingData tb ) a
-			pivot (max(Columns_Value) for Columns_Name in ([Airline],[Version],[Lang 1], [Embedded Subs],[Remarks],[File details],[PO Booking],[Estimated Screening Cost per flight USD],
+			pivot (max(Columns_Value) for Columns_Name in ([Airline],[Version],[Lang 1],[Lang 2],[Lang 3],[Lang 4], [Embedded Subs],[Remarks],[File details],[PO Booking],[Estimated Screening Cost per flight USD],
 												   [Estimated Screening Total USD],[Duplication Cost per flight USD],[Duplication Total USD],[Miscellaneous Items],[Miscellaneous Charges],
 												   [Master delivery date],[Trailer delivery date],[Delivery and Payment remarks], [Lab], [Moment (Wireless IFE)], [Moment MPEG], [Moment Aspect Ratio], [Moment Filename])) p) AS T
 		ON tpod.AL_Booking_Sheet_Code = T.AL_Booking_Sheet_Code

@@ -1126,6 +1126,8 @@
         <EntityTypeShape EntityType="RightsU_NeoModel.Email_Config_Keys" Width="1.5" PointX="52.125" PointY="13.375" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Email_Config_Keys_Email_Config" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Email_Config_Keys_Event_Template_Keys" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Notifications_Email_Config" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Notifications_Event_Platform" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

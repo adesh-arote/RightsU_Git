@@ -12,6 +12,11 @@ namespace RightsU_Entities
     using System.ComponentModel.DataAnnotations.Schema;
     public partial class Event_Platform
     {
+        public Event_Platform()
+        {
+            this.Notifications = new HashSet<Notifications>();
+        }
+
         public State EntityState { get; set; }
         public int Event_Platform_Code { get; set; }
         public string Event_Platform_Name { get; set; }
@@ -28,5 +33,6 @@ namespace RightsU_Entities
         public string Inserted_By_User { get; set; }
         [NotMapped]
         public string Last_Action_By_User { get; set; }
+        public virtual ICollection<Notifications> Notifications { get; set; }
     }
 }

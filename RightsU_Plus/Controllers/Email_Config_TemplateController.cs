@@ -27,7 +27,7 @@ namespace RightsU_Plus.Controllers
         private List<Email_Config_Template> lstEmail_Template_Searched = new List<Email_Config_Template>();
         #endregion
 
-        #region Master save
+        #region Event Config Template list
         public ActionResult Index()
         {
             List<SelectListItem> lstSort = new List<SelectListItem>();
@@ -37,6 +37,10 @@ namespace RightsU_Plus.Controllers
             ViewBag.SortType = lstSort;
 
             ViewBag.UserModuleRights = GetUserModuleRights();
+            string moduleCode = GlobalParams.ModuleCodeForEmailConfigTemplate.ToString();
+            string SysLanguageCode = objLoginUser.System_Language_Code.ToString();
+            ViewBag.ModuleCode = moduleCode;
+            ViewBag.LangCode = SysLanguageCode;
 
             return View();
         }
@@ -53,7 +57,7 @@ namespace RightsU_Plus.Controllers
 
         public PartialViewResult Bind_Email_Config_Template(int pageNo, int recordPerPage, int Email_Config_Template_Code, string commandName, string sortType)
         {
-            lstEmail_Template_Searched = lstEmail_Template;//new Email_Config_Template_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).ToList();
+            lstEmail_Template_Searched = lstEmail_Template;
             ViewBag.Email_Config_Template_Code = Email_Config_Template_Code;
             ViewBag.CommandName = commandName;
             List<Email_Config_Template> lst = new List<Email_Config_Template>();
@@ -70,23 +74,20 @@ namespace RightsU_Plus.Controllers
                 }
                 else if (sortType == "NA")
                 {
-                    lst = lstEmail_Template_Searched.OrderBy(o => o.Email_Config_Template_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    lst = lstEmail_Template_Searched.OrderBy(o => o.Email_Type).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
                 }
                 else if (sortType == "ND")
                 {
-                    lst = lstEmail_Template_Searched.OrderByDescending(o => o.Email_Config_Template_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    lst = lstEmail_Template_Searched.OrderByDescending(o => o.Email_Type).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
                 }
             }
-
-            Email_Config_Service objEmail_Config_Service = new Email_Config_Service(objLoginEntity.ConnectionStringName);
-            Event_Platform_Service objEvent_Platform_Service = new Event_Platform_Service(objLoginEntity.ConnectionStringName);
 
             List<SelectListItem> lstTemplateType = new List<SelectListItem>();
             lstTemplateType.Add(new SelectListItem { Selected = true, Text = "TEXT", Value = "T" });
             lstTemplateType.Add(new SelectListItem { Text = "HTML", Value = "H" });
 
-            var lstEmailConfig = objEmail_Config_Service.SearchFor(s => true).ToList();
-            var lstPlatform = objEvent_Platform_Service.SearchFor(s => true).ToList();
+            var lstEmailConfig = new Email_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).ToList();
+            var lstPlatform = new Event_Platform_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).ToList();
 
             if (commandName == "ADD")
             {
@@ -111,21 +112,27 @@ namespace RightsU_Plus.Controllers
 
             ViewBag.UserModuleRights = GetUserModuleRights();
 
-            //var result = new SelectList(from x in new Email_Config_Template_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).ToList()
-            //                             join y in new Email_Config_Detail_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).ToList()
-            //                             on x.Email_Config_Code equals y.Email_Config_Code
-            //                             join z in new Email_Config_Detail_User_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).ToList()
-            //                             on y.Email_Config_Detail_Code equals z.Email_Config_Detail_Code
-            //                             select new
-            //                             {
-            //                                 z.Event_Platform_Code,
-            //                                 z.Event_Template_Type,
-            //                                 x.Email_Config_Code
-            //                             }).ToList();
+            var result = (from x in new Email_Config_Template_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).ToList()
+                                         join y in new Email_Config_Detail_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).ToList()
+                                         on x.Email_Config_Code equals y.Email_Config_Code
+                                         join z in new Email_Config_Detail_User_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).ToList()
+                                         on y.Email_Config_Detail_Code equals z.Email_Config_Detail_Code
+                                         select new
+                                         {
+                                             z.Event_Platform_Code,
+                                             z.Event_Template_Type,
+                                             x.Email_Config_Code
+                                         }).ToList();
 
-            //ViewBag.AllowEditingFlag = "";
+            foreach(var item in lst)
+            {
+                var ValidList = result.Where(a => a.Email_Config_Code == item.Email_Config_Code && a.Event_Platform_Code == item.Event_Platform_Code && a.Event_Template_Type == item.Event_Template_Type).ToList();
 
-            return PartialView("_EmailTemplate_List", lst);
+                if(ValidList.Count > 0)
+                    item.AllowEdit = "N";
+            }                
+
+        return PartialView("_EmailTemplate_List", lst);
         }
 
         public int GetPaging(int pageNo, int recordPerPage, int recordCount, out int noOfRecordSkip, out int noOfRecordTake)
@@ -162,11 +169,18 @@ namespace RightsU_Plus.Controllers
         public JsonResult Search_Email_Config_Template(string searchText)
         {
             lstEmail_Template_Searched = new Email_Config_Template_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).ToList();
+
+            foreach(var item in lstEmail_Template_Searched)
+            {
+                item.Email_Type = new Email_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Email_Config_Code == item.Email_Config_Code).Select(x => x.Email_Type).FirstOrDefault();
+            }
+
             if (!string.IsNullOrEmpty(searchText))
             {
-                var configNames = TemplateEmailConfig(searchText);
-                string[] terms = configNames.Split(',');
-                lstEmail_Template_Searched = lstEmail_Template_Searched.Where(a => terms.Contains(Convert.ToString(a.Email_Config_Code))).ToList();
+                //var configNames = TemplateEmailConfig(searchText);
+                //string[] terms = configNames.Split(',');
+                //lstEmail_Template_Searched = lstEmail_Template_Searched.Where(a => terms.Contains(Convert.ToString(a.Email_Config_Code))).ToList();
+                lstEmail_Template_Searched = lstEmail_Template_Searched.Where(w => w.Email_Type.ToUpper().Contains(searchText.ToUpper())).ToList();
             }
             var obj = new
             {
@@ -220,7 +234,7 @@ namespace RightsU_Plus.Controllers
                     message = objMessageKey.Recordsavedsuccessfully;
                 }
                 status = "S";
-                lstEmail_Template_Searched = new Email_Config_Template_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).ToList();
+                lstEmail_Template = new Email_Config_Template_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).ToList();
 
                 try
                 {
@@ -255,7 +269,7 @@ namespace RightsU_Plus.Controllers
 
             var obj = new
             {
-                RecordCount = lstEmail_Template_Searched.Count,
+                RecordCount = lstEmail_Template.Count,
                 Status = status,
                 Message = message
             };
@@ -354,8 +368,7 @@ namespace RightsU_Plus.Controllers
                     }
                 }
             }
-
-
+            lstEmail_Template = new Email_Config_Template_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).ToList();
 
             var Obj = new
             {
@@ -366,7 +379,7 @@ namespace RightsU_Plus.Controllers
         }
         #endregion
 
-        #region Event Template
+        #region Event Template Popup
         public PartialViewResult Bind_Event_Template_PopUp(int Email_Config_Template_Code, int Email_Config_Code, int Event_Platform_Code, string Event_Template_Type, int Event_Template_Code = 0)
         {
             Event_Template objEv_Template = new Event_Template();
@@ -466,9 +479,11 @@ namespace RightsU_Plus.Controllers
                 ObjEmail_Config_Template = new Email_Config_Template_Service(objLoginEntity.ConnectionStringName).GetById(Email_Config_Template_Code);
                 ObjEmail_Config_Template.EntityState = State.Modified;
                 ObjEmail_Config_Template.Event_Template_Code = ObjEvent_Template.Event_Template_Code;
+                ObjEmail_Config_Template.Last_Action_By = objLoginUser.Users_Code;
+                ObjEmail_Config_Template.Last_UpDated_Time = DateTime.Now;
 
                 new Email_Config_Template_Service(objLoginEntity.ConnectionStringName).Save(ObjEmail_Config_Template, out resultSet);
-
+                lstEmail_Template = new Email_Config_Template_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).ToList();
                 status = "S";
 
                 try

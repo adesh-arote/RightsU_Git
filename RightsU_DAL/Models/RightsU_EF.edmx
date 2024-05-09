@@ -4548,6 +4548,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Notifications' does not have a
           <Property Name="IsAutoEscalated" Type="bit" Nullable="false" />
           <Property Name="IsReminderMail" Type="bit" Nullable="false" />
           <Property Name="Service_Response" Type="nvarchar(max)" />
+          <Property Name="Email_Config_Code" Type="int" />
+          <Property Name="Event_Platform_Code" Type="int" />
+          <Property Name="Event_Template_Type" Type="char" MaxLength="1" />
         </EntityType>
         <EntityType Name="Paf">
           <Key>
@@ -11254,6 +11257,30 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Notifications_Email_Config">
+          <End Role="Email_Config" Type="Self.Email_Config" Multiplicity="0..1" />
+          <End Role="Notifications" Type="Self.Notifications" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Email_Config">
+              <PropertyRef Name="Email_Config_Code" />
+            </Principal>
+            <Dependent Role="Notifications">
+              <PropertyRef Name="Email_Config_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Notifications_Event_Platform">
+          <End Role="Event_Platform" Type="Self.Event_Platform" Multiplicity="0..1" />
+          <End Role="Notifications" Type="Self.Notifications" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Event_Platform">
+              <PropertyRef Name="Event_Platform_Code" />
+            </Principal>
+            <Dependent Role="Notifications">
+              <PropertyRef Name="Event_Platform_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Platform_Avail_Acq">
           <End Role="Platform" Type="Self.Platform" Multiplicity="0..1" />
           <End Role="Avail_Acq" Type="Self.Avail_Acq" Multiplicity="*" />
@@ -17178,7 +17205,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
     [Notifications].[ModifiedBy] AS [ModifiedBy], 
     [Notifications].[IsAutoEscalated] AS [IsAutoEscalated], 
     [Notifications].[IsReminderMail] AS [IsReminderMail], 
-    [Notifications].[Service_Response] AS [Service_Response]
+    [Notifications].[Service_Response] AS [Service_Response], 
+    [Notifications].[Email_Config_Code] AS [Email_Config_Code], 
+    [Notifications].[Event_Platform_Code] AS [Event_Platform_Code], 
+    [Notifications].[Event_Template_Type] AS [Event_Template_Type]
     FROM [dbo].[Notifications] AS [Notifications]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="Paf_Details" EntityType="Self.Paf_Details" store:Type="Tables" store:Schema="dbo">
@@ -18713,6 +18743,14 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <AssociationSet Name="FK_Music_Title_Title" Association="Self.FK_Music_Title_Title">
             <End Role="Title" EntitySet="Title" />
             <End Role="Music_Title" EntitySet="Music_Title" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Notifications_Email_Config" Association="Self.FK_Notifications_Email_Config">
+            <End Role="Email_Config" EntitySet="Email_Config" />
+            <End Role="Notifications" EntitySet="Notifications" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Notifications_Event_Platform" Association="Self.FK_Notifications_Event_Platform">
+            <End Role="Event_Platform" EntitySet="Event_Platform" />
+            <End Role="Notifications" EntitySet="Notifications" />
           </AssociationSet>
           <AssociationSet Name="FK_Platform_Avail_Acq" Association="Self.FK_Platform_Avail_Acq">
             <End Role="Platform" EntitySet="Platform" />
@@ -24122,6 +24160,14 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <AssociationSet Name="FK_Email_Config_Keys_Event_Template_Keys" Association="RightsU_NeoModel.FK_Email_Config_Keys_Event_Template_Keys">
             <End Role="Event_Template_Keys" EntitySet="Event_Template_Keys" />
             <End Role="Email_Config_Keys" EntitySet="Email_Config_Keys" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Notifications_Email_Config" Association="RightsU_NeoModel.FK_Notifications_Email_Config">
+            <End Role="Email_Config" EntitySet="Email_Config" />
+            <End Role="Notifications" EntitySet="Notifications" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Notifications_Event_Platform" Association="RightsU_NeoModel.FK_Notifications_Event_Platform">
+            <End Role="Event_Platform" EntitySet="Event_Platform" />
+            <End Role="Notifications" EntitySet="Notifications" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="Acq_Deal">
@@ -35702,6 +35748,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Last_Updated_On" Type="DateTime" Precision="3" />
           <Property Name="Event_Type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
           <NavigationProperty Name="Email_Config_Keys" Relationship="RightsU_NeoModel.FK_Email_Config_Keys_Email_Config" FromRole="Email_Config" ToRole="Email_Config_Keys" />
+          <NavigationProperty Name="Notifications" Relationship="RightsU_NeoModel.FK_Notifications_Email_Config" FromRole="Email_Config" ToRole="Notifications" />
         </EntityType>
         <EntityType Name="Email_Config_Detail">
           <Key>
@@ -41292,6 +41339,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Last_Action_By" Type="Int32" />
           <Property Name="Lock_Time" Type="DateTime" Precision="3" />
           <Property Name="Enable_CC_And_BCC" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <NavigationProperty Name="Notifications" Relationship="RightsU_NeoModel.FK_Notifications_Event_Platform" FromRole="Event_Platform" ToRole="Notifications" />
         </EntityType>
         <EntityType Name="Event_Template_Keys">
           <Key>
@@ -41355,6 +41403,11 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="IsAutoEscalated" Type="Boolean" Nullable="false" />
           <Property Name="IsReminderMail" Type="Boolean" Nullable="false" />
           <Property Name="Service_Response" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Email_Config_Code" Type="Int32" />
+          <Property Name="Event_Platform_Code" Type="Int32" />
+          <Property Name="Event_Template_Type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <NavigationProperty Name="Email_Config" Relationship="RightsU_NeoModel.FK_Notifications_Email_Config" FromRole="Notifications" ToRole="Email_Config" />
+          <NavigationProperty Name="Event_Platform" Relationship="RightsU_NeoModel.FK_Notifications_Event_Platform" FromRole="Notifications" ToRole="Event_Platform" />
         </EntityType>
         <EntityType Name="Email_Config_Keys">
           <Key>
@@ -41387,6 +41440,30 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Principal>
             <Dependent Role="Email_Config_Keys">
               <PropertyRef Name="Event_Template_Keys_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Notifications_Email_Config">
+          <End Type="RightsU_NeoModel.Email_Config" Role="Email_Config" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Notifications" Role="Notifications" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Email_Config">
+              <PropertyRef Name="Email_Config_Code" />
+            </Principal>
+            <Dependent Role="Notifications">
+              <PropertyRef Name="Email_Config_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Notifications_Event_Platform">
+          <End Type="RightsU_NeoModel.Event_Platform" Role="Event_Platform" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Notifications" Role="Notifications" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Event_Platform">
+              <PropertyRef Name="Event_Platform_Code" />
+            </Principal>
+            <Dependent Role="Notifications">
+              <PropertyRef Name="Event_Platform_Code" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -52188,6 +52265,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Notifications">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Notifications">
               <MappingFragment StoreEntitySet="Notifications">
+                <ScalarProperty Name="Event_Template_Type" ColumnName="Event_Template_Type" />
+                <ScalarProperty Name="Event_Platform_Code" ColumnName="Event_Platform_Code" />
+                <ScalarProperty Name="Email_Config_Code" ColumnName="Email_Config_Code" />
                 <ScalarProperty Name="Service_Response" ColumnName="Service_Response" />
                 <ScalarProperty Name="IsReminderMail" ColumnName="IsReminderMail" />
                 <ScalarProperty Name="IsAutoEscalated" ColumnName="IsAutoEscalated" />
