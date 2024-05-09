@@ -11,7 +11,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.22.1/ckeditor.js" integrity="sha512-F8fV4+wpHYl9zul08Soff9H9fCx6OMIFfgbQcy+2v2gV7PdbT0OgM1LFwujQmwlLGWWKNbOFZ13uWP+Cbe0Ngw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <script>
-      var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T";
+      var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T", Module_Code = @ViewBag.ModuleCode, SysLanguageCode = @ViewBag.LangCode;
 
     var URL_Bind_Email_Config_Template = '@Url.Action("Bind_Email_Config_Template", "Email_Config_Template")';
     var URL_Search_Email_Config_Template = '@Url.Action("Search_Email_Config_Template", "Email_Config_Template")';
@@ -393,7 +393,7 @@
         }
     }
 
-    //----------------Config Template Popup----------------------
+    //----------------Event Template Popup----------------------
 
     function ConfigureTemplate(Email_Config_Template_Code, Email_Config_Code, Event_Template_Code, Event_Platform_Code, Event_Template_Type) {
         debugger;
@@ -506,6 +506,17 @@
         }
     }
 
+    //-----------------Export To Excel--------------------------- 
+    function ExportToExcel() {
+        debugger;
+        var type = "";
+        var Module_Name = "Email Config Template";
+        type = $('#ddlSortType').val();
+        var StrSearchCriteria = $.trim($('#searchCommon').val());
+
+        window.location.href = '@Url.Action("ExportToExcel", "Global")?Module_Code=' + Module_Code + '&SysLanguageCode=' + SysLanguageCode + '&Module_Name=' + Module_Name + '&sortColumnOrder=' + type + '&StrSearchCriteria=' + StrSearchCriteria;
+    }
+
 </script>
 
 <style>
@@ -537,12 +548,12 @@
                                     <input autocomplete="off" type="button" class="btn btn-primary" value="@objMessageKey.Add" onclick="AddEditEmail_Template('ADD', 0)" />
                                 }
                             </li>
-                            @*<li>
+                            <li>
                                 @if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForExportToExcel.ToString() + "~"))
                                 {
                                     <a title="@objMessageKey.SaveToExcel" class="glyphicon glyphicon-floppy-save" style="cursor:pointer; text-decoration:underline; " onclick="ExportToExcel()"></a>
                                 }
-                            </li>*@
+                            </li>
                         </ul>
                     </div>
                 </div>

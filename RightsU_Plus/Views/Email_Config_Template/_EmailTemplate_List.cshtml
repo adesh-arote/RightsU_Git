@@ -150,17 +150,31 @@
                     <td>
                         @if (item.Is_Active == "Y")
                         {
-                            if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForEdit.ToString() + "~"))
+                            if (item.AllowEdit == "Y")
                             {
-                                <a title="Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer" onclick="CheckRecordLock('EDIT', '@item.Email_Config_Template_Code')"></a>
+                                if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForEdit.ToString() + "~"))
+                                {
+                                    <a title="Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer" onclick="CheckRecordLock('EDIT', '@item.Email_Config_Template_Code')"></a>
+                                }
+                            }
+                            else
+                            {
+                                <a title="Cannot edit record as it is in use" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
                             }
                             if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForDeactivate + "~"))
                             {
                                 <a title="@objMessageKey.Deactivate" class="glyphicon glyphicon-thumbs-down" style="cursor: pointer" onclick="ActivateDeactivate('@item.Email_Config_Template_Code', 'N')"></a>
                             }
-                            if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForEdit.ToString() + "~"))
+                            if (item.AllowEdit == "Y")
                             {
-                                <a title="Configure" class="glyphicon glyphicon-cog" style="cursor: pointer" onclick="ConfigureTemplate('@item.Email_Config_Template_Code', '@item.Email_Config_Code', '@item.Event_Template_Code', '@item.Event_Platform_Code', '@item.Event_Template_Type')"></a>
+                                if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForEdit.ToString() + "~"))
+                                {
+                                    <a title="Configure" class="glyphicon glyphicon-cog" style="cursor: pointer" onclick="ConfigureTemplate('@item.Email_Config_Template_Code', '@item.Email_Config_Code', '@item.Event_Template_Code', '@item.Event_Platform_Code', '@item.Event_Template_Type')"></a>
+                                }
+                            }
+                            else
+                            {
+                                <a title="Cannot edit template as it is in use" class="glyphicon glyphicon-cog disabled" onclick="return false;"></a>
                             }
                         }
                         else
