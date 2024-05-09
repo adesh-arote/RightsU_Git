@@ -17,20 +17,22 @@ namespace RightsU_Entities
         public Email_Config()
         {
             this.Email_Config_Detail = new HashSet<Email_Config_Detail>();
+            this.Email_Notification_Log = new HashSet<Email_Notification_Log>();
             this.Email_Config_Keys = new HashSet<Email_Config_Keys>();
+            this.Notifications = new HashSet<Notifications>();
         }
-    
-    	public State EntityState { get; set; }
+
+        public State EntityState { get; set; }
         public int Email_Config_Code { get; set; }
-    	public string Email_Type { get; set; }
-    	public string OnScreen_Notification { get; set; }
-    	public string Allow_Config { get; set; }
-    	public string IsChannel { get; set; }
-    	public string IsBusinessUnit { get; set; }
-    	public string Notification_Frequency { get; set; }
-    	public string Days_Config { get; set; }
-    	public string Days_Freq { get; set; }
-    	public string Remarks { get; set; }
+        public string Email_Type { get; set; }
+        public string OnScreen_Notification { get; set; }
+        public string Allow_Config { get; set; }
+        public string IsChannel { get; set; }
+        public string IsBusinessUnit { get; set; }
+        public string Notification_Frequency { get; set; }
+        public string Days_Config { get; set; }
+        public string Days_Freq { get; set; }
+        public string Remarks { get; set; }
         public string User_Count { get; set; }
         public Nullable<int> Inserted_By { get; set; }
         public Nullable<System.DateTime> Inserted_On { get; set; }
@@ -42,5 +44,6 @@ namespace RightsU_Entities
         public virtual ICollection<Email_Config_Detail> Email_Config_Detail { get; set; }
         public virtual ICollection<Email_Notification_Log> Email_Notification_Log { get; set; }
         public virtual ICollection<Email_Config_Keys> Email_Config_Keys { get; set; }
+        public virtual ICollection<Notifications> Notifications { get; set; }
     }
 }
