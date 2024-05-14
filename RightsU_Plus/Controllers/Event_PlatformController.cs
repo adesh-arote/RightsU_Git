@@ -3,7 +3,12 @@ using RightsU_BLL;
 using RightsU_Entities;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Security.Cryptography;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using UTOFrameWork.FrameworkClasses;
@@ -195,13 +200,15 @@ namespace RightsU_Plus.Controllers
                     if (EventPlatform_Code > 0)
                     {
                         message = objMessageKey.Recordupdatedsuccessfully;
-                        Action = Convert.ToString(ActionType.U); // U = "Update";
+                        Action = Convert.ToString(ActionType.U); // U = "Update";                       
                     }
                     else
                     {
-                        message = objMessageKey.Recordsavedsuccessfully;
+                        message = objMessageKey.Recordsavedsuccessfully;                   
                     }
                     lstEvent_Platform_Searched = objEvent_Platform_Service.SearchFor(s => true).ToList();
+
+                    UpdateRecordsUsingAPI(Objevent_Platform.Short_Code, Objevent_Platform.Event_Platform_Name, Objevent_Platform.Credentials, "Y");   //---Calling API Method here while Add/Edit
                 }
             }
             else
@@ -278,13 +285,14 @@ namespace RightsU_Plus.Controllers
                     Status = "S";
                     if (ActiveAction == "Y")
                     {
-                        Message = objMessageKey.Recordactivatedsuccessfully;
+                        Message = objMessageKey.Recordactivatedsuccessfully;                       
                     }
                     else
                     {
                         Message = objMessageKey.Recorddeactivatedsuccessfully;
                         Action = Convert.ToString(ActionType.D);  //Deactivate
                     }
+                    UpdateRecordsUsingAPI(objEP.Short_Code, objEP.Event_Platform_Name, objEP.Credentials, ActiveAction);  //---Calling API Method here while Activate/Deactivate
                 }
 
                 try
@@ -346,14 +354,18 @@ namespace RightsU_Plus.Controllers
         public PartialViewResult AddEditEventKeys(int Id, string CommandName)
         {
             EventTemplateKeys objkey = new EventTemplateKeys();
-            Event_Template_Key_Service Objevent_Template_Key_Service = new Event_Template_Key_Service(objLoginEntity.ConnectionStringName);
 
+            Extended_Group objExt_Grp = new Extended_Group();
+            List<Extended_Columns> lstextended_Columns = new List<Extended_Columns>();
+            objExt_Grp = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Module_Code == GlobalParams.ModuleCodeForEventPlatform && x.IsActive == "Y").OrderBy(x => x.Group_Order).FirstOrDefault();
+            lstextended_Columns = objExt_Grp.Extended_Group_Config.Select(config => config.Extended_Columns)
+                .ToList();
+          
             List<string> UsedKeydata = lstEventTemplateKeys.Select(s => s.Key).ToList();
-
-            List<Event_Template_Keys> lstKeys = Objevent_Template_Key_Service.SearchFor(s => true).ToList();
-            ViewBag.ddlKeyData2 = lstKeys;
-            lstKeys = lstKeys.Where(w => !UsedKeydata.Any(a => a == w.Key_Name)).ToList();
-            ViewBag.ddlKeys = new SelectList(lstKeys, "Key_Name", "Key_Name");
+        
+             ViewBag.ddlKeyData2 = lstextended_Columns;
+            lstextended_Columns = lstextended_Columns.Where(w => !UsedKeydata.Any(a => a == w.Columns_Name)).ToList();
+            ViewBag.ddlKeys = new SelectList(lstextended_Columns, "Columns_Name", "Columns_Name");
 
             if (CommandName == "ADD")
             {
@@ -361,9 +373,12 @@ namespace RightsU_Plus.Controllers
             }
             if (CommandName == "EDIT")
             {
-                objkey = lstEventTemplateKeys.Where(c => c.Code == Id).FirstOrDefault();
-                List<Event_Template_Keys> lstEditKeys = Objevent_Template_Key_Service.SearchFor(s => true).ToList();
-                ViewBag.ddlKeys = new SelectList(lstEditKeys, "Key_Name", "Key_Name", objkey.Key);
+                objkey = lstEventTemplateKeys.Where(c => c.Code == Id).FirstOrDefault();              
+                objExt_Grp = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Module_Code == GlobalParams.ModuleCodeForEventPlatform && x.IsActive == "Y").OrderBy(x => x.Group_Order).FirstOrDefault();
+                lstextended_Columns = objExt_Grp.Extended_Group_Config.Select(config => config.Extended_Columns)
+                    .ToList();
+                
+               ViewBag.ddlKeys = new SelectList(lstextended_Columns, "Columns_Name", "Columns_Name", objkey.Key);
 
                 TempData["Action"] = "EDIT";
                 TempData["Id"] = objkey.Code;
@@ -470,6 +485,7 @@ namespace RightsU_Plus.Controllers
                 {
                     status = "S";
                     message = objMessageKey.Recordupdatedsuccessfully;
+                    UpdateRecordsUsingAPI(objEP.Short_Code, objEP.Event_Platform_Name, SearializeJsondata, "Y");    //---Calling API Method here while Add/Edit Credentials
                 }
                 Session["EventPlatformCode"] = null;
             }
@@ -509,6 +525,114 @@ namespace RightsU_Plus.Controllers
             public string Value { get; set; }
 
         }
+
+        //------------------------------------------------------------
+        #region Generic Auth Key Methods
+        public void UpdateRecordsUsingAPI(string ShortName, string PlatformName, string Credential, string IsActive)
+        {
+            string AuthKey = GetAuthKey();
+            var result = (dynamic)null;
+            string RequestUri = Convert.ToString(ConfigurationManager.AppSettings["NotificationURL"]);
+            System_Parameter_New_Service objSPNService = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName);
+            System_Parameter_New objSPN = objSPNService.SearchFor(s => s.Parameter_Name == "Notification_ClientName" && s.IsActive == "Y").FirstOrDefault();
+
+            using (var client = new WebClient())
+            {
+                client.Headers.Add("Content-Type:application/json");
+                client.Headers.Add("Accept:application/json");
+                client.Headers.Add("AuthKey", AuthKey);
+                client.Headers.Add("Service", "false");
+                var Response = new
+                {
+                    NotificationType = ShortName,
+                    ClientName = objSPN.Parameter_Value,
+                    Platform_Name = PlatformName,
+                    Credentials = Credential,
+                    Is_Active = IsActive
+                };
+                try
+                {
+                    result = client.UploadString(RequestUri + "NESaveNotificationType", JsonConvert.SerializeObject(Response));
+                   // Responses Objresponse = JsonConvert.DeserializeObject<Responses>(result);
+                    //if(Objresponse.Status == true)
+                    //{
+
+                    //}
+                    
+                }
+                catch (Exception ex)
+                {
+
+                }
+            }
+        }
+
+        public string GetAuthKey()
+        {
+            string AuthKey = "";
+            string hostName = Dns.GetHostName(); // Retrive the Name of HOST
+            string myIP = Dns.GetHostByName(hostName).AddressList[0].ToString();
+
+            byte[] bytesToBeEncrypted = Encoding.UTF8.GetBytes(ConfigurationManager.AppSettings["salt"].ToString());
+            byte[] passwordBytes = Encoding.UTF8.GetBytes(myIP);
+
+            byte[] bytesEncrypted = AesOperation.AES_Encrypt(bytesToBeEncrypted, passwordBytes);
+            AuthKey = Convert.ToBase64String(bytesEncrypted);
+
+            return AuthKey;
+        }
+        class AesOperation
+        {
+            public static byte[] AES_Encrypt(byte[] bytesToBeEncrypted, byte[] passwordBytes)
+            {
+                byte[] encryptedBytes = null;
+                byte[] saltBytes = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 };
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    using (RijndaelManaged AES = new RijndaelManaged())
+                    {
+                        AES.KeySize = 256;
+                        AES.BlockSize = 128;
+
+                        var key = new Rfc2898DeriveBytes(passwordBytes, saltBytes, 1000);
+                        AES.Key = key.GetBytes(AES.KeySize / 8);
+                        AES.IV = key.GetBytes(AES.BlockSize / 8);
+
+                        AES.Mode = CipherMode.CBC;
+
+                        using (var cs = new CryptoStream(ms, AES.CreateEncryptor(), CryptoStreamMode.Write))
+                        {
+                            cs.Write(bytesToBeEncrypted, 0, bytesToBeEncrypted.Length);
+                            cs.Close();
+                        }
+                        encryptedBytes = ms.ToArray();
+                    }
+                }
+                return encryptedBytes;
+            }
+        }
+
+        //public class Responses
+        //{
+        //    public string ResponseCode { get; set; }
+        //    public bool Status { get; set; }
+
+        //    public string Message { get; set; }
+
+        //    public Nullable<long> NECode { get; set; }
+        //    public string ErrorCode { get; set; }
+        //    public string ErrorMessage { get; set; }
+        //    public object Response { get; set; }
+        //    public Responses()
+        //    {
+        //        ResponseCode = string.Empty;
+        //        ErrorCode = string.Empty;
+        //        ErrorMessage = string.Empty;
+        //        Status = true;
+        //        NECode = 0;
+        //    }
+        //}
+        #endregion
 
     }
 }
