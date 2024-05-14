@@ -88,6 +88,8 @@
 
     function SearchEvent_Platform(searchtext) {
     //    debugger;
+        if (!checkCurrentAction())
+            return false;
         $('#searchCommon').val(searchtext);
         showLoading();
         $.ajax({
