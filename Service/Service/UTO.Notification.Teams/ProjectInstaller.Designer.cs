@@ -1,4 +1,4 @@
-﻿namespace SendNotificationService
+﻿namespace UTO.Notification.Teams
 {
     partial class ProjectInstaller
     {
@@ -39,7 +39,7 @@
             // 
             // NotificationserviceInstaller
             // 
-            this.NotificationserviceInstaller.ServiceName = "NotificationService";
+            this.NotificationserviceInstaller.ServiceName = "UTO.Notification.Teams";
             // 
             // ProjectInstaller
             // 

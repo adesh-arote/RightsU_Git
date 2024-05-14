@@ -56,6 +56,26 @@ namespace UTO_Notification.DAL
             return base.ExecuteSQLProcedure<USPInsertNotification>("USPInsertNotification_Teams", param);
         }
 
+        public IEnumerable<USPInsertNotification> USPInsertNotification_InApp(string EventCategory, string NotificationType, string TO, string CC, string BCC, string Subject, string HTMLMessage, string TextMessage, string TransType, long TransCode, string ScheduleDateTime, long UserCode, string ClientName, long ForeignId)
+        {
+            var param = new DynamicParameters();
+            param.Add("@EventCategory", EventCategory);
+            param.Add("@NotificationType", NotificationType);
+            param.Add("@TO", TO);
+            param.Add("@CC", CC);
+            param.Add("@BCC", BCC);
+            param.Add("@Subject", Subject);
+            param.Add("@HTMLMessage", HTMLMessage);
+            param.Add("@TextMessage", TextMessage);
+            param.Add("@TransType", TransType);
+            param.Add("@TransCode", TransCode);
+            param.Add("@ScheduleDateTime", ScheduleDateTime);
+            param.Add("@UserCode", UserCode);
+            param.Add("@ClientName", ClientName);
+            param.Add("@ForeignId", ForeignId);
+
+            return base.ExecuteSQLProcedure<USPInsertNotification>("USPInsertNotification_InApp", param);
+        }
 
         public IEnumerable<USPInsertNotification> USPUpdateNotification(long NECode, string UpdatedStatus, string ReadDateTime, string NEDetailCode)
         {

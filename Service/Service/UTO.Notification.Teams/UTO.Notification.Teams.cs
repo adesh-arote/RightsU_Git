@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using UTO.Notification.Teams.Entity;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -12,10 +15,12 @@ using System.ServiceProcess;
 using System.Text;
 using System.Timers;
 using Timer = System.Timers.Timer;
+using Microsoft.Graph.Models;
+using Microsoft.Graph;
 
-namespace SendNotificationService
+namespace UTO.Notification.Teams
 {
-    public partial class UTONotificationService : ServiceBase
+    public partial class UTO_Notification_Teams : ServiceBase
     {
         Timer timer;
         public static string strHostName { get; private set; }
@@ -30,7 +35,7 @@ namespace SendNotificationService
 
         int count;
 
-        public UTONotificationService()
+        public UTO_Notification_Teams()
         {
             InitializeComponent();
         }
@@ -42,7 +47,7 @@ namespace SendNotificationService
 
         protected override void OnStart(string[] args)
         {
-            //System.Diagnostics.Debugger.Launch();
+            System.Diagnostics.Debugger.Launch();
             strHostName = Dns.GetHostName();
             IPHostEntry ipEntry = Dns.GetHostEntry(strHostName);
             IPAddress[] addr = ipEntry.AddressList;
@@ -113,23 +118,23 @@ namespace SendNotificationService
 
                 }
                 if (LogLevel > 3) LogError("Running Notification started");
-                USPGetConfig objConfig = RunUSPGetConfigProcedure();
+                //USPGetConfig objConfig = RunUSPGetConfigProcedure();
 
-                if (Convert.ToBoolean(WriteLog))
-                {
-                    //LogService("After fetching config");
-                    Error.WriteLog_Conditional("STEP 1.3 : After fetching config - " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss"));
-                }
+                //if (Convert.ToBoolean(WriteLog))
+                //{
+                //    //LogService("After fetching config");
+                //    Error.WriteLog_Conditional("STEP 1.3 : After fetching config - " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss"));
+                //}
 
-                List<USPGetPendingNotifications> lstNotifications = RunUSPGetPendingNotificationsProcedure();
+                List<USPGetPendingNotifications> lstNotifications = RunUSPGetTeamsPendingNotificationsProcedure();
 
                 if (Convert.ToBoolean(WriteLog))
                 {
                     //LogService("After Getting Pending List");
-                    Error.WriteLog_Conditional("STEP 1.4 : After Getting Pending List - " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss"));
+                    Error.WriteLog_Conditional("STEP 1.3 : After Getting Pending List - " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss"));
                 }
 
-                RunNotifications(lstNotifications, objConfig);
+                RunNotifications(lstNotifications);
 
 
                 int time = DateTime.Now.Hour;
@@ -168,81 +173,81 @@ namespace SendNotificationService
             //StartTimer();
         }
 
-        public static USPGetConfig RunUSPGetConfigProcedure()
+        //public static USPGetConfig RunUSPGetConfigProcedure()
+        //{
+        //    SqlConnection myConn = new SqlConnection();
+        //    myConn.ConnectionString = ConfigurationSettings.AppSettings["DefaultConnection"];
+        //    myConn.Open();
+        //    try
+        //    {
+        //        SqlCommand nonQryCommand = new SqlCommand();
+        //        nonQryCommand.CommandType = CommandType.StoredProcedure;
+        //        nonQryCommand.CommandText = "USPGetConfig";
+        //        nonQryCommand.Connection = myConn;
+        //        nonQryCommand.ExecuteNonQuery();
+        //        DataSet ds = new DataSet();
+        //        SqlDataAdapter da = new SqlDataAdapter();
+        //        da.SelectCommand = nonQryCommand;
+        //        da.Fill(ds);
+
+        //        List<USPGetConfig> lst = ds.Tables[0].AsEnumerable()
+        //    .Select(dataRow => new USPGetConfig
+        //    {
+        //        NotificationConfigCode = dataRow.Field<long>("NotificationConfigCode"),
+        //        NoOfTimesToRetry = dataRow.Field<int>("NoOfTimesToRetry"),
+        //        DurationBetweenTwoRetriesMin = dataRow.Field<int>("DurationBetweenTwoRetriesMin"),
+        //        RetryOptionForFailed = dataRow.Field<bool>("RetryOptionForFailed"),
+        //        ResendOptionForSuccessful = dataRow.Field<bool>("ResendOptionForSuccessful"),
+        //        SMTPServer = dataRow.Field<string>("SMTPServer"),
+        //        SMTPPort = dataRow.Field<int>("SMTPPort"),
+        //        UseDefaultCredentials = dataRow.Field<bool>("UseDefaultCredentials"),
+        //        UserName = dataRow.Field<string>("UserName"),
+        //        Password = dataRow.Field<string>("Password"),
+        //    }).ToList();
+
+        //        myConn.Close();
+        //        myConn.Dispose();
+
+        //        return lst.FirstOrDefault();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        myConn.Close();
+        //        myConn.Dispose();
+
+        //        SendErrorEmail("API : RunUSPGetConfigProcedure => " + Convert.ToString(ex.InnerException), "Error on api : RunUSPGetConfigProcedure");
+        //        if (Convert.ToBoolean(WriteLog))
+        //        {
+        //            //LogService("API : RunUSPGetConfigProcedure => " + Convert.ToString(ex.InnerException));
+        //            Error.WriteLog_Conditional("API : RunUSPGetConfigProcedure => " + Convert.ToString(ex.InnerException) + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss"));
+        //        }
+        //        if (LogLevel > 3) LogError("API : RunUSPGetConfigProcedure => " + Convert.ToString(ex.InnerException));
+
+        //        return new USPGetConfig();
+        //    }
+        //    //pass the stored procedure name
+        //    // cmd.CommandText = "data_ins";
+
+        //    //pass the parameter to stored procedure
+        //    //  cmd.Parameters.Add(new SqlParameter("@name", SqlDbType.VarChar)).Value = name;
+        //    // cmd.Parameters.Add(new SqlParameter("@age", SqlDbType.Int)).Value = age;
+
+        //    //Execute the query
+        //    // int res = cmd.ExecuteNonQuery();
+
+        //}
+
+        public static List<USPGetPendingNotifications> RunUSPGetTeamsPendingNotificationsProcedure()
         {
             SqlConnection myConn = new SqlConnection();
             myConn.ConnectionString = ConfigurationSettings.AppSettings["DefaultConnection"];
             myConn.Open();
-            try
-            {
-                SqlCommand nonQryCommand = new SqlCommand();
-                nonQryCommand.CommandType = CommandType.StoredProcedure;
-                nonQryCommand.CommandText = "USPGetConfig";
-                nonQryCommand.Connection = myConn;
-                nonQryCommand.ExecuteNonQuery();
-                DataSet ds = new DataSet();
-                SqlDataAdapter da = new SqlDataAdapter();
-                da.SelectCommand = nonQryCommand;
-                da.Fill(ds);
-
-                List<USPGetConfig> lst = ds.Tables[0].AsEnumerable()
-            .Select(dataRow => new USPGetConfig
-            {
-                NotificationConfigCode = dataRow.Field<long>("NotificationConfigCode"),
-                NoOfTimesToRetry = dataRow.Field<int>("NoOfTimesToRetry"),
-                DurationBetweenTwoRetriesMin = dataRow.Field<int>("DurationBetweenTwoRetriesMin"),
-                RetryOptionForFailed = dataRow.Field<bool>("RetryOptionForFailed"),
-                ResendOptionForSuccessful = dataRow.Field<bool>("ResendOptionForSuccessful"),
-                SMTPServer = dataRow.Field<string>("SMTPServer"),
-                SMTPPort = dataRow.Field<int>("SMTPPort"),
-                UseDefaultCredentials = dataRow.Field<bool>("UseDefaultCredentials"),
-                UserName = dataRow.Field<string>("UserName"),
-                Password = dataRow.Field<string>("Password"),
-            }).ToList();
-
-                myConn.Close();
-                myConn.Dispose();
-
-                return lst.FirstOrDefault();
-            }
-            catch (Exception ex)
-            {
-                myConn.Close();
-                myConn.Dispose();
-
-                SendErrorEmail("API : RunUSPGetConfigProcedure => " + Convert.ToString(ex.InnerException), "Error on api : RunUSPGetConfigProcedure");
-                if (Convert.ToBoolean(WriteLog))
-                {
-                    //LogService("API : RunUSPGetConfigProcedure => " + Convert.ToString(ex.InnerException));
-                    Error.WriteLog_Conditional("API : RunUSPGetConfigProcedure => " + Convert.ToString(ex.InnerException) + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss"));
-                }
-                if (LogLevel > 3) LogError("API : RunUSPGetConfigProcedure => " + Convert.ToString(ex.InnerException));
-
-                return new USPGetConfig();
-            }
-            //pass the stored procedure name
-            // cmd.CommandText = "data_ins";
-
-            //pass the parameter to stored procedure
-            //  cmd.Parameters.Add(new SqlParameter("@name", SqlDbType.VarChar)).Value = name;
-            // cmd.Parameters.Add(new SqlParameter("@age", SqlDbType.Int)).Value = age;
-
-            //Execute the query
-            // int res = cmd.ExecuteNonQuery();
-
-        }
-
-        public static List<USPGetPendingNotifications> RunUSPGetPendingNotificationsProcedure()
-        {
-            SqlConnection myConn = new SqlConnection();
-            myConn.ConnectionString = ConfigurationSettings.AppSettings["DefaultConnection"];
-            myConn.Open();
 
             try
             {
                 SqlCommand nonQryCommand = new SqlCommand();
                 nonQryCommand.CommandType = CommandType.StoredProcedure;
-                nonQryCommand.CommandText = "USPGetPendingNotifications";
+                nonQryCommand.CommandText = "USPGetTeamsPendingNotifications";
                 nonQryCommand.Parameters.Add(new SqlParameter("@FromDateTime", SqlDbType.VarChar)).Value = DateTime.Now.ToString("dd-MMM-yyyy HH:mm");
                 nonQryCommand.Connection = myConn;
                 nonQryCommand.ExecuteNonQuery();
@@ -261,7 +266,8 @@ namespace SendNotificationService
                     Subject = dataRow.Field<string>("Subject"),
                     HtmlBody = dataRow.Field<string>("HtmlBody"),
                     UserCode = dataRow.Field<long>("UserCode"),
-                    RequestDateTime = dataRow.Field<DateTime>("RequestDateTime")
+                    RequestDateTime = dataRow.Field<DateTime>("RequestDateTime"),
+                    Credentials = dataRow.Field<string>("Credentials")
                 }).ToList();
 
                 myConn.Close();
@@ -284,13 +290,15 @@ namespace SendNotificationService
             }
         }
 
-        public static void RunNotifications(List<USPGetPendingNotifications> notificationList, USPGetConfig config)
+        public static void RunNotifications(List<USPGetPendingNotifications> notificationList)
         {
             UTOLog logObj = new UTOLog();
             logObj.ApplicationName = "Notification Engine";
             Boolean isSuccess; double TimeTaken;
             String ResponseText;
             DateTime startTime;
+
+
 
             if (Convert.ToBoolean(WriteLog))
             {
@@ -300,35 +308,38 @@ namespace SendNotificationService
 
             foreach (USPGetPendingNotifications notification in notificationList)
             {
+
+                USPGetConfig objConfig = GetCredentials(notification.Credentials);
+
+                List<string> lstToAddress = new List<string>();
+
+                if (Convert.ToString(notification.Email).IndexOf(';') > 0)
+                {
+                    lstToAddress = notification.Email.Split(';').ToList();
+                }
+                else
+                {
+                    lstToAddress = notification.Email.Split(',').ToList();
+                }
+
                 isSuccess = false; ResponseText = ""; TimeTaken = 0;
                 try
                 {
                     if (Convert.ToBoolean(WriteLog))
                     {
                         //LogService("Sending Email");
-                        Error.WriteLog_Conditional("Sending Email - " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss"));
+                        Error.WriteLog_Conditional("Sending Teams Message - " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss"));
                     }
 
-                    SendMail objSendEmail = new SendMail();
-                    objSendEmail.UserName = config.UserName;
-                    objSendEmail.Password = config.Password;
-                    objSendEmail.FromEmailId = ConfigurationSettings.AppSettings["EmailSendId"];
-                    objSendEmail.Port = config.SMTPPort;
-                    objSendEmail.Ip = config.SMTPServer;
-
-                    objSendEmail.Subject = notification.Subject;
-                    objSendEmail.Body = notification.HtmlBody;
-                    objSendEmail.To = notification.Email;
-                    objSendEmail.CC = notification.cc;
-                    objSendEmail.Bcc = notification.bcc;
-                    objSendEmail.UseDefaultCredential = Convert.ToBoolean(ConfigurationSettings.AppSettings["UseDefaultCredential"]);
-
                     startTime = DateTime.Now;
-                    objSendEmail.Send();
-                    TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+                    var response = TeamsHelper.SendTeamNotification(lstToAddress, ChatType.OneOnOne, notification.HtmlBody, objConfig);
 
-                    isSuccess = true;
-                    ResponseText = "Message Sent Ok";
+                    TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+                    if (response != null && response.Id > 0)
+                    {
+                        isSuccess = true;
+                        ResponseText = "Message Sent with MessageId :" + response.Id;
+                    }
 
                     if (Convert.ToBoolean(WriteLog))
                     {
@@ -339,29 +350,10 @@ namespace SendNotificationService
                     RunUSPUpdateNotificationStatusProcedure(notification.NotificationsCode, isSuccess, 1, DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"), 0, "");
 
                 }
-                catch (SmtpFailedRecipientsException ex)
+                catch (ServiceException ex)
                 {
-                    for (int i = 0; i < ex.InnerExceptions.Length; i++)
-                    {
-                        SmtpStatusCode status = ex.InnerExceptions[i].StatusCode;
-                        if (status == SmtpStatusCode.MailboxBusy ||
-                            status == SmtpStatusCode.MailboxUnavailable)
-                        {
-                            //LogService("Delivery failed");
-                            Error.WriteLog_Conditional("Delivery failed - " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss"));
-                            ResponseText = "Delivery failed";
-                        }
-                        else
-                        {
-                            if (Convert.ToBoolean(WriteLog))
-                            {
-                                //LogService("Failed to deliver message to {0}" + ex.InnerExceptions[i].FailedRecipient);
-                                Error.WriteLog_Conditional("Failed to deliver message to {0}" + ex.InnerExceptions[i].FailedRecipient + " - " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss"));
-
-                            }
-                            ResponseText = "Failed to deliver message to {0}" + ex.InnerExceptions[i].FailedRecipient;
-                        }
-                    }
+                    Error.WriteLog_Conditional("Delivery failed - " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss"));
+                    ResponseText = "Delivery failed";
                 }
                 catch (Exception ex)
                 {
@@ -389,16 +381,16 @@ namespace SendNotificationService
 
                 logObj.RequestId = Convert.ToString(notification.NotificationsCode);
                 logObj.UserId = Convert.ToString(notification.UserCode);
-                logObj.RequestContent = "To: " + notification.Email + " <br/> CC: " + notification.cc + " <br/> Bcc:" + notification.bcc;
-                logObj.RequestContent = logObj.RequestContent + " Subject: " + notification.Subject + " <br/><br/>" + notification.HtmlBody;
+                logObj.RequestContent = "To: " + notification.Email;
+                logObj.RequestContent = logObj.RequestContent + " <br/><br/>" + notification.HtmlBody;
                 logObj.RequestLength = Convert.ToString(logObj.RequestContent.ToString().Length);
                 logObj.RequestDateTime = notification.RequestDateTime.ToString("dd-MMM-yyyy hh:mm:ss");
                 logObj.ResponseDateTime = DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss");
                 logObj.ResponseContent = ResponseText;
                 logObj.ResponseLength = Convert.ToString(ResponseText.Length);
-                logObj.ServerName = config.SMTPServer + ":" + config.SMTPPort;
-                logObj.UserAgent = "SMTP Server";
-                logObj.Method = "Email";
+                logObj.ServerName = "ClientId :" + objConfig.ClientId + ", TenantId :" + objConfig.TenantId;
+                logObj.UserAgent = "Teams Server";
+                logObj.Method = "Teams";
                 logObj.ClientIpAddress = ipAddress;
                 logObj.IsSuccess = isSuccess.ToString();
                 logObj.TimeTaken = Convert.ToString(TimeTaken);
@@ -476,7 +468,7 @@ namespace SendNotificationService
             {
                 SqlCommand nonQryCommand = new SqlCommand();
                 nonQryCommand.CommandType = CommandType.StoredProcedure;
-                nonQryCommand.CommandText = "USPUpdateNotificationStatus";
+                nonQryCommand.CommandText = "USPUpdateTeamsNotificationStatus";
                 nonQryCommand.Parameters.Add(new SqlParameter("@NECode", SqlDbType.BigInt)).Value = NECode;
                 nonQryCommand.Parameters.Add(new SqlParameter("@Issend", SqlDbType.Bit)).Value = Issend;
                 nonQryCommand.Parameters.Add(new SqlParameter("@MsgstatusCode", SqlDbType.Int)).Value = MsgstatusCode;
@@ -698,6 +690,43 @@ namespace SendNotificationService
             }
 
             return encryptedBytes;
+        }
+
+        private static USPGetConfig GetCredentials(string credentials)
+        {
+            USPGetConfig Obj = new USPGetConfig();
+
+            var lstConfig = JsonConvert.DeserializeObject<List<Credentials>>(credentials);
+
+            foreach (var item in lstConfig)
+            {
+                if (item.Key.ToLower() == "ClientId".ToLower())
+                {
+                    Obj.ClientId = item.Value;
+                }
+
+                if (item.Key.ToLower() == "TenantId".ToLower())
+                {
+                    Obj.TenantId = item.Value;
+                }
+
+                if (item.Key.ToLower() == "scope".ToLower())
+                {
+                    Obj.scope = item.Value;
+                }
+
+                if (item.Key.ToLower() == "UserName".ToLower())
+                {
+                    Obj.UserName = item.Value;
+                }
+
+                if (item.Key.ToLower() == "Password".ToLower())
+                {
+                    Obj.Password = item.Value;
+                }
+            }
+
+            return Obj;
         }
     }
 }

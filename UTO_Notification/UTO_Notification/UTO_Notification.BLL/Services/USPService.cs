@@ -28,6 +28,14 @@ namespace UTO_Notification.BLL
             return objUSPInsertNotification_Teams;
         }
 
+        public USPInsertNotification USPInsertNotification_InApp(string EventCategory, string NotificationType, string TO, string CC, string BCC, string Subject, string HTMLMessage, string TextMessage, string TransType, long TransCode, string ScheduleDateTime, long UserCode, string ClientName, long ForeignId)
+        {
+            ProcedureRepositories objProcedureRepositories = new ProcedureRepositories("InAppConnection");
+
+            USPInsertNotification objUSPInsertNotification_Teams = objProcedureRepositories.USPInsertNotification_InApp(EventCategory, NotificationType, TO, CC, BCC, Subject, HTMLMessage, TextMessage, TransType, TransCode, ScheduleDateTime, UserCode, ClientName, ForeignId).FirstOrDefault();
+            return objUSPInsertNotification_Teams;
+        }
+
         public USPInsertNotification USPUpdateNotification(long NECode, string UpdatedStatus, string ReadDateTime, string NEDetailCode)
         {
             ProcedureRepositories objProcedureRepositories = new ProcedureRepositories("EmailConnection");
