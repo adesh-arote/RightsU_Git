@@ -9,7 +9,7 @@
         <span>X</span>
         <span class="sr-only">Close</span>
     </a>
-    <h2>Add Event Name</h2>
+    <h2>@ViewBag.EventType</h2>
 </div>
 
 
@@ -18,5 +18,14 @@
         <div class="scale_table_block">
             @Html.Raw(ViewBag.Html)
         </div>
+    </div>
+</div>
+<div class="modal_block_full" style="margin-top: 10px;">
+    <div class="form_links">
+        <ul class="modal_block clearfix" style="padding-left:10px;padding-top: 10px;">
+            <li>
+                <input type="button" class="btn btn-primary" value="Cancel" onclick="ClosePopup()" />
+            </li>
+        </ul>
     </div>
 </div>

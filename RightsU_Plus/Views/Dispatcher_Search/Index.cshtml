@@ -92,8 +92,8 @@
                 enctype: 'multipart/form-data',
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify({
-                    StartDate: StartDate,
-                    EndDate: EndDate,
+                    strStartDate: StartDate,
+                    strEndDate: EndDate,
                     EventType : EventType,
                     Platform : Platform,
                     MessageType: MessageType,
@@ -132,20 +132,9 @@
                 async: false,
                 success: function (result) {
                     debugger;
-                    $('#popup').modal();
-                    //var decodedHtml = result.replace(/\\u([0-9a-fA-F]{4})/g, function (match, grp) {
-                    //    return String.fromCharCode(parseInt(grp, 16));
-                    //});
-                    //var decodedHtml1 = decodedHtml.replace('"','');
-                    //$('#MsgpupupHtml').empty();
-                //    $('#MsgpupupHtml').html((decodedHtml1));
-
-                     $('#MsgpupupHtml').empty();
-                    $('#MsgpupupHtml').html(result);
-
-                    if (result.Status == "E") {
-                        showAlert("E", result.Message, "OK")
-                    }
+                        $('#popup').modal();
+                        $('#MsgpupupHtml').empty();
+                        $('#MsgpupupHtml').html(result);
                 },
                 error: function (result) {
                     alert('Error: ' + result.responseText);
@@ -170,45 +159,49 @@
             <div id="divFilter">
                 <table border="0" style="border-spacing: 5px;border-collapse: separate;padding: 0px;">
                     <tr>
-                        <td style="width:10%"><label style="font-weight:bold">Event Type:</label></td>
-                        <td>
-                            @Html.DropDownList("EventType", (List<SelectListItem>)ViewBag.EventType, new { @id = "ddlEventType", @class = "form_input chosen-select" })
+                        <td style="width:8%"><label style="font-weight:bold">Event Type:</label></td>
+                        <td style="width:30% !important">
+                            @Html.DropDownList("EventType", (List<SelectListItem>)ViewBag.EventType, "Please Select", new { @id = "ddlEventType", @class = "form_input chosen-select" })
                         </td>
-                        <td style="width:12%"><label style="font-weight:bold"> Start Date:</label></td>
-                        <td>
-                            <input type="text" id="StartDate" class="isDatepicker shortDate common" autocomplete="off" style="width:95%" placeholder="From" />
-                        </td>
-                        <td style="width:10%"><label style="font-weight:bold"> End Date:</label></td>
-                        <td>
-                            <input type="text" id="EndDate" class="isDatepicker shortDate common" autocomplete="off" style="width:95%" placeholder="To" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><label style="font-weight:bold"> Platform:</label></td>
-                        <td>
-                            @Html.DropDownList("Platform", (List<SelectListItem>)ViewBag.EventPlatform, new { @id = "ddlPlatform", @class = "form_input chosen-select" })
-                        </td>
-                        <td><label style="font-weight:bold"> Message Type:</label></td>
-                        <td>
+                        <td style="width:9%"><label style="font-weight:bold"> Message Type:</label></td>
+                        <td style="width:30% !important">
                             <select class="form_input chosen-select" id="ddlMessageType">
                                 <option value="HTML">HTML</option>
                                 <option value="TEXT">TEXT</option>
                             </select>
                         </td>
-                        <td><label style="font-weight:bold"> Message To:</label></td>
-                        <td>
-                            <input type="text" id="txtMessageTo" placeholder="Please Enter Sent User Id" style="width:95%" />
+                        <td style="width:8%"><label style="font-weight:bold"> Message To:</label></td>
+                        <td style="width:30% !important">
+                            <input type="text" id="txtMessageTo" placeholder="Please Enter Sent User Id" style="width:100%" />
                         </td>
                     </tr>
-
                     <tr>
-                        <td colspan="6">
-                            <div class="pull-right" style="padding-right: 19px;">
+                        <td style="width:8%"><label style="font-weight:bold"> Platform:</label></td>
+                        <td style="width:30% !important">
+                            @Html.DropDownList("Platform", (List<SelectListItem>)ViewBag.EventPlatform, "Please Select", new { @id = "ddlPlatform", @class = "form_input chosen-select" })
+                        </td>
+                        <td style="width:8%"><label style="font-weight:bold"> Period:</label></td>
+                        <td style="width:30% !important">
+                            <input type="text" id="StartDate" class="isDatepicker shortDate common" autocomplete="off" style="width:45%" placeholder="From" />
+                            <label style="font-weight:bold"> To</label>
+                            <input type="text" id="EndDate" class="isDatepicker shortDate common" autocomplete="off" style="width:45%" placeholder="To" />
+                        </td>
+                        <td colspan="2">
+                            <div class="pull-right">
                                 <input type="button" id="btnShow" class="btn btn-primary " value="Search" onclick="GetNotifications('NA')"> &nbsp; &nbsp;
                                 <input type="button" id="btnReset" class="btn btn-primary " value="Search in Archive" onclick="GetNotifications('AR')">
                             </div>
                         </td>
                     </tr>
+
+                    @*<tr>
+                            <td colspan="6">
+                                <div class="pull-right" style="padding-right: 19px;">
+                                    <input type="button" id="btnShow" class="btn btn-primary " value="Search" onclick="GetNotifications('NA')"> &nbsp; &nbsp;
+                                    <input type="button" id="btnReset" class="btn btn-primary " value="Search in Archive" onclick="GetNotifications('AR')">
+                                </div>
+                            </td>
+                        </tr>*@
 
                 </table>
             </div>

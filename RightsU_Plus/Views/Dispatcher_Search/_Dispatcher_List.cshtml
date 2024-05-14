@@ -45,10 +45,10 @@
                 <tr style="text-align:center">
                     <td>@i </td>
                     <td>
-                        To do
+                        @Html.DisplayFor(modelItem => item.Email_Config.Email_Type)
                     </td>
-                    <td >
-                        @Html.DisplayFor(modelItem => item.NotificationType)
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Event_Platform.Short_Code) - @Html.DisplayFor(modelItem => item.Event_Platform.Event_Platform_Name)
                     </td>
                     <td>
                         @ViewBag.MessageType
