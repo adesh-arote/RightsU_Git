@@ -27,8 +27,12 @@
     && x.User_Code == objLoginUser.Users_Code && x.Created_Time >= dt
     && x.Email_Config.Email_Config_Detail.Select(e => e.OnScreen_Notification).FirstOrDefault() == "Y").Select(s => s.Email_Notification_Log_Code).Count();
 
-    List<EventCategoryMsgCount> lstEventCategoryMsgCount = new NotificationController().GetSummarisedMessageStatus(objLoginUser.Email_Id).ToList();
-    int BellIconCount = lstEventCategoryMsgCount.Sum(x => x.cnt);
+    string Notification_App = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Notification_App").Select(x => x.Parameter_Value).FirstOrDefault();
+    string Notification_ClientName = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Notification_ClientName").Select(x => x.Parameter_Value).FirstOrDefault();
+    string User_Email_Id = objLoginUser.Email_Id;
+    //List<EventCategoryMsgCount> lstEventCategoryMsgCount = new NotificationController().GetSummarisedMessageStatus(objLoginUser.Email_Id).ToList();
+    //int BellIconCount = lstEventCategoryMsgCount.Sum(x => x.cnt);
+    int BellIconCount = 0;
     MessageKey objMessageKey = new MessageKey();
     if (Session["objMessageKey"] != null)
     {
@@ -84,7 +88,8 @@
     , URL_Syn_Approve_Reject = '@Url.Action("Syn_Approve_Reject_Deal", "Global")'
     , URL_Approve_Reject_Reopen = '@Url.Action("Approve_Reject_Deal", "Global")'
     , URL_BindAeroplay = '@Url.Action("BindAeroplay", "Global")'
-    , URL_RedirectToROP = '@Url.Action("RedirectToROP", "Global")';
+    , URL_RedirectToROP = '@Url.Action("RedirectToROP", "Global")'
+    , URL_BindNotification = '@Url.Action("GetSummarisedMessageStatus", "Notification")';
 
         $(document).ready(function () {
             //  $("#triangle").css({ "top": "-13px" });
@@ -157,6 +162,7 @@
                 $(".rightPannel").slideUp("slow", function () {
                 });
                 $(".rightPanneltoggle").fadeToggle(300);
+                CheckNotificationGroupwiseCount();
             });
             $(".container,.navigation,.pull-left").click(function () {
                 $("#collapse2").css("display", "none");
@@ -184,6 +190,10 @@
                 });
             });
             var lastScrollTop = 0;
+            CheckNotificationAllCount();
+            setInterval(CheckNotificationAllCount, 10000);
+            //CheckNotificationGroupwiseCount();
+
         });
         function ViewProfile() {
             $('#viewProfile').submit();
@@ -210,6 +220,76 @@
             .appendTo(ul);
         };
 
+        function CheckNotificationAllCount() {
+            $.ajax({
+                type: "POST",
+                url: URL_BindNotification,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                //dataType: "json",
+                data: JSON.stringify({
+                    Client_Name: '@Notification_ClientName',
+                    Email_Id: '@User_Email_Id',
+                    Notification_App: '@Notification_App',
+                    Call_For: "ALL"
+                }),                
+                success: function (result) {
+                    var Count = 0;
+                    $.each(result.lst, function (index, item) {
+                        Count = Count + item.cnt;                        
+                    });
+
+                    if (Count > 99) {
+                        $("#TotalEmailCount").text("99+");
+                    }
+                    else {
+                        $("#TotalEmailCount").text(Count);
+                    }
+
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        };
+
+        function CheckNotificationGroupwiseCount() {
+            $.ajax({
+                type: "POST",
+                url: URL_BindNotification,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                //dataType: "json",
+                data: JSON.stringify({
+                    Client_Name: '@Notification_ClientName',
+                    Email_Id: '@User_Email_Id',
+                    Notification_App: '@Notification_App',
+                    Call_For: "GROUPWISE"
+                }),                
+                success: function (result) {
+                    var NoNotiCount = 0;
+                    var HTMLString = "";
+                    $.each(result.lst, function (index, item) {
+                        NoNotiCount++;
+                        //HTMLString = HTMLString + 'Sandip ' + NoNotiCount;
+                        HTMLString = HTMLString + '<li class="liEmail" onclick="EmailPopup(' + NoNotiCount + ',\'' + item.EventCategory + '\',' + item.cnt + ');"> <a href="#">'+item.EventCategory+'</a> <span class="EmailCount" title="Unseen Message"  id="TotalECount_'+NoNotiCount+'"> '+item.cnt+' </span> </li> ';
+                        
+                    });
+                    if (NoNotiCount == 0) {
+                        HTMLString = '<li> <span>No new notifications</span> </li>';
+                    }
+
+                    $('#DivEmailConfig').html(HTMLString);
+
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        };
+        
     </script>
     <link href="~/CSS/slider-menu.jquery.css" rel="stylesheet" />
     <link href="~/CSS/slider-menu.theme.jquery.css" rel="stylesheet" />
@@ -1217,14 +1297,15 @@
                         </li>
                         <li data-placement="left" id="Email-Head-Icon">
                             <label class="glyphicon glyphicon-bell" id="NotifyEmail"></label>
-                            @if (count > 99)
+                            @*@if (count > 99)
                             {
                                 <span class="TotalEmailCount" id="TotalEmailCount">99+</span>
                             }
                             else
                             {
                                 <span class="TotalEmailCount" id="TotalEmailCount">@BellIconCount</span>
-                            }
+                            }*@
+                            <span class="TotalEmailCount" id="TotalEmailCount">@BellIconCount</span>
                             <input type="hidden" id="hdnTotalEmailCount" value="@BellIconCount" />
                             <ul id="EmailPanel" class="NotifyEmailPanel" style="display: none;">
                                 <li class="emailPNL">
@@ -1237,7 +1318,7 @@
                                 @{int NoNotiCount = 0;}
                                 <div id="DivEmailConfig">
 
-                                    @foreach (EventCategoryMsgCount item in lstEventCategoryMsgCount)
+                                    @*@foreach (EventCategoryMsgCount item in lstEventCategoryMsgCount)
                                     {
 
                                         NoNotiCount++;
@@ -1253,14 +1334,14 @@
                                         <li>
                                             <span>No new notifications</span>
                                         </li>
-                                    }
+                                    }*@
                                 </div>
-                                @if (NoNotiCount > 0)
+                                @*@if (NoNotiCount > 0)
                                 {
                                     <li class="emailPNL" style="text-align:center">
                                         <a id="MarkAsRead" onclick="MarkAllRead()">Mark all as Read</a>
                                     </li>
-                                }
+                                }*@
                             </ul>
                         </li>
 
@@ -1605,7 +1686,9 @@
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify({
                     NEDetailCode: NEDetailCode,
-                    NECode: NECode
+                    NECode: NECode,
+                    Client_Name: '@Notification_ClientName',
+                    Notification_App: '@Notification_App'
                 }),
                 async: false,
                 success: function (result) {
@@ -1794,7 +1877,10 @@
             data: JSON.stringify({
                 Email_Type: Email_Type,
                 Email_Id: '@objLoginUser.Email_Id',
-                Email_Type_Code: Email_Type_Code
+                Email_Type_Code: Email_Type_Code,
+                Client_Name: '@Notification_ClientName',
+                Notification_App: '@Notification_App',
+                Call_For: "GROUPWISE"
             }),
             success: function (result) {
                 if (result == "true") {

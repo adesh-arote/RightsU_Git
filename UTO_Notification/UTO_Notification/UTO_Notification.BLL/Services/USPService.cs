@@ -36,19 +36,19 @@ namespace UTO_Notification.BLL
             return objUSPInsertNotification_Teams;
         }
 
-        public USPInsertNotification USPUpdateNotification(long NECode, string UpdatedStatus, string ReadDateTime, string NEDetailCode)
+        public USPInsertNotification USPUpdateNotification(long NECode, string UpdatedStatus, string ReadDateTime, string NEDetailCode, string Client_Name = "", string Notification_App = "")
         {
             ProcedureRepositories objProcedureRepositories = new ProcedureRepositories("EmailConnection");
 
-            USPInsertNotification objUSPUpdateNotification = objProcedureRepositories.USPUpdateNotification(NECode, UpdatedStatus, ReadDateTime, NEDetailCode).FirstOrDefault();
+            USPInsertNotification objUSPUpdateNotification = objProcedureRepositories.USPUpdateNotification(NECode, UpdatedStatus, ReadDateTime, NEDetailCode, Client_Name, Notification_App).FirstOrDefault();
             return objUSPUpdateNotification;
         }
 
-        public List<USPGetMessageStatus> USPGetMessageStatus(string NECode, string TransType, string TransCode, string UserCode, string NotificationType, string EventCategory, string Subject, string Status, int NoOfRetry, int size, int from, string ScheduleStartDateTime, string ScheduleEndDateTime, string SentStartDateTime, string SentEndDateTime, string Recipient, string isRead, string isSend)
+        public List<USPGetMessageStatus> USPGetMessageStatus(string NECode, string TransType, string TransCode, string UserCode, string NotificationType, string EventCategory, string Subject, string Status, int NoOfRetry, int size, int from, string ScheduleStartDateTime, string ScheduleEndDateTime, string SentStartDateTime, string SentEndDateTime, string Recipient, string isRead, string isSend, string ClientName = "", string NotificationApp = "", string CallFor = "")
         {
             ProcedureRepositories objProcedureRepositories = new ProcedureRepositories("EmailConnection");
 
-            List<USPGetMessageStatus> lstUSPGetMessageStatus = objProcedureRepositories.USPGetMessageStatus(NECode, TransType, TransCode, UserCode, NotificationType, EventCategory, Subject, Status, NoOfRetry, size, from, ScheduleStartDateTime, ScheduleEndDateTime, SentStartDateTime, SentEndDateTime, Recipient, isRead, isSend).ToList();
+            List<USPGetMessageStatus> lstUSPGetMessageStatus = objProcedureRepositories.USPGetMessageStatus(NECode, TransType, TransCode, UserCode, NotificationType, EventCategory, Subject, Status, NoOfRetry, size, from, ScheduleStartDateTime, ScheduleEndDateTime, SentStartDateTime, SentEndDateTime, Recipient, isRead, isSend, ClientName, NotificationApp, CallFor).ToList();
             return lstUSPGetMessageStatus;
         }
 
@@ -79,11 +79,11 @@ namespace UTO_Notification.BLL
             return objUSPInsertConfig;
         }
 
-        public List<USPEventCategoryMsgCount> USPEventCategoryMsgCount(string UserEmail)
+        public List<USPEventCategoryMsgCount> USPEventCategoryMsgCount(string ClientName, string UserEmail, string NotificationApp, string CallFor)
         {
             ProcedureRepositories objProcedureRepositories = new ProcedureRepositories("DefaultConnection");
 
-            List<USPEventCategoryMsgCount> objGetSummarisedMessage = objProcedureRepositories.USPEventCategoryMsgCount(UserEmail).ToList();
+            List<USPEventCategoryMsgCount> objGetSummarisedMessage = objProcedureRepositories.USPEventCategoryMsgCount(ClientName, UserEmail, NotificationApp, CallFor).ToList();
             return objGetSummarisedMessage;
         }
 

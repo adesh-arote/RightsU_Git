@@ -77,7 +77,7 @@ namespace UTO_Notification.DAL
             return base.ExecuteSQLProcedure<USPInsertNotification>("USPInsertNotification_InApp", param);
         }
 
-        public IEnumerable<USPInsertNotification> USPUpdateNotification(long NECode, string UpdatedStatus, string ReadDateTime, string NEDetailCode)
+        public IEnumerable<USPInsertNotification> USPUpdateNotification(long NECode, string UpdatedStatus, string ReadDateTime, string NEDetailCode, string Client_Name = "", string Notification_App = "")
         {
             var param = new DynamicParameters();
             param.Add("@NECode", NECode);
@@ -85,11 +85,14 @@ namespace UTO_Notification.DAL
             param.Add("@ReadDateTime", ReadDateTime);
             param.Add("@NEDetailCode", NEDetailCode);
 
+            param.Add("@ClientName", Client_Name);
+            param.Add("@NotificationApp", Notification_App);
+
 
             return base.ExecuteSQLProcedure<USPInsertNotification>("USPUpdateNotification", param);
         }
 
-        public IEnumerable<USPGetMessageStatus> USPGetMessageStatus(string NECode, string TransType, string TransCode, string UserCode, string NotificationType, string EventCategory, string Subject, string Status, int NoOfRetry, int size, int from, string ScheduleStartDateTime, string ScheduleEndDateTime, string SentStartDateTime, string SentEndDateTime, string Recipient, string isRead, string isSend)
+        public IEnumerable<USPGetMessageStatus> USPGetMessageStatus(string NECode, string TransType, string TransCode, string UserCode, string NotificationType, string EventCategory, string Subject, string Status, int NoOfRetry, int size, int from, string ScheduleStartDateTime, string ScheduleEndDateTime, string SentStartDateTime, string SentEndDateTime, string Recipient, string isRead, string isSend, string ClientName = "", string NotificationApp = "", string CallFor = "")
         {
             var param = new DynamicParameters();
             param.Add("@NECode", NECode);
@@ -139,6 +142,10 @@ namespace UTO_Notification.DAL
             param.Add("@Recipient", Recipient);
             param.Add("@isRead", isRead);
             param.Add("@isSend", isSend);
+            param.Add("@ClientName", ClientName);
+            param.Add("@NotificationApp", NotificationApp);
+            param.Add("@CallFor", CallFor);
+
             return base.ExecuteSQLProcedure<USPGetMessageStatus>("USPGetMessageStatus", param);
         }
 
@@ -174,10 +181,13 @@ namespace UTO_Notification.DAL
 
             return base.ExecuteSQLProcedure<USPGetConfig>("USPInsertConfig", param);
         }
-        public IEnumerable<USPEventCategoryMsgCount> USPEventCategoryMsgCount(string UserEmail)
+        public IEnumerable<USPEventCategoryMsgCount> USPEventCategoryMsgCount(string ClientName, string UserEmail, string NotificationApp, string CallFor)
         {
             var param = new DynamicParameters();
-            param.Add("@UserEMail", UserEmail);
+            param.Add("@ClientName", ClientName);
+            param.Add("@UserEmail", UserEmail);
+            param.Add("@NotificationApp", NotificationApp);
+            param.Add("@CallFor", CallFor);
             return ExecuteSQLProcedure<USPEventCategoryMsgCount>("USPEventCategoryMsgCount", param);
         }
 
