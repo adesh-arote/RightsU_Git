@@ -6,7 +6,7 @@ using System.Net;
 using System.Net.Mail;
 using System.Web;
 
-namespace SendNotificationService
+namespace UTO.Notification.Teams
 {
     public class SendMail
     {
@@ -46,7 +46,7 @@ namespace SendNotificationService
         }
         public void Send()
         {
-            if (Convert.ToBoolean(ConfigurationSettings.AppSettings["WriteLog"])) { UTONotificationService.LogService("Inside Send"); }
+            if (Convert.ToBoolean(ConfigurationSettings.AppSettings["WriteLog"])) { UTO_Notification_Teams.LogService("Inside Send"); }
 
             if (this.Port != 0)
                 Client = new SmtpClient(this.Ip, this.Port);
@@ -70,8 +70,8 @@ namespace SendNotificationService
             Email.Subject = this.Subject;
             Email.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure;
 
-            if (Convert.ToBoolean(ConfigurationSettings.AppSettings["WriteLog"])) { UTONotificationService.LogService("Before Send Enable SSL:" + this.EnableSsl.ToString()); }
-            if (Convert.ToBoolean(ConfigurationSettings.AppSettings["WriteLog"])) { UTONotificationService.LogService("Before Send Use Default Credentials:" + this.UseDefaultCredential.ToString()); }
+            if (Convert.ToBoolean(ConfigurationSettings.AppSettings["WriteLog"])) { UTO_Notification_Teams.LogService("Before Send Enable SSL:" + this.EnableSsl.ToString()); }
+            if (Convert.ToBoolean(ConfigurationSettings.AppSettings["WriteLog"])) { UTO_Notification_Teams.LogService("Before Send Use Default Credentials:" + this.UseDefaultCredential.ToString()); }
             Client.Send(Email);
             Email.Dispose();
         }

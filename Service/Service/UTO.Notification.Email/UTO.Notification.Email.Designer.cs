@@ -1,6 +1,6 @@
-﻿namespace SendNotificationService
+﻿namespace UTO.Notification.Email
 {
-    partial class UTONotificationService
+    partial class UTO_Notification_Email
     {
         /// <summary> 
         /// Required designer variable.

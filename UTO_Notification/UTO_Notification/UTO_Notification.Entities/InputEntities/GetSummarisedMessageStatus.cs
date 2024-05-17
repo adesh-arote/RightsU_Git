@@ -8,6 +8,9 @@ namespace UTO_Notification.Entities
 {
     public class GetSummarisedMessageStatus
     {
+        public string ClientName { get; set; }
         public string UserEmail { get; set; }
+        public string NotificationApp { get; set; }
+        public string CallFor { get; set; }
     }
 }

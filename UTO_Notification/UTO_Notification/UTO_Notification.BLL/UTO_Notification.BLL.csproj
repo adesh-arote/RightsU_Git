@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Notifications\Email.cs" />
+    <Compile Include="Notifications\InApp.cs" />
     <Compile Include="Notifications\Notification.cs" />
     <Compile Include="Notifications\ShortMessage.cs" />
     <Compile Include="Notifications\Teams.cs" />

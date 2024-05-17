@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{F637B34C-C789-4B04-B3C3-6CB3334BCDFD}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>SendNotificationService</RootNamespace>
-    <AssemblyName>SendNotificationService</AssemblyName>
+    <RootNamespace>UTO.Notification.Email</RootNamespace>
+    <AssemblyName>UTO.Notification.Email</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Configuration.Install" />
@@ -47,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entity\Credentials.cs" />
     <Compile Include="Entity\SendMail.cs" />
     <Compile Include="Entity\USPGetConfig.cs" />
     <Compile Include="Entity\USPGetPendingNotifications.cs" />
@@ -61,24 +65,25 @@
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UTONotificationService.cs">
+    <Compile Include="UTO.Notification.Email.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="UTONotificationService.Designer.cs">
-      <DependentUpon>UTONotificationService.cs</DependentUpon>
+    <Compile Include="UTO.Notification.Email.Designer.cs">
+      <DependentUpon>UTO.Notification.Email.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ProjectInstaller.resx">
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UTONotificationService.resx">
-      <DependentUpon>UTONotificationService.cs</DependentUpon>
+    <EmbeddedResource Include="UTO.Notification.Email.resx">
+      <DependentUpon>UTO.Notification.Email.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

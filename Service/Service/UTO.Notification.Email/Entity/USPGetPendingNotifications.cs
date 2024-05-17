@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SendNotificationService
+namespace UTO.Notification.Email
 {
     public class USPGetPendingNotifications
     {
@@ -16,5 +16,6 @@ namespace SendNotificationService
         public string HtmlBody { get; set; }
         public long UserCode { get; set; }
         public DateTime RequestDateTime { get; set; }
-}
+        public string Credentials { get; set; }        
+    }
 }

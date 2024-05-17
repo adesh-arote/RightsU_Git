@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SendNotificationService
+namespace UTO.Notification.Teams
 {
     public class UTOLog
     {

@@ -39,7 +39,7 @@ namespace UTO_Notification.Controllers
             startTime = DateTime.Now;
             HttpResponses httpResponses = new HttpResponses();
 
-            if (obj.NotificationType == "email_ntf")
+            if (obj.NotificationType.ToLower() == "EMAIL_NTF".ToLower())
             {
                 Email objEmail = new Email();
 
@@ -54,7 +54,7 @@ namespace UTO_Notification.Controllers
                 logObj.RequestContent = logObj.RequestContent + " Subject: " + obj.Subject + " <br/><br/>" + obj.HTMLMessage;
             }
 
-            if (obj.NotificationType == "SMS_NTF" || obj.NotificationType == "Whatsapp_ntf")
+            if (obj.NotificationType.ToLower() == "SMS_NTF".ToLower() || obj.NotificationType.ToLower() == "WTSAPP_NTF".ToLower())
             {
                 ShortMessage objShortMessage = new ShortMessage();
 
@@ -69,11 +69,26 @@ namespace UTO_Notification.Controllers
                 logObj.RequestContent = logObj.RequestContent + " Subject: " + obj.Subject + " <br/><br/>" + obj.HTMLMessage;
             }
 
-            if (obj.NotificationType == "TM")
+            if (obj.NotificationType.ToLower() == "TEAMS_NTF".ToLower())
             {
                 Teams objTeams = new Teams();
 
                 httpResponses = objTeams.SaveNotification(obj);
+                if (!httpResponses.Status)
+                {
+                    return Request.CreateResponse(HttpStatusCode.InternalServerError, httpResponses);
+                }
+                TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+
+                logObj.RequestContent = "To: " + obj.TO;
+                logObj.RequestContent = logObj.RequestContent + " Subject: " + obj.Subject + " <br/><br/>" + obj.HTMLMessage;
+            }
+
+            if (obj.NotificationType.ToLower() == "APP_NTF".ToLower())
+            {
+                InApp objInApp = new InApp();
+
+                httpResponses = objInApp.SaveNotification(obj);
                 if (!httpResponses.Status)
                 {
                     return Request.CreateResponse(HttpStatusCode.InternalServerError, httpResponses);
@@ -127,7 +142,7 @@ namespace UTO_Notification.Controllers
 
             HttpResponses httpResponses = new HttpResponses();
             IHttpResponseMapper httpResponseMapper = new HttpResponseMapper();
-            USPInsertNotification objOutput = objUspService.USPUpdateNotification(obj.NECode, obj.UpdatedStatus, obj.ReadDateTime, obj.NEDetailCode);
+            USPInsertNotification objOutput = objUspService.USPUpdateNotification(obj.NECode, obj.UpdatedStatus, obj.ReadDateTime, obj.NEDetailCode, obj.Client_Name, obj.Notification_App);
 
 
             httpResponses = httpResponseMapper.GetHttpSuccessResponse(objOutput);
@@ -183,7 +198,7 @@ namespace UTO_Notification.Controllers
 
             USPGetMessages objOutput = new USPGetMessages();
 
-            List<USPGetMessageStatus> uSPGetMessageStatuses = objUspService.USPGetMessageStatus(obj.NECode, obj.TransType, obj.TransCode, obj.UserCode, obj.NotificationType, obj.EventCategory, obj.Subject, obj.Status, obj.NoOfRetry, obj.size, obj.from, obj.ScheduleStartDateTime, obj.ScheduleEndDateTime, obj.SentStartDateTime, obj.SentEndDateTime, obj.Recipient, obj.isSend, obj.isRead);
+            List<USPGetMessageStatus> uSPGetMessageStatuses = objUspService.USPGetMessageStatus(obj.NECode, obj.TransType, obj.TransCode, obj.UserCode, obj.NotificationType, obj.EventCategory, obj.Subject, obj.Status, obj.NoOfRetry, obj.size, obj.from, obj.ScheduleStartDateTime, obj.ScheduleEndDateTime, obj.SentStartDateTime, obj.SentEndDateTime, obj.Recipient, obj.isSend, obj.isRead, obj.ClientName, obj.NotificationApp, obj.CallFor);
             objOutput.lstGetMessages = uSPGetMessageStatuses;
             objOutput.TotalRecords = 0;
 
@@ -386,7 +401,7 @@ namespace UTO_Notification.Controllers
             startTime = DateTime.Now;
             HttpResponses httpResponses = new HttpResponses();
             IHttpResponseMapper httpResponseMapper = new HttpResponseMapper();
-            List<USPEventCategoryMsgCount> objGetSummarisedMessage = objUspService.USPEventCategoryMsgCount(obj.UserEmail);
+            List<USPEventCategoryMsgCount> objGetSummarisedMessage = objUspService.USPEventCategoryMsgCount(obj.ClientName, obj.UserEmail, obj.NotificationApp, obj.CallFor);
             httpResponses = httpResponseMapper.GetHttpSuccessResponse(objGetSummarisedMessage);
 
             TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;

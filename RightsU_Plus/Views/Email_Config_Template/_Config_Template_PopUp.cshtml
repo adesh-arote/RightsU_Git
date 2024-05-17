@@ -104,6 +104,7 @@
 
         if (ExistingValue == 0) {
             CKEDITOR.instances.texteditor.setData();
+            $('#Subject').val('');
             return false;
         }
 
@@ -118,7 +119,10 @@
             }),
             success: function (result) {
                 debugger;
-                CKEDITOR.instances.texteditor.setData(result);
+                CKEDITOR.instances.texteditor.setData(result.Template);
+
+                $("#Subject").val(result.Subject);
+
             }
         })
     }
