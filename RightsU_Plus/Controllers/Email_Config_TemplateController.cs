@@ -177,7 +177,7 @@ namespace RightsU_Plus.Controllers
 
             if (!string.IsNullOrEmpty(searchText))
             {
-                //var configNames = TemplateEmailConfig(searchText);
+                //var configNames = FindEmailConfig(searchText);
                 //string[] terms = configNames.Split(',');
                 //lstEmail_Template_Searched = lstEmail_Template_Searched.Where(a => terms.Contains(Convert.ToString(a.Email_Config_Code))).ToList();
                 lstEmail_Template_Searched = lstEmail_Template_Searched.Where(w => w.Email_Type.ToUpper().Contains(searchText.ToUpper())).ToList();
@@ -524,15 +524,19 @@ namespace RightsU_Plus.Controllers
         }
 
         public JsonResult Bind_Template_Data(int ExistingValue)
-        {
-            dynamic result = "";
-            
-            result = new Event_Template_Service(objLoginEntity.ConnectionStringName).GetById(ExistingValue).Template; 
+        {            
+            var result = new Event_Template_Service(objLoginEntity.ConnectionStringName).GetById(ExistingValue);
 
-            return Json(result);
+            var obj = new
+            {
+                Template = result.Template,
+                Subject = result.Subject
+            };
+
+            return Json(obj);
         }
 
-        public string TemplateEmailConfig(string searchText)
+        public string FindEmailConfig(string searchText)
         {
             searchText = searchText.Trim();
             string configNames = "";

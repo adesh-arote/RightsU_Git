@@ -407,18 +407,36 @@ BEGIN
 
 		DELETE FROM #tempTrailorData
 			
+		----INSERT INTO #tempTrailorData
+		----Select top 1 * from ##tmp WHERE Title_Content_Code IN (Select TitleContentCode FROM @TitleContentIntersect)
+		
 		--INSERT INTO #tempTrailorData
-		--Select top 1 * from ##tmp WHERE Title_Content_Code IN (Select TitleContentCode FROM @TitleContentIntersect)
-		
-		INSERT INTO #tempTrailorData
-		SELECT * from (
-			SELECT ROW_NUMBER() OVER (PARTITION BY Title_Content_Code ORDER BY  Title_Content_Code) AS row_num,* FROM 
-			##tmp AS tmp WHERE Title_Content_Code IN (Select TitleContentCode FROM @TitleContentIntersect tci WHERE tmp.Airline = tci.Vendor_Name)
-		) AS a
-		WHERE a.row_num = 1
+		--SELECT * from (
+		--	SELECT ROW_NUMBER() OVER (PARTITION BY Title_Content_Code ORDER BY  Title_Content_Code) AS row_num,* FROM 
+		--	##tmp AS tmp WHERE Title_Content_Code IN (Select TitleContentCode FROM @TitleContentIntersect tci WHERE tmp.Airline = tci.Vendor_Name)
+		--) AS a
+		--WHERE a.row_num = 1		
 
-		ALTER TABLE #tempTrailorData DROP COLUMN row_num
+		If NOT EXISTS (SELECT * FROM tempdb.information_schema.columns WHERE table_name like'##tmp' AND column_name = 'Airline')
+		BEGIN
+			INSERT INTO #tempTrailorData
+			SELECT * from (
+				SELECT ROW_NUMBER() OVER (PARTITION BY Title_Content_Code ORDER BY  Title_Content_Code) AS row_num,* FROM 
+				##tmp AS tmp WHERE Title_Content_Code IN (Select TitleContentCode FROM @TitleContentIntersect)
+			) AS a
+			WHERE a.row_num = 1
+		END
+		ELSE
+		BEGIN
+			INSERT INTO #tempTrailorData
+			SELECT * from (
+				SELECT ROW_NUMBER() OVER (PARTITION BY Title_Content_Code ORDER BY  Title_Content_Code) AS row_num,* FROM 
+				##tmp AS tmp WHERE Title_Content_Code IN (Select TitleContentCode FROM @TitleContentIntersect tci WHERE tmp.Airline = tci.Vendor_Name)
+			) AS a
+			WHERE a.row_num = 1
+		END
 		
+		ALTER TABLE #tempTrailorData DROP COLUMN row_num
 
 		INSERT INTO #tempTableSchema(ColumnName)
 		SELECT name

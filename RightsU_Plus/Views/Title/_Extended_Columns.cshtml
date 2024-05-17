@@ -230,7 +230,7 @@
 
                     $("#" + trId + " td:nth-child(1)").first().append(ddl_first_col);
                     var test = "";
-                    test = "<input type='text' id=" + obj + "_txtControlType style='display:none' maxlength='100'> <select class='form_input chosen-select' id=" + obj + "_ddlControlType style='display:none'></select>";
+                    test = "<input type='text' id=" + obj + "_txtControlType style='display:none' maxlength='1000'> <select class='form_input chosen-select' id=" + obj + "_ddlControlType style='display:none'></select>";
                     $("#" + trId + " td:nth-child(2)").first().append(test);
 
                     $('#' + $("#hdnRowNum").val() + "_ddlFieldNameList_chosen").show();
@@ -1111,7 +1111,7 @@
 
         if (ddlFieldNameValue != "0") {
             if (document.getElementById($("#hdnRowNum").val() + "_lblName") != null) {
-                labelName = $("#" + $("#hdnRowNum").val() + "_lblName").text();
+                labelName = $("#" + $("#hdnRowNum").val() + "_lblName").text().replace("...read more ", "").replace(" [^]", "");
                 document.getElementById($("#hdnRowNum").val() + "_lblName").style.display = "none";
             }
 
@@ -1484,7 +1484,7 @@
             $('#btnExtendedColumn_' + $("#hdnRowNum").val()).hide();
             html += "<td>" + ddl_first_col + " </td>";
             @*html += "<td><input type='text' id=" + count + "_txtControlType style='display:none' maxlength='100'> <select class='form_input chosen-select' id=" + count + "_ddlControlType style='display:none'></select><a type='button' title='Add' class='red_icon glyphicon glyphicon-plus' onclick='AddTalent(@GlobalParams.Role_code_Producer);' /></td> />";*@
-            html += "<td><input type='text' id=" + count + "_txtControlType style='display:none;' maxlength='100'> <select class='form_input chosen-select' id=" + count + "_ddlControlType style='display:none'></select><a type='button' title='Add' id='btnExtendedColumn_" + count + "' class='red_icon glyphicon glyphicon-plus' style='margin-left:1%;float:right;margin-top: 5px;visibility:hidden;' onclick='AddAction();' /></td> />";
+            html += "<td><input type='text' id=" + count + "_txtControlType style='display:none;' maxlength='1000'> <select class='form_input chosen-select' id=" + count + "_ddlControlType style='display:none'></select><a type='button' title='Add' id='btnExtendedColumn_" + count + "' class='red_icon glyphicon glyphicon-plus' style='margin-left:1%;float:right;margin-top: 5px;visibility:hidden;' onclick='AddAction();' /></td> />";
 
             html += "<td><a type='button' title='Save' class='glyphicon glyphicon-ok-circle'   id='btnSave_gvExtended_" + count + "' onclick='SaveExtended(this);' /><a type='button' class='glyphicon glyphicon-remove-circle' title='Cancel' id='btnCancel_gvExtended_" + count + "'  onclick='handleECancel(\"A\"," + count + ")' />   </td>";
             html += "</tr>"

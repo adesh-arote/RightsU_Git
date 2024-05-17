@@ -6,7 +6,7 @@ using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SendNotificationService
+namespace UTO.Notification.Email
 {
     static class Program
     {
@@ -18,7 +18,7 @@ namespace SendNotificationService
             ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[]
             {
-                new UTONotificationService()
+                new UTO_Notification_Email()
             };
             ServiceBase.Run(ServicesToRun);
         }

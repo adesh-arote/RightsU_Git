@@ -35,11 +35,70 @@ namespace RightsU_Plus.Controllers
             baseUri = new ApplicationConfiguration().GetConfigurationValue("NotificationApi");
         }
 
-        public List<EventCategoryMsgCount> GetSummarisedMessageStatus(string Email_Id)
+        //public List<EventCategoryMsgCount> GetSummarisedMessageStatus(string Client_Name = "", string Email_Id = "", string Notification_App = "", string Call_For = "")
+        //{
+        //    int timeout = 3600;
+        //    string result = "";
+
+        //    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(baseUri + "NEGetSummarisedMessageStatus");
+
+        //    request.KeepAlive = false;
+        //    request.ProtocolVersion = HttpVersion.Version10;
+        //    request.ContentType = "application/Json";
+        //    request.Method = "POST";
+        //    request.Headers.Add("ContentType", "application/json");
+        //    request.Headers.Add("AuthKey", AuthKey);
+        //    request.Headers.Add("Service", "true");
+        //    //Ragnar_Tygerian@uto.in;sds_daf@uto.in
+        //    var objEmail = new
+        //    {
+        //        ClientName = Client_Name,
+        //        UserEmail = Email_Id, // "Ragnar_Tygerian@uto.in"// objLoginUser.Email_Id
+        //        NotificationApp = Notification_App,
+        //        CallFor = Call_For
+        //    };
+
+        //    try
+        //    {
+        //        using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+        //        {
+        //            string json = JsonConvert.SerializeObject(objEmail);
+        //            streamWriter.Write(json);
+        //        }
+        //        var httpResponse = (HttpWebResponse)request.GetResponse();
+        //        using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+        //        {
+        //            result = streamReader.ReadToEnd();
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        request.Abort();
+        //    }
+
+        //    if (result != "")
+        //    {
+        //        try
+        //        {
+        //            HttpResponseClass objData = JsonConvert.DeserializeObject<HttpResponseClass>(result);
+        //            List<EventCategoryMsgCount> lst = JsonConvert.DeserializeObject<List<EventCategoryMsgCount>>(objData.Response.ToString());
+        //            return lst;
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            return new List<EventCategoryMsgCount>();
+        //        }
+        //    }
+        //    return new List<EventCategoryMsgCount>();
+
+        //}
+
+        public JsonResult GetSummarisedMessageStatus(string Client_Name = "", string Email_Id = "", string Notification_App = "", string Call_For = "")
         {
             int timeout = 3600;
             string result = "";
-
+            List<EventCategoryMsgCount> lst = new List<EventCategoryMsgCount>();
+            
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(baseUri + "NEGetSummarisedMessageStatus");
 
             request.KeepAlive = false;
@@ -52,7 +111,10 @@ namespace RightsU_Plus.Controllers
             //Ragnar_Tygerian@uto.in;sds_daf@uto.in
             var objEmail = new
             {
-                UserEmail = Email_Id // "Ragnar_Tygerian@uto.in"// objLoginUser.Email_Id
+                ClientName = Client_Name,
+                UserEmail = Email_Id, 
+                NotificationApp = Notification_App,
+                CallFor = Call_For
             };
 
             try
@@ -78,28 +140,31 @@ namespace RightsU_Plus.Controllers
                 try
                 {
                     HttpResponseClass objData = JsonConvert.DeserializeObject<HttpResponseClass>(result);
-                    List<EventCategoryMsgCount> lst = JsonConvert.DeserializeObject<List<EventCategoryMsgCount>>(objData.Response.ToString());
-                    return lst;
+                    lst = JsonConvert.DeserializeObject<List<EventCategoryMsgCount>>(objData.Response.ToString());
+                    //return lst;
                 }
                 catch (Exception ex)
                 {
-                    return new List<EventCategoryMsgCount>();
+                    //return new List<EventCategoryMsgCount>();
                 }
             }
-            return new List<EventCategoryMsgCount>();
+
+            Dictionary<string, object> obj = new Dictionary<string, object>();
+            obj.Add("lst", lst);
+            return Json(obj);
         }
 
-        public ActionResult Show_Email_Popup(int Email_Type_Code, string Email_Type, string Email_Id)
+        public ActionResult Show_Email_Popup(int Email_Type_Code, string Email_Type, string Email_Id, string Client_Name = "", string Notification_App = "", string Call_For = "")
         {
-            List<GetMessageStatus> lst = GetMessageStatusDetails(Email_Type, Email_Id);
+            List<GetMessageStatus> lst = GetMessageStatusDetails(Email_Type, Email_Id, Client_Name, Notification_App, Call_For);
             ViewBag.Email_Type_Code = Email_Type_Code;
             return PartialView("_Email_Notification_Popup", lst);
         }
 
-        public JsonResult UpdateMessageStatus(int NECode, int NEDetailCode)
+        public JsonResult UpdateMessageStatus(int NECode, int NEDetailCode, string Client_Name = "", string Notification_App = "")
         {
             var obj = (dynamic)null;
-            UpdateMessageStatusDetails(NECode, NEDetailCode);
+            UpdateMessageStatusDetails(NECode, NEDetailCode, Client_Name, Notification_App);
             obj = new
             {
                 Status = "S",
@@ -125,7 +190,7 @@ namespace RightsU_Plus.Controllers
         }
 
         #region CRUD Methods
-        public HttpResponseClass UpdateMessageStatusDetails(int NECode, int NEDetailCode)
+        public HttpResponseClass UpdateMessageStatusDetails(int NECode, int NEDetailCode, string Client_Name = "", string Notification_App = "")
         {
             string result = "";
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(baseUri + "NEUpdateMessageStatus");
@@ -143,7 +208,9 @@ namespace RightsU_Plus.Controllers
                 NECode = NECode,
                 NEDetailCode = NEDetailCode,
                 UpdatedStatus = "Read",
-                ReadDateTime = System.DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss")
+                ReadDateTime = System.DateTime.Now.ToString("dd-MMM-yyyy hh:mm:ss"),
+                Client_Name = Client_Name,
+                Notification_App = Notification_App
             };
 
             using (var streamWriter = new StreamWriter(request.GetRequestStream()))
@@ -171,7 +238,7 @@ namespace RightsU_Plus.Controllers
             }
             return new HttpResponseClass();
         }
-        public List<GetMessageStatus> GetMessageStatusDetails(string Email_Type, string Email_Id)
+        public List<GetMessageStatus> GetMessageStatusDetails(string Email_Type, string Email_Id, string Client_Name = "", string Notification_App = "", string Call_For = "")
         {
             string result = "";
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(baseUri + "NEGetMessageStatus");
@@ -201,7 +268,10 @@ namespace RightsU_Plus.Controllers
                 isSend = "",
                 NoOfRetry = "",
                 size = "500",
-                from = "0"
+                from = "0",
+                ClientName = Client_Name,
+                NotificationApp = Notification_App,
+                CallFor = Call_For
             };
 
             using (var streamWriter = new StreamWriter(request.GetRequestStream()))

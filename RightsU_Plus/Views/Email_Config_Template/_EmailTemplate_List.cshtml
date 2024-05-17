@@ -165,17 +165,11 @@
                             {
                                 <a title="@objMessageKey.Deactivate" class="glyphicon glyphicon-thumbs-down" style="cursor: pointer" onclick="ActivateDeactivate('@item.Email_Config_Template_Code', 'N')"></a>
                             }
-                            if (item.AllowEdit == "Y")
+                            if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForEdit.ToString() + "~"))
                             {
-                                if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForEdit.ToString() + "~"))
-                                {
-                                    <a title="Configure" class="glyphicon glyphicon-cog" style="cursor: pointer" onclick="ConfigureTemplate('@item.Email_Config_Template_Code', '@item.Email_Config_Code', '@item.Event_Template_Code', '@item.Event_Platform_Code', '@item.Event_Template_Type')"></a>
-                                }
+                                <a title="Configure" class="glyphicon glyphicon-cog" style="cursor: pointer" onclick="ConfigureTemplate('@item.Email_Config_Template_Code', '@item.Email_Config_Code', '@item.Event_Template_Code', '@item.Event_Platform_Code', '@item.Event_Template_Type')"></a>
                             }
-                            else
-                            {
-                                <a title="Cannot edit template as it is in use" class="glyphicon glyphicon-cog disabled" onclick="return false;"></a>
-                            }
+                           
                         }
                         else
                         {

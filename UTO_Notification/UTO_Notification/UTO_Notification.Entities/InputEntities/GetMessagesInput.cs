@@ -30,5 +30,9 @@ namespace UTO_Notification.Entities
         public string isRead { get; set; }
         public string isSend { get; set; }
 
+        public string ClientName { get; set; }
+        public string NotificationApp { get; set; }
+        public string CallFor { get; set; }
+
     }
 }

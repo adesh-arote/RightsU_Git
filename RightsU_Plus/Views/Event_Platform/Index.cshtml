@@ -88,6 +88,8 @@
 
     function SearchEvent_Platform(searchtext) {
     //    debugger;
+        if (!checkCurrentAction())
+            return false;
         $('#searchCommon').val(searchtext);
         showLoading();
         $.ajax({
@@ -265,6 +267,10 @@
         var returnVal = true;
         var EventPlatform_Name = $.trim($("#EventPlatform_Name").val());
         var EventPlatform_Short_Name = $.trim($("#EventPlatform_Short_Name").val());
+        if (EventPlatform_Short_Name.length > 10) {
+            showAlert("E", "Please Enter short name below 10 Characters", "OK");
+            return false;
+        }
         var EnableCCAndBCC = ($('#EnableCCAndBCC').is(":checked"));
         var IsEnableCCandBCC = "";
 
@@ -393,30 +399,29 @@
 
     //---------------------------------KeysPopup
     function EventTemplateKey(EventId) {
-        debugger;      
-        $.ajax({
-            type: "POST",
-            url: URL_EventTemplateKey,
-            traditional: true,
-            enctype: 'multipart/form-data',
-            contentType: "application/json; charset=utf-8",
-            dataType: "html",
-            data: JSON.stringify({
-                EventPlatform_Code: EventId
-            }),
-            success: function (result) {
-                $('#popup').modal();
-                $('#pupupHtml').empty();
-                $('#pupupHtml').html(result);
-                initializeChosen();
-                //if (CommandName != "VIEW")
-                  //  CommandName = "";                
-               // BindExtdGrpDetail(0, CommandName, ModuleCode);
-            },
-            error: function (result) {
-                alert('Error: ' + result.responseText);
-            }
-        });
+        debugger;    
+        if (checkCurrentAction()) {
+            $.ajax({
+                type: "POST",
+                url: URL_EventTemplateKey,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                data: JSON.stringify({
+                    EventPlatform_Code: EventId
+                }),
+                success: function (result) {
+                    $('#popup').modal();
+                    $('#pupupHtml').empty();
+                    $('#pupupHtml').html(result);
+                    initializeChosen();
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
     }
 
     function ClosePopup() {
@@ -577,8 +582,6 @@
                         if (data.Status == "E") {
                             showAlert("E", data.Message, "OK");
                         }
-
-
                     },
                     error: function (data) {
                         alert('Error: ' + data.responseText);

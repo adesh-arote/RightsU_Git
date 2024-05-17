@@ -207,14 +207,14 @@ BEGIN
 						  + CASE WHEN ISNULL(LEFT([Lang 4], 3),'') <> '' THEN ', ' + LEFT([Lang 4], 3) ELSE '' END ) AS [Lang1], LEFT([Embedded Subs], 3) AS [Embedded Subs], [Remarks], [File details], [PO Booking], [Estimated Screening Cost per flight USD],
 		   [Estimated Screening Total USD],[Duplication Cost per flight USD],[Duplication Total USD],[Miscellaneous Items],[Miscellaneous Charges], [Master delivery date],
 		   [Trailer delivery date],[Delivery and Payment remarks], @OEM_Company_Name [OEM_Company_Name], @OEM_Company_Short_Name [OEM_Company_Short_Name], [Lab],
-		   (SELECT TOP 1 ISNULL(Contact_Person, '') FROM AL_Lab WHERE AL_Lab_Name COLLATE SQL_Latin1_General_CP1_CI_AS = [Lab]) AS [Lab_Contact_Name], '' AS [MPEG], '' AS [AspectRatio], '' AS [FileName], '' AS [System], @PODelivaryText AS [PODelivaryText],
+		   (SELECT TOP 1 ISNULL(Contact_Person, '') FROM AL_Lab WHERE AL_Lab_Name COLLATE SQL_Latin1_General_CP1_CI_AS = [Lab]) AS [Lab_Contact_Name], [MPEG] AS [MPEG], [Aspect Ratio] AS [AspectRatio], [Bluebox WOW Filename] AS [FileName], CASE WHEN ISNULL([Bluebox WOW],'0') = '1' THEN 'Bluebox WOW' ELSE '' END AS [System], @PODelivaryText AS [PODelivaryText],
 		   (SELECT Vendor_Name FROM Vendor WHERE Vendor_Code = @VendorCode) AS [Client_Name_New], [Client_Name] AS [Vendor_Name_New]
 		From #TempPurchaseOrderData tpod 
 			INNER JOIN
 		(Select * from ( Select tb.AL_Booking_Sheet_Code, tb.TitleName, tb.Columns_Name, tb.Columns_Value, tb.Title_Code  from #TempBookingData tb ) a
 			pivot (max(Columns_Value) for Columns_Name in ([Airline],[Version],[Lang 1],[Lang 2],[Lang 3],[Lang 4],[Embedded Subs],[Remarks],[File details],[PO Booking],[Estimated Screening Cost per flight USD],
 												   [Estimated Screening Total USD],[Duplication Cost per flight USD],[Duplication Total USD],[Miscellaneous Items],[Miscellaneous Charges],
-												   [Master delivery date],[Trailer delivery date],[Delivery and Payment remarks], [Lab], [Moment (Wireless IFE)], [Moment MPEG], [Moment Aspect Ratio], [Moment Filename])) p) AS T
+												   [Master delivery date],[Trailer delivery date],[Delivery and Payment remarks], [Lab], [Moment (Wireless IFE)], [Moment MPEG], [Moment Aspect Ratio], [Moment Filename], [MPEG], [Aspect Ratio], [Bluebox WOW Filename], [Bluebox WOW])) p) AS T
 		ON tpod.AL_Booking_Sheet_Code = T.AL_Booking_Sheet_Code
 	END
 	ELSE IF(@AL_OEM_Code = @AL_Viasat_OEM_Value)

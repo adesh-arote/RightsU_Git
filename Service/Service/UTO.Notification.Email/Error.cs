@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SendNotificationService
+namespace UTO.Notification.Email
 {
     public class Error
     {

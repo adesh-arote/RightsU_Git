@@ -29,5 +29,9 @@ namespace UTO_Notification.Entities
         public string ReadDateTime { get; set; }
         public string ClientName { get; set; }
         public long ForeignId { get; set; }
+
+        public string Client_Name { get; set; }
+        public string Notification_App { get; set; }
+        
     }
 }
