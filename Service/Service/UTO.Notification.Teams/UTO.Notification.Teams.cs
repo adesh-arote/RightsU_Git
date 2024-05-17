@@ -332,13 +332,17 @@ namespace UTO.Notification.Teams
                     }
 
                     startTime = DateTime.Now;
-                    var response = TeamsHelper.SendTeamNotification(lstToAddress, ChatType.OneOnOne, notification.HtmlBody, objConfig);
 
-                    TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                    if (response != null && response.Id > 0)
+                    foreach (var item in lstToAddress)
                     {
-                        isSuccess = true;
-                        ResponseText = "Message Sent with MessageId :" + response.Id;
+                        var response = TeamsHelper.SendTeamNotification(item, ChatType.OneOnOne, notification.HtmlBody, objConfig);
+
+                        TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+                        if (response != null && response.Id > 0)
+                        {
+                            isSuccess = true;
+                            ResponseText += "\nMessage Sent to "+ item + " with MessageId :" + response.Id;
+                        }
                     }
 
                     if (Convert.ToBoolean(WriteLog))
