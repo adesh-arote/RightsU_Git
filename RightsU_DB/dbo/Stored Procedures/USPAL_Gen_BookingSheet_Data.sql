@@ -222,7 +222,11 @@ BEGIN
 	) AS a
 	INNER JOIN #TempFileName tmp2 ON a.Title_Content_Code = tmp2.Title_Content_Code AND a.Additional_Condition = tmp2.Additional_Condition
 
-	SELECT @MAXNo = MAX(CAST(ISNULL(IncrementNo, 0) AS INT)) FROM #TempFileName WHERE CAST(ISNULL(IncrementNo, 0) AS INT) > 0
+	--SELECT @MAXNo = MAX(CAST(ISNULL(IncrementNo, 0) AS INT)) FROM #TempFileName WHERE CAST(ISNULL(IncrementNo, 0) AS INT) > 0
+	IF((SELECT MAX(CAST(ISNULL(IncrementNo, 0) AS INT)) FROM #TempFileName WHERE CAST(ISNULL(IncrementNo, 0) AS INT) > 0) > 0)
+	BEGIN
+		SELECT @MAXNo = MAX(CAST(ISNULL(IncrementNo, 0) AS INT)) FROM #TempFileName WHERE CAST(ISNULL(IncrementNo, 0) AS INT) > 0
+	END
 
 	UPDATE tmp2 SET tmp2.IncrementNo = a.IncNo, tmp2.IncrementNo5Digit =  RIGHT('00000'+ CONVERT(VARCHAR,a.IncNo),5)
 	FROM (
@@ -294,7 +298,8 @@ BEGIN
 	UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{TitleLang3Char}', ISNULL(TitleLang3Char, ''))
 	UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{EmbSubs3Char}', ISNULL(EmbSubs3Char, ''))
 	UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{Version}', ISNULL(Version, ''))
-	UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{EpisodeTitleWOSpace}', ISNULL(EpisodeTitleWOSpace, ''))
+	--UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{EpisodeTitleWOSpace}', ISNULL(EpisodeTitleWOSpace, ''))
+	UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{EpisodeTitleWOSpace}', ISNULL(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(ISNULL(EpisodeTitleWOSpace, ''), '!', ''),'@',''),'#',''),'$',''),'%',''),'^',''),'&',''),'*',''),'(',''),')',''),'-',''),'_',''),'=',''),'+',''),'[',''),'{',''),']',''),'}',''),'\',''),'|',''),':',''),';',''),'"',''),'''',''),',',''),'<',''),'.',''),'>',''),'/',''),'?',''),'~',''),'`',''), ''))
 	UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{SeasonWOZero}', ISNULL(SeasonWOZero, ''))
 	UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{EpisodeWOZero}', ISNULL(EpisodeWOZero, ''))
 	UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{TitleLang2Char}', ISNULL(TitleLang2Char, ''))
