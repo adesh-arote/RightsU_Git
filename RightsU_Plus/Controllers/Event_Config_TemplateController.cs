@@ -10,7 +10,7 @@ using UTOFrameWork.FrameworkClasses;
 
 namespace RightsU_Plus.Controllers
 {
-    public class Email_Config_TemplateController : BaseController
+    public class Event_Config_TemplateController : BaseController
     {
         #region  Sessions
         private List<RightsU_Entities.Email_Config_Template> lstEmail_Template
@@ -100,7 +100,7 @@ namespace RightsU_Plus.Controllers
             }
             else if (commandName == "EDIT")
             {
-                Email_Config_Template Detail = lst.FirstOrDefault();
+                Email_Config_Template Detail = lst.Where(s => s.Email_Config_Template_Code == Email_Config_Template_Code).FirstOrDefault();
 
                 ViewBag.lst_EmailConfig = new SelectList(lstEmailConfig, "Email_Config_Code", "Email_Type", Detail.Email_Config_Code);
 
