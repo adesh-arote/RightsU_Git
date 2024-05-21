@@ -25,5 +25,6 @@ namespace RightsU_InterimDb.Models
     	    public Nullable<int> Last_Action_By { get; set; }
     	    public Nullable<System.DateTime> Lock_Time { get; set; }
     	    public string Subject { get; set; }
+    	    public string Table_Type { get; set; }
     }
 }
