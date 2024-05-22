@@ -46,7 +46,7 @@ namespace RightsU_Plus.Controllers
         #region UI Methods
         public ActionResult Index()
         {
-            string moduleCode = GlobalParams.ModuleCodeForCurrency.ToString();
+            string moduleCode = GlobalParams.ModuleCodeForEventPlatform.ToString();
             string SysLanguageCode = objLoginUser.System_Language_Code.ToString();
             ViewBag.Code = moduleCode;
             ViewBag.LangCode = SysLanguageCode;
@@ -532,7 +532,7 @@ namespace RightsU_Plus.Controllers
         {
             string AuthKey = GetAuthKey();
             var result = (dynamic)null;
-            string RequestUri = Convert.ToString(ConfigurationManager.AppSettings["NotificationURL"]);
+            string RequestUri = Convert.ToString(ConfigurationManager.AppSettings["NotificationApi"]);
             System_Parameter_New_Service objSPNService = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName);
             System_Parameter_New objSPN = objSPNService.SearchFor(s => s.Parameter_Name == "Notification_ClientName" && s.IsActive == "Y").FirstOrDefault();
 
@@ -567,50 +567,50 @@ namespace RightsU_Plus.Controllers
             }
         }
 
-        public string GetAuthKey()
-        {
-            string AuthKey = "";
-            string hostName = Dns.GetHostName(); // Retrive the Name of HOST
-            string myIP = Dns.GetHostByName(hostName).AddressList[0].ToString();
+        //public string GetAuthKey()
+        //{
+        //    string AuthKey = "";
+        //    string hostName = Dns.GetHostName(); // Retrive the Name of HOST
+        //    string myIP = Dns.GetHostByName(hostName).AddressList[0].ToString();
 
-            byte[] bytesToBeEncrypted = Encoding.UTF8.GetBytes(ConfigurationManager.AppSettings["salt"].ToString());
-            byte[] passwordBytes = Encoding.UTF8.GetBytes(myIP);
+        //    byte[] bytesToBeEncrypted = Encoding.UTF8.GetBytes(ConfigurationManager.AppSettings["salt"].ToString());
+        //    byte[] passwordBytes = Encoding.UTF8.GetBytes(myIP);
 
-            byte[] bytesEncrypted = AesOperation.AES_Encrypt(bytesToBeEncrypted, passwordBytes);
-            AuthKey = Convert.ToBase64String(bytesEncrypted);
+        //    byte[] bytesEncrypted = AesOperation.AES_Encrypt(bytesToBeEncrypted, passwordBytes);
+        //    AuthKey = Convert.ToBase64String(bytesEncrypted);
 
-            return AuthKey;
-        }
-        class AesOperation
-        {
-            public static byte[] AES_Encrypt(byte[] bytesToBeEncrypted, byte[] passwordBytes)
-            {
-                byte[] encryptedBytes = null;
-                byte[] saltBytes = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 };
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    using (RijndaelManaged AES = new RijndaelManaged())
-                    {
-                        AES.KeySize = 256;
-                        AES.BlockSize = 128;
+        //    return AuthKey;
+        //}
+        //class AesOperation
+        //{
+        //    public static byte[] AES_Encrypt(byte[] bytesToBeEncrypted, byte[] passwordBytes)
+        //    {
+        //        byte[] encryptedBytes = null;
+        //        byte[] saltBytes = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 };
+        //        using (MemoryStream ms = new MemoryStream())
+        //        {
+        //            using (RijndaelManaged AES = new RijndaelManaged())
+        //            {
+        //                AES.KeySize = 256;
+        //                AES.BlockSize = 128;
 
-                        var key = new Rfc2898DeriveBytes(passwordBytes, saltBytes, 1000);
-                        AES.Key = key.GetBytes(AES.KeySize / 8);
-                        AES.IV = key.GetBytes(AES.BlockSize / 8);
+        //                var key = new Rfc2898DeriveBytes(passwordBytes, saltBytes, 1000);
+        //                AES.Key = key.GetBytes(AES.KeySize / 8);
+        //                AES.IV = key.GetBytes(AES.BlockSize / 8);
 
-                        AES.Mode = CipherMode.CBC;
+        //                AES.Mode = CipherMode.CBC;
 
-                        using (var cs = new CryptoStream(ms, AES.CreateEncryptor(), CryptoStreamMode.Write))
-                        {
-                            cs.Write(bytesToBeEncrypted, 0, bytesToBeEncrypted.Length);
-                            cs.Close();
-                        }
-                        encryptedBytes = ms.ToArray();
-                    }
-                }
-                return encryptedBytes;
-            }
-        }
+        //                using (var cs = new CryptoStream(ms, AES.CreateEncryptor(), CryptoStreamMode.Write))
+        //                {
+        //                    cs.Write(bytesToBeEncrypted, 0, bytesToBeEncrypted.Length);
+        //                    cs.Close();
+        //                }
+        //                encryptedBytes = ms.ToArray();
+        //            }
+        //        }
+        //        return encryptedBytes;
+        //    }
+        //}
 
         //public class Responses
         //{

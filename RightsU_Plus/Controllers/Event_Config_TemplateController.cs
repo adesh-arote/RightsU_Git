@@ -10,7 +10,7 @@ using UTOFrameWork.FrameworkClasses;
 
 namespace RightsU_Plus.Controllers
 {
-    public class Email_Config_TemplateController : BaseController
+    public class Event_Config_TemplateController : BaseController
     {
         #region  Sessions
         private List<RightsU_Entities.Email_Config_Template> lstEmail_Template
@@ -100,7 +100,7 @@ namespace RightsU_Plus.Controllers
             }
             else if (commandName == "EDIT")
             {
-                Email_Config_Template Detail = lst.FirstOrDefault();
+                Email_Config_Template Detail = lst.Where(s => s.Email_Config_Template_Code == Email_Config_Template_Code).FirstOrDefault();
 
                 ViewBag.lst_EmailConfig = new SelectList(lstEmailConfig, "Email_Config_Code", "Email_Type", Detail.Email_Config_Code);
 
@@ -430,7 +430,7 @@ namespace RightsU_Plus.Controllers
             return PartialView("_Config_Template_PopUp", objEv_Template);
         }
 
-        public JsonResult Save_Event_Template(int Email_Config_Template_Code, int Event_Template_Code, string Template_Type, int Platform_Code, string editorData, string subject, string IsNewTemplate, string TemplateName = "")
+        public JsonResult Save_Event_Template(int Email_Config_Template_Code, int Event_Template_Code, string Template_Type, int Platform_Code, string editorData, string subject, string IsNewTemplate, string TemplateName = "", string TableType = "")
         {
             string status = "S", message = "", Action = Convert.ToString(ActionType.C); // C = "Create";
             Event_Template_Service ObjEvent_Template_Service = new Event_Template_Service(objLoginEntity.ConnectionStringName);
@@ -456,6 +456,7 @@ namespace RightsU_Plus.Controllers
             ObjEvent_Template.Template = editorData;
             ObjEvent_Template.Last_Action_By = objLoginUser.Users_Code;
             ObjEvent_Template.Last_UpDated_Time = DateTime.Now;
+            ObjEvent_Template.Table_Type = TableType;
 
             dynamic resultSet;
             if (!new Event_Template_Service(objLoginEntity.ConnectionStringName).Save(ObjEvent_Template, out resultSet))

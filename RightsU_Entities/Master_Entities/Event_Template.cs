@@ -33,5 +33,7 @@ namespace RightsU_Entities
         [JsonIgnore]
         public Nullable<System.DateTime> Lock_Time { get; set; }
         public string Subject { get; set; }
+        [JsonIgnore]
+        public string Table_Type { get; set; }
     }
 }

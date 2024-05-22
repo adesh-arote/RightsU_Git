@@ -3470,6 +3470,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
           <Property Name="Last_Action_By" Type="int" />
           <Property Name="Lock_Time" Type="datetime" />
           <Property Name="Subject" Type="varchar(max)" />
+          <Property Name="Table_Type" Type="char" MaxLength="1" />
         </EntityType>
         <EntityType Name="Event_Template_Keys">
           <Key>
@@ -41365,6 +41366,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Last_Action_By" Type="Int32" />
           <Property Name="Lock_Time" Type="DateTime" Precision="3" />
           <Property Name="Subject" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Table_Type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
         </EntityType>
         <EntityType Name="Notifications">
           <Key>
@@ -52248,6 +52250,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Event_Template">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Event_Template">
               <MappingFragment StoreEntitySet="Event_Template">
+                <ScalarProperty Name="Table_Type" ColumnName="Table_Type" />
                 <ScalarProperty Name="Subject" ColumnName="Subject" />
                 <ScalarProperty Name="Lock_Time" ColumnName="Lock_Time" />
                 <ScalarProperty Name="Last_Action_By" ColumnName="Last_Action_By" />
