@@ -45,13 +45,25 @@
                 <tr style="text-align:center">
                     <td>@i </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Email_Config.Email_Type)
+                        @if (item.Email_Config != null)
+                        {
+                            if (item.Email_Config.Email_Type != null)
+                            {
+                                @Html.DisplayFor(modelItem => item.Email_Config.Email_Type)
+                            }
+                        }
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Event_Platform.Short_Code) - @Html.DisplayFor(modelItem => item.Event_Platform.Event_Platform_Name)
+                        @if (item.Event_Platform != null)
+                        {
+                            if (item.Event_Platform.Short_Code != null)
+                            {
+                                @Html.DisplayFor(modelItem => item.Event_Platform.Short_Code)
+                            }
+                        }
                     </td>
                     <td>
-                        @ViewBag.MessageType
+                        @Session["MessageType"]
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Email)
@@ -60,8 +72,8 @@
                         @Html.DisplayFor(modelItem => item.CreatedOn)
                     </td>
                     <td>
-                        <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="MessagePopup(@item.NotificationsCode, '@ViewBag.MessageType')"></a>
-                        <a title="Status" class="glyphicon glyphicon-eye-open" style="cursor: pointer;"></a>
+                        <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="MessagePopup(@item.NotificationsCode, '@Session["MessageType"]','HTMLVIEW', '')"></a>
+                        <a title="Status" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="MessagePopup(@item.NotificationsCode, '@ViewBag.MessageType', 'STATUS', '@item.Event_Platform.Short_Code')"></a>
                     </td>
                 </tr>
             }
