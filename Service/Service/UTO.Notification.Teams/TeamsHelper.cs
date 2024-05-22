@@ -26,7 +26,7 @@ namespace UTO.Notification.Teams
             return new GraphServiceClient(userNamePasswordCredential, scopes);
         }
 
-        public static Chat GetChatPayload(string FromAddress, List<string> ToAddress, ChatType chatType)
+        public static Chat GetChatPayload(string FromAddress, string ToAddress, ChatType chatType)
         {
             Chat chatPayload = new Chat();
             chatPayload.Members = new List<ConversationMember>();
@@ -64,7 +64,7 @@ namespace UTO.Notification.Teams
                                 AdditionalData = new Dictionary<string, object>
                                 {
                                     {
-                                        "user@odata.bind" , "https://graph.microsoft.com/v1.0/users('"+ToAddress.FirstOrDefault()+"')"
+                                        "user@odata.bind" , "https://graph.microsoft.com/v1.0/users('"+ToAddress+"')"
                                     }
                                 }
                             }
@@ -80,7 +80,7 @@ namespace UTO.Notification.Teams
             return chatPayload;
         }
 
-        public static async Task<ChatMessage> SendTeamNotification(List<string> ToAddress, ChatType chatType, string MsgBody, USPGetConfig objConfig)
+        public static async Task<ChatMessage> SendTeamNotification(string ToAddress, ChatType chatType, string MsgBody, USPGetConfig objConfig)
         {
             try
             {

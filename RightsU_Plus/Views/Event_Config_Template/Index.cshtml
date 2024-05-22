@@ -13,14 +13,14 @@
 <script>
       var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T", Module_Code = @ViewBag.ModuleCode, SysLanguageCode = @ViewBag.LangCode;
 
-    var URL_Bind_Email_Config_Template = '@Url.Action("Bind_Email_Config_Template", "Email_Config_Template")';
-    var URL_Search_Email_Config_Template = '@Url.Action("Search_Email_Config_Template", "Email_Config_Template")';
-    var URL_Save_Email_Config_Template = '@Url.Action("Save_Email_Config_Template", "Email_Config_Template")';
-    var URL_ActivateDeactivate = '@Url.Action("ActivateDeactivate", "Email_Config_Template")';
-    var URL_Bind_Event_Template_PopUp = '@Url.Action("Bind_Event_Template_PopUp", "Email_Config_Template")';
-    var URL_Save_Event_Template = '@Url.Action("Save_Event_Template", "Email_Config_Template")';
+    var URL_Bind_Email_Config_Template = '@Url.Action("Bind_Email_Config_Template", "Event_Config_Template")';
+    var URL_Search_Email_Config_Template = '@Url.Action("Search_Email_Config_Template", "Event_Config_Template")';
+    var URL_Save_Email_Config_Template = '@Url.Action("Save_Email_Config_Template", "Event_Config_Template")';
+    var URL_ActivateDeactivate = '@Url.Action("ActivateDeactivate", "Event_Config_Template")';
+    var URL_Bind_Event_Template_PopUp = '@Url.Action("Bind_Event_Template_PopUp", "Event_Config_Template")';
+    var URL_Save_Event_Template = '@Url.Action("Save_Event_Template", "Event_Config_Template")';
 
-    var URL_CheckRecordLock = '@Url.Action("CheckRecordLock", "Email_Config_Template")';
+    var URL_CheckRecordLock = '@Url.Action("CheckRecordLock", "Event_Config_Template")';
     var URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")';
     var URL_Release_Lock = '@Url.Action("Release_Lock", "Global")';
 
@@ -480,6 +480,8 @@
             Template_Type = "T";
         }
 
+        var Table_Type = $("input[name='dataAttachment']:checked").val();
+
         if (returnVal) {
             $.ajax({
                 type: "POST",
@@ -495,7 +497,8 @@
                     TemplateName: TemplateName,
                     editorData: editorData,
                     Subject: Subject,
-                    IsNewTemplate: IsNewTemplate
+                    IsNewTemplate: IsNewTemplate,
+                    TableType: Table_Type
                 }),
                 success: function (result) {
                     debugger;
@@ -616,7 +619,7 @@
         </div>
     </section>
 </div>
-<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="max-width: 80%; display: none;">
     <div class="modal-dialog">
         <div class="modal-content clearfix">
             <div class="form_fields acq" id="pupupHtml">

@@ -1,6 +1,11 @@
-﻿@{
-    ViewBag.Title = "Dispatcher_Search";
+﻿@using UTOFrameWork.FrameworkClasses
+@{
     Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
 }
 
 <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
@@ -63,27 +68,16 @@
 </style>
 
 <script>
-   var URL_GetNotifications = '@Url.Action("GetNotifications", "Dispatcher_Search")';
-    var URL_MessagePopUpBody = '@Url.Action("MessagePopUpBody", "Dispatcher_Search")';
+    var sort_Type = "T";
+    var URL_GetNotifications = '@Url.Action("GetNotifications", "Dispatcher_Search")';
+    var URL_SearchNotification = '@Url.Action("SearchDispatcher", "Dispatcher_Search")';
 
-    function GetNotifications(btnType) {
+    function GetNotifications() {
         debugger;
-        var returnVal = true;
-        var StartDate = $('#StartDate').val();
-        var EndDate = $('#EndDate').val();
-        var EventType = $('#ddlEventType').val();
-        var Platform = $('#ddlPlatform').val();
-        var MessageType = $('#ddlMessageType').val();
-        var MessageTo = $('#txtMessageTo').val();
-        if (btnType == "AR") {
-             StartDate = "";
-            EndDate = "";
-            $('#StartDate').val('');
-            $('#EndDate').val('');
-        }
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+    
 
-
-        if (returnVal) {
             showLoading();
             $.ajax({
                 type: "POST",
@@ -91,14 +85,10 @@
                 traditional: true,
                 enctype: 'multipart/form-data',
                 contentType: "application/json; charset=utf-8",
-                data: JSON.stringify({
-                    strStartDate: StartDate,
-                    strEndDate: EndDate,
-                    EventType : EventType,
-                    Platform : Platform,
-                    MessageType: MessageType,
-                    MessageTo: MessageTo,
-                    BtnType: btnType
+                data: JSON.stringify({                   
+                    pageNo: pageNo,
+                    recordPerPage: recordPerPage,
+                    sortType: sort_Type
                 }),
                // async: false,
                 success: function (result) {
@@ -114,9 +104,140 @@
                     alert('Error: ' + result.responseText);
                 }
             });
+    }
+
+
+    function SetPaging() {
+        debugger;
+        IsCall = 'N';
+        var pageNo = parseInt($('#hdnPageNo').val());
+        var recordCount = parseInt($('#hdnRecordCount').val());
+        var pagePerBatch = parseInt($('#hdnPagePerBatch').val());
+        var recordPerPage = parseInt($('#txtPageSize').val());
+
+        var cnt = pageNo * recordPerPage;
+        if (cnt >= recordCount) {
+            var v1 = parseInt(recordCount / recordPerPage);
+            if ((v1 * recordPerPage) == recordCount)
+                pageNo = v1;
+            else
+                pageNo = v1 + 1;
+        }
+
+        if (pageNo == 0)
+            pageNo = 1;
+
+        var index = pageNo - 1;
+        $('#hdnPageNo').val(pageNo);
+
+        var opt = null;
+        opt = { callback: pageselectCallback };
+        opt["items_per_page"] = recordPerPage;
+        opt["num_display_entries"] = pagePerBatch;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = index;
+        $("#Pagination").pagination(recordCount, opt);
+    }
+
+    function pageselectCallback(page_index, jq) {
+        debugger;
+            $('.required').removeClass('required');
+
+            if (!ValidatePageSize())
+                return false;
+
+            var pageNo = page_index + 1
+            $('#hdnPageNo').val(pageNo);
+            if (IsCall == 'Y')
+                GetNotifications();
+            else
+                IsCall = 'Y';
+    }
+    function ValidatePageSize() {
+        debugger;
+        var recordPerPage = $('#txtPageSize').val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize').attr('required', true)
+        return false
+    }
+
+    function txtPageSize_OnChange() {
+        debugger;
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        if (!ValidatePageSize())
+            return false;
+
+        GetNotifications();
+        SetPaging();
+    }
+    function SearchNotification(btnType) {
+        debugger;
+        var returnVal = true;
+        var StartDate = $('#StartDate').val();
+        var EndDate = $('#EndDate').val();
+        var EventType = $('#ddlEventType').val();
+        var Platform = $('#ddlPlatform').val();
+        var MessageType = $('#ddlMessageType').val();
+        var MessageTo = $('#txtMessageTo').val();
+        if (btnType == "AR") {
+            StartDate = "";
+            EndDate = "";
+            $('#StartDate').val('');
+            $('#EndDate').val('');
+        }
+
+        showLoading();
+        if (returnVal) {
+            $.ajax({
+                type: "POST",
+                url: URL_SearchNotification,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    strStartDate: StartDate,
+                    strEndDate: EndDate,
+                    EventType: EventType,
+                    Platform: Platform,
+                    MessageType: MessageType,
+                    MessageTo: MessageTo,
+                    BtnType: btnType
+                }),
+                //  async: false,
+                success: function (result) {
+                    debugger;
+                    $('#hdnPageNo').text(1);
+                    $('#hdnPageNo').val(1);
+                    $('#lblRecordCount').text(result.Record_Count);
+                    $("#hdnRecordCount").val(result.Record_Count);
+                    GetNotifications();
+                    SetPaging();
+                    hideLoading();
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                    hideLoading();
+                }
+            });
         }
     }
-    function MessagePopup(Id, MsgType) {
+
+
+    function MessagePopup(Id, MsgType, ViewType, NotificationType) {
+        if (ViewType == "HTMLVIEW") {
+            var URL_MessagePopUpBody = '@Url.Action("MessagePopUpBody", "Dispatcher_Search")';
+        }
+        if (ViewType == "STATUS") {
+            var URL_MessagePopUpBody = '@Url.Action("GetNotificationStatus", "Dispatcher_Search")';
+        }
+
         debugger;
             $.ajax({
                 type: "POST",
@@ -127,7 +248,8 @@
                 dataType: "html",
                 data: JSON.stringify({
                     NotificationCode: Id,
-                    MsgType: MsgType
+                    MsgType: MsgType,
+                    NotificationType: NotificationType
                 }),
                 async: false,
                 success: function (result) {
@@ -188,22 +310,49 @@
                         </td>
                         <td colspan="2">
                             <div class="pull-right">
-                                <input type="button" id="btnShow" class="btn btn-primary " value="Search" onclick="GetNotifications('NA')"> &nbsp; &nbsp;
-                                <input type="button" id="btnReset" class="btn btn-primary " value="Search in Archive" onclick="GetNotifications('AR')">
+                                <input type="button" id="btnShow" class="btn btn-primary " value="Search" onclick="SearchNotification('NA')"> &nbsp; &nbsp;
+                                <input type="button" id="btnReset" class="btn btn-primary " value="Search in Archive" onclick="SearchNotification('AR')">
                             </div>
                         </td>
                     </tr>
 
                     @*<tr>
-                            <td colspan="6">
-                                <div class="pull-right" style="padding-right: 19px;">
-                                    <input type="button" id="btnShow" class="btn btn-primary " value="Search" onclick="GetNotifications('NA')"> &nbsp; &nbsp;
-                                    <input type="button" id="btnReset" class="btn btn-primary " value="Search in Archive" onclick="GetNotifications('AR')">
-                                </div>
-                            </td>
-                        </tr>*@
+                    <td colspan="6">
+                        <div class="pull-right" style="padding-right: 19px;">
+                            <input type="button" id="btnShow" class="btn btn-primary " value="Search" onclick="GetNotifications('NA')"> &nbsp; &nbsp;
+                            <input type="button" id="btnReset" class="btn btn-primary " value="Search in Archive" onclick="GetNotifications('AR')">
+                        </div>
+                    </td>
+                </tr>*@
 
                 </table>
+            </div>
+            <div class="grid_area">
+                <div style="border-bottom: 1px dotted #777; display:none;"></div>
+                <div class="paging_area clearfix">
+                    <span class="pull-left">@objMessageKey.TotalRecords: </span>
+                    <span class="pull-left" id="lblRecordCount"></span>
+                    <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                    <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                    <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+
+                    <div id="Pagination" class="pagination">
+                    </div>
+                    <span class="pull-right">
+                        @objMessageKey.PageSize:
+                        <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="txtPageSize_OnChange()" onblur="setDefaultPaging('txtPageSize')">
+                    </span>
+                </div>
+
+                @*<div class="tab-content clearfix table-wrapper scale_table_container">
+                    <div class="scale_table_block">
+                        <input type="hidden" id="hdnAction" value="" />
+                        <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
+                        <div id="divExtendedList" class="deal clearfix">
+
+                        </div>
+                    </div>
+                </div>*@
             </div>
             <div class="title_block dotted_border clearfix">
             </div>
@@ -215,7 +364,7 @@
     </section>
 </div>
 
-<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none; max-height:80%;">
     <div class="modal-dialog">
         <div class="modal-content clearfix">
             <div class="form_fields acq" id="MsgpupupHtml">

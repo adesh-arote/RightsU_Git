@@ -18,7 +18,8 @@ BEGIN
 		TitleName	NVARCHAR(MAX),
 		Columns_Name NVARCHAR(MAX),	
 		Columns_Value NVARCHAR(MAX),	
-		Columns_Code INT
+		Columns_Code INT,
+		AL_Recommendation_Content_Code INT
 	)
 	 
 	CREATE TABLE #TempBookingSheetDetail
@@ -66,10 +67,10 @@ BEGIN
 	 FROM AL_Booking_Sheet_Details
 	 WHERE AL_Booking_Sheet_Code = @BookingSheetCode
 
-	 INSERT INTO #TempBookingData(Title_Content_Code, TitleName, Columns_Name, Columns_Value, Columns_Code)
+	 INSERT INTO #TempBookingData(Title_Content_Code, TitleName, Columns_Name, Columns_Value, Columns_Code, AL_Recommendation_Content_Code)
 	 SELECT absd.Title_Content_Code,
 		CASE WHEN @Display_For = 'S' THEN tc.Episode_Title + '(' + CAST(tc.Episode_No AS VARCHAR) + ')' ELSE t.Title_Name END TITLE, 
-		ec.Columns_Name, absd.Columns_Value, ec.Columns_Code
+		ec.Columns_Name, absd.Columns_Value, ec.Columns_Code, arc.AL_Recommendation_Content_Code
 	 FROM AL_Recommendation_Content arc
 		INNER JOIN #TempBookingSheetDet absd ON arc.Title_Code = absd.Title_Code AND ISNULL(arc.Title_Content_Code, 0) = ISNULL(absd.Title_Content_Code, 0)
 		INNER JOIN Extended_Columns ec ON absd.Columns_Code = ec.Columns_Code
@@ -116,15 +117,19 @@ BEGIN
 	--SELECT @query = 'Select '+@ColNames+' from ( Select tb.TitleName, tb.Columns_Name, tb.Columns_Value  from #TempBookingData tb ) a
 	--					 pivot (max(Columns_Value) for Columns_Name in ('+@ColNames+')) p'
 
-	IF (NOT EXISTS(Select TOP 1 * from #TempBookingData where Columns_Name = 'Title Category') OR NOT EXISTS(Select TOP 1 * from #TempBookingData where Columns_Name = 'Display Order'))
+	IF (NOT EXISTS(Select TOP 1 * from #TempBookingData where Columns_Name = 'Title Category')) -- OR NOT EXISTS(Select TOP 1 * from #TempBookingData where Columns_Name = 'Display Order')
 	BEGIN
-		SELECT @query = 'SELECT '+@ColNames+' from ( SELECT tb.TitleName, tb.Columns_Name, tb.Columns_Value  from #TempBookingData tb ) a
-						 pivot (max(Columns_Value) for Columns_Name in ('+@ColNames+')) p'
+		--SELECT @query = 'SELECT '+@ColNames+' from ( SELECT tb.TitleName, tb.Columns_Name, tb.Columns_Value  from #TempBookingData tb ) a
+		--				 pivot (max(Columns_Value) for Columns_Name in ('+@ColNames+')) p'
+		SELECT @query = 'SELECT '+@ColNames+' FROM (SELECT '+@ColNames+', AL_Recommendation_Content_Code from ( SELECT tb.TitleName, tb.Columns_Name, tb.Columns_Value, tb.AL_Recommendation_Content_Code  from #TempBookingData tb ) a
+						 pivot (max(Columns_Value) for Columns_Name in ('+@ColNames+')) p) AS T ORDER BY AL_Recommendation_Content_Code'
 	END
 	ELSE
 	BEGIN
-		SELECT @query = 'SELECT * INTO #TempFinalResult FROM (SELECT (SELECT TOP 1 ISNULL(Rule_Short_Name,'''') FROM AL_Vendor_Rule WHERE Rule_Name COLLATE SQL_Latin1_General_CP1_CI_AS = neo.[Title Category]) AS OrderByShortName, ' + @ColNames + ' FROM (Select Title_Content_Code, '+@ColNames+' from ( Select tb.Title_Content_Code, tb.TitleName, tb.Columns_Name, tb.Columns_Value from #TempBookingData tb ) a
-					pivot (max(Columns_Value) for Columns_Name in ('+@ColNames+')) p) AS neo ) AS T ORDER BY OrderByShortName, [TITLE] ALTER TABLE #TempFinalResult DROP COLUMN OrderByShortName SELECT * FROM #TempFinalResult'
+		--SELECT @query = 'SELECT * INTO #TempFinalResult FROM (SELECT (SELECT TOP 1 ISNULL(Rule_Short_Name,'''') FROM AL_Vendor_Rule WHERE Rule_Name COLLATE SQL_Latin1_General_CP1_CI_AS = neo.[Title Category]) AS OrderByShortName, ' + @ColNames + ' FROM (Select Title_Content_Code, '+@ColNames+' from ( Select tb.Title_Content_Code, tb.TitleName, tb.Columns_Name, tb.Columns_Value from #TempBookingData tb ) a
+		--			pivot (max(Columns_Value) for Columns_Name in ('+@ColNames+')) p) AS neo ) AS T ORDER BY OrderByShortName, [TITLE] ALTER TABLE #TempFinalResult DROP COLUMN OrderByShortName SELECT * FROM #TempFinalResult'
+		SELECT @query = 'SELECT * INTO #TempFinalResult FROM (SELECT (SELECT TOP 1 ISNULL(Rule_Short_Name,'''') FROM AL_Vendor_Rule WHERE Rule_Name COLLATE SQL_Latin1_General_CP1_CI_AS = neo.[Title Category]) AS OrderByShortName, ' + @ColNames + ', AL_Recommendation_Content_Code FROM (Select Title_Content_Code, '+@ColNames+', AL_Recommendation_Content_Code from ( Select tb.Title_Content_Code, tb.TitleName, tb.Columns_Name, tb.Columns_Value, tb.AL_Recommendation_Content_Code from #TempBookingData tb ) a
+					pivot (max(Columns_Value) for Columns_Name in ('+@ColNames+')) p) AS neo ) AS T ORDER BY OrderByShortName, AL_Recommendation_Content_Code  ALTER TABLE #TempFinalResult DROP COLUMN OrderByShortName ALTER TABLE #TempFinalResult DROP COLUMN AL_Recommendation_Content_Code SELECT * FROM #TempFinalResult'
 	END
 
 	EXEC (@query)

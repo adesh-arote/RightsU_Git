@@ -1021,7 +1021,16 @@
                     }
                     else {
                         if (JSON.parse(result).Message == "Locked") {
-                            showAlert("E", "User already logged in. Do you want to release account?", "OKCANCEL");
+                            //showAlert("E", "User already logged in. Do you want to release account?", "OKCANCEL");
+                            var alertHTML = '<div class="alert alert-error fade in">' +
+                                '<label>User already logged in. Do you want to release account?</label>' +
+                                '<a class="btn btn-primary" href="#" onclick="dismissAlert();handleCancelRelease();">Cancel</a>' +
+                                '<a class="btn btn-primary btnOk" href="#" onclick="dismissAlert();handleOkRelease();">Ok</a>' +
+                                '</div>';
+                            var strOverlay = '<div class="modal-backdrop alert-overlay fade in"></div>';
+                            $(".main_col").append(alertHTML);
+                            $("body").append(strOverlay);
+                            $(".btnOk").focus();
                         }
                         else {
                             var uniqueKey = 'key_' + Date.now();
@@ -1037,11 +1046,11 @@
             });
         }
 
-        function handleCancel() {
+        function handleCancelRelease() {
             return false;
         }
 
-        function handleOk() {
+        function handleOkRelease() {
             debugger;
             $.ajax({
                 type: "POST",

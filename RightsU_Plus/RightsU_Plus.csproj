@@ -224,7 +224,7 @@
     <Compile Include="Controllers\BookingSheetController.cs" />
     <Compile Include="Controllers\DeliveryTrackingController.cs" />
     <Compile Include="Controllers\Dispatcher_SearchController.cs" />
-    <Compile Include="Controllers\Email_Config_TemplateController.cs" />
+    <Compile Include="Controllers\Event_Config_TemplateController.cs" />
     <Compile Include="Controllers\Event_PlatformController.cs" />
     <Compile Include="Controllers\Extended_GroupController.cs" />
     <Compile Include="Controllers\BannerController.cs" />
@@ -1468,10 +1468,10 @@
     <Content Include="Views\Reports\AuditLogReport.cshtml" />
     <Content Include="Views\Event_Platform\Index.cshtml" />
     <Content Include="Views\Event_Platform\_EventPlatform_List.cshtml" />
-    <Content Include="Views\Email_Config_Template\Index.cshtml" />
-    <Content Include="Views\Email_Config_Template\_EmailTemplate_List.cshtml" />
+    <Content Include="Views\Event_Config_Template\Index.cshtml" />
+    <Content Include="Views\Event_Config_Template\_EmailTemplate_List.cshtml" />
     <Content Include="Views\Event_Platform\_EventTemplateKey_List.cshtml" />
-    <Content Include="Views\Email_Config_Template\_Config_Template_PopUp.cshtml" />
+    <Content Include="Views\Event_Config_Template\_Config_Template_PopUp.cshtml" />
     <Content Include="Views\Dispatcher_Search\Index.cshtml" />
     <Content Include="Views\Dispatcher_Search\_Dispatcher_List.cshtml" />
     <Content Include="Views\Dispatcher_Search\_MessageViewPopUp.cshtml" />
