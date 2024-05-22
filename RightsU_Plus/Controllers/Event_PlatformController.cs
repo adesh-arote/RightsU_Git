@@ -46,7 +46,7 @@ namespace RightsU_Plus.Controllers
         #region UI Methods
         public ActionResult Index()
         {
-            string moduleCode = GlobalParams.ModuleCodeForCurrency.ToString();
+            string moduleCode = GlobalParams.ModuleCodeForEventPlatform.ToString();
             string SysLanguageCode = objLoginUser.System_Language_Code.ToString();
             ViewBag.Code = moduleCode;
             ViewBag.LangCode = SysLanguageCode;
