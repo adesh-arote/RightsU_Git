@@ -18,6 +18,17 @@
         ExistChecked = "checked=\"checked\"";
         AddChecked = "";
     }
+
+    string TableTypeBody = "checked=\"checked\"";
+    string TableTypeAttachment = "";
+    if (Model != null)
+    {
+        if(Model.Table_Type == "A")
+        {
+            TableTypeAttachment = "checked=\"checked\"";
+            TableTypeBody = "";
+        }
+    }
 }
 
 <script>
@@ -168,14 +179,21 @@
 </div>
 <div class="grid_area" style="margin: 0 auto; width: 98%;">
     <div class="paging_area clearfix" style="height:50px !important;">
-        <div class="col-md-6" style="margin-top: 14px; width: 45%;">
-            <input type="radio" name="configTemplate" class="configTemplate" id="rbAdd" value="AddNew" @AddChecked /><text>&nbsp;&nbsp; <b>Add New Template</b> &nbsp;&nbsp;</text>
-            <input type="radio" name="configTemplate" class="configTemplate" id="rbExist" value="Exists" @ExistChecked /><text>&nbsp;&nbsp; <b>Use Existing Template</b> &nbsp;&nbsp;</text>
+        <div class="col-md-3" style="margin-top: 14px;">
+            <input type="radio" name="configTemplate" class="configTemplate" id="rbAdd" value="AddNew" @AddChecked /><text>&nbsp;&nbsp; <b>Add New</b> &nbsp;&nbsp;</text>
+            <input type="radio" name="configTemplate" class="configTemplate" id="rbExist" value="Exists" @ExistChecked /><text>&nbsp;&nbsp; <b>Use Existing</b> &nbsp;&nbsp;</text>
         </div>
-        <div class="col-md-6" id="divInputField" style="margin-top: 1%;">
+        <div class="col-md-4" id="divInputField" style="margin-top: 1%;">
 
         </div>
-    </div>
+        @if (Convert.ToString(ViewBag.Platform) == "Email")
+        {
+            <div class="col-md-4" style="margin-top: 14px; ">
+                <input type="radio" name="dataAttachment" class="configTemplate" id="rbDataAsBody" value="B" @TableTypeBody /><text>&nbsp;&nbsp; <b>Data As Body</b> &nbsp;&nbsp;</text>
+                <input type="radio" name="dataAttachment" class="configTemplate" id="rbDataAsAttachment" value="A" @TableTypeAttachment /><text>&nbsp;&nbsp; <b>Data As Attachment</b> &nbsp;&nbsp;</text>
+            </div>
+        }
+    </div>    
     <div class="paging_area clearfix" style="height:50px !important;">
         <div class="col-md-12" style="margin-top: 12px;">
             <span class="pull-left">Subject : </span>&nbsp;&nbsp;&nbsp;&nbsp;

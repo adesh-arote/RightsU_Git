@@ -480,6 +480,8 @@
             Template_Type = "T";
         }
 
+        var Table_Type = $("input[name='dataAttachment']:checked").val();
+
         if (returnVal) {
             $.ajax({
                 type: "POST",
@@ -495,7 +497,8 @@
                     TemplateName: TemplateName,
                     editorData: editorData,
                     Subject: Subject,
-                    IsNewTemplate: IsNewTemplate
+                    IsNewTemplate: IsNewTemplate,
+                    TableType: Table_Type
                 }),
                 success: function (result) {
                     debugger;
@@ -616,7 +619,7 @@
         </div>
     </section>
 </div>
-<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="max-width: 80%; display: none;">
     <div class="modal-dialog">
         <div class="modal-content clearfix">
             <div class="form_fields acq" id="pupupHtml">
