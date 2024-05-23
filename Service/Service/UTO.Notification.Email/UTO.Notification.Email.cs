@@ -321,7 +321,7 @@ namespace UTO.Notification.Email
                     SendMail objSendEmail = new SendMail();
                     objSendEmail.UserName = objConfig.UserName;
                     objSendEmail.Password = objConfig.Password;
-                    objSendEmail.FromEmailId = ConfigurationSettings.AppSettings["EmailSendId"];
+                    objSendEmail.FromEmailId = objConfig.FromEmailId;
                     objSendEmail.Port = objConfig.SMTPPort;
                     objSendEmail.Ip = objConfig.SMTPServer;
 
@@ -330,7 +330,7 @@ namespace UTO.Notification.Email
                     objSendEmail.To = notification.Email;
                     objSendEmail.CC = notification.cc;
                     objSendEmail.Bcc = notification.bcc;
-                    objSendEmail.UseDefaultCredential = Convert.ToBoolean(ConfigurationSettings.AppSettings["UseDefaultCredential"]);
+                    objSendEmail.UseDefaultCredential = objConfig.UseDefaultCredentials;
 
                     startTime = DateTime.Now;
                     objSendEmail.Send();
@@ -729,7 +729,7 @@ namespace UTO.Notification.Email
 
                 if (item.Key.ToLower() == "UseDefaultCredentials".ToLower())
                 {
-                    Obj.UseDefaultCredentials = Convert.ToBoolean(item.Value);
+                    Obj.UseDefaultCredentials = Convert.ToBoolean(Convert.ToInt32(item.Value));
                 }
 
                 if (item.Key.ToLower() == "UserName".ToLower())

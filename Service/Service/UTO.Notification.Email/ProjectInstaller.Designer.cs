@@ -39,7 +39,7 @@
             // 
             // NotificationserviceInstaller
             // 
-            this.NotificationserviceInstaller.ServiceName = "UTO.Notification.Email";
+            this.NotificationserviceInstaller.ServiceName = "UTO EMail Notifications";
             // 
             // ProjectInstaller
             // 

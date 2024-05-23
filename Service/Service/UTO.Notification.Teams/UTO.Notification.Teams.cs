@@ -47,7 +47,7 @@ namespace UTO.Notification.Teams
 
         protected override void OnStart(string[] args)
         {
-            System.Diagnostics.Debugger.Launch();
+            //System.Diagnostics.Debugger.Launch();
             strHostName = Dns.GetHostName();
             IPHostEntry ipEntry = Dns.GetHostEntry(strHostName);
             IPAddress[] addr = ipEntry.AddressList;
@@ -335,6 +335,13 @@ namespace UTO.Notification.Teams
 
                     foreach (var item in lstToAddress)
                     {
+                        if (Convert.ToBoolean(WriteLog))
+                        {
+                            //LogService("Inside Run Notifications");
+                            Error.WriteLog_Conditional("User - " + item);
+                        }
+
+
                         var response = TeamsHelper.SendTeamNotification(item, ChatType.OneOnOne, notification.HtmlBody, objConfig);
 
                         TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
@@ -343,6 +350,8 @@ namespace UTO.Notification.Teams
                             isSuccess = true;
                             ResponseText += "\nMessage Sent to "+ item + " with MessageId :" + response.Id;
                         }
+
+                        
                     }
 
                     if (Convert.ToBoolean(WriteLog))
