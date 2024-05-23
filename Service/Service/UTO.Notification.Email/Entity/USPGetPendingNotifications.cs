@@ -16,6 +16,7 @@ namespace UTO.Notification.Email
         public string HtmlBody { get; set; }
         public long UserCode { get; set; }
         public DateTime RequestDateTime { get; set; }
-        public string Credentials { get; set; }        
+        public string Credentials { get; set; }
+        public string Attachment_File_Name { get; set; }
     }
 }

@@ -333,6 +333,14 @@ namespace UTO.Notification.Email
                     objSendEmail.UseDefaultCredential = objConfig.UseDefaultCredentials;
 
                     startTime = DateTime.Now;
+
+                    if(!string.IsNullOrEmpty(notification.Attachment_File_Name))
+                    {
+                        string FileAttachmentPath = "";
+                        FileAttachmentPath = ConfigurationManager.AppSettings["EmailFileAttachmentPath"] + notification.Attachment_File_Name;
+                        objSendEmail.Attachment(FileAttachmentPath);
+                    }
+
                     objSendEmail.Send();
                     TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
 
