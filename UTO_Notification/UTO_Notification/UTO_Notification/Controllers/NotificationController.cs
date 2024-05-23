@@ -38,10 +38,17 @@ namespace UTO_Notification.Controllers
             DateTime startTime;
             startTime = DateTime.Now;
             HttpResponses httpResponses = new HttpResponses();
+            
 
             if (obj.NotificationType.ToLower() == "EMAIL_NTF".ToLower())
             {
                 Email objEmail = new Email();
+
+                if (!string.IsNullOrEmpty(obj.AttachmentFileName) && !string.IsNullOrEmpty(obj.AttachmentFileToString))
+                {
+                    byte[] imageBytes = Convert.FromBase64String(obj.AttachmentFileToString);
+                    System.IO.File.WriteAllBytes(ConfigurationManager.AppSettings["EmailFileAttachmentPath"] + obj.AttachmentFileName, imageBytes);
+                }
 
                 httpResponses = objEmail.SaveNotification(obj);
                 if (!httpResponses.Status)
@@ -58,6 +65,12 @@ namespace UTO_Notification.Controllers
             {
                 ShortMessage objShortMessage = new ShortMessage();
 
+                if (!string.IsNullOrEmpty(obj.AttachmentFileName) && !string.IsNullOrEmpty(obj.AttachmentFileToString))
+                {
+                    byte[] imageBytes = Convert.FromBase64String(obj.AttachmentFileToString);
+                    System.IO.File.WriteAllBytes(ConfigurationManager.AppSettings["SMSFileAttachmentPath"] + obj.AttachmentFileName, imageBytes);
+                }
+
                 httpResponses = objShortMessage.SaveNotification(obj);
                 if (!httpResponses.Status)
                 {
@@ -73,6 +86,12 @@ namespace UTO_Notification.Controllers
             {
                 Teams objTeams = new Teams();
 
+                if (!string.IsNullOrEmpty(obj.AttachmentFileName) && !string.IsNullOrEmpty(obj.AttachmentFileToString))
+                {
+                    byte[] imageBytes = Convert.FromBase64String(obj.AttachmentFileToString);
+                    System.IO.File.WriteAllBytes(ConfigurationManager.AppSettings["TeamsFileAttachmentPath"] + obj.AttachmentFileName, imageBytes);
+                }
+
                 httpResponses = objTeams.SaveNotification(obj);
                 if (!httpResponses.Status)
                 {
@@ -87,6 +106,12 @@ namespace UTO_Notification.Controllers
             if (obj.NotificationType.ToLower() == "APP_NTF".ToLower())
             {
                 InApp objInApp = new InApp();
+
+                if (!string.IsNullOrEmpty(obj.AttachmentFileName) && !string.IsNullOrEmpty(obj.AttachmentFileToString))
+                {
+                    byte[] imageBytes = Convert.FromBase64String(obj.AttachmentFileToString);
+                    System.IO.File.WriteAllBytes(ConfigurationManager.AppSettings["InAppFileAttachmentPath"] + obj.AttachmentFileName, imageBytes);
+                }
 
                 httpResponses = objInApp.SaveNotification(obj);
                 if (!httpResponses.Status)

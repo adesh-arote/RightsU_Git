@@ -37,6 +37,10 @@
           <Property Name="IsAutoEscalated" Type="bit" Nullable="false" />
           <Property Name="IsReminderMail" Type="bit" Nullable="false" />
           <Property Name="Service_Response" Type="nvarchar(max)" />
+          <Property Name="Email_Config_Code" Type="int" />
+          <Property Name="Event_Platform_Code" Type="int" />
+          <Property Name="Event_Template_Type" Type="char" MaxLength="1" />
+          <Property Name="Attachment_File_Name" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="System_Parameter">
           <Key>
@@ -101,6 +105,10 @@
           <Property Name="IsAutoEscalated" Type="Boolean" Nullable="false" />
           <Property Name="IsReminderMail" Type="Boolean" Nullable="false" />
           <Property Name="Service_Response" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Email_Config_Code" Type="Int32" />
+          <Property Name="Event_Platform_Code" Type="Int32" />
+          <Property Name="Event_Template_Type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Attachment_File_Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="System_Parameter">
           <Key>
@@ -130,6 +138,10 @@
           <EntitySetMapping Name="Notifications">
             <EntityTypeMapping TypeName="RightsU_Plus_TestingModel.Notifications">
               <MappingFragment StoreEntitySet="Notifications">
+                <ScalarProperty Name="Attachment_File_Name" ColumnName="Attachment_File_Name" />
+                <ScalarProperty Name="Event_Template_Type" ColumnName="Event_Template_Type" />
+                <ScalarProperty Name="Event_Platform_Code" ColumnName="Event_Platform_Code" />
+                <ScalarProperty Name="Email_Config_Code" ColumnName="Email_Config_Code" />
                 <ScalarProperty Name="Service_Response" ColumnName="Service_Response" />
                 <ScalarProperty Name="IsReminderMail" ColumnName="IsReminderMail" />
                 <ScalarProperty Name="IsAutoEscalated" ColumnName="IsAutoEscalated" />

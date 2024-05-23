@@ -186,13 +186,10 @@
         <div class="col-md-4" id="divInputField" style="margin-top: 1%;">
 
         </div>
-        @if (Convert.ToString(ViewBag.Platform) == "Email")
-        {
-            <div class="col-md-4" style="margin-top: 14px; ">
-                <input type="radio" name="dataAttachment" class="configTemplate" id="rbDataAsBody" value="B" @TableTypeBody /><text>&nbsp;&nbsp; <b>Data As Body</b> &nbsp;&nbsp;</text>
-                <input type="radio" name="dataAttachment" class="configTemplate" id="rbDataAsAttachment" value="A" @TableTypeAttachment /><text>&nbsp;&nbsp; <b>Data As Attachment</b> &nbsp;&nbsp;</text>
-            </div>
-        }
+        <div class="col-md-4" style="margin-top: 14px; ">
+            <input type="radio" name="dataAttachment" class="configTemplate" id="rbDataAsBody" value="B" @TableTypeBody /><text>&nbsp;&nbsp; <b>Data As Body</b> &nbsp;&nbsp;</text>
+            <input type="radio" name="dataAttachment" class="configTemplate" id="rbDataAsAttachment" value="A" @TableTypeAttachment /><text>&nbsp;&nbsp; <b>Data As Attachment</b> &nbsp;&nbsp;</text>
+        </div>
     </div>    
     <div class="paging_area clearfix" style="height:50px !important;">
         <div class="col-md-12" style="margin-top: 12px;">

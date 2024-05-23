@@ -12,27 +12,27 @@ namespace UTO_Notification.BLL
 {
     public class USPService
     {
-        public USPInsertNotification USPInsertNotification(string EventCategory, string NotificationType, string TO, string CC, string BCC, string Subject, string HTMLMessage, string TextMessage, string TransType, long TransCode, string ScheduleDateTime, long UserCode, string ClientName, long ForeignId)
+        public USPInsertNotification USPInsertNotification(string EventCategory, string NotificationType, string TO, string CC, string BCC, string Subject, string HTMLMessage, string TextMessage, string TransType, long TransCode, string ScheduleDateTime, long UserCode, string ClientName, long ForeignId, string AttachmentFileName)
         {
             ProcedureRepositories objProcedureRepositories = new ProcedureRepositories("EmailConnection");
 
-            USPInsertNotification objUSPInsertNotification = objProcedureRepositories.USPInsertNotification(EventCategory, NotificationType, TO, CC, BCC, Subject, HTMLMessage, TextMessage, TransType, TransCode, ScheduleDateTime, UserCode, ClientName, ForeignId).FirstOrDefault();
+            USPInsertNotification objUSPInsertNotification = objProcedureRepositories.USPInsertNotification(EventCategory, NotificationType, TO, CC, BCC, Subject, HTMLMessage, TextMessage, TransType, TransCode, ScheduleDateTime, UserCode, ClientName, ForeignId, AttachmentFileName).FirstOrDefault();
             return objUSPInsertNotification;
         }
 
-        public USPInsertNotification USPInsertNotification_Teams(string EventCategory, string NotificationType, string TO, string CC, string BCC, string Subject, string HTMLMessage, string TextMessage, string TransType, long TransCode, string ScheduleDateTime, long UserCode, string ClientName, long ForeignId)
+        public USPInsertNotification USPInsertNotification_Teams(string EventCategory, string NotificationType, string TO, string CC, string BCC, string Subject, string HTMLMessage, string TextMessage, string TransType, long TransCode, string ScheduleDateTime, long UserCode, string ClientName, long ForeignId, string AttachmentFileName)
         {
             ProcedureRepositories objProcedureRepositories = new ProcedureRepositories("TeamsConnection");
 
-            USPInsertNotification objUSPInsertNotification_Teams = objProcedureRepositories.USPInsertNotification_Teams(EventCategory, NotificationType, TO, CC, BCC, Subject, HTMLMessage, TextMessage, TransType, TransCode, ScheduleDateTime, UserCode, ClientName, ForeignId).FirstOrDefault();
+            USPInsertNotification objUSPInsertNotification_Teams = objProcedureRepositories.USPInsertNotification_Teams(EventCategory, NotificationType, TO, CC, BCC, Subject, HTMLMessage, TextMessage, TransType, TransCode, ScheduleDateTime, UserCode, ClientName, ForeignId, AttachmentFileName).FirstOrDefault();
             return objUSPInsertNotification_Teams;
         }
 
-        public USPInsertNotification USPInsertNotification_InApp(string EventCategory, string NotificationType, string TO, string CC, string BCC, string Subject, string HTMLMessage, string TextMessage, string TransType, long TransCode, string ScheduleDateTime, long UserCode, string ClientName, long ForeignId)
+        public USPInsertNotification USPInsertNotification_InApp(string EventCategory, string NotificationType, string TO, string CC, string BCC, string Subject, string HTMLMessage, string TextMessage, string TransType, long TransCode, string ScheduleDateTime, long UserCode, string ClientName, long ForeignId, string AttachmentFileName)
         {
             ProcedureRepositories objProcedureRepositories = new ProcedureRepositories("InAppConnection");
 
-            USPInsertNotification objUSPInsertNotification_Teams = objProcedureRepositories.USPInsertNotification_InApp(EventCategory, NotificationType, TO, CC, BCC, Subject, HTMLMessage, TextMessage, TransType, TransCode, ScheduleDateTime, UserCode, ClientName, ForeignId).FirstOrDefault();
+            USPInsertNotification objUSPInsertNotification_Teams = objProcedureRepositories.USPInsertNotification_InApp(EventCategory, NotificationType, TO, CC, BCC, Subject, HTMLMessage, TextMessage, TransType, TransCode, ScheduleDateTime, UserCode, ClientName, ForeignId, AttachmentFileName).FirstOrDefault();
             return objUSPInsertNotification_Teams;
         }
 

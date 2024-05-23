@@ -5,16 +5,16 @@ BEGIN
 	select @Loglevel = Parameter_Value from System_Parameter_New  where Parameter_Name='loglevel'
 	if(@Loglevel< 2)Exec [USPLogSQLSteps] '[USP_BMS_Schedule_Neo_Notification]', 'Step 1', 0, 'Started Procedure', 0, ''
 
-	DECLARE @Email_Config_Code INT, @Notification_Subject VARCHAR(2000) = '', @Notification_Body VARCHAR(MAX) = '', @Event_Platform_Code INT = 0, @Event_Template_Type CHAR(1) = ''
+	DECLARE @Email_Config_Code INT, @Notification_Subject VARCHAR(2000) = '', @Notification_Body VARCHAR(MAX) = '', @Event_Platform_Code INT = 0, @Event_Template_Type CHAR(1) = '', @Table_Type CHAR(1) = ''
 	DECLARE curNotificationPlatforms CURSOR FOR 
-			SELECT ec.Email_Config_Code, et.[Subject], et.Template, ect.Event_Platform_Code, ect.Event_Template_Type
+			SELECT ec.Email_Config_Code, et.[Subject], et.Template, ect.Event_Platform_Code, ect.Event_Template_Type, et.Table_Type
 			FROM Email_Config ec
 			INNER JOIN Email_Config_Template ect ON ec.Email_Config_Code = ect.Email_Config_Code
 			INNER JOIN Event_Template et ON ect.Event_Template_Code = et.Event_Template_Code
 			WHERE ec.[Key] = 'SCE'
 	--Change
 	OPEN curNotificationPlatforms 
-	FETCH NEXT FROM curNotificationPlatforms INTO @Email_Config_Code, @Notification_Subject, @Notification_Body, @Event_Platform_Code, @Event_Template_Type
+	FETCH NEXT FROM curNotificationPlatforms INTO @Email_Config_Code, @Notification_Subject, @Notification_Body, @Event_Platform_Code, @Event_Template_Type, @Table_Type
 	WHILE @@FETCH_STATUS = 0 
 	BEGIN
 
@@ -83,6 +83,10 @@ BEGIN
 
 		DECLARE @IS_User_Send_Mail varchar(1)
 		set @IS_User_Send_Mail = 'N'
+
+		DECLARE @NewID NVARCHAR(MAX) = '', @AttchamentFileName NVARCHAR(500) = '', @str VARCHAR(1000) = ''
+		SET @NewID = NEWID();
+	    SET @AttchamentFileName = 'Schedule_Exception_'+ CAST((REPLACE(REPLACE(REPLACE(CAST(CONVERT(VARCHAR(19), GETDATE(), 120) AS VARCHAR(19)),'-',''),':',''),' ','')) AS NVARCHAR(MAX))
 	
 		DECLARE cur_on_Users_Data CURSOR
 		KEYSET
@@ -180,20 +184,18 @@ BEGIN
 														@BCC_Users_Code  NVARCHAR(MAX) = '', @BCC_User_Mail_Id  NVARCHAR(MAX) = '', @Channel_Codes  NVARCHAR(MAX) = ''
 
 														
-												SET @Emailbody = @Notification_Body
+												SET @Emailbody = @Notification_Body										
 												
-												DECLARE @MainRowBody VARCHAR(MAX) = '', @ReplaceRowBody VARCHAR(MAX) = '', @PerRowBody VARCHAR(MAX) = '', @StartIndex INT = 0, @EndIndex INT = 0
-												SELECT @StartIndex = CHARINDEX('<!--ROWSETSTART-->', @Emailbody), @EndIndex = CHARINDEX('<!--ROWSETEND-->', @Emailbody)
-															
-												SELECT @MainRowBody = SUBSTRING(@Emailbody, @StartIndex, (@EndIndex - @StartIndex) + 16)
 															
 												SET @Temp_tbl_count = 0
 
-												DECLARE @Program_Title  NVARCHAR(MAX), @Program_Episode_Number  NVARCHAR(MAX), @Right_Start_Date  NVARCHAR(MAX), @Right_End_Date  NVARCHAR(MAX), @Available_Channels  NVARCHAR(MAX), @Channel_Name  NVARCHAR(MAX), @Schedule_Item_Log_Date  NVARCHAR(MAX), @Schedule_Item_Log_Time  NVARCHAR(MAX), @Allocated_Runs  NVARCHAR(MAX), @Consumed_Runs  NVARCHAR(MAX), @Deal_Desc NVARCHAR(MAX)
-
-												DECLARE curP CURSOR FOR
-
-													SELECT CAST(ISNULL(e.Email_Notification_Msg, ' ') AS NVARCHAR(1000)) AS Email_Notification_Msg
+												IF(ISNULL(@Table_Type,'') = 'A')
+												BEGIN
+													INSERT INTO TempFileData([Col1], [Col2], [Col3], [Col4], [Col5], [Col6], [Col7], [Col8], [Col9], [Col10], [Col11], [Col12], [Col13], [Col14])
+													SELECT @NewID, '0', 'Exception', 'Title Name', 'Episode Number', 'Right Start Date', 'Right End Date', 'Available Channels', 'Airing Channel', 'Date of Schedule', 'Time of Schedule', 'Allocated Runs', 'Consumed Runs', 'Deal_Description'
+													
+													INSERT INTO TempFileData([Col1], [Col2], [Col3], [Col4], [Col5], [Col6], [Col7], [Col8], [Col9], [Col10], [Col11], [Col12], [Col13], [Col14])
+													SELECT TOP 5 @NewID, '1', CAST(ISNULL(e.Email_Notification_Msg, ' ') AS NVARCHAR(1000)) AS Email_Notification_Msg
 													      ,CAST  (ISNULL(e.Program_Title,' ')  AS NVARCHAR(250)) AS Program_Title
 														  , CAST  (ISNULL(e.Program_Episode_Number,' ')  AS NVARCHAR(250)) AS Program_Episode_Number
 														  , ISNULL(CAST(case WHEN ( CAST( case WHEN isnull(e.Right_Start_Date,'1900-01-01 00:00:00.000') = '1900-01-01 00:00:00.000' THEN '' 
@@ -214,56 +216,97 @@ BEGIN
 													LEFT JOIN Acq_Deal_Movie ADM (NOLOCK) ON ADM.Acq_Deal_Movie_Code = e.Deal_Movie_Code INNER JOIN Acq_Deal AD ON ADM.Acq_Deal_Code = AD.Acq_Deal_Code
 													WHERE e.File_Code = @File_Code AND ISNULL(IsMailSent,'N') = 'N'
 
-												OPEN curP 
-												FETCH NEXT FROM curP INTO @Email_Notification_Msg, @Program_Title, @Program_Episode_Number, @Right_Start_Date, @Right_End_Date, @Available_Channels, @Channel_Name, @Schedule_Item_Log_Date, @Schedule_Item_Log_Time, @Allocated_Runs, @Consumed_Runs, @Deal_Desc
-													WHILE @@FETCH_STATUS = 0 
-													BEGIN
-														SET @Index  = @Index  + 1
-														
-														SELECT @PerRowBody = ''
-														--SET @RowTitleCodeNew=@Email_Notification_Msg+'|'+ @Program_Title +'|'+ ISNULL(@Program_Episode_Number, '') +'|'+ ISNULL(@Right_Start_Date, '') +'|'+ @Right_End_Date +'|'+@Available_Channels+'|'+@Channel_Name+'|'+@Schedule_Item_Log_Date+'|'+@Schedule_Item_Log_Time+'|'+@Allocated_Runs+'|'+@Consumed_Runs+'|'+@Deal_Desc
-													    
-														--IF((@RowTitleCodeOld <> @RowTitleCodeNew))
-														--BEGIN
-															SET @Temp_tbl_count = @Temp_tbl_count+1
-															SELECT @PerRowBody = @MainRowBody
+													SET @str = 'bcp "Select Col3, Col4, Col5, Col6, Col7, Col8, Col9, Col10, Col11, Col12, Col13, Col14 From RightsU_Plus_Dev.dbo.TempFileData WHERE Col1 = '''+@NewID+''' ORDER BY Col2 ASC " queryout "E:\FileAttachmentLog\'+@AttchamentFileName+'.csv" -c -t, -T'
+													print @str
+													EXEC MASTER..XP_CMDSHELL @str
 
-															SELECT @PerRowBody
-
-															SELECT @PerRowBody = REPLACE(@PerRowBody, '{Exception}', CAST(ISNULL(@Email_Notification_Msg, ' ') AS NVARCHAR(1000)))
-															SELECT @PerRowBody = REPLACE(@PerRowBody, '{Title_Name}', CAST(ISNULL(@Program_Title, ' ') AS NVARCHAR(1000)))
-															SELECT @PerRowBody = REPLACE(@PerRowBody, '{EpisodeNumber}', CAST(ISNULL(@Program_Episode_Number, ' ') AS NVARCHAR(1000)))
-															SELECT @PerRowBody = REPLACE(@PerRowBody, '{RightStartDate}', CAST(ISNULL(CONVERT(VARCHAR(11),ISNULL(@Right_Start_Date,''), 106), ' ') AS NVARCHAR(1000)))
-															SELECT @PerRowBody = REPLACE(@PerRowBody, '{RightEndDate}', CAST(ISNULL(CONVERT(VARCHAR(11),ISNULL(@Right_End_Date,''), 106), ' ') AS NVARCHAR(1000)))
-															SELECT @PerRowBody = REPLACE(@PerRowBody, '{AvailableChannels}', CAST(ISNULL(@Available_Channels, ' ') AS NVARCHAR(1000)))
-															SELECT @PerRowBody = REPLACE(@PerRowBody, '{AiringChannel}', CAST(ISNULL(@Channel_Name, ' ') AS NVARCHAR(1000)))
-															SELECT @PerRowBody = REPLACE(@PerRowBody, '{DateofSchedule}', CAST(ISNULL(@Schedule_Item_Log_Date, ' ') AS NVARCHAR(1000)))
-															SELECT @PerRowBody = REPLACE(@PerRowBody, '{TimeofSchedule}', CAST(ISNULL(@Schedule_Item_Log_Time, ' ') AS NVARCHAR(1000)))
-															SELECT @PerRowBody = REPLACE(@PerRowBody, '{AllocatedRuns}', CAST(ISNULL(@Allocated_Runs, ' ') AS NVARCHAR(1000)))
-															SELECT @PerRowBody = REPLACE(@PerRowBody, '{ConsumedRuns}', CAST(ISNULL(@Consumed_Runs, ' ') AS NVARCHAR(1000)))
-															SELECT @PerRowBody = REPLACE(@PerRowBody, '{Deal_Description}', CAST(ISNULL(@Deal_Desc, ' ') AS NVARCHAR(1000)))
-															
-															SELECT @ReplaceRowBody = @ReplaceRowBody + @PerRowBody
-
-															SET @RowTitleCodeOld = @RowTitleCodeNew
-															
-														--END
-
-														FETCH NEXT FROM curP INTO @Email_Notification_Msg, @Program_Title, @Program_Episode_Number, @Right_Start_Date, @Right_End_Date, @Available_Channels, @Channel_Name, @Schedule_Item_Log_Date, @Schedule_Item_Log_Time, @Allocated_Runs, @Consumed_Runs, @Deal_Desc
-													END
-												CLOSE curP
-												DEALLOCATE curP
-
-												IF( @Temp_tbl_count <> 0)
-												BEGIN
-													
-													SELECT @Emailbody = REPLACE(@Emailbody, @MainRowBody, @ReplaceRowBody)
-													SELECT @MailSubjectCr = @Notification_Subject
-												
-													INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id, [Subject])
-													SELECT @Email_Config_Code, @Emailbody, ISNULL(@To_Users_Code,''), ISNULL(@To_User_Mail_Id ,''), ISNULL(@CC_Users_Code,''), ISNULL(@CC_User_Mail_Id,''), ISNULL(@BCC_Users_Code,''), ISNULL(@BCC_User_Mail_Id,''), @MailSubjectCr
-												
+													DELETE FROM TempFileData WHERE Col1 = @NewID
 												END
+												ELSE
+												BEGIN
+												    
+													SET @AttchamentFileName = '';
+
+													DECLARE @MainRowBody VARCHAR(MAX) = '', @ReplaceRowBody VARCHAR(MAX) = '', @PerRowBody VARCHAR(MAX) = '', @StartIndex INT = 0, @EndIndex INT = 0
+													SELECT @StartIndex = CHARINDEX('<!--ROWSETSTART-->', @Emailbody), @EndIndex = CHARINDEX('<!--ROWSETEND-->', @Emailbody)															
+													SELECT @MainRowBody = SUBSTRING(@Emailbody, @StartIndex, (@EndIndex - @StartIndex) + 16)
+
+													DECLARE @Program_Title  NVARCHAR(MAX), @Program_Episode_Number  NVARCHAR(MAX), @Right_Start_Date  NVARCHAR(MAX), @Right_End_Date  NVARCHAR(MAX), @Available_Channels  NVARCHAR(MAX), @Channel_Name  NVARCHAR(MAX), @Schedule_Item_Log_Date  NVARCHAR(MAX), @Schedule_Item_Log_Time  NVARCHAR(MAX), @Allocated_Runs  NVARCHAR(MAX), @Consumed_Runs  NVARCHAR(MAX), @Deal_Desc NVARCHAR(MAX)
+
+													DECLARE curP CURSOR FOR
+
+														SELECT CAST(ISNULL(e.Email_Notification_Msg, ' ') AS NVARCHAR(1000)) AS Email_Notification_Msg
+														      ,CAST  (ISNULL(e.Program_Title,' ')  AS NVARCHAR(250)) AS Program_Title
+															  , CAST  (ISNULL(e.Program_Episode_Number,' ')  AS NVARCHAR(250)) AS Program_Episode_Number
+															  , ISNULL(CAST(case WHEN ( CAST( case WHEN isnull(e.Right_Start_Date,'1900-01-01 00:00:00.000') = '1900-01-01 00:00:00.000' THEN '' 
+																								   WHEN isnull(e.Right_Start_Date,'Jan 1 1900 12:00AM') = 'Jan 1 1900 12:00AM' THEN '' ELSE e.Right_Start_Date END AS VARCHAR(250))) = '1900-01-01 00:00:00.000' THEN 'NA'
+																								   WHEN ( CAST( case WHEN isnull(e.Right_Start_Date,'1900-01-01 00:00:00.000') = '1900-01-01 00:00:00.000' THEN '' 
+																								   WHEN isnull(e.Right_Start_Date,'Jan 1 1900 12:00AM') = 'Jan 1 1900 12:00AM' THEN '' ELSE e.Right_Start_Date END AS VARCHAR(250))) = 'Jan 1 1900 12:00AM' THEN 'NA' ELSE  convert(varchar, e.Right_Start_Date, 106) END  AS VARCHAR(250)),'NA') AS Right_Start_Date
+															  ,ISNULL(CAST  (case WHEN ( CAST( case WHEN isnull(e.Right_End_Date,'1900-01-01 00:00:00.000') = '1900-01-01 00:00:00.000' THEN '' 
+																								   WHEN isnull(e.Right_End_Date,'Jan 1 1900 12:00AM') = 'Jan 1 1900 12:00AM' THEN '' ELSE e.Right_End_Date END AS VARCHAR(250))) ='1900-01-01 00:00:00.000' THEN 'NA'
+																								   WHEN ( CAST( case WHEN isnull(e.Right_End_Date,'1900-01-01 00:00:00.000') = '1900-01-01 00:00:00.000' THEN '' WHEN isnull(e.Right_End_Date,'Jan 1 1900 12:00AM') = 'Jan 1 1900 12:00AM' THEN '' ELSE e.Right_End_Date END AS VARCHAR(250))) ='Jan 1 1900 12:00AM' THEN 'NA' ELSE  convert(varchar, e.Right_End_Date, 106) END  AS VARCHAR(250)),'NA') AS Right_End_Date
+															  ,CAST  (ISNULL(e.Available_Channels, ' ') AS NVARCHAR(250)) AS Available_Channels
+															  ,CAST  (ISNULL(e.Channel_Name, ' ') AS NVARCHAR(250)) AS Channel_Name
+															  ,ISNULL(convert(varchar, cast(e.Schedule_Item_Log_Date as datetime), 106) ,'') AS Schedule_Item_Log_Date
+															  ,CAST  (ISNULL(Schedule_Item_Log_Time, ' ') AS VARCHAR(250)) AS Schedule_Item_Log_Time
+															  ,CAST  (CASE WHEN ISNULL(e.Allocated_Runs, -1) = -1 THEN '0' ELSE CAST(e.Allocated_Runs AS VARCHAR(50)) END AS VARCHAR(250)) AS Allocated_Runs
+															  ,CAST  (ISNULL(e.Consumed_Runs, '0') AS VARCHAR(250)) AS Consumed_Runs
+															  ,CAST  (AD.Deal_Desc AS VARCHAR(250)) AS Deal_Desc
+														FROM Email_Notification_Schedule e (NOLOCK)
+														LEFT JOIN Acq_Deal_Movie ADM (NOLOCK) ON ADM.Acq_Deal_Movie_Code = e.Deal_Movie_Code INNER JOIN Acq_Deal AD ON ADM.Acq_Deal_Code = AD.Acq_Deal_Code
+														WHERE e.File_Code = @File_Code AND ISNULL(IsMailSent,'N') = 'N'
+
+													OPEN curP 
+													FETCH NEXT FROM curP INTO @Email_Notification_Msg, @Program_Title, @Program_Episode_Number, @Right_Start_Date, @Right_End_Date, @Available_Channels, @Channel_Name, @Schedule_Item_Log_Date, @Schedule_Item_Log_Time, @Allocated_Runs, @Consumed_Runs, @Deal_Desc
+														WHILE @@FETCH_STATUS = 0 
+														BEGIN
+															SET @Index  = @Index  + 1
+															
+															SELECT @PerRowBody = ''
+															--SET @RowTitleCodeNew=@Email_Notification_Msg+'|'+ @Program_Title +'|'+ ISNULL(@Program_Episode_Number, '') +'|'+ ISNULL(@Right_Start_Date, '') +'|'+ @Right_End_Date +'|'+@Available_Channels+'|'+@Channel_Name+'|'+@Schedule_Item_Log_Date+'|'+@Schedule_Item_Log_Time+'|'+@Allocated_Runs+'|'+@Consumed_Runs+'|'+@Deal_Desc
+														    
+															--IF((@RowTitleCodeOld <> @RowTitleCodeNew))
+															--BEGIN
+																SET @Temp_tbl_count = @Temp_tbl_count+1
+																SELECT @PerRowBody = @MainRowBody
+
+																SELECT @PerRowBody
+
+																SELECT @PerRowBody = REPLACE(@PerRowBody, '{Exception}', CAST(ISNULL(@Email_Notification_Msg, ' ') AS NVARCHAR(1000)))
+																SELECT @PerRowBody = REPLACE(@PerRowBody, '{Title_Name}', CAST(ISNULL(@Program_Title, ' ') AS NVARCHAR(1000)))
+																SELECT @PerRowBody = REPLACE(@PerRowBody, '{EpisodeNumber}', CAST(ISNULL(@Program_Episode_Number, ' ') AS NVARCHAR(1000)))
+																SELECT @PerRowBody = REPLACE(@PerRowBody, '{RightStartDate}', CAST(ISNULL(CONVERT(VARCHAR(11),ISNULL(@Right_Start_Date,''), 106), ' ') AS NVARCHAR(1000)))
+																SELECT @PerRowBody = REPLACE(@PerRowBody, '{RightEndDate}', CAST(ISNULL(CONVERT(VARCHAR(11),ISNULL(@Right_End_Date,''), 106), ' ') AS NVARCHAR(1000)))
+																SELECT @PerRowBody = REPLACE(@PerRowBody, '{AvailableChannels}', CAST(ISNULL(@Available_Channels, ' ') AS NVARCHAR(1000)))
+																SELECT @PerRowBody = REPLACE(@PerRowBody, '{AiringChannel}', CAST(ISNULL(@Channel_Name, ' ') AS NVARCHAR(1000)))
+																SELECT @PerRowBody = REPLACE(@PerRowBody, '{DateofSchedule}', CAST(ISNULL(@Schedule_Item_Log_Date, ' ') AS NVARCHAR(1000)))
+																SELECT @PerRowBody = REPLACE(@PerRowBody, '{TimeofSchedule}', CAST(ISNULL(@Schedule_Item_Log_Time, ' ') AS NVARCHAR(1000)))
+																SELECT @PerRowBody = REPLACE(@PerRowBody, '{AllocatedRuns}', CAST(ISNULL(@Allocated_Runs, ' ') AS NVARCHAR(1000)))
+																SELECT @PerRowBody = REPLACE(@PerRowBody, '{ConsumedRuns}', CAST(ISNULL(@Consumed_Runs, ' ') AS NVARCHAR(1000)))
+																SELECT @PerRowBody = REPLACE(@PerRowBody, '{Deal_Description}', CAST(ISNULL(@Deal_Desc, ' ') AS NVARCHAR(1000)))
+																
+																SELECT @ReplaceRowBody = @ReplaceRowBody + @PerRowBody
+
+																SET @RowTitleCodeOld = @RowTitleCodeNew
+																
+															--END
+
+															FETCH NEXT FROM curP INTO @Email_Notification_Msg, @Program_Title, @Program_Episode_Number, @Right_Start_Date, @Right_End_Date, @Available_Channels, @Channel_Name, @Schedule_Item_Log_Date, @Schedule_Item_Log_Time, @Allocated_Runs, @Consumed_Runs, @Deal_Desc
+														END
+													CLOSE curP
+													DEALLOCATE curP
+
+													IF( @Temp_tbl_count <> 0)
+													BEGIN
+														
+														SELECT @Emailbody = REPLACE(@Emailbody, @MainRowBody, @ReplaceRowBody)
+														SELECT @MailSubjectCr = @Notification_Subject
+													
+														--INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_Users_Code, To_User_Mail_Id, CC_Users_Code, CC_User_Mail_Id, BCC_Users_Code, BCC_User_Mail_Id, [Subject])
+														--SELECT @Email_Config_Code, @Emailbody, ISNULL(@To_Users_Code,''), ISNULL(@To_User_Mail_Id ,''), ISNULL(@CC_Users_Code,''), ISNULL(@CC_User_Mail_Id,''), ISNULL(@BCC_Users_Code,''), ISNULL(@BCC_User_Mail_Id,''), @MailSubjectCr
+													
+													END
+												END											
 							
 												-------------------------------------------4.0A END SET_EMAIL_BODY_DELETED -------------------------------------------	
 										END
@@ -289,8 +332,8 @@ BEGIN
 							DECLARE @Emailbody1 AS NVARCHAR(MAX);	SET @Emailbody1 = ''
 							select  @Emailbody1=Email_body from #Users_Data where users_code = @cur_user_code
 						
-							--SET @Emailbody1 =@Emailbody_Username +  @Emailbody1 +  @RedirectUrl + @EMailFooter
-							SET @Emailbody1 =@Emailbody_Username +  @RedirectUrl + @Emailbody1  + @EMailFooter
+							----SET @Emailbody1 =@Emailbody_Username +  @Emailbody1 +  @RedirectUrl + @EMailFooter
+							--SET @Emailbody1 =@Emailbody_Username +  @RedirectUrl + @Emailbody1  + @EMailFooter
 						
 							--SET @Emailbody1 =@Emailbody_Username   +  @RedirectUrl + @EMailFooter
 							--update #Users_Data set Email_body = @Emailbody1 where  users_code = @cur_user_code
@@ -351,7 +394,7 @@ BEGIN
 		CLOSE cur_on_Update_Data
 		DEALLOCATE cur_on_Update_Data	
 
-		EXEC USP_Insert_Email_Notification_Log @Email_Config_Users_UDT
+		EXEC USP_Insert_Email_Notification_Log @Email_Config_Users_UDT, 0, 0, @Email_Config_Code, @Event_Platform_Code, @Event_Template_Type, @AttchamentFileName
 		DELETE FROM @Email_Config_Users_UDT
 	
 	END		
@@ -371,7 +414,7 @@ BEGIN
 			IF OBJECT_ID('tempdb..#Users_Data') IS NOT NULL DROP TABLE #Users_Data
 			IF OBJECT_ID('tempdb..#Users_Email_Data') IS NOT NULL DROP TABLE #Users_Email_Data
 
-	FETCH NEXT FROM curNotificationPlatforms INTO @Email_Config_Code, @Notification_Subject, @Notification_Body, @Event_Platform_Code, @Event_Template_Type
+	FETCH NEXT FROM curNotificationPlatforms INTO @Email_Config_Code, @Notification_Subject, @Notification_Body, @Event_Platform_Code, @Event_Template_Type, @Table_Type
 	END
 	CLOSE curNotificationPlatforms
 	DEALLOCATE curNotificationPlatforms
