@@ -72,6 +72,11 @@
     var URL_GetNotifications = '@Url.Action("GetNotifications", "Dispatcher_Search")';
     var URL_SearchNotification = '@Url.Action("SearchDispatcher", "Dispatcher_Search")';
 
+    $(document).ready(function () {
+        debugger;
+        addNumeric();
+    });
+
     function GetNotifications() {
         debugger;
         var pageNo = $('#hdnPageNo').val();
@@ -96,16 +101,25 @@
                     hideLoading();
                     $('#divResult').empty();
                     $('#divResult').html(result);
-                    if (result.Status == "E") {
-                        showAlert("E", result.Message, "OK");
-                    }
+                    //if (result.Status == "E") {
+                    //    showAlert("E", result.Message, "OK");
+                    //}
                 },
                 error: function (result) {
                     alert('Error: ' + result.responseText);
                 }
             });
     }
-
+    function addNumeric() {
+        debugger;
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
 
     function SetPaging() {
         debugger;
@@ -213,13 +227,20 @@
                 //  async: false,
                 success: function (result) {
                     debugger;
-                    $('#hdnPageNo').text(1);
-                    $('#hdnPageNo').val(1);
-                    $('#lblRecordCount').text(result.Record_Count);
-                    $("#hdnRecordCount").val(result.Record_Count);
-                    GetNotifications();
-                    SetPaging();
-                    hideLoading();
+                    if (result.Status == "E") {
+                        showAlert("E", result.Message, "OK");
+                        hideLoading();
+                        return false;
+                    }
+                    else {
+                        $('#hdnPageNo').text(1);
+                        $('#hdnPageNo').val(1);
+                        $('#lblRecordCount').text(result.Record_Count);
+                        $("#hdnRecordCount").val(result.Record_Count);
+                        GetNotifications();
+                        SetPaging();
+                        hideLoading();
+                    }
                 },
                 error: function (result) {
                     alert('Error: ' + result.responseText);

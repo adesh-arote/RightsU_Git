@@ -227,7 +227,7 @@ namespace RightsU_Plus.Controllers
                 //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForALLab), Convert.ToInt32(lstAL_Lab.AL_Lab_Code), LogData, Action, objLoginUser.Users_Code);
 
                 MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
-                objAuditLog.moduleCode = GlobalParams.ModuleCodeForALLab;
+                objAuditLog.moduleCode = GlobalParams.ModuleCodeForEventPlatform;
                 objAuditLog.intCode = Objevent_Platform.Event_Platform_Code;
                 objAuditLog.logData = LogData;
                 objAuditLog.actionBy = objLoginUser.Login_Name;
@@ -552,17 +552,18 @@ namespace RightsU_Plus.Controllers
                 };
                 try
                 {
-                    result = client.UploadString(RequestUri + "NESaveNotificationType", JsonConvert.SerializeObject(Response));
-                   // Responses Objresponse = JsonConvert.DeserializeObject<Responses>(result);
-                    //if(Objresponse.Status == true)
-                    //{
+                    CommonUtil.WriteErrorLog(DateTime.Now + "- Event Platform 'NESaveNotificationType' API Called" , "Authkey " + AuthKey);
+                    CommonUtil.WriteErrorLog(DateTime.Now + "- Link API Called - " + RequestUri + "NESaveNotificationType", " - Data - " + JsonConvert.SerializeObject(Response));
 
-                    //}
+                    result = client.UploadString(RequestUri + "NESaveNotificationType", JsonConvert.SerializeObject(Response));
                     
+                    CommonUtil.WriteErrorLog(DateTime.Now + "- API Called Successfully", "Response -" + result);
+
                 }
                 catch (Exception ex)
                 {
-
+                    CommonUtil.WriteErrorLog(DateTime.Now + "- API Call Failed" , ex.Message + ex.InnerException);
+                    throw ex;
                 }
             }
         }

@@ -128,6 +128,7 @@ namespace RightsU_Plus.Controllers
             }
             #endregion
 
+            lstNotifications = null;
             if (MessageType != null)
             {
                 Session["MessageType"] = MessageType;
@@ -206,7 +207,7 @@ namespace RightsU_Plus.Controllers
         {
             string AuthKey = GetAuthKey();
             var result = (dynamic)null;
-            string RequestUri = Convert.ToString(ConfigurationManager.AppSettings["NotificationApi"]);
+            string RequestUri = Convert.ToString(ConfigurationManager.AppSettings["NotificationURL"]);
             System_Parameter_New_Service objSPNService = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName);
             System_Parameter_New objSPN = objSPNService.SearchFor(s => s.Parameter_Name == "Notification_ClientName" && s.IsActive == "Y").FirstOrDefault();
             NotificationStatus notificationStatus = new NotificationStatus();
@@ -226,17 +227,21 @@ namespace RightsU_Plus.Controllers
                 try
                 {
                     ViewBag.Status = "STATUS";
+
+                    CommonUtil.WriteErrorLog(DateTime.Now + "- Dispatcher screen 'NEGetNotificationByForeignId' API Called", "Authkey " + AuthKey);
+                    CommonUtil.WriteErrorLog(DateTime.Now + "- Link API Called - " + RequestUri + "NEGetNotificationByForeignId", " - Data - " + JsonConvert.SerializeObject(Response));
+
                     result = client.UploadString(RequestUri + "NEGetNotificationByForeignId", JsonConvert.SerializeObject(Response));
                     notificationStatus = JsonConvert.DeserializeObject<NotificationStatus>(result);
 
-                    //dynamic jsonObject = JsonConvert.DeserializeObject<dynamic>(result);
-                    //var ReturnStatus = JsonConvert.DeserializeObject(result);
-                    //string name = ReturnStatus
+                    CommonUtil.WriteErrorLog(DateTime.Now + "- Dispatcher screen API Called Successfully", "Response -" + result);
+                    
 
                 }
                 catch (Exception ex)
                 {
-
+                    CommonUtil.WriteErrorLog(DateTime.Now + "-Dispatcher screen API Call Failed", ex.Message + ex.InnerException);
+                    throw ex;
                 }
 
                 return PartialView("_MessageViewPopUp", notificationStatus);
