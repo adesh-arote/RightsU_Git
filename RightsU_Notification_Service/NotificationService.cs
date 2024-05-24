@@ -209,7 +209,8 @@ namespace RightsU_Notification_Service
                             }
                             catch (Exception ex)
                             {
-                                Error.WriteLog("Within Catch - " + ex.Message.ToString(), includeTime: true, addSeperater: true);
+                                Error.WriteLog("Within Catch Ex Msg - " + ex.Message, includeTime: true, addSeperater: true);
+                                Error.WriteLog("Within Catch JSON - " + JsonConvert.SerializeObject(Response), includeTime: true, addSeperater: true);
                             }
                         }
                     }

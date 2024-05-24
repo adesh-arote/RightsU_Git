@@ -86,8 +86,8 @@ namespace UTO.Notification.Teams
 
         public static async Task<ChatMessage> SendTeamNotification(string ToAddress, ChatType chatType, string MsgBody, USPGetConfig objConfig)
         {
-            try
-            {
+            //try
+            //{
                 WriteLog = ConfigurationSettings.AppSettings["WriteLog"];
 
                 if (Convert.ToBoolean(WriteLog))
@@ -134,27 +134,27 @@ namespace UTO.Notification.Teams
                 }
 
                 return chatMessage;
-            }
-            catch (ServiceException ex)
-            {
-                if (Convert.ToBoolean(WriteLog))
-                {
-                    //LogService("Sending Email");
-                    Error.WriteLog_Conditional("GraphClientException - " + ex.Message);
-                }
+            //}
+            //catch (ServiceException ex)
+            //{
+            //    //if (Convert.ToBoolean(WriteLog))
+            //    //{
+            //    //    //LogService("Sending Email");
+            //    //    Error.WriteLog_Conditional("GraphClientException - " + ex.Message);
+            //    //}
 
-                throw ex;
-            }
-            catch (Exception ex)
-            {
-                if (Convert.ToBoolean(WriteLog))
-                {
-                    //LogService("Sending Email");
-                    Error.WriteLog_Conditional("GraphClientException - " + ex.Message);
-                }
+            //    throw ex;
+            //}
+            //catch (Exception ex)
+            //{
+            //    //if (Convert.ToBoolean(WriteLog))
+            //    //{
+            //    //    //LogService("Sending Email");
+            //    //    Error.WriteLog_Conditional("GraphClientException - " + ex.Message);
+            //    //}
 
-                throw ex;
-            }
+            //    throw ex;
+            //}
         }
     }
 }
