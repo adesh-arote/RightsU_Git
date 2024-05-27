@@ -56,7 +56,7 @@ BEGIN
 		FROM BMS_Deal_Content_Rights BDCR (NOLOCK)
 		INNER JOIN BMS_Deal_Content BDC (NOLOCK) ON BDC.BMS_Deal_Content_Code=BDCR.BMS_Deal_Content_Code		
 		LEFT JOIN Right_Rule RR (NOLOCK) ON BDCR.RU_Right_Rule_Code=RR.Right_Rule_Code
-		WHERE ISNULL(BDCR.Updated_On,BDCR.Created_On) >=@since AND BDCR.BMS_Asset_Code =@AssetId AND BDC.BMS_Deal_Code =@DealId
+		WHERE ISNULL(BDCR.Updated_On,BDCR.Created_On) >= CONVERT(Datetime,@since, 120) AND BDCR.BMS_Asset_Code =@AssetId AND BDC.BMS_Deal_Code =@DealId
 
 		--SET @Params += ' AND BDC.BMS_Asset_Code ='+@AssetId+' AND BDC.BMS_Deal_Code ='+@DealId
 	END
@@ -81,7 +81,7 @@ BEGIN
 		FROM BMS_Deal_Content_Rights BDCR (NOLOCK)
 		INNER JOIN BMS_Deal_Content BDC (NOLOCK) ON BDC.BMS_Deal_Content_Code=BDCR.BMS_Deal_Content_Code		
 		LEFT JOIN Right_Rule RR (NOLOCK) ON BDCR.RU_Right_Rule_Code=RR.Right_Rule_Code
-		WHERE ISNULL(BDCR.Updated_On,BDCR.Created_On) >=@since AND BDCR.BMS_Asset_Code =@AssetId
+		WHERE ISNULL(BDCR.Updated_On,BDCR.Created_On) >= CONVERT(Datetime,@since, 120) AND BDCR.BMS_Asset_Code =@AssetId
 		--SET @Params += ' AND BDC.BMS_Asset_Code ='+@AssetId
 	END
 	ELSE IF(ISNULL(@DealId,'')<>'')
@@ -104,7 +104,7 @@ BEGIN
 		FROM BMS_Deal_Content_Rights BDCR (NOLOCK)
 		INNER JOIN BMS_Deal_Content BDC (NOLOCK) ON BDC.BMS_Deal_Content_Code=BDCR.BMS_Deal_Content_Code		
 		LEFT JOIN Right_Rule RR (NOLOCK) ON BDCR.RU_Right_Rule_Code=RR.Right_Rule_Code
-		WHERE ISNULL(BDCR.Updated_On,BDCR.Created_On) >=@since AND BDC.BMS_Deal_Code =@DealId
+		WHERE ISNULL(BDCR.Updated_On,BDCR.Created_On) >= CONVERT(Datetime,@since, 120) AND BDC.BMS_Deal_Code =@DealId
 
 		--SET @Params += ' AND BDC.BMS_Deal_Code ='+@DealId
 	END
@@ -128,7 +128,7 @@ BEGIN
 		FROM BMS_Deal_Content_Rights BDCR (NOLOCK)
 		INNER JOIN BMS_Deal_Content BDC (NOLOCK) ON BDC.BMS_Deal_Content_Code=BDCR.BMS_Deal_Content_Code		
 		LEFT JOIN Right_Rule RR (NOLOCK) ON BDCR.RU_Right_Rule_Code=RR.Right_Rule_Code
-		WHERE ISNULL(BDCR.Updated_On,BDCR.Created_On) >=@since
+		WHERE ISNULL(BDCR.Updated_On,BDCR.Created_On) >= CONVERT(Datetime,@since, 120)
 
 		--SET @Params += ' ISNULL(BDC.Updated_On,BDC.Created_On) ='+@since
 	END

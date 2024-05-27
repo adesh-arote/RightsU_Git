@@ -99,8 +99,17 @@ namespace RightsU_Notification_Service
 
                 if (lstNotification.Count > 0)
                 {
+                    string FileAttachmentPath = context.System_Parameter.Where(x => x.Parameter_Name == "FileAttachmentPath").Select(x => x.Parameter_Value).FirstOrDefault();
+
                     foreach (var x in lstNotification)
                     {
+                        string FileToString = "";
+                        if (!string.IsNullOrEmpty(x.Attachment_File_Name))
+                        {
+                            string fpath = FileAttachmentPath + x.Attachment_File_Name;
+                            byte[] bytes = System.IO.File.ReadAllBytes(fpath);
+                            FileToString = Convert.ToBase64String(bytes);
+                        }
                         using (var client = new WebClient())
                         {
                             client.Headers.Add("Content-Type:application/json");
@@ -122,7 +131,9 @@ namespace RightsU_Notification_Service
                                 ScheduleDateTime = x.ScheduleDateTime,
                                 UserCode = x.UserCode,
                                 ClientName = strClientName,
-                                ForeignId = x.NotificationsCode
+                                ForeignId = x.NotificationsCode                                ,
+                                AttachmentFileName = x.Attachment_File_Name,
+                                AttachmentFileToString = FileToString
                             };
 
                             if (x.NoOfRetry >= Max_Retry_Limit)
@@ -153,8 +164,17 @@ namespace RightsU_Notification_Service
 
                 if (lstNotification.Count > 0)
                 {
+                    string FileAttachmentPath = context.System_Parameter.Where(x => x.Parameter_Name == "FileAttachmentPath").Select(x => x.Parameter_Value).FirstOrDefault();
+
                     foreach (Notifications x in lstNotification)
                     {
+                        string FileToString = "";
+                        if (!string.IsNullOrEmpty(x.Attachment_File_Name))
+                        {
+                            string fpath = FileAttachmentPath + x.Attachment_File_Name;
+                            byte[] bytes = System.IO.File.ReadAllBytes(fpath);
+                            FileToString = Convert.ToBase64String(bytes);
+                        }
                         using (var client = new WebClient())
                         {
                             client.Headers.Add("Content-Type:application/json");
@@ -176,9 +196,9 @@ namespace RightsU_Notification_Service
                                 ScheduleDateTime = x.ScheduleDateTime,
                                 UserCode = x.UserCode,
                                 ClientName = strClientName,
-                                ForeignId = x.NotificationsCode
-
-
+                                ForeignId = x.NotificationsCode,
+                                AttachmentFileName = x.Attachment_File_Name,
+                                AttachmentFileToString = FileToString
                             };
 
                             try
@@ -189,7 +209,8 @@ namespace RightsU_Notification_Service
                             }
                             catch (Exception ex)
                             {
-                                Error.WriteLog("Within Catch - " + ex.Message.ToString(), includeTime: true, addSeperater: true);
+                                Error.WriteLog("Within Catch Ex Msg - " + ex.Message, includeTime: true, addSeperater: true);
+                                Error.WriteLog("Within Catch JSON - " + JsonConvert.SerializeObject(Response), includeTime: true, addSeperater: true);
                             }
                         }
                     }

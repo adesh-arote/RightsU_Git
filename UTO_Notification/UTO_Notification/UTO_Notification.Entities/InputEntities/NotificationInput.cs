@@ -32,6 +32,9 @@ namespace UTO_Notification.Entities
 
         public string Client_Name { get; set; }
         public string Notification_App { get; set; }
-        
+
+        public string AttachmentFileName { get; set; }
+        public string AttachmentFileToString { get; set; }
+
     }
 }

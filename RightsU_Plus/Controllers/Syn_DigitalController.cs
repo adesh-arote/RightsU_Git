@@ -359,7 +359,7 @@ namespace RightsU_Plus.Controllers
                     }
                     else if (ST.Control_Type == "INT")
                     {
-                        strAddRow = strAddRow + getNumber("", Short_Name, l, "A", ST.Digital_Config_Code);
+                        strAddRow = strAddRow + getNumber("", Short_Name, l, "A", ST.Digital_Config_Code, ST.Max_Length.ToString());
                         l++;
                     }
                     else if (ST.Control_Type == "DBL")
@@ -494,9 +494,9 @@ namespace RightsU_Plus.Controllers
             _fieldList = _fieldList + Short_Name + "dtDigi" + i.ToString() + "~" + ConfigCode.ToString() + ",";
             return getDATE;
         }
-        public string getNumber(string User_Value, string Short_Name, int i, string Operation, int ConfigCode)
+        public string getNumber(string User_Value, string Short_Name, int i, string Operation, int ConfigCode, string MaxLength)
         {
-            string getNumber = "<input type=\"number\" min=\"0\" onkeypress=\"return !(event.charCode == 46)\" value=\"" + User_Value + "\" id=\"" + Operation + Short_Name + "numDigi" + i.ToString() + "\" name=\"" + Operation + Short_Name + "numDigi" + i.ToString() + "\">";
+            string getNumber = "<input type=\"number\" data-max-length=\"" + MaxLength + "\" min=\"0\" onkeypress=\"return !(event.charCode == 46)\" value=\"" + User_Value + "\" id=\"" + Operation + Short_Name + "numDigi" + i.ToString() + "\" name=\"" + Operation + Short_Name + "numDigi" + i.ToString() + "\">";
             _fieldList = _fieldList + Short_Name + "numDigi" + i.ToString() + "~" + ConfigCode.ToString() + ",";
             return getNumber;
         }
@@ -645,7 +645,7 @@ namespace RightsU_Plus.Controllers
                 }
                 else if (ED.Control_Type == "INT")
                 {
-                    strAddRow = strAddRow + getNumber(ED.User_Value, Short_Name, l, "E", Convert.ToInt32(ED.Digital_Config_Code));
+                    strAddRow = strAddRow + getNumber(ED.User_Value, Short_Name, l, "E", Convert.ToInt32(ED.Digital_Config_Code), ED.Max_Length.ToString());
                     l++;
                 }
                 else if (ED.Control_Type == "DBL")
@@ -819,7 +819,7 @@ namespace RightsU_Plus.Controllers
                     }
                     else if (CM.Control_Type == "INT")
                     {
-                        utospltag = getNumber(user_Value, Short_Name, l, Operation, CM.Digital_Config_Code);
+                        utospltag = getNumber(user_Value, Short_Name, l, Operation, CM.Digital_Config_Code, CM.Max_Length.ToString());
                         l++;
                     }
                     else if (CM.Control_Type == "DBL")
@@ -872,7 +872,7 @@ namespace RightsU_Plus.Controllers
                     }
                     else if (CM.Control_Type == "INT")
                     {
-                        strAddRow = strAddRow + getNumber(user_Value, Short_Name, l, Operation, CM.Digital_Config_Code);
+                        strAddRow = strAddRow + getNumber(user_Value, Short_Name, l, Operation, CM.Digital_Config_Code, CM.Max_Length.ToString());
                         l++;
                     }
                     else if (CM.Control_Type == "DBL")

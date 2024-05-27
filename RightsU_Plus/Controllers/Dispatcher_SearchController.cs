@@ -128,6 +128,7 @@ namespace RightsU_Plus.Controllers
             }
             #endregion
 
+            lstNotifications = null;
             if (MessageType != null)
             {
                 Session["MessageType"] = MessageType;
@@ -202,14 +203,13 @@ namespace RightsU_Plus.Controllers
             }
 
         }
-        public PartialViewResult GetNotificationStatus(long NotificationCode, string NotificationType)
+        public JsonResult GetNotificationStatus(long NotificationCode, string NotificationType)
         {
             string AuthKey = GetAuthKey();
             var result = (dynamic)null;
-            string RequestUri = Convert.ToString(ConfigurationManager.AppSettings["NotificationApi"]);
+            string RequestUri = Convert.ToString(ConfigurationManager.AppSettings["NotificationURL"]);
             System_Parameter_New_Service objSPNService = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName);
             System_Parameter_New objSPN = objSPNService.SearchFor(s => s.Parameter_Name == "Notification_ClientName" && s.IsActive == "Y").FirstOrDefault();
-            NotificationStatus notificationStatus = new NotificationStatus();
 
             using (var client = new WebClient())
             {
@@ -226,65 +226,25 @@ namespace RightsU_Plus.Controllers
                 try
                 {
                     ViewBag.Status = "STATUS";
-                    result = client.UploadString(RequestUri + "NEGetNotificationByForeignId", JsonConvert.SerializeObject(Response));
-                    notificationStatus = JsonConvert.DeserializeObject<NotificationStatus>(result);
 
-                    //dynamic jsonObject = JsonConvert.DeserializeObject<dynamic>(result);
-                    //var ReturnStatus = JsonConvert.DeserializeObject(result);
-                    //string name = ReturnStatus
+                    CommonUtil.WriteErrorLog(DateTime.Now + "- Dispatcher screen 'NEGetNotificationByForeignId' API Called", "Authkey " + AuthKey);
+                    CommonUtil.WriteErrorLog(DateTime.Now + "- Link API Called - " + RequestUri + "NEGetNotificationByForeignId", " - Data - " + JsonConvert.SerializeObject(Response));
+
+                    result = client.UploadString(RequestUri + "NEGetNotificationByForeignId", JsonConvert.SerializeObject(Response));
+                    //notificationStatus = JsonConvert.DeserializeObject<NotificationStatus>(result);
+
+                    CommonUtil.WriteErrorLog(DateTime.Now + "- Dispatcher screen API Called Successfully", "Response -" + result);
+                    
 
                 }
                 catch (Exception ex)
                 {
-
+                    CommonUtil.WriteErrorLog(DateTime.Now + "-Dispatcher screen API Call Failed", ex.Message + ex.InnerException);
+                    throw ex;
                 }
 
-                return PartialView("_MessageViewPopUp", notificationStatus);
+                return Json(result);
             }
         }
-
-
-        public class Response
-        {
-            public int NotificationsCode { get; set; }
-            public int NotificationType { get; set; }
-            public int EventCategory { get; set; }
-            public int UserCode { get; set; }
-            public int TransType { get; set; }
-            public int TransCode { get; set; }
-            public string Email { get; set; }
-            public string Mobile { get; set; }
-            public bool IsSend { get; set; }
-            public bool IsRead { get; set; }
-            public string CC { get; set; }
-            public string BCC { get; set; }
-            public string Subject { get; set; }
-            public DateTime ScheduleDateTime { get; set; }
-            public int NoOfRetry { get; set; }
-            public int MsgStatusCode { get; set; }
-            public DateTime SentOrReadDateTime { get; set; }
-            public string ErrorCode { get; set; }
-            public string ErrorDetails { get; set; }
-            public DateTime CreatedOn { get; set; }
-            public int CreatedBy { get; set; }
-            public DateTime ModifiedOn { get; set; }
-            public int ModifiedBy { get; set; }
-            public bool IsAutoEscalated { get; set; }
-            public bool IsReminderMail { get; set; }
-            public string ClientName { get; set; }
-            public int ForeignId { get; set; }
-        }
-
-        public class NotificationStatus
-        {
-            public string ResponseCode { get; set; }
-            public bool Status { get; set; }
-            public string Message { get; set; }
-            public int NECode { get; set; }
-            public string ErrorCode { get; set; }
-            public string ErrorMessage { get; set; }
-            public Response Response { get; set; }
-        }
-
     }
 }

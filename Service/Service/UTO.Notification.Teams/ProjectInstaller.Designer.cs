@@ -39,7 +39,7 @@
             // 
             // NotificationserviceInstaller
             // 
-            this.NotificationserviceInstaller.ServiceName = "UTO.Notification.Teams";
+            this.NotificationserviceInstaller.ServiceName = "UTO Teams Notifications";
             // 
             // ProjectInstaller
             // 

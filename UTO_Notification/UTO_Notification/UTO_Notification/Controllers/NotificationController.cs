@@ -16,6 +16,7 @@ using System.Web.Hosting;
 using UTO_Notification.Entities.InputEntities;
 using UTO_Notification.Entities.ProcedureEntities;
 using UTO_Notification.BLL.Notifications;
+using UTO_Notification.API.CustomFilter;
 
 namespace UTO_Notification.Controllers
 {
@@ -39,66 +40,97 @@ namespace UTO_Notification.Controllers
             startTime = DateTime.Now;
             HttpResponses httpResponses = new HttpResponses();
 
-            if (obj.NotificationType.ToLower() == "EMAIL_NTF".ToLower())
+            try
             {
-                Email objEmail = new Email();
-
-                httpResponses = objEmail.SaveNotification(obj);
-                if (!httpResponses.Status)
+                if (obj.NotificationType.ToLower() == "EMAIL_NTF".ToLower())
                 {
-                    return Request.CreateResponse(HttpStatusCode.InternalServerError, httpResponses);
+                    Email objEmail = new Email();
+
+                    if (!string.IsNullOrEmpty(obj.AttachmentFileName) && !string.IsNullOrEmpty(obj.AttachmentFileToString))
+                    {
+                        byte[] imageBytes = Convert.FromBase64String(obj.AttachmentFileToString);
+                        System.IO.File.WriteAllBytes(ConfigurationManager.AppSettings["EmailFileAttachmentPath"] + obj.AttachmentFileName, imageBytes);
+                    }
+
+                    httpResponses = objEmail.SaveNotification(obj);
+                    if (!httpResponses.Status)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.InternalServerError, httpResponses);
+                    }
+                    TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+
+                    logObj.RequestContent = "To: " + obj.TO + " <br/> CC: " + obj.CC + " <br/> Bcc:" + obj.BCC;
+                    logObj.RequestContent = logObj.RequestContent + " Subject: " + obj.Subject + " <br/><br/>" + obj.HTMLMessage;
                 }
-                TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
 
-                logObj.RequestContent = "To: " + obj.TO + " <br/> CC: " + obj.CC + " <br/> Bcc:" + obj.BCC;
-                logObj.RequestContent = logObj.RequestContent + " Subject: " + obj.Subject + " <br/><br/>" + obj.HTMLMessage;
+                if (obj.NotificationType.ToLower() == "SMS_NTF".ToLower() || obj.NotificationType.ToLower() == "WTSAPP_NTF".ToLower())
+                {
+                    ShortMessage objShortMessage = new ShortMessage();
+
+                    if (!string.IsNullOrEmpty(obj.AttachmentFileName) && !string.IsNullOrEmpty(obj.AttachmentFileToString))
+                    {
+                        byte[] imageBytes = Convert.FromBase64String(obj.AttachmentFileToString);
+                        System.IO.File.WriteAllBytes(ConfigurationManager.AppSettings["SMSFileAttachmentPath"] + obj.AttachmentFileName, imageBytes);
+                    }
+
+                    httpResponses = objShortMessage.SaveNotification(obj);
+                    if (!httpResponses.Status)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.InternalServerError, httpResponses);
+                    }
+                    TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+
+                    logObj.RequestContent = "To: " + obj.TO;
+                    logObj.RequestContent = logObj.RequestContent + " Subject: " + obj.Subject + " <br/><br/>" + obj.HTMLMessage;
+                }
+
+                if (obj.NotificationType.ToLower() == "TEAMS_NTF".ToLower())
+                {
+                    Teams objTeams = new Teams();
+
+                    if (!string.IsNullOrEmpty(obj.AttachmentFileName) && !string.IsNullOrEmpty(obj.AttachmentFileToString))
+                    {
+                        byte[] imageBytes = Convert.FromBase64String(obj.AttachmentFileToString);
+                        System.IO.File.WriteAllBytes(ConfigurationManager.AppSettings["TeamsFileAttachmentPath"] + obj.AttachmentFileName, imageBytes);
+                    }
+
+                    httpResponses = objTeams.SaveNotification(obj);
+                    if (!httpResponses.Status)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.InternalServerError, httpResponses);
+                    }
+                    TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+
+                    logObj.RequestContent = "To: " + obj.TO;
+                    logObj.RequestContent = logObj.RequestContent + " Subject: " + obj.Subject + " <br/><br/>" + obj.HTMLMessage;
+                }
+
+                if (obj.NotificationType.ToLower() == "APP_NTF".ToLower())
+                {
+                    InApp objInApp = new InApp();
+
+                    if (!string.IsNullOrEmpty(obj.AttachmentFileName) && !string.IsNullOrEmpty(obj.AttachmentFileToString))
+                    {
+                        byte[] imageBytes = Convert.FromBase64String(obj.AttachmentFileToString);
+                        System.IO.File.WriteAllBytes(ConfigurationManager.AppSettings["InAppFileAttachmentPath"] + obj.AttachmentFileName, imageBytes);
+                    }
+
+                    httpResponses = objInApp.SaveNotification(obj);
+                    if (!httpResponses.Status)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.InternalServerError, httpResponses);
+                    }
+                    TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+
+                    logObj.RequestContent = "To: " + obj.TO;
+                    logObj.RequestContent = logObj.RequestContent + " Subject: " + obj.Subject + " <br/><br/>" + obj.HTMLMessage;
+                }
             }
-
-            if (obj.NotificationType.ToLower() == "SMS_NTF".ToLower() || obj.NotificationType.ToLower() == "WTSAPP_NTF".ToLower())
+            catch (Exception ex)
             {
-                ShortMessage objShortMessage = new ShortMessage();
-
-                httpResponses = objShortMessage.SaveNotification(obj);
-                if (!httpResponses.Status)
-                {
-                    return Request.CreateResponse(HttpStatusCode.InternalServerError, httpResponses);
-                }
-                TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-
-                logObj.RequestContent = "To: " + obj.TO;
-                logObj.RequestContent = logObj.RequestContent + " Subject: " + obj.Subject + " <br/><br/>" + obj.HTMLMessage;
+                WriteLog.Log("NESendMessage", "Error Message - " + ex.Message, "");
+                WriteLog.Log("NESendMessage", "Inner Exception - " + ex.InnerException, "");                
             }
-
-            if (obj.NotificationType.ToLower() == "TEAMS_NTF".ToLower())
-            {
-                Teams objTeams = new Teams();
-
-                httpResponses = objTeams.SaveNotification(obj);
-                if (!httpResponses.Status)
-                {
-                    return Request.CreateResponse(HttpStatusCode.InternalServerError, httpResponses);
-                }
-                TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-
-                logObj.RequestContent = "To: " + obj.TO;
-                logObj.RequestContent = logObj.RequestContent + " Subject: " + obj.Subject + " <br/><br/>" + obj.HTMLMessage;
-            }
-
-            if (obj.NotificationType.ToLower() == "APP_NTF".ToLower())
-            {
-                InApp objInApp = new InApp();
-
-                httpResponses = objInApp.SaveNotification(obj);
-                if (!httpResponses.Status)
-                {
-                    return Request.CreateResponse(HttpStatusCode.InternalServerError, httpResponses);
-                }
-                TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-
-                logObj.RequestContent = "To: " + obj.TO;
-                logObj.RequestContent = logObj.RequestContent + " Subject: " + obj.Subject + " <br/><br/>" + obj.HTMLMessage;
-            }
-
             if (Convert.ToInt16((HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogLevel"]) <= 2)
             {
                 if ((HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogURL"] != "" && (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogURL"] != null)
@@ -509,10 +541,14 @@ namespace UTO_Notification.Controllers
             {
                 objNotification = objUspService.USPGetEmailNotificationByForeignId(obj.ForeignId, obj.ClientName);
             }
-            else if (obj.NotificationType.ToUpper() == "TM")
+            else if (obj.NotificationType.ToUpper() == "TEAMS_NTF")
             {
                 objNotification = objUspService.USPGetTeamsNotificationByForeignId(obj.ForeignId, obj.ClientName);
             }
+            //else if (obj.NotificationType.ToUpper() == "APP_NTF")
+            //{
+            //    objNotification = objUspService.USPGetTeamsNotificationByForeignId(obj.ForeignId, obj.ClientName);
+            //}
 
             httpResponses = httpResponseMapper.GetHttpSuccessResponse(objNotification);
 

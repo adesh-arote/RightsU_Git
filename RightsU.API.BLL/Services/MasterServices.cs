@@ -770,7 +770,7 @@ namespace RightsU.API.BLL.Services
 
                 var objModuleRights = UserModuleRights.Where(x => x.Url.ToLower() == Module_Url.ToLower()).ToList();
 
-                if (lstModuleUrl.Count() > 2)
+                if (lstModuleUrl.Count() >= 2 && objModuleRights.Count == 0)
                     objModuleRights = UserModuleRights.Where(x => x.Url.ToLower() == "/" + lstModuleUrl[0].ToLower() + "/" + lstModuleUrl[1].ToLower()).ToList();
 
                 if (objModuleRights.Count() > 0)
