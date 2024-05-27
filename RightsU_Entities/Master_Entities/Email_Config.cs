@@ -41,6 +41,7 @@ namespace RightsU_Entities
         public int Count { get; set; }
         public int TotalCount { get; set; }
         public string Event_Type { get; set; }
+        public string Job_Name { get; set; }
         public virtual ICollection<Email_Config_Detail> Email_Config_Detail { get; set; }
         public virtual ICollection<Email_Notification_Log> Email_Notification_Log { get; set; }
         public virtual ICollection<Email_Config_Keys> Email_Config_Keys { get; set; }

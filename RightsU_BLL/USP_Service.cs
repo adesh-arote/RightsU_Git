@@ -1888,5 +1888,17 @@ namespace RightsU_BLL
             USP_DAL objContext = new USP_DAL(conStr);
             return objContext.USP_Validate_LP(deal_Code, title_Code, epsFrom, epsTo, module_Code);
         }
+        public virtual int USP_Event_Schedule(Nullable<int> email_Config_Code)
+        {
+            try
+            {
+                USP_DAL objUSPDAL = new USP_DAL(conStr);
+                return objUSPDAL.USP_Event_Schedule(email_Config_Code);
+            }
+            catch (Exception)
+            {
+                return 0;
+            }            
+        }
     }
 }

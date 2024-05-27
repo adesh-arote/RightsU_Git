@@ -37,6 +37,7 @@ namespace RightsU_InterimDb.Models
     	    public Nullable<int> Last_Updated_By { get; set; }
     	    public Nullable<System.DateTime> Last_Updated_On { get; set; }
     	    public string Event_Type { get; set; }
+    	    public string Job_Name { get; set; }
     
         public virtual ICollection<Email_Config_Detail> Email_Config_Detail { get; set; }
         public virtual ICollection<Email_Notification_Log> Email_Notification_Log { get; set; }

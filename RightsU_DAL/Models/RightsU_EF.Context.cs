@@ -6208,5 +6208,14 @@ namespace RightsU_DAL
 
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Validate_LP_Result>("USP_Validate_LP", deal_CodeParameter, title_CodeParameter, epsFromParameter, epsToParameter, module_CodeParameter);
         }
+
+        public virtual int USP_Event_Schedule(Nullable<int> email_Config_Code)
+        {
+            var email_Config_CodeParameter = email_Config_Code.HasValue ?
+                new ObjectParameter("Email_Config_Code", email_Config_Code) :
+                new ObjectParameter("Email_Config_Code", typeof(int));
+
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USP_Event_Schedule", email_Config_CodeParameter);
+        }
     }
 }

@@ -1905,5 +1905,10 @@ namespace RightsU_DAL
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
             return objContext.USP_Validate_LP(deal_Code, title_Code, epsFrom, epsTo, module_Code);
         }
+        public virtual int USP_Event_Schedule(Nullable<int> email_Config_Code)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_Event_Schedule(email_Config_Code);
+        }
     }
 }

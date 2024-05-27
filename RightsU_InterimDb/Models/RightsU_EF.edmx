@@ -3146,6 +3146,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
           <Property Name="Last_Updated_By" Type="int" />
           <Property Name="Last_Updated_On" Type="datetime" />
           <Property Name="Event_Type" Type="char" MaxLength="1" />
+          <Property Name="Job_Name" Type="nvarchar" MaxLength="500" />
         </EntityType>
         <EntityType Name="Email_Config_Detail">
           <Key>
@@ -14339,6 +14340,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="User_Code" Type="int" Mode="In" />
           <Parameter Name="Remarks" Type="varchar(max)" Mode="In" />
         </Function>
+        <Function Name="USP_Event_Schedule" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Email_Config_Code" Type="int" Mode="In" />
+        </Function>
         <Function Name="USP_Export_Table_To_Excel" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Module_Code" Type="int" Mode="In" />
           <Parameter Name="Column_Count" Type="int" Mode="InOut" />
@@ -24170,6 +24174,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="Event_Platform" EntitySet="Event_Platform" />
             <End Role="Notifications" EntitySet="Notifications" />
           </AssociationSet>
+          <FunctionImport Name="USP_Event_Schedule">
+            <Parameter Name="Email_Config_Code" Mode="In" Type="Int32" />
+          </FunctionImport>
         </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -35750,6 +35757,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Event_Type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
           <NavigationProperty Name="Email_Config_Keys" Relationship="RightsU_NeoModel.FK_Email_Config_Keys_Email_Config" FromRole="Email_Config" ToRole="Email_Config_Keys" />
           <NavigationProperty Name="Notifications" Relationship="RightsU_NeoModel.FK_Notifications_Email_Config" FromRole="Email_Config" ToRole="Notifications" />
+          <Property Name="Job_Name" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Email_Config_Detail">
           <Key>
@@ -48445,6 +48453,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Email_Config">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Email_Config">
               <MappingFragment StoreEntitySet="Email_Config">
+                <ScalarProperty Name="Job_Name" ColumnName="Job_Name" />
                 <ScalarProperty Name="Event_Type" ColumnName="Event_Type" />
                 <ScalarProperty Name="Last_Updated_On" ColumnName="Last_Updated_On" />
                 <ScalarProperty Name="Last_Updated_By" ColumnName="Last_Updated_By" />
@@ -52311,6 +52320,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="USP_Event_Schedule" FunctionName="RightsU_NeoModel.Store.USP_Event_Schedule" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

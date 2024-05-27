@@ -501,6 +501,14 @@ namespace RightsU_Plus.Controllers
             }
             objECDService.Save(objECD, out resultSet);
 
+            string Allow_Config = Convert.ToString(objECD.Email_Config.Allow_Config);
+            string Event_Type = Convert.ToString(objECD.Email_Config.Event_Type);
+
+            if (Event_Type == "T" && Allow_Config == "Y")
+            {
+                var ret = new USP_Service(objLoginEntity.ConnectionStringName).USP_Event_Schedule(objECD.Email_Config_Code);
+            }
+
             try
             {
                 objECD.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objECD.Inserted_By));
@@ -651,7 +659,7 @@ namespace RightsU_Plus.Controllers
             if (!string.IsNullOrEmpty(objECDU.Event_Template_Type))
             {
                 if (objECDU.Event_Template_Type == "T")
-                    objECDU.Event_Template_Type_Format = "TXT";
+                    objECDU.Event_Template_Type_Format = "Text";
                 else
                     objECDU.Event_Template_Type_Format = "HTML";
             }
@@ -688,7 +696,7 @@ namespace RightsU_Plus.Controllers
             {
                 if(item.Event_Template_Type == "T" && t == 0)
                 {
-                    lst_TextFormat.Insert(0, new SelectListItem() { Value = "T", Text = "TXT" });
+                    lst_TextFormat.Insert(0, new SelectListItem() { Value = "T", Text = "Text" });
                     t = 1;
                 }
                 if (item.Event_Template_Type == "H" && h == 0)
