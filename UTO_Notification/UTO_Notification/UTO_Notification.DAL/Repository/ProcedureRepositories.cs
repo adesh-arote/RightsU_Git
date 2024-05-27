@@ -14,7 +14,7 @@ namespace UTO_Notification.DAL
 
         HttpResponses httpResponses = new HttpResponses();
 
-        public IEnumerable<USPInsertNotification> USPInsertNotification(string EventCategory, string NotificationType, string TO, string CC, string BCC, string Subject, string HTMLMessage, string TextMessage, string TransType, long TransCode, string ScheduleDateTime, long UserCode, string ClientName, long ForeignId)
+        public IEnumerable<USPInsertNotification> USPInsertNotification(string EventCategory, string NotificationType, string TO, string CC, string BCC, string Subject, string HTMLMessage, string TextMessage, string TransType, long TransCode, string ScheduleDateTime, long UserCode, string ClientName, long ForeignId, string AttachmentFileName)
         {
             var param = new DynamicParameters();
             param.Add("@EventCategory", EventCategory);
@@ -31,11 +31,12 @@ namespace UTO_Notification.DAL
             param.Add("@UserCode", UserCode);
             param.Add("@ClientName", ClientName);
             param.Add("@ForeignId", ForeignId);
+            param.Add("@AttachmentFileName", AttachmentFileName); 
 
             return base.ExecuteSQLProcedure<USPInsertNotification>("USPInsertNotification", param);
         }
 
-        public IEnumerable<USPInsertNotification> USPInsertNotification_Teams(string EventCategory, string NotificationType, string TO, string CC, string BCC, string Subject, string HTMLMessage, string TextMessage, string TransType, long TransCode, string ScheduleDateTime, long UserCode, string ClientName, long ForeignId)
+        public IEnumerable<USPInsertNotification> USPInsertNotification_Teams(string EventCategory, string NotificationType, string TO, string CC, string BCC, string Subject, string HTMLMessage, string TextMessage, string TransType, long TransCode, string ScheduleDateTime, long UserCode, string ClientName, long ForeignId, string AttachmentFileName)
         {
             var param = new DynamicParameters();
             param.Add("@EventCategory", EventCategory);
@@ -52,11 +53,12 @@ namespace UTO_Notification.DAL
             param.Add("@UserCode", UserCode);
             param.Add("@ClientName", ClientName);
             param.Add("@ForeignId", ForeignId);
+            param.Add("@AttachmentFileName", AttachmentFileName);
 
             return base.ExecuteSQLProcedure<USPInsertNotification>("USPInsertNotification_Teams", param);
         }
 
-        public IEnumerable<USPInsertNotification> USPInsertNotification_InApp(string EventCategory, string NotificationType, string TO, string CC, string BCC, string Subject, string HTMLMessage, string TextMessage, string TransType, long TransCode, string ScheduleDateTime, long UserCode, string ClientName, long ForeignId)
+        public IEnumerable<USPInsertNotification> USPInsertNotification_InApp(string EventCategory, string NotificationType, string TO, string CC, string BCC, string Subject, string HTMLMessage, string TextMessage, string TransType, long TransCode, string ScheduleDateTime, long UserCode, string ClientName, long ForeignId, string AttachmentFileName)
         {
             var param = new DynamicParameters();
             param.Add("@EventCategory", EventCategory);
@@ -73,6 +75,7 @@ namespace UTO_Notification.DAL
             param.Add("@UserCode", UserCode);
             param.Add("@ClientName", ClientName);
             param.Add("@ForeignId", ForeignId);
+            param.Add("@AttachmentFileName", AttachmentFileName);
 
             return base.ExecuteSQLProcedure<USPInsertNotification>("USPInsertNotification_InApp", param);
         }

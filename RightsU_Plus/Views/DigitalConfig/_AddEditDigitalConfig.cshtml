@@ -447,7 +447,7 @@
     //Digital Master Methods Start
 
     function AddDigitalMaster(MasterMode, DigitalCode, searchText) {
-
+        debugger;
         $('.required').removeClass('required');
         $("[required='required']").removeAttr("required");
         if (checkDigitalCurrentAction()) {
@@ -465,6 +465,7 @@
                     searchText: searchText
                 }),
                 success: function (result) {
+                    debugger;
                     if (result == "true") {
                         redirectToLogin();
                     }
@@ -486,6 +487,7 @@
     }
 
     function saveDigitalMaster() {
+        debugger;
         $('.required').removeClass('required');
         $("[required='required']").removeAttr("required");
 
@@ -507,7 +509,7 @@
                     Digital_Master_Name: Digital_Master_Name
                 }),
                 success: function (result) {
-
+                    debugger;
                     if (result.Status == "S") {
                         $('#hdnAction_DigitalMaster').val('');
                         showAlert("S", result.Message);
@@ -520,6 +522,7 @@
                     }
                     else {
                         showAlert("E", result.Message);
+                        $('#hdnAction_DigitalMaster').val('');
                         ("#popAddDigital").modal();
                     }
                 },
@@ -552,6 +555,7 @@
             contentType: false,
             processData: false,
             success: function (result) {
+                debugger;
                 if (result == "true") {
                     redirectToLogin();
                 }

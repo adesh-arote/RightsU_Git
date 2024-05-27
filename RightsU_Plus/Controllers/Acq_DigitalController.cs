@@ -348,7 +348,8 @@ namespace RightsU_Plus.Controllers
                     strAddRow = strAddRow + "<td style=\"width:" + width + "%\">";
                     if (ST.Control_Type == "TXTDDL")
                     {
-                        strAddRow = strAddRow + getDDL(ListDigital_Data, Short_Name, i, ST.Whr_Criteria, "", "A", "multiple", ST.Digital_Config_Code);
+                        string multipletype = ST.Is_Multiselect == "Y" ? "multiple" : "";
+                        strAddRow = strAddRow + getDDL(ListDigital_Data, Short_Name, i, ST.Whr_Criteria, "", "A", multipletype, ST.Digital_Config_Code);
                         i++;
                     }
                     else if (ST.Control_Type == "TXTAREA")
@@ -363,7 +364,7 @@ namespace RightsU_Plus.Controllers
                     }
                     else if (ST.Control_Type == "INT")
                     {
-                        strAddRow = strAddRow + getNumber("", Short_Name, l, "A", ST.Digital_Config_Code);
+                        strAddRow = strAddRow + getNumber("", Short_Name, l, "A", ST.Digital_Config_Code, ST.Max_Length.ToString());
                         l++;
                     }
                     else if (ST.Control_Type == "DBL")
@@ -488,9 +489,9 @@ namespace RightsU_Plus.Controllers
             _fieldList = _fieldList + Short_Name + "dtDigital" + i.ToString() + "~" + ConfigCode.ToString() + ",";
             return getDATE;
         }
-        public string getNumber(string User_Value, string Short_Name, int i, string Operation, int ConfigCode)
+        public string getNumber(string User_Value, string Short_Name, int i, string Operation, int ConfigCode, string MaxLength)
         {
-            string getNumber = "<input type=\"number\" min=\"0\" onkeypress=\"return !(event.charCode == 46)\" value=\"" + User_Value + "\" id=\"" + Operation + Short_Name + "numDigital" + i.ToString() + "\" name=\"" + Operation + Short_Name + "numDigital" + i.ToString() + "\">";
+            string getNumber = "<input type=\"number\" data-max-length=\"" + MaxLength + "\"  min=\"0\" onkeypress=\"return !(event.charCode == 46)\" value=\"" + User_Value + "\" id=\"" + Operation + Short_Name + "numDigital" + i.ToString() + "\" name=\"" + Operation + Short_Name + "numDigital" + i.ToString() + "\">";
             _fieldList = _fieldList + Short_Name + "numDigital" + i.ToString() + "~" + ConfigCode.ToString() + ",";
             return getNumber;
         }
@@ -592,7 +593,7 @@ namespace RightsU_Plus.Controllers
                 }
                 else if (ED.Control_Type == "INT")
                 {
-                    strAddRow = strAddRow + getNumber(ED.User_Value, Short_Name, l, "E", Convert.ToInt32(ED.Digital_Config_Code));
+                    strAddRow = strAddRow + getNumber(ED.User_Value, Short_Name, l, "E", Convert.ToInt32(ED.Digital_Config_Code), ED.Max_Length.ToString());
                     l++;
                 }
                 else if (ED.Control_Type == "DBL")
@@ -752,7 +753,7 @@ namespace RightsU_Plus.Controllers
                     }
                     else if (CM.Control_Type == "INT")
                     {
-                        utospltag = getNumber(user_Value, Short_Name, l, Operation, CM.Digital_Config_Code);
+                        utospltag = getNumber(user_Value, Short_Name, l, Operation, CM.Digital_Config_Code, CM.Max_Length.ToString());
                         l++;
                     }
                     else if (CM.Control_Type == "DBL")
@@ -800,7 +801,7 @@ namespace RightsU_Plus.Controllers
                     }
                     else if (CM.Control_Type == "INT")
                     {
-                        strAddRow = strAddRow + getNumber(user_Value, Short_Name, l, Operation, CM.Digital_Config_Code);
+                        strAddRow = strAddRow + getNumber(user_Value, Short_Name, l, Operation, CM.Digital_Config_Code, CM.Max_Length.ToString());
                         l++;
                     }
                     else if (CM.Control_Type == "DBL")

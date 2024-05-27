@@ -203,7 +203,7 @@ namespace UTO_Notification.API.AuthFilter
             request.Method = "POST";
             request.Headers.Add("ContentType", "application/json");
             request.Headers.Add("AuthKey", AuthKey);
-            request.Headers.Add("Service", "True");
+            request.Headers.Add("Service", "false");
             if (obj.RequestContent == null)
             {
                 obj.RequestContent = "";

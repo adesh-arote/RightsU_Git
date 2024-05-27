@@ -227,7 +227,7 @@ namespace RightsU_Plus.Controllers
                 //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForALLab), Convert.ToInt32(lstAL_Lab.AL_Lab_Code), LogData, Action, objLoginUser.Users_Code);
 
                 MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
-                objAuditLog.moduleCode = GlobalParams.ModuleCodeForALLab;
+                objAuditLog.moduleCode = GlobalParams.ModuleCodeForEventPlatform;
                 objAuditLog.intCode = Objevent_Platform.Event_Platform_Code;
                 objAuditLog.logData = LogData;
                 objAuditLog.actionBy = objLoginUser.Login_Name;
@@ -552,86 +552,22 @@ namespace RightsU_Plus.Controllers
                 };
                 try
                 {
-                    result = client.UploadString(RequestUri + "NESaveNotificationType", JsonConvert.SerializeObject(Response));
-                   // Responses Objresponse = JsonConvert.DeserializeObject<Responses>(result);
-                    //if(Objresponse.Status == true)
-                    //{
+                    CommonUtil.WriteErrorLog(DateTime.Now + "- Event Platform 'NESaveNotificationType' API Called" , "Authkey " + AuthKey);
+                    CommonUtil.WriteErrorLog(DateTime.Now + "- Link API Called - " + RequestUri + "NESaveNotificationType", " - Data - " + JsonConvert.SerializeObject(Response));
 
-                    //}
+                    result = client.UploadString(RequestUri + "NESaveNotificationType", JsonConvert.SerializeObject(Response));
                     
+                    CommonUtil.WriteErrorLog(DateTime.Now + "- API Called Successfully", "Response -" + result);
+
                 }
                 catch (Exception ex)
                 {
-
+                    CommonUtil.WriteErrorLog(DateTime.Now + "- API Call Failed" , ex.Message + ex.InnerException);
+                    throw ex;
                 }
             }
         }
 
-        //public string GetAuthKey()
-        //{
-        //    string AuthKey = "";
-        //    string hostName = Dns.GetHostName(); // Retrive the Name of HOST
-        //    string myIP = Dns.GetHostByName(hostName).AddressList[0].ToString();
-
-        //    byte[] bytesToBeEncrypted = Encoding.UTF8.GetBytes(ConfigurationManager.AppSettings["salt"].ToString());
-        //    byte[] passwordBytes = Encoding.UTF8.GetBytes(myIP);
-
-        //    byte[] bytesEncrypted = AesOperation.AES_Encrypt(bytesToBeEncrypted, passwordBytes);
-        //    AuthKey = Convert.ToBase64String(bytesEncrypted);
-
-        //    return AuthKey;
-        //}
-        //class AesOperation
-        //{
-        //    public static byte[] AES_Encrypt(byte[] bytesToBeEncrypted, byte[] passwordBytes)
-        //    {
-        //        byte[] encryptedBytes = null;
-        //        byte[] saltBytes = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 };
-        //        using (MemoryStream ms = new MemoryStream())
-        //        {
-        //            using (RijndaelManaged AES = new RijndaelManaged())
-        //            {
-        //                AES.KeySize = 256;
-        //                AES.BlockSize = 128;
-
-        //                var key = new Rfc2898DeriveBytes(passwordBytes, saltBytes, 1000);
-        //                AES.Key = key.GetBytes(AES.KeySize / 8);
-        //                AES.IV = key.GetBytes(AES.BlockSize / 8);
-
-        //                AES.Mode = CipherMode.CBC;
-
-        //                using (var cs = new CryptoStream(ms, AES.CreateEncryptor(), CryptoStreamMode.Write))
-        //                {
-        //                    cs.Write(bytesToBeEncrypted, 0, bytesToBeEncrypted.Length);
-        //                    cs.Close();
-        //                }
-        //                encryptedBytes = ms.ToArray();
-        //            }
-        //        }
-        //        return encryptedBytes;
-        //    }
-        //}
-
-        //public class Responses
-        //{
-        //    public string ResponseCode { get; set; }
-        //    public bool Status { get; set; }
-
-        //    public string Message { get; set; }
-
-        //    public Nullable<long> NECode { get; set; }
-        //    public string ErrorCode { get; set; }
-        //    public string ErrorMessage { get; set; }
-        //    public object Response { get; set; }
-        //    public Responses()
-        //    {
-        //        ResponseCode = string.Empty;
-        //        ErrorCode = string.Empty;
-        //        ErrorMessage = string.Empty;
-        //        Status = true;
-        //        NECode = 0;
-        //    }
-        //}
         #endregion
 
     }

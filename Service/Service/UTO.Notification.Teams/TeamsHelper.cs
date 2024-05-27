@@ -1,8 +1,10 @@
 ﻿using Azure.Identity;
 using Microsoft.Graph;
 using Microsoft.Graph.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +13,8 @@ namespace UTO.Notification.Teams
 {
     public class TeamsHelper
     {
+        public static string WriteLog { get; private set; }
+
         public static GraphServiceClient GetGraphServiceClient(USPGetConfig objConfig)
         {
             var scopes = new[] { objConfig.scope };
@@ -82,13 +86,35 @@ namespace UTO.Notification.Teams
 
         public static async Task<ChatMessage> SendTeamNotification(string ToAddress, ChatType chatType, string MsgBody, USPGetConfig objConfig)
         {
-            try
-            {
+            //try
+            //{
+                WriteLog = ConfigurationSettings.AppSettings["WriteLog"];
+
+                if (Convert.ToBoolean(WriteLog))
+                {
+                    //LogService("Sending Email");
+                    Error.WriteLog_Conditional("Config - " + JsonConvert.SerializeObject(objConfig));
+                }
+                                
+
                 var graphClient = GetGraphServiceClient(objConfig);
 
+                
                 var chatPayload = GetChatPayload(objConfig.UserName, ToAddress, chatType);
 
+                if (Convert.ToBoolean(WriteLog))
+                {
+                    //LogService("Sending Email");
+                    Error.WriteLog_Conditional("ChatPayload - " + JsonConvert.SerializeObject(chatPayload));
+                }
+
                 var objChat = await graphClient.Chats.PostAsync(chatPayload);
+
+                if (Convert.ToBoolean(WriteLog))
+                {
+                    //LogService("Sending Email");
+                    Error.WriteLog_Conditional("ChatResponse - " + JsonConvert.SerializeObject(objChat));
+                }
 
                 var requestBodyMessage = new ChatMessage
                 {
@@ -101,16 +127,34 @@ namespace UTO.Notification.Teams
 
                 var chatMessage = await graphClient.Chats[objChat.Id].Messages.PostAsync(requestBodyMessage);
 
+                if (Convert.ToBoolean(WriteLog))
+                {
+                    //LogService("Sending Email");
+                    Error.WriteLog_Conditional("ChatMessageResponse - " + JsonConvert.SerializeObject(chatMessage));
+                }
+
                 return chatMessage;
-            }
-            catch (ServiceException ex)
-            {
-                throw ex;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            //}
+            //catch (ServiceException ex)
+            //{
+            //    //if (Convert.ToBoolean(WriteLog))
+            //    //{
+            //    //    //LogService("Sending Email");
+            //    //    Error.WriteLog_Conditional("GraphClientException - " + ex.Message);
+            //    //}
+
+            //    throw ex;
+            //}
+            //catch (Exception ex)
+            //{
+            //    //if (Convert.ToBoolean(WriteLog))
+            //    //{
+            //    //    //LogService("Sending Email");
+            //    //    Error.WriteLog_Conditional("GraphClientException - " + ex.Message);
+            //    //}
+
+            //    throw ex;
+            //}
         }
     }
 }

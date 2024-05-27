@@ -41,6 +41,7 @@ namespace UTO_Notification
 
             Application["WriteLog"] = ConfigurationSettings.AppSettings["WriteLog"];
             Application["LogLevel"] = Convert.ToInt16(ConfigurationSettings.AppSettings["LogLevel"]);
+            Application["LogURL"] = ConfigurationSettings.AppSettings["LogURL"];
         }
 
         private byte[] AES_Encrypt(byte[] bytesToBeEncrypted, byte[] passwordBytes)

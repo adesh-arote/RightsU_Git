@@ -75,5 +75,12 @@ namespace UTO.Notification.Email
             Client.Send(Email);
             Email.Dispose();
         }
-     }
+
+        public void Attachment(string FileAttachmentPath)
+        {
+            System.Net.Mail.Attachment attachment;
+            attachment = new System.Net.Mail.Attachment(FileAttachmentPath);
+            Email.Attachments.Add(attachment);
+        }
+    }
 }

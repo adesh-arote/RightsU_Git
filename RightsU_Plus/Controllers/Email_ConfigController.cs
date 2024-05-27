@@ -364,8 +364,9 @@ namespace RightsU_Plus.Controllers
                 BccuserEmail = string.Join(";", BccuserEmails.Where(x => !string.IsNullOrWhiteSpace(x)));
 
             bool IsValid = true;
-            if (Type != "E") { 
-            IsValid = ValidateUser(Type, BuCodes, UsersCodes, ChannelCodes, DummyGuid, SecurityGroupCode);
+            if (Type != "E") {
+                //IsValid = ValidateUser(Type, BuCodes, UsersCodes, ChannelCodes, DummyGuid, SecurityGroupCode);
+                IsValid = true;
             }
 
             if (IsValid)

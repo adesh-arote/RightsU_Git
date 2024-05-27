@@ -17,6 +17,7 @@ using System.Timers;
 using Timer = System.Timers.Timer;
 using Microsoft.Graph.Models;
 using Microsoft.Graph;
+using System.Threading.Tasks;
 
 namespace UTO.Notification.Teams
 {
@@ -290,15 +291,13 @@ namespace UTO.Notification.Teams
             }
         }
 
-        public static void RunNotifications(List<USPGetPendingNotifications> notificationList)
+        public static async Task RunNotifications(List<USPGetPendingNotifications> notificationList)
         {
             UTOLog logObj = new UTOLog();
             logObj.ApplicationName = "Notification Engine";
             Boolean isSuccess; double TimeTaken;
             String ResponseText;
             DateTime startTime;
-
-
 
             if (Convert.ToBoolean(WriteLog))
             {
@@ -335,13 +334,22 @@ namespace UTO.Notification.Teams
 
                     foreach (var item in lstToAddress)
                     {
-                        var response = TeamsHelper.SendTeamNotification(item, ChatType.OneOnOne, notification.HtmlBody, objConfig);
+                        if (Convert.ToBoolean(WriteLog))
+                        {
+                            //LogService("Inside Run Notifications");
+                            Error.WriteLog_Conditional("User - " + item);
+                        }
+
+
+                        var response =await TeamsHelper.SendTeamNotification(item, ChatType.OneOnOne, notification.HtmlBody, objConfig);
 
                         TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                        if (response != null && response.Id > 0)
+                        if (response != null && Convert.ToInt64(response.Id) > 0)
                         {
                             isSuccess = true;
-                            ResponseText += "\nMessage Sent to "+ item + " with MessageId :" + response.Id;
+                            ResponseText += "\nMessage Sent to " + item + " with MessageId :" + response.Id;
+
+                            RunUSPUpdateNotificationStatusProcedure(notification.NotificationsCode, isSuccess, 1, DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"), 0, "ChatId : "+response.ChatId+"#MessageId : "+response.Id);
                         }
                     }
 
@@ -351,13 +359,14 @@ namespace UTO.Notification.Teams
                         Error.WriteLog_Conditional("mail sent updating status in table - " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss"));
                     }
 
-                    RunUSPUpdateNotificationStatusProcedure(notification.NotificationsCode, isSuccess, 1, DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"), 0, "");
+                    
 
                 }
                 catch (ServiceException ex)
                 {
                     Error.WriteLog_Conditional("Delivery failed - " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss"));
                     ResponseText = "Delivery failed";
+                    throw ex;
                 }
                 catch (Exception ex)
                 {
@@ -380,7 +389,9 @@ namespace UTO.Notification.Teams
                         //LogService("API : RunNotifications => " + error);
                         Error.WriteLog_Conditional("API : RunNotifications => " + error + " - " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss"));
                     }
-                    RunUSPUpdateNotificationStatusProcedure(notification.NotificationsCode, isSuccess, 2, DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"), 0, Convert.ToString(ex.InnerException));
+                    RunUSPUpdateNotificationStatusProcedure(notification.NotificationsCode, isSuccess, 2, DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"), 0, error);
+
+                    throw ex;
                 }
 
                 logObj.RequestId = Convert.ToString(notification.NotificationsCode);

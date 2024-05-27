@@ -1,183 +1,40 @@
-﻿@model RightsU_Plus.Controllers.Dispatcher_SearchController.NotificationStatus
-
-
+﻿
 <script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
 <link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
 <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
 <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
 
-<script>
-    $('.Expand_Error').expander({
-        slicePoint: 50,
-        expandPrefix: '',
-        expandText: '...readmore',
-        collapseTimer: 0,
-        userCollapseText: '<span>[^]</span>'
-    });
-</script>
-<style>
-    .StatusHead {
-        font-size: 16px;
-        color: #37302E;
-        font-weight: 500;
-        padding-left: 13px;
-    }
 
-    .Statusmsg {
-        font-size: 12px;
-        color: #37302E;
-        padding-left: 13px;
-    }
-    th {
-        text-align: left;
-         width: 20%;
-    }
-
-    .scrollable-content {
-        max-height: 300px; /* Set the desired max height */
-        overflow-y: auto; /* Enable vertical scrolling */
-    }
-    .scrollable-content-Html {
-        max-height: 500px; /* Set the desired max height */
-        overflow-y: auto; /* Enable vertical scrolling */
-    }
-    
-</style>
-
-@if (ViewBag.Status != "STATUS")
-{
-    <div class="modal_block modal_header">
-        <a class="close" onclick="ClosePopup()">
-            <span>X</span>
-            <span class="sr-only">Close</span>
-        </a>
-        <h2>
-            @if (ViewBag.EventType != null)
-            {
-                @ViewBag.EventType
-            }
-            else
-            {
-                <h2>No Event</h2>
-            }
-        </h2>
-    </div>
-    <div class="modal_block">
-        <div class="tab-content clearfix table-wrapper scale_table_container">
-            <div class="scale_table_block scrollable-content-Html">
-                @Html.Raw(ViewBag.Html)
-            </div>
+<div class="modal_block modal_header">
+    <a class="close" onclick="ClosePopup()">
+        <span>X</span>
+        <span class="sr-only">Close</span>
+    </a>
+    <h2>
+        @if (ViewBag.EventType != null)
+        {
+            @ViewBag.EventType
+        }
+        else
+        {
+            <h2>No Event</h2>
+        }
+    </h2>
+</div>
+<div class="modal_block">
+    <div class="tab-content clearfix table-wrapper scale_table_container">
+        <div class="scale_table_block scrollable-content-Html">
+            @Html.Raw(ViewBag.Html)
         </div>
     </div>
-    <div class="modal_block_full" style="margin-top: 10px;">
-        <div class="form_links">
-            <ul class="modal_block clearfix" style="padding-left:10px;padding-top: 10px;">
-                <li>
-                    <input type="button" class="btn btn-primary" value="Cancel" onclick="ClosePopup()" />
-                </li>
-            </ul>
-        </div>
+</div>
+<div class="modal_block_full" style="margin-top: 10px;">
+    <div class="form_links">
+        <ul class="modal_block clearfix" style="padding-left:10px;padding-top: 10px;">
+            <li>
+                <input type="button" class="btn btn-primary" value="Cancel" onclick="ClosePopup()" />
+            </li>
+        </ul>
     </div>
-}
-@if (ViewBag.Status == "STATUS")
-{
-    <div class="modal_block modal_header">
-        <a class="close" onclick="ClosePopup()">
-            <span>X</span>
-            <span class="sr-only">Close</span>
-        </a>
-        <h2>
-            Notification Status
-        </h2>
-    </div>
-    <div class="modal_block">
-        <div class="tab-content clearfix table-wrapper scale_table_container">
-            <div class="scale_table_block">
-                <table class="table table-responsive">                   
-                    @if (Model.Response.IsSend == true)
-                    {
-                        <tr>
-                            <th>
-                                Status :
-                            </th>
-                            <td>Message Sent Succesfully</td>
-                        </tr>
-                        <tr>
-                            <th>
-                                Sent Date :
-                            </th>
-
-                            <td>
-                                @Model.Response.ModifiedOn
-                            </td>
-                        </tr>
-                    }
-                    else
-                    {
-                        <tr>
-                            <th>
-                                Status :
-                            </th>
-                            <td>
-                                Message Sent Failed
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>
-                                Sent Date :
-                            </th>
-                            <td>
-                                @Model.Response.ModifiedOn
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>
-                                Message Status Code :
-                            </th>
-                            <td>
-                                @Model.Response.MsgStatusCode
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>
-                                Retry of count :
-                            </th>
-                            <td>
-                                @Model.Response.NoOfRetry
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>
-                                Error Code :
-                            </th>
-                            <td>
-                                @Model.Response.ErrorCode
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>
-                                Error Details :
-                            </th>
-                            <td>
-                                <div class="scrollable-content Expand_Error">
-                                    @Model.Response.ErrorDetails
-                                </div>
-                            </td>                    
-                        </tr>
-                    }
-                </table>
-            </div>
-        </div>
-    </div>
-    <div class="modal_block_full" style="margin-top: 10px;">
-        <div class="form_links">
-            <ul class="modal_block clearfix" style="padding-left:10px;padding-top: 10px;">
-                <li>
-                    <input type="button" class="btn btn-primary" value="Cancel" onclick="ClosePopup()" />
-                </li>
-            </ul>
-        </div>
-    </div>
-}
-
+</div>
 

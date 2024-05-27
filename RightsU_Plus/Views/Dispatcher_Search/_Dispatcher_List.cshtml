@@ -72,8 +72,8 @@
                         @Html.DisplayFor(modelItem => item.CreatedOn)
                     </td>
                     <td>
-                        <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="MessagePopup(@item.NotificationsCode, '@Session["MessageType"]','HTMLVIEW', '')"></a>
-                        <a title="Status" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="MessagePopup(@item.NotificationsCode, '@ViewBag.MessageType', 'STATUS', '@item.Event_Platform.Short_Code')"></a>
+                        <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="MessagePopup(@item.NotificationsCode, '@Session["MessageType"]')"></a>
+                        <a title="Status" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="StatusPopup(@item.NotificationsCode, '@item.Event_Platform.Short_Code')"></a>
                     </td>
                 </tr>
             }

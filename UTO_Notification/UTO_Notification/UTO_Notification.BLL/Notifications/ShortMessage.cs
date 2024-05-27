@@ -45,7 +45,7 @@ namespace UTO_Notification.BLL.Notifications
                 return httpResponses;
             }
 
-            USPInsertNotification objOutput = objUspService.USPInsertNotification(obj.EventCategory, obj.NotificationType, obj.TO, obj.CC, obj.BCC, obj.Subject, obj.HTMLMessage, obj.TextMessage, obj.TransType, obj.TransCode, obj.ScheduleDateTime, obj.UserCode, obj.ClientName, obj.ForeignId);
+            USPInsertNotification objOutput = objUspService.USPInsertNotification(obj.EventCategory, obj.NotificationType, obj.TO, obj.CC, obj.BCC, obj.Subject, obj.HTMLMessage, obj.TextMessage, obj.TransType, obj.TransCode, obj.ScheduleDateTime, obj.UserCode, obj.ClientName, obj.ForeignId, obj.AttachmentFileName);
 
             httpResponses = httpResponseMapper.GetHttpSuccessResponse(objOutput);
             httpResponses.NECode = objOutput.NotificationsCode;
