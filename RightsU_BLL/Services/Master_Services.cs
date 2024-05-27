@@ -7792,11 +7792,12 @@ namespace RightsU_BLL
 
         private bool ValidateDuplicate(Digital_Tab objToValidate, out dynamic resultSet)
         {
-            if (SearchFor(s => s.Digital_Tab_Description == objToValidate.Digital_Tab_Description && s.Short_Name == objToValidate.Short_Name && s.Digital_Tab_Code != objToValidate.Digital_Tab_Code).Count() > 0)
+            if (SearchFor(s => (s.Digital_Tab_Description == objToValidate.Digital_Tab_Description || s.Short_Name == objToValidate.Short_Name) && s.Digital_Tab_Code != objToValidate.Digital_Tab_Code).Count() > 0)
             {
                 resultSet = "Digital Tab already exists";
                 return false;
             }
+
 
             resultSet = "";
             return true;

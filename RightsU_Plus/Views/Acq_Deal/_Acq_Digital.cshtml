@@ -35,6 +35,32 @@
             $('#hdnCurrentPageNo').val(0);
         }
         BindGrid();
+
+
+        function enforceMaxLength(element, maxLength) {
+            $(element).on('keypress', function (event) {
+                if (this.value.length >= maxLength && event.which !== 8 && event.which !== 0) {
+                    event.preventDefault();
+                }
+            });
+            $(element).on('input', function () {
+                if (this.value.length > maxLength) {
+                    this.value = this.value.slice(0, maxLength);
+                }
+            });
+
+            $(element).on('keypress', function (event) {
+                if (event.charCode === 46) {
+                    event.preventDefault();
+                }
+            });
+        }
+        $(document).on('focus', 'input[type="number"]', function () {
+            const maxLength = $(this).data('max-length');
+            if (maxLength) {
+                enforceMaxLength(this, maxLength);
+            }
+        });
     });
 
     function BindGrid() {

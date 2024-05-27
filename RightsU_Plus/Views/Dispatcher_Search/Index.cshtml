@@ -75,13 +75,21 @@
     $(document).ready(function () {
         debugger;
         addNumeric();
+
+        $('.Expand_Error').expander({
+            slicePoint: 50,
+            expandPrefix: '',
+            expandText: '...readmore',
+            collapseTimer: 0,
+            userCollapseText: '<span>[^]</span>'
+        });
     });
 
     function GetNotifications() {
         debugger;
         var pageNo = $('#hdnPageNo').val();
         var recordPerPage = $('#txtPageSize').val();
-    
+
 
             showLoading();
             $.ajax({
@@ -90,7 +98,7 @@
                 traditional: true,
                 enctype: 'multipart/form-data',
                 contentType: "application/json; charset=utf-8",
-                data: JSON.stringify({                   
+                data: JSON.stringify({
                     pageNo: pageNo,
                     recordPerPage: recordPerPage,
                     sortType: sort_Type
@@ -251,13 +259,35 @@
     }
 
 
-    function MessagePopup(Id, MsgType, ViewType, NotificationType) {
-        if (ViewType == "HTMLVIEW") {
+    function MessagePopup(Id, MsgType) {
             var URL_MessagePopUpBody = '@Url.Action("MessagePopUpBody", "Dispatcher_Search")';
-        }
-        if (ViewType == "STATUS") {
-            var URL_MessagePopUpBody = '@Url.Action("GetNotificationStatus", "Dispatcher_Search")';
-        }
+        debugger;
+            $.ajax({
+                type: "POST",
+                url: URL_MessagePopUpBody,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                data: JSON.stringify({
+                    NotificationCode: Id,
+                    MsgType: MsgType
+                }),
+                async: false,
+                success: function (result) {
+                    debugger;
+                    $('#popup').modal();
+                    $('#MsgpupupHtml').empty();
+                    $('#MsgpupupHtml').html(result);
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+        });
+    }
+    function StatusPopup(Id, NotificationType) {
+
+     var URL_MessagePopUpBody = '@Url.Action("GetNotificationStatus", "Dispatcher_Search")';
 
         debugger;
             $.ajax({
@@ -269,29 +299,83 @@
                 dataType: "html",
                 data: JSON.stringify({
                     NotificationCode: Id,
-                    MsgType: MsgType,
                     NotificationType: NotificationType
                 }),
                 async: false,
                 success: function (result) {
                     debugger;
-                        $('#popup').modal();
-                        $('#MsgpupupHtml').empty();
-                        $('#MsgpupupHtml').html(result);
+                    var JsonResponse = JSON.parse(JSON.parse(result))
+                    $('#Message').empty();
+                    $('#SentDate').empty();
+                    $('#RetryOfCount').empty();
+                    $('#ErrorCode').empty();
+                    $('#ErrorCodeDetails').empty();                
+
+                    var sentDateTime = JsonResponse.Response.SentOrReadDateTime;
+                    var dateObject = new Date(sentDateTime);
+                    var formattedDate = dateObject.toLocaleDateString(); 
+                    var formattedTime = dateObject.toLocaleTimeString(); 
+                    var formattedDateTime = formattedDate + ' ' + formattedTime;
+
+                    $('#Message').html(JsonResponse.Response.NotificationStatus);
+                    $('#SentDate').html(formattedDateTime);
+                    if (JsonResponse.Response.IsSend == false) {
+                        $('#RetryOfCount').html(JsonResponse.Response.NoOfRetry);
+                        $('#ErrorCode').html(JsonResponse.Response.ErrorCode);
+                        $('#ErrorCodeDetails').html(JsonResponse.Response.ErrorDetails);
+                    }
+                    $('#Statuspopup').modal();
+
                 },
                 error: function (result) {
                     alert('Error: ' + result.responseText);
                 }
         });
-
     }
+
+
+
     function ClosePopup() {
         debugger;
         $('#popup').modal('hide');
         $('#MsgpupupHtml').empty();
 
     }
+    function CloseStatusPopup() {
+        debugger;
+        $('#Statuspopup').modal('hide');
+    }
 </script>
+
+<style>
+    .StatusHead {
+        font-size: 16px;
+        color: #37302E;
+        font-weight: 500;
+        padding-left: 13px;
+    }
+
+    .Statusmsg {
+        font-size: 12px;
+        color: #37302E;
+        padding-left: 13px;
+    }
+
+    .Status-head {
+        text-align: left;
+        width: 20%;
+    }
+
+    .scrollable-content {
+        max-height: 250px; 
+        overflow-y: auto; 
+    }
+
+    .scrollable-content-Html {
+        max-height: 450px; 
+        overflow-y: auto; 
+    }
+</style>
 
 <div class="main_section">
     <section class="rightsU_container clearfix">
@@ -338,13 +422,13 @@
                     </tr>
 
                     @*<tr>
-                    <td colspan="6">
-                        <div class="pull-right" style="padding-right: 19px;">
-                            <input type="button" id="btnShow" class="btn btn-primary " value="Search" onclick="GetNotifications('NA')"> &nbsp; &nbsp;
-                            <input type="button" id="btnReset" class="btn btn-primary " value="Search in Archive" onclick="GetNotifications('AR')">
-                        </div>
-                    </td>
-                </tr>*@
+                            <td colspan="6">
+                                <div class="pull-right" style="padding-right: 19px;">
+                                    <input type="button" id="btnShow" class="btn btn-primary " value="Search" onclick="GetNotifications('NA')"> &nbsp; &nbsp;
+                                    <input type="button" id="btnReset" class="btn btn-primary " value="Search in Archive" onclick="GetNotifications('AR')">
+                                </div>
+                            </td>
+                        </tr>*@
 
                 </table>
             </div>
@@ -366,14 +450,14 @@
                 </div>
 
                 @*<div class="tab-content clearfix table-wrapper scale_table_container">
-                    <div class="scale_table_block">
-                        <input type="hidden" id="hdnAction" value="" />
-                        <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
-                        <div id="divExtendedList" class="deal clearfix">
+                        <div class="scale_table_block">
+                            <input type="hidden" id="hdnAction" value="" />
+                            <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
+                            <div id="divExtendedList" class="deal clearfix">
 
+                            </div>
                         </div>
-                    </div>
-                </div>*@
+                    </div>*@
             </div>
             <div class="title_block dotted_border clearfix">
             </div>
@@ -390,6 +474,76 @@
         <div class="modal-content clearfix">
             <div class="form_fields acq" id="MsgpupupHtml">
 
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="Statuspopup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none; max-height:80%;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <div class="form_fields acq" id="StatuspupupHtml">
+                <div class="modal_block modal_header">
+                    <a class="close" onclick="CloseStatusPopup()">
+                        <span>X</span>
+                        <span class="sr-only">Close</span>
+                    </a>
+                    <h2>
+                        Notification Status
+                    </h2>
+                </div>
+                <div class="modal_block">
+                    <div class="tab-content clearfix table-wrapper scale_table_container">
+                        <div class="scale_table_block">
+                            <table class="table table-responsive">
+                                <tr>
+                                    <th class="Status-head">
+                                        Status :
+                                    </th>
+                                    <td id="Message"></td>
+                                </tr>
+                                <tr>
+                                    <th class="Status-head">
+                                        Sent Date :
+                                    </th>
+
+                                    <td id="SentDate"></td>
+                                </tr>
+                                <tr>
+                                    <th class="Status-head">
+                                        Retry of count :
+                                    </th>
+                                    <td id="RetryOfCount"></td>
+                                </tr>
+                                <tr>
+                                    <th class="Status-head">
+                                        Error Code :
+                                    </th>
+                                    <td id="ErrorCode"></td>
+                                </tr>
+                                <tr>
+                                    <th class="Status-head">
+                                        Error Details :
+                                    </th>
+                                    <td>
+                                        <div class="scrollable-content Expand_Error" id="ErrorCodeDetails">
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal_block_full" style="margin-top: 10px;">
+                    <div class="form_links">
+                        <ul class="modal_block clearfix" style="padding-left:10px;padding-top: 10px;">
+                            <li>
+                                <input type="button" class="btn btn-primary" value="Cancel" onclick="CloseStatusPopup()" />
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

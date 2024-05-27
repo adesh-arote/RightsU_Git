@@ -576,7 +576,7 @@ namespace RightsU_Plus.Controllers
                 status = "E";
                 message = "Order in column should be Same";
             }
-            else if(lstDigital_Config_Searched.Where(s => s.Digital_Code.ToString() == str_digital && s.Page_Control_Order.ToString() == str_pageControlOrder && s.EntityState != State.Deleted).Count() > 0)
+            else if (lstDigital_Config_Searched.Where(s => s.Digital_Code.ToString() == str_digital && s.Page_Control_Order.ToString() == str_pageControlOrder && s.EntityState != State.Deleted).Count() > 0)
             {
                 status = "E";
                 message = "Column order should not be Same";
@@ -830,64 +830,94 @@ namespace RightsU_Plus.Controllers
             RightsU_Entities.Digital_Tab objDigital_Tab = new RightsU_Entities.Digital_Tab();
             Digital_Config objDigital_Config = new Digital_Config();
 
-
-            objDigital_Tab = new Digital_Tab_Service(objLoginEntity.ConnectionStringName).GetById(DigitalTabCode);
-
-            //Key Config Dropdown list             
-            TempData["KeyConfigDDL"] = new SelectList(objDigital_Tab.Digital_Config.Where(x => x.Control_Type == "TXTDDL").ToList(), "Digital_Config_Code", "Digital.Digital_Name", objDigital_Tab.Key_Config_Code);
-
-            if (objDigital_Tab.Key_Config_Code > 0 || objDigital_Tab.Key_Config_Code != null)
+            try
             {
-                objDigital_Config = objDigital_Tab.Digital_Config.Where(x => x.Digital_Config_Code == objDigital_Tab.Key_Config_Code).SingleOrDefault();
+                objDigital_Tab = new Digital_Tab_Service(objLoginEntity.ConnectionStringName).GetById(DigitalTabCode);
 
-                //DigitalData Dropdown List
-                List<Digital_Data> lstDigitalData = new Digital_Data_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Digital_Type == objDigital_Config.Whr_Criteria).ToList();
+                //Key Config Dropdown list             
+                TempData["KeyConfigDDL"] = new SelectList(objDigital_Tab.Digital_Config.Where(x => x.Control_Type == "TXTDDL").ToList(), "Digital_Config_Code", "Digital.Digital_Name", objDigital_Tab.Key_Config_Code);
 
-                int[] selectedDigitalData = !string.IsNullOrEmpty(objDigital_Config.LP_Digital_Data_Code) ? objDigital_Config.LP_Digital_Data_Code.Split(',').Select(x => int.Parse(x)).ToArray() : new int[0];
-                TempData["DigitalDataDDL"] = new MultiSelectList(lstDigitalData, "Digital_Data_Code", "Data_Description", selectedDigitalData);
-
-                //DigitalValueConfig Dropdown List
-                var DigitalValueConfig = new Digital_Data_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Digital_Type == objDigital_Config.Whr_Criteria).ToList();
-
-                int[] SelectedDigitalValueConfig = !string.IsNullOrEmpty(objDigital_Config.LP_Digital_Value_Config_Code) ? objDigital_Config.LP_Digital_Value_Config_Code.Split(',').Select(x => int.Parse(x)).ToArray() : new int[0];
-                TempData["DigitalValueConfigDDL"] = new MultiSelectList(objDigital_Tab.Digital_Config, "Digital_Config_Code", "Digital.Digital_Name", SelectedDigitalValueConfig);
-
-                if (objDigital_Tab.Is_Show == "Y")
+                if (objDigital_Tab.Key_Config_Code > 0 || objDigital_Tab.Key_Config_Code != null)
                 {
-                    ViewBag.DisplayLevel = "TL";
-                }
-                else if (objDigital_Tab.Is_Show == "N")
-                {
-                    if (!string.IsNullOrEmpty(objDigital_Config.LP_Digital_Data_Code) && !string.IsNullOrEmpty(objDigital_Config.LP_Digital_Value_Config_Code))
+                    objDigital_Config = objDigital_Tab.Digital_Config.Where(x => x.Digital_Config_Code == objDigital_Tab.Key_Config_Code).SingleOrDefault();
+
+                    if (objDigital_Config != null)
                     {
-                        ViewBag.DisplayLevel = "DL";
+                        //DigitalData Dropdown List
+                        List<Digital_Data> lstDigitalData = new Digital_Data_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Digital_Type == objDigital_Config.Whr_Criteria).ToList();
+
+                        int[] selectedDigitalData = !string.IsNullOrEmpty(objDigital_Config.LP_Digital_Data_Code) ? objDigital_Config.LP_Digital_Data_Code.Split(',').Select(x => int.Parse(x)).ToArray() : new int[0];
+                        TempData["DigitalDataDDL"] = new MultiSelectList(lstDigitalData, "Digital_Data_Code", "Data_Description", selectedDigitalData);
+
+                        //DigitalValueConfig Dropdown List
+                        var DigitalValueConfig = new Digital_Data_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Digital_Type == objDigital_Config.Whr_Criteria).ToList();
+
+                        int[] SelectedDigitalValueConfig = !string.IsNullOrEmpty(objDigital_Config.LP_Digital_Value_Config_Code) ? objDigital_Config.LP_Digital_Value_Config_Code.Split(',').Select(x => int.Parse(x)).ToArray() : new int[0];
+                        TempData["DigitalValueConfigDDL"] = new MultiSelectList(objDigital_Tab.Digital_Config, "Digital_Config_Code", "Digital.Digital_Name", SelectedDigitalValueConfig);
+
+                        if (objDigital_Tab.Is_Show == "Y")
+                        {
+                            ViewBag.DisplayLevel = "TL";
+                        }
+                        else if (objDigital_Tab.Is_Show == "N")
+                        {
+                            if (!string.IsNullOrEmpty(objDigital_Config.LP_Digital_Data_Code) && !string.IsNullOrEmpty(objDigital_Config.LP_Digital_Value_Config_Code))
+                            {
+                                ViewBag.DisplayLevel = "DL";
+                            }
+                            else
+                            {
+                                ViewBag.DisplayLevel = "NS";
+                            }
+                        }
                     }
                     else
                     {
-                        ViewBag.DisplayLevel = "NS";
+                        if (objDigital_Tab.Is_Show == "Y")
+                        {
+                            ViewBag.DisplayLevel = "TL";
+                        }
+                        else if (objDigital_Tab.Is_Show == "N")
+                        {
+                            ViewBag.DisplayLevel = "NS";
+                        }
+
+                        //DigitalData Dropdown List
+                        List<Digital_Data> lstDigitalData = new List<Digital_Data>();
+
+                        TempData["DigitalDataDDL"] = new MultiSelectList(lstDigitalData, "Digital_Data_Code", "Data_Description");
+
+                        //DigitalValueConfig Dropdown List
+                        List<Digital_Data> DigitalValueConfig = new List<Digital_Data>();
+
+                        TempData["DigitalValueConfigDDL"] = new MultiSelectList(objDigital_Tab.Digital_Config, "Digital_Config_Code", "Digital.Digital_Name");
                     }
                 }
+                else
+                {
+                    if (objDigital_Tab.Is_Show == "Y")
+                    {
+                        ViewBag.DisplayLevel = "TL";
+                    }
+                    else if (objDigital_Tab.Is_Show == "N")
+                    {
+                        ViewBag.DisplayLevel = "NS";
+                    }
+
+                    //DigitalData Dropdown List
+                    List<Digital_Data> lstDigitalData = new List<Digital_Data>();
+
+                    TempData["DigitalDataDDL"] = new MultiSelectList(lstDigitalData, "Digital_Data_Code", "Data_Description");
+
+                    //DigitalValueConfig Dropdown List
+                    List<Digital_Data> DigitalValueConfig = new List<Digital_Data>();
+
+                    TempData["DigitalValueConfigDDL"] = new MultiSelectList(objDigital_Tab.Digital_Config, "Digital_Config_Code", "Digital.Digital_Name");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                if (objDigital_Tab.Is_Show == "Y")
-                {
-                    ViewBag.DisplayLevel = "TL";
-                }
-                else if (objDigital_Tab.Is_Show == "N")
-                {
-                    ViewBag.DisplayLevel = "NS";
-                }
-
-                //DigitalData Dropdown List
-                List<Digital_Data> lstDigitalData = new List<Digital_Data>();
-
-                TempData["DigitalDataDDL"] = new MultiSelectList(lstDigitalData, "Digital_Data_Code", "Data_Description");
-
-                //DigitalValueConfig Dropdown List
-                List<Digital_Data> DigitalValueConfig = new List<Digital_Data>();
-
-                TempData["DigitalValueConfigDDL"] = new MultiSelectList(objDigital_Tab.Digital_Config, "Digital_Config_Code", "Digital.Digital_Name");
+                throw;
             }
             //ViewBag.UserModuleRights = GetUserModuleRights();
             return PartialView("~/Views/DigitalConfig/_DigitalTabListViewConfig.cshtml", objDigital_Tab);
@@ -957,7 +987,7 @@ namespace RightsU_Plus.Controllers
             }
             else if (str_DisplayLevel == "DL")
             {
-                objDigitalTab.Is_Show = "N";
+                objDigitalTab.Is_Show = "Y";
 
 
                 objDigital_Config.LP_Digital_Data_Code = str_LP_Digital_Data_Code;

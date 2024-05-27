@@ -33,6 +33,14 @@
             $('#txtText_Field').val('Data_Description');
             $('#txtValue_Field').val('Digital_Data_Code');
 
+            $('#txtView_Name').attr("disabled", "disabled");
+            $('#txtText_Field').attr("disabled", "disabled");
+            $('#txtValue_Field').attr("disabled", "disabled");
+
+            $('#txtView_Name').attr("title", "Digital_Data")
+            $('#txtText_Field').attr("title", "Data_Description")
+            $('#txtValue_Field').attr("title", "Digital_Data_Code")
+
             $('#lnkDigitalData').show();
         } else if (controlType == "CHK") {
             $('#txtMax_Length').val('');
@@ -147,7 +155,7 @@
                     @Html.TextBox("txtControl_Field_Order", "1", new { @class = "numeric", maxlength = 15 })
                 </td>
                 <td align="center">
-                    @Html.TextBox("txtView_Name", "", new { @class = "alpha", maxlength = 50 })
+                    @Html.TextBox("txtView_Name", "", new { @class = "alpha", maxlength = 50})
                 </td>
                 <td align="center">
                     @Html.TextBox("txtText_Field", "", new { @class = "alpha", maxlength = 50 })
@@ -206,7 +214,7 @@
                             @Html.TextBoxFor(x => item.Control_Field_Order, new { @class = "numeric", maxlength = 15, id = "txtControl_Field_Order" })
                         </td>
                         <td align="center">
-                            @Html.TextBoxFor(x => item.View_Name, new { @class = "alpha", maxlength = 50, id = "txtView_Name" })
+                            @Html.TextBoxFor(x => item.View_Name, new { @class = "alpha", maxlength = 50, id = "txtView_Name"})
                         </td>
                         <td align="center">
                             @Html.TextBoxFor(x => item.Text_Field, new { @class = "alpha", maxlength = 50, id = "txtText_Field" })
