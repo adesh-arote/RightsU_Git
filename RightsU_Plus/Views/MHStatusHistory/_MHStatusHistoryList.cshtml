@@ -1,0 +1,51 @@
+﻿@model List<RightsU_Entities.USPMHRequisitionList_Result>
+@using UTOFrameWork.FrameworkClasses;
+<script>
+    $(document).ready(function () {
+        $("#lblRecordCount").text(@ViewBag.RecordCount);
+        $("#hdnRecordCount").val(@ViewBag.RecordCount);
+        $("#txtPageSize").val(@ViewBag.PageSize);
+        $("#hdnPageNo").val(@((ViewBag.PageNo ?? 1)));
+        SetPaging1();
+    });
+</script>
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th style="width:12%;">Request ID</th>
+            <th style="width:15%;">Show Name</th>
+            <th style="width:8%;">Episode No</th>
+            <th style="width:8%;">Requested Songs</th>
+            <th style="width:15%;">Music Label</th>
+            <th style="width:18%;">Requested By</th>
+            <th style="width:11%">Requested Date</th> 
+            <th style="width:10%;">Status</th>         
+        </tr>
+    </thead>
+
+    <tbody>
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.RequestID</td>
+                    <td>@((item.ShowName ?? "NA"))</td>
+                    <td align="center">@item.EpisodeNo</td>
+                    <td align="center">@item.Songs</td>
+                    <td>@((item.MusicLabel ?? "NA"))</td>
+                    <td>@item.RequestedBy</td>                  
+                    <td align="center">@string.Format("{0:" + GlobalParams.DateFormat_Display + "}", item.RequestedDate)</td>   
+                    <td >@item.Status</td>                 
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="8">No record found</td>
+            </tr>
+        }
+    </tbody>
+</table>

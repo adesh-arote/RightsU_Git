@@ -1,0 +1,641 @@
+﻿@{
+    ViewBag.Title = "Scheduling_Instruction";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/CSS/common.css" rel="stylesheet" />
+<link href="~/CSS/responsive.css" rel="stylesheet" media="screen and (max-width:960px) and (max-height:640px)" />
+<link href="~/CSS/chosen.min.css" rel="stylesheet" />
+<link type="text/css" rel="stylesheet" href="../css/ui.fancytree.css">
+<link type="text/css" rel="stylesheet" href="../css/breadcrumb.css">
+
+
+<script src="~/Scripts/jquery-3.0.0.min.js"></script>
+<script src="~/JS_Core/jquery-ui.min.js"></script>
+<script src="~/JS_Core/chosen.jquery.min.js"></script>
+<script src="~/JS_Core/common.concat.js"></script>
+<script type="text/javascript" src="../js/jquery.expander.js"></script>
+<script type="text/javascript" src="../js/jquery.fancytree.js"></script>
+
+
+
+<script language="javascript" type="text/javascript">
+    function checkAll(elm, name) {
+        for (var i = 0; i < elm.form.elements.length; i++)
+            if (elm.form.elements[i].name.indexOf(name) == 0)
+                elm.form.elements[i].checked = elm.checked;
+    }
+    function checkAllPopup(elm, name) {
+        for (var i = 0; i < elm.form.elements.length; i++)
+            if (elm.form.elements[i].name.indexOf(name) == 0)
+                elm.form.elements[i].checked = elm.checked;
+    }
+    function showNewProgram() {
+        self.parent.document.getElementById("AddProgram").style.display = '';
+    }
+    function ShowMore() {
+        document.getElementById("AddMore").style.display = '';
+    }
+    function ShowCancel() {
+        document.getElementById("AddMore").style.display = 'none';
+    }
+
+    // Popup Chekbox add Remove
+
+    jQuery(document).ready(function () {
+        //--------------------xxxx
+        $("[name='optMovieType1']").on('click', function () {
+            debugger;
+            if ($('#optEpisode').is(':checked') == true) {
+                $('#divAsset').hide();
+                $('#divEpisode').show();
+                $('.episodeno').show();
+            }
+            else {
+                $('#divAsset').show();
+                $('#divEpisode').hide();
+                $('.episodeno').hide();
+            }
+        });
+
+        $("[name='check1']").on('click', function () {
+            debugger;
+            if ($('#ascheck1').is(':checked') == true) {
+                $('#asrule1').show();
+                $('#asruleblank1').hide();
+            }
+            else {
+                $('#asrule1').hide();
+                $('#asruleblank1').show();
+            }
+
+            if ($('#ascheck2').is(':checked') == true) {
+                $('#asrule2').show();
+                $('#asruleblank2').hide();
+            }
+            else {
+                $('#asrule2').hide();
+                $('#asruleblank2').show();
+            }
+            if ($('#ascheck3').is(':checked') == true) {
+                $('#asrule3').show();
+                $('#asruleblank3').hide();
+            }
+            else {
+                $('#asrule3').hide();
+                $('#asruleblank3').show();
+            }
+            if ($('#ascheck4').is(':checked') == true) {
+                $('#asrule4').show();
+                $('#asruleblank4').hide();
+            }
+            else {
+                $('#asrule4').hide();
+                $('#asruleblank4').show();
+            }
+
+
+            if ($('#epcheck1').is(':checked') == true) {
+                $('#eprule1').show();
+                $('#epruleblank1').hide();
+
+            }
+            else {
+                $('#eprule1').hide();
+                $('#epruleblank1').show();
+            }
+
+            if ($('#epcheck2').is(':checked') == true) {
+                $('#eprule2').show();
+                $('#epruleblank2').hide();
+
+            }
+            else {
+                $('#eprule2').hide();
+                $('#epruleblank2').show();
+            }
+
+            if ($('#epcheck3').is(':checked') == true) {
+                $('#eprule3').show();
+                $('#epruleblank3').hide();
+
+            }
+            else {
+                $('#eprule3').hide();
+                $('#epruleblank3').show();
+            }
+
+            if ($('#epcheck4').is(':checked') == true) {
+                $('#eprule4').show();
+                $('#epruleblank4').hide();
+
+            }
+            else {
+                $('#eprule4').hide();
+                $('#epruleblank4').show();
+            }
+
+
+        });
+
+        //$("[name='check1']").on('click', function () {
+        //    debugger;
+        //    if ($('#checkallasset').is(':checked') == true) {
+        //        $('#asrule1').show();
+        //        $('#asrule2').show();
+        //        $('#asrule3').show();
+        //        $('#asrule4').show();
+        //        }
+        //    else {
+        //        $('#asrule1').hide();
+        //        $('#asrule2').hide();
+        //        $('#asrule3').hide();
+        //        $('#asrule4').hide();
+
+
+        //    }
+        //});
+
+        //$('.pChk').click(function () {
+        //    if ($(this).is(':checked')) {
+        //        $("#ProjectListButton").show();
+        //    } else {
+        //        $("#ProjectListButton").hide();
+        //    }
+        //});
+
+        $('#headerCheckbox').click(function () {
+            // debugger;
+            var isheaderChecked = this.checked;
+            if (isheaderChecked) {
+                $(".childCheckBox").each(function () {
+                    this.checked = true;
+                })
+            }
+            else {
+                $(".childCheckBox").each(function () {
+                    this.checked = false;
+                })
+            }
+        })
+
+        $('#footerCheckbox').click(function () {
+            // debugger;
+            var isheaderChecked = this.checked;
+            if (isheaderChecked) {
+                $(".checkbox").each(function () {
+                    this.checked = true;
+                })
+            }
+            else {
+                $(".checkbox").each(function () {
+                    this.checked = false;
+                })
+            }
+        })
+
+        $('#cAll').change(function () {
+            if (this.checked) {
+                document.getElementById("1").style.display = '';
+                document.getElementById("2").style.display = '';
+                document.getElementById("3").style.display = '';
+            }
+            else {
+
+                document.getElementById("1").style.display = 'none';
+                document.getElementById("2").style.display = 'none';
+                document.getElementById("3").style.display = 'none';
+
+            }
+        });
+
+        $('#SelectTitle').click(function () {
+            $(".childCheckBox").each(function () {
+                if (c11.checked == true) {
+                    document.getElementById("tr1").style.display = 'none';
+                    document.getElementById("1").style.display = '';
+                    //c11.checked = false;
+                }
+                else {
+
+                    document.getElementById("1").style.display = 'none';
+                }
+
+                if (c22.checked == true) {
+                    document.getElementById("tr2").style.display = 'none';
+                    document.getElementById("2").style.display = '';
+                }
+                else {
+
+                    document.getElementById("2").style.display = 'none';
+                }
+
+                if (c33.checked == true) {
+                    document.getElementById("tr3").style.display = 'none';
+                    document.getElementById("3").style.display = '';
+                }
+                else {
+
+                    document.getElementById("3").style.display = 'none';
+                }
+            });
+            $('#headerCheckbox').attr('checked', false);
+        });
+
+        $('#RemoveTitle').click(function () {
+            $(".checkbox").each(function () {
+                if (chk1.checked == true) {
+                    document.getElementById("tr1").style.display = '';
+                    document.getElementById("1").style.display = 'none';
+                    //chk1.checked = false;
+                }
+                if (chk2.checked == true) {
+                    document.getElementById("tr2").style.display = '';
+                    document.getElementById("2").style.display = 'none';
+                }
+                if (chk3.checked == true) {
+                    document.getElementById("tr3").style.display = '';
+                    document.getElementById("3").style.display = 'none';
+                }
+            })
+
+            $('#footerCheckbox').attr('checked', false);
+
+        });
+
+
+        //	$('#c11').change(function () {
+        //		if (this.checked) {
+        //			document.getElementById("1").style.display = '';
+        //		}
+        //		else {
+        //
+        //			document.getElementById("1").style.display = 'none';
+        //		}
+        //	});
+        //
+        //	$('#c22').change(function () {
+        //		if (this.checked) {
+        //			document.getElementById("2").style.display = '';
+        //		}
+        //		else {
+        //
+        //			document.getElementById("2").style.display = 'none';
+        //		}
+        //	});
+        //
+        //	$('#c33').change(function () {
+        //		if (this.checked) {
+        //			document.getElementById("3").style.display = '';
+        //		}
+        //		else {
+        //
+        //			document.getElementById("3").style.display = 'none';
+        //		}
+        //	});
+    });
+
+    //$('input[type="radio"]').click(function () {
+    //    debugger;
+    //    if ($(this).attr("value") == "optAssetValue") {
+    //        $("#divEpisode").hide();
+
+    //        $("#divAsset").show();
+    //    }
+    //    if ($(this).attr("value") == "optEpisodeValue") {
+    //        $("##divAsset").hide();
+
+    //        $("#divEpisode").show();
+    //    }
+    //    if ($(this).attr("value") == "blue") {
+    //        $(".box").not(".blue").hide();
+    //        $(".blue").show();
+    //    }
+    //});
+
+
+
+</script>
+<style>
+    .search_area {
+        border-bottom: 1px dotted #777;
+        padding: 5px;
+        background-color: #eee;
+    }
+
+    .form_wrapper {
+        max-width: 910px !important;
+        width: 100%;
+        margin: 0 auto;
+    }
+</style>
+
+
+
+<div class="main_section">
+    <div class="container acq main_col">
+        <div class="">
+            <div class="title_block dotted_border clearfix">
+                <h2 class="pull-left">
+                    Scheduling Instruction
+                    <span></span>
+                </h2>
+                <!--div class="pull-left">
+                        <ul class="breadcrumb">
+                            <li><a href="EmbeddedMusic.htm">MUSIC</a></li>
+                            <li ><a href="MusicProgram.htm">PROGRAM</a></li>
+                            <li><a href="MusicAssign.htm">ASSIGN</a></li>
+                            <li><a href="#">&nbsp;</a></li>
+                        </ul >
+                </div-->
+                <div class="right_nav pull-right">
+                </div>
+            </div>
+            <div class="search_area">
+                <table class="table">
+                    <tr>
+                        <!--<td style="width:10%;">Program Name</td>
+                        <td style="width:20%;">
+                            <input type="text" style="width:100%" class="musicSearch" placeholder="Program Name" />
+                        </td>-->
+                        <td style="width:10%">
+                            <label class="radio-inline">
+                                <input type="radio" checked name="optMovieType1" id="optAsset" value="optAssetValue">On Asset
+
+                            </label>
+                        </td>
+                        <td style="width:10%">
+                            <label class="radio-inline">
+                                <input type="radio" name="optMovieType1" id="optEpisode" value="optEpisodeValue">On Episode
+                            </label>
+                        </td>
+                        <td style="width:10%; text-align:right;">Asset</td>
+                        <td style="width:10%;">
+                            <input type="text" class="" placeholder="Digital Asset" />
+                        </td>
+                        <td class="episodeno" style="width:10%; text-align:right; display:none"> Episode #</td>
+                        <td class="episodeno" style="width:10%; display:none">
+                            <input type="text" style="width:50px" class="" placeholder="From" />
+                            <input type="text" style="width:50px" class="" placeholder="To" />
+                        </td>
+                        <td>
+                            <input type="button" class="button" value="Search">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="grid_area">
+                <div style="border-bottom: 1px dotted #777; display:none;"><h3 id="musicShow">Music Program</h3></div>
+                <div class="paging_area clearfix">
+                    <span class="pull-left">Total Records: 4</span>
+                    <div id="Pagination" class="pagination"><span class="current prev">&lt;&lt;</span><span class="current">1</span><span class="current next">&gt;&gt;</span></div>
+                    @*<ul class="pagination pull-right">
+                        <li class="disabled">
+                            <a href="#" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        <li class="active"><a href="#">1</a></li>
+                        <li><a href="#">2</a></li>
+                        <li><a href="#">3</a></li>
+                        <li><a href="#">4</a></li>
+                        <li><a href="#">5</a></li>
+                        <li>
+                            <a href="#" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>*@
+                    <span class="pull-right">Page Size: <input type="text" class="smallTextBox" value="100"></span>
+                </div>
+                <div class="tab-content clearfix table-wrapper scale_table_container">
+                    <div class="scale_table_block" id="divAsset">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="width:5%;"> <input type="checkbox" name="check1" id="checkallasset" onclick="checkAll(this,'check')" /></th>
+                                    <th style="width:30%;">Asset</th>
+                                    <th style="width:15%;">Duration (min)</th>
+                                    <th style="width:15%;">Asset Type</th>
+                                    <th style="width:15%;">Release Date</th>
+                                    <th style="width:20%;">Rule</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td align="center"><input type="checkbox" name="check1" id="ascheck1" value="1" class="checkbox" /> </td>
+                                    <td>Rowdy Badshah</td>
+                                    <td style="text-align:center">30</td>
+                                    <td style="text-align:center">Movie</td>
+                                    <td style="text-align:center">
+                                        25/09/2016
+                                        <!--<input type="text" value="25/09/2016" name="" />-->
+                                    </td>
+                                    <td id="asruleblank1"></td>
+                                    <td style="display:none" id="asrule1">
+                                        <select name="ddlLicensor" id="ddlProducer" class="form_input chosen-select">
+                                            <option selected="selected" value="1">POE01HR</option>
+                                            <option value="1">POE24HR</option>
+                                            <option value="2">PRE24HR</option>
+                                            <option value="3">POE08HR</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="center"><input type="checkbox" id="ascheck2" name="check1" value="1" class="checkbox" /> </td>
+                                    <td>Ki & Ka</td>
+                                    <td style="text-align:center">120</td>
+                                    <td style="text-align:center">Movie</td>
+                                    <td style="text-align:center">
+                                        10/08/2016
+                                        <!--<input type="text" value="10/08/2016" name="" />-->
+                                    </td>
+                                    <td id="asruleblank2"></td>
+                                    <td id="asrule2" style="display:none">
+                                        <select name="ddlLicensor" id="ddlProducer" class="form_input chosen-select">
+                                            <option>--Please Select--</option>
+                                            <option value="1">POE01HR</option>
+                                            <option value="1">POE24HR</option>
+                                            <option value="2">PRE24HR</option>
+                                            <option value="3">POE08HR</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="center"><input type="checkbox" id="ascheck3" name="check1" value="1" class="checkbox" /> </td>
+                                    <td>Sasural Simar Ka</td>
+                                    <td style="text-align:center">30</td>
+                                    <td style="text-align:center">Program</td>
+                                    <td style="text-align:center">
+                                        10/06/2016
+                                        <!--<input type="text" value="10/06/2016" name="" />-->
+                                    </td>
+                                    <td id="asruleblank3"></td>
+                                    <td id="asrule3" style="display:none;">
+                                        <select name="ddlLicensor" id="ddlProducer" class="form_input chosen-select">
+                                            <option>--Please Select--</option>
+                                            <option value="1">POE01HR</option>
+                                            <option value="1">POE24HR</option>
+                                            <option value="2">PRE24HR</option>
+                                            <option value="3">POE08HR</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="center"><input type="checkbox" id="ascheck4" name="check1" value="1" class="checkbox" /> </td>
+                                    <td>Jhalak Dikhla Ja 8</td>
+                                    <td style="text-align:center">60</td>
+                                    <td style="text-align:center">Program</td>
+                                    <td style="text-align:center">
+                                        20/09/2016
+                                        <!--<input type="text" value="20/09/2016" name="" />-->
+                                    </td>
+                                    <td id="asruleblank4"></td>
+                                    <td id="asrule4" style="display:none;">
+                                        <select name="ddlLicensor" id="ddlProducer" class="form_input chosen-select">
+                                            <option>--Please Select--</option>
+                                            <option value="1">POE01HR</option>
+                                            <option value="1">POE24HR</option>
+                                            <option value="2">PRE24HR</option>
+                                            <option value="3">POE08HR</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="scale_table_block" id="divEpisode" style="display:none;">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="width:5%;"><input type="checkbox" name="check1" onclick="checkAll(this,'check')" /></th>
+                                    <th style="width:15%">Title</th>
+                                    <th style="width:5%">Episode</th>
+                                    <th style="width:15%;">Asset</th>
+                                    <th style="width:15%;">Duration (min)</th>
+                                    <th style="width:15%;">Asset Type</th>
+                                    <th style="width:15%;">Release Date</th>
+                                    <th style="width:15%;">Rule</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td align="center"><input type="checkbox" id="epcheck1" name="check1" value="1" class="checkbox" /> </td>
+                                    <td>Rowdy Badshah</td>
+                                    <td style="text-align:center">-</td>
+                                    <td>Rowdy Badshah</td>
+                                    <td style="text-align:center">30</td>
+                                    <td style="text-align:center">Movie</td>
+                                    <td style="text-align:center">
+                                        25/09/2016
+                                        <!--<input type="text" value="25/09/2016" name="" />-->
+                                    </td>
+                                    <td id="epruleblank1"></td>
+                                    <td id="eprule1" style="display:none;">
+                                        <select name="ddlLicensor" id="ddlProducer" class="form_input chosen-select">
+
+                                            <option value="1">POE01HR</option>
+                                            <option value="1">POE24HR</option>
+                                            <option value="2">PRE24HR</option>
+                                            <option value="3">POE08HR</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="center"><input type="checkbox" id="epcheck2" name="check1" value="1" class="checkbox" /> </td>
+                                    <td>Ki & Ka</td>
+                                    <td style="text-align:center">-</td>
+                                    <td>Ki & Ka</td>
+                                    <td style="text-align:center">120</td>
+                                    <td style="text-align:center">Movie</td>
+                                    <td style="text-align:center">
+                                        10/08/2016
+                                        <!--<input type="text" value="10/08/2016" name="" />-->
+                                    </td>
+                                    <td id="epruleblank2"></td>
+                                    <td id="eprule2" style="display:none;">
+                                        <select name="ddlLicensor" id="ddlProducer" class="form_input chosen-select">
+                                            <option>--Please Select--</option>
+                                            <option value="1">POE01HR</option>
+                                            <option value="1">POE24HR</option>
+                                            <option value="2">PRE24HR</option>
+                                            <option value="3">POE08HR</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="center"><input type="checkbox" id="epcheck3" name="check1" value="1" class="checkbox" /> </td>
+                                    <td>JDJ 1</td>
+                                    <td style="text-align:center">1</td>
+                                    <td>Sasural Simar Ka</td>
+                                    <td style="text-align:center">30</td>
+                                    <td style="text-align:center">Program</td>
+                                    <td style="text-align:center">
+                                        10/06/2016
+                                        <!--<input type="text" value="10/06/2016" name="" />-->
+                                    </td>
+                                    <td id="epruleblank3"></td>
+                                    <td id="eprule3" style="display:none;">
+                                        <select name="ddlLicensor" id="ddlProducer" class="form_input chosen-select">
+                                            <option>--Please Select--</option>
+                                            <option value="1">POE01HR</option>
+                                            <option value="1">POE24HR</option>
+                                            <option value="2">PRE24HR</option>
+                                            <option value="3">POE08HR</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="center"><input type="checkbox" name="check1" value="1" class="checkbox" id="epcheck4" /> </td>
+                                    <td>JDJ 2</td>
+                                    <td style="text-align:center">2</td>
+                                    <td>Jhalak Dikhla Ja 8</td>
+                                    <td style="text-align:center">60</td>
+                                    <td style="text-align:center">Program</td>
+                                    <td style="text-align:center">
+                                        20/09/2016
+                                        <!--<input type="text" value="20/09/2016" name="" />-->
+                                    </td>
+                                    <td id="epruleblank4"></td>
+                                    <td style="display:none;" id="eprule4">
+                                        <select name="ddlLicensor" id="ddlProducer" class="form_input chosen-select">
+                                            <option>--Please Select--</option>
+                                            <option value="1">POE01HR</option>
+                                            <option value="1">POE24HR</option>
+                                            <option value="2">PRE24HR</option>
+                                            <option value="3">POE08HR</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="bottom_action">
+                    <ul class="form_link_nav clearfix">
+                        <li>
+                            <a class="btn btn-primary" href="#">Apply</a>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary" onclick="location.href = '@Url.Action("Digital", "Digital_Rights")'">Back</a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="bottom_action">
+                    <!--ul class="form_link_nav clearfix">
+                        <li>
+                            <span class="btn-primary" onclick="window.location.href='EmbeddedMusic.htm';" style="cursor: pointer;">BACK</span>
+                        </li>
+                        <li>
+                            <span class="btn-primary" onclick="window.location.href='MusicAssign.htm';" style="cursor: pointer;">NEXT</span>
+                        </li>
+
+                    </ul -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

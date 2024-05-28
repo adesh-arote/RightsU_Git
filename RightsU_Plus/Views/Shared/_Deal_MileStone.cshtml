@@ -1,0 +1,181 @@
+﻿@model IEnumerable<RightsU_Entities.USP_Add_ACQ_Milestone_Result>
+
+<script type="text/javascript">
+    function ClearDates(rowIndex) {
+        $("#txtActual_Right_Start_Date_" + rowIndex).val('');
+    }
+
+    function HidePopup() { $("#popSetMileStone").hide(); }
+
+    function SaveMilestone() {
+        var strConcat = "";
+        var cnt = 0;
+        cnt = '@Model.Count()';
+        var cntForSave = 0;
+        var isValid = true;
+        for (var i = 0; i < cnt ; i++) {
+            var strTitleCode = $('#Title_Code_' + i).val();
+            var strAcq_Deal_Rights_Code = $('#Acq_Deal_Rights_Code_' + i).val();
+            var strStart_Date = $('#txtActual_Right_Start_Date_' + i).val();
+            var strMilNoOfUnit = $('#Milestone_No_Of_Unit_' + i).val();
+            var strMilnitType = $('#Milestone_Unit_Type_' + i).val();
+            debugger;
+            if ($.trim(strStart_Date) == '')
+            {
+                $('#txtActual_Right_Start_Date_' + i).addClass("required");
+                isValid = false;
+            }
+            else
+                $('#txtActual_Right_Start_Date_' + i).removeClass("required");
+
+            if (isValid) {
+                cntForSave = cntForSave + 1;
+                strConcat = strConcat + "~" + strTitleCode + "#" + strAcq_Deal_Rights_Code + "#" + strStart_Date + "#" + strMilNoOfUnit + "#" + strMilnitType;
+            }
+        }
+        if (!isValid)
+        {
+            showAlert('E', 'Please Select Start Date');
+            return false;
+        }
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("SaveMilestone", "Acq_List")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                MileStoneData: strConcat
+            }),
+            success: function (result) {
+                hideLoading();
+                if (result.RedirectTo == 'Index') {
+                        @*window.location.href = '@Url.Action("Index", "Acq_List")';
+                        return false;*@
+                    $('div.modal-backdrop').hide();
+                    $('#popSetMileStone').modal('hide');
+                    LoadDeals(tmp_pageNo, tmp_IsAdvanced, 'N');
+                    if (result.strMsgType != null && result.strMsgType != '' && result.strMsgType == 'S') {
+                        if (result.Message != '')
+                            showAlert("S", result.Message);
+                    }
+                    else {
+                        if (result.Message != '')
+                            showAlert("E", result.Message);
+                    }
+                }
+                else {
+                    ShowValidationPopup("", 10, 0);
+                    return false;
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+        //}
+    }
+
+    function ShowValidationPopup(search_Titles, Page_Size, Page_No) {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("Show_Validation_Popup", "Acq_List")',
+                traditional: true,
+                async: false,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    searchForTitles: search_Titles,
+                    PageSize: Page_Size,
+                    PageNo: Page_No
+                }),
+                success: function (result) {
+                    $("#BindValidationPopup").html(result);
+                },
+                error: function (x, e) { }
+            });
+            $('#popupValidationError').modal();
+            initializeChosen();
+            setChosenWidth('#lbSearchTitles', '500px');
+            initializeExpander();
+            //$('#txtPageSize').numeric({
+            //    allowMinus: false,
+            //    allowThouSep: false,
+            //    allowDecSep: false,
+            //    maxPreDecimalPlaces: 3,
+            //    maxDecimalPlaces: 0
+            //});
+    }
+
+    $(document).ready(function () {
+        var cnt = 0;
+        cnt = '@Model.Count()';
+        for (var i = 0; i < cnt ; i++) {
+
+            var strSYN_RIGHTS_MIN_START_DATE = $('#SYN_RIGHTS_MIN_START_DATE_' + i).val();
+            if (strSYN_RIGHTS_MIN_START_DATE != "")
+                $('#txtActual_Right_Start_Date_' + i).datepicker({ maxDate: strSYN_RIGHTS_MIN_START_DATE });
+            else
+                $('#txtActual_Right_Start_Date_' + i).datepicker({ maxDate: null });
+        }
+        debugger;
+        //alert($("#datepicker")+"test");
+        $("#datepicker").datepicker({
+            
+            changeMonth: true,
+            changeYear: true
+        });
+    });
+</script>
+
+<div class="modal_block">
+    <table class="table table-bordered table-hover" style="display: table;" id="tblMileStone">
+        <tr>
+            <th style="width: 200px;" class="movie">Title Name</th>
+            <th>Milestone Name</th>
+            <th style="width: 168px;">Start Date</th>
+        </tr>
+        @for (int i = 0; i < Model.Count(); i++)
+        {
+            <tr>
+                <td>
+                    @Html.Label("Title_Name", Model.ElementAt(i).TITLE_NAME)
+                </td>
+                <td>
+                    @Html.Label("Milestone_Type_Name", Model.ElementAt(i).MILESTONE_TYPE_NAME, 
+                    new { @name = "Milestone_Type_Name_1", @id = "txtMilestone_Type_Name_" + i })
+                </td>
+                <td>
+                    @{if (Model.ElementAt(i).ACTUAL_RIGHT_START_DATE.ToString() != "")
+                      {
+                        @Html.TextBox("Actual_Right_Start_Date", Convert.ToDateTime(Model.ElementAt(i).ACTUAL_RIGHT_START_DATE).ToString("dd/MM/yyyy"), 
+                        new { @name = "Actual_Right_Start_Date_1", @id = "txtActual_Right_Start_Date_" + i, @class = "isDatepicker", @readonly = "readonly" })}
+                      else
+                      {
+                        @Html.TextBoxFor(m => Model.ElementAt(i).ACTUAL_RIGHT_START_DATE, 
+                        new { @name = "Actual_Right_Start_Date_1", @id = "txtActual_Right_Start_Date_" + i, @class = "isDatepicker", @readonly = "readonly" })}
+                    }
+                    @*<a class="btn btn-primary" onclick="ClearDates(@i)">Clear</a>*@
+                    @Html.Hidden("Title_Code_" + i, Model.ElementAt(i).TITLE_CODE)
+                    @Html.Hidden("Acq_Deal_Rights_Code_" + i, Model.ElementAt(i).ACQ_DEAL_RIGHTS_CODE)
+                    @Html.Hidden("Milestone_No_Of_Unit_" + i, Model.ElementAt(i).MILESTONE_NO_OF_UNIT)
+                    @Html.Hidden("Milestone_Unit_Type_" + i, Model.ElementAt(i).MILESTONE_UNIT_TYPE)
+                    @Html.Hidden("SYN_RIGHTS_MIN_START_DATE_" + i,(Model.ElementAt(i).SYN_RIGHTS_MIN_START_DATE != null)? Model.ElementAt(i).SYN_RIGHTS_MIN_START_DATE.Value.ToString("dd/MM/yyyy") : "")
+                </td>
+            </tr> 
+        }
+    </table>
+</div>
+<div class="modal_block_full">
+    <div class="form_links">
+        <ul class="modal_block clearfix">
+            <li>
+                <input class="btn btn-primary" type="button" value="Save" onclick="return SaveMilestone();" />
+            </li>
+            <li>
+                <a class="btn btn-primary" data-dismiss="modal" href="#">Cancel</a>
+            </li>
+        </ul>
+    </div>
+</div>

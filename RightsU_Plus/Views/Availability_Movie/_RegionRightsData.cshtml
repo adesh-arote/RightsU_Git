@@ -1,0 +1,127 @@
+﻿@using UTOFrameWork.FrameworkClasses
+
+@if (Convert.ToInt32(ViewBag.ModuleCode) == GlobalParams.ModuleCodeForMovieAvailabilityReport || Convert.ToInt32(ViewBag.ModuleCode) == GlobalParams.ModuleCodeForProgramAvailabilityReport || Convert.ToInt32(ViewBag.ModuleCode) == GlobalParams.ModuleCodeForSelfUtilizationMovieAvailabilityReport || Convert.ToInt32(ViewBag.ModuleCode) == GlobalParams.ModuleCodeForSelfUtilizationProgramAvailabilityReport)
+{
+    <div class="tabbable">
+        <ul class="nav nav-tabs nav-tab pull-left" id="ResolveConflictTab">
+            @if (ViewBag.ISCountryRight == true)
+            {
+                <li id="IsCountry" class="active">
+                    <a data-toggle="tab" href="#" role="tab" data-tabname="CO">Country</a>
+                </li>
+            }
+            @if (ViewBag.IsTerritoryLevelRights == true)
+            {
+                <li id="IsTerritory">
+                    <a data-toggle="tab" href="#" role="tab" data-tabname="IF">Territory</a>
+                </li>
+            }
+        </ul>
+        <div style="float:right;">
+            <span class="glyphicon glyphicon-filter" title="More options" id="show_hide_Region"></span>
+            <div id="extent" class="MoreOptionRegionDiv" style="display:none;padding:5px !important;">
+                <a class="glyphicon glyphicon-remove-circle" style="float:right;" title="Close" onclick="CloseRegionPopup()">
+                </a>
+                <table class="table-wrapper scale_table_container">
+                    <tr>
+                        <td style="text-align:center; padding:2px !important">
+                            <label class="checkbox-inline">
+                                <input type="checkbox" name="CheckRegion" id="chkExactMatch" value="EM" text="Exact Match" />
+                                <b>Exact Match</b>
+                            </label>
+                            &nbsp;
+                            <label class="checkbox-inline">
+                                <input type="checkbox" name="CheckRegion" id="chkMustHave" value="MH" text="Must Have">
+                                <b>Must Have</b>
+                            </label>
+                            <br />
+                            <select id="ddlMustHaveCountry" multiple></select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-content clearfix table-wrapper scale_table_container" id="divTabRegion" >
+        <div id="divMappingData"></div>
+    </div>
+}
+else
+{
+    <div id="divMappingData"></div>
+}
+<script>
+    $(document).ready(function () {
+        debugger
+       
+        //$('#ddlTerritoryList').val(TerritoryCodess)[0].sumo.reload();
+        IsFirstTime = "N";
+        BindRegion();
+        getTabName= $('#ResolveConflictTab > li > a').data('tabname')
+        //var selectedCodes = $("#hdnTVCodes_Country").val();
+        //AddEditRegion(selectedCodes);
+        $('#ResolveConflictTab > li > a').on('click', function () {
+            debugger
+            TabChange($(this).data('tabname'));
+            $('.MoreOptionDubbingDiv').hide('slow');
+            $('.MoreOptionSubtitleDiv').hide('slow');
+            $('.MoreOptionPlatformDiv').hide('slow');
+            $('.MoreOptionRegionDiv').hide('slow');
+        });
+        
+       
+    });
+    function TabChange(tabName) {
+        BindRegion(tabName);
+    }
+</script>
+<style>
+    #divTabRegion{
+         padding: 0px !important;
+    }
+    .table-wrapper {
+        background-color: white !important;
+        /*padding: 0px !important;*/
+    }
+
+    #divMappingData {
+        background-color: white !important;
+    }
+      .MoreOptionRegionDiv {
+        padding: 2px !important;
+        background: #ffffff; /*#2B5F8E;*/
+        width: 250px;
+        max-height: 165px;
+        box-shadow: 0 0 5px #aaa;
+        font-size: 12px;
+        color: #000;
+        text-align: left;
+        position: absolute;
+        z-index: 99;
+        right: auto;
+        /*overflow-y: auto;*/
+        display: none;
+        /*line-height: 30px !important;*/
+        /*overflow-x: hidden;*/
+        border:#a0a0a0 4px solid;
+    }
+     .MoreOptionRegionDiv:before {
+        content: '';
+        display: block;
+        position: absolute;
+        width: 0;
+        height: 0;
+        color: transparent;
+        border: 10px solid black;
+        border-color: transparent transparent #a0a0a0;
+        margin-top: -25px;
+    /*margin-left: 210px;*/
+    }
+     .SumoSelect .select-all > span i{
+         display:none;
+     }
+</style>

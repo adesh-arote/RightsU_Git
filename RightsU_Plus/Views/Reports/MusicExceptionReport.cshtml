@@ -1,0 +1,367 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+
+}
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<style>
+    #ddlDateFormat_chosen{
+        width:95%!important;
+    }
+    #ddlTimeFormat_chosen{
+        width:95%!important;
+    }
+</style>
+<script>
+    var URL_BindTitleList = '@Url.Action("BindTitleList", "Reports")';
+    var URL_PopulateTitle = '@Url.Action("BindContenForMusicEx", "Reports")';
+
+    var URL_BindMusicExceptionReport = '@Url.Action("BindMusicExceptionReport", "Reports")';
+    $(document).ready(function () {
+        $('#txtFrom').change(function () {
+            SetMinDt();
+        });
+
+        $('#ddlChannel').SumoSelect();
+        $('#ddlMusicLabel').SumoSelect();
+
+        $('#txtTo').change(function () {
+            SetMaxDt();
+        });
+        $("#ddlType").change(function () {
+            $('#txtTitle').val('');
+        });
+    });
+
+    function btnShow_OnClick() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var type = $('#ddlType').val();
+        var fromDate = $('#txtFrom').val();
+        var toDate = $('#txtTo').val();
+        var channel = $('#ddlChannel').val();
+
+        var musicLabel = $('#ddlMusicLabel').val();
+        var content = $('#txtTitle').val();
+        var episodeFrom = $('#txtEpisodeFrom').val();
+        var episodeTo = $('#txtEpisodeTo').val();
+        var returnVal = true;       
+        if (fromDate == "" && toDate == "" && channel == null && musicLabel == null && content == 0 && episodeFrom == "" && episodeTo == "") {
+            showAlert("E", "@objMessageKey.Pleaseselectatleastonesearchcriteria");
+            returnVal = false;
+        }
+       
+        else {
+            if (channel != null)
+                channel = $('#ddlChannel').val().join(',');
+            if (musicLabel != null)
+                musicLabel = $('#ddlMusicLabel').val().join(',');
+            if (channel == null)
+                channel = "";
+            if (musicLabel == null)
+                musicLabel = "";
+            if (content == null)
+                content = "";
+            returnVal = true;
+        }
+        if (parseInt(episodeFrom) > parseInt(episodeTo)) {
+            showAlert("E", "@objMessageKey.EpisodeFromcannotbegreaterthanEpisodeTo");
+            returnVal = false;
+        }
+        if (returnVal) {
+            $.ajax({
+                type: "POST",
+                url: URL_BindMusicExceptionReport,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    type: type,
+                    fromDate: fromDate,
+                    toDate: toDate,
+                    channel: channel,
+                    musicLabel: musicLabel,
+                    content: content,
+                    episodeFrom: episodeFrom,
+                    episodeTo: episodeTo,
+                    dateformat: $('#ddlDateFormat').val(),
+                    timeformat: $('#ddlTimeFormat').val()
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        $('#divResult').empty();
+                        $('#divResult').html(result);
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    }
+    function btnClear_OnClick() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        $('#txtFrom,#txtTitle').val('');
+        $('#txtTo').val('');
+        $('#hdnTitleCode').val(0);
+        $("#ddlChannel").find("option").attr("selected", false);
+        $("#ddlChannel").val('')[0].sumo.reload();
+        $("#ddlMusicLabel").find("option").attr("selected", false);
+        $("#ddlMusicLabel").val('')[0].sumo.reload();
+      
+        $('#txtEpisodeFrom').val('');
+        $('#txtEpisodeTo').val('');
+    }
+    function SetMaxDt() {
+        setMinMaxDates('txtFrom', '', $('#txtTo').val());
+    }
+    function SetMinDt() {
+        setMinMaxDates('txtTo', $('#txtFrom').val(), '');
+    }
+    function PopulateTitle(keyword) {
+        var Type = "";
+        if ($('#txtTitle').val().length == "0") {
+            $('#hdnTitleCode').val(0);
+        }
+        var selectedtxt = $('#txtTitle').val()
+        var txt = selectedtxt.split('﹐');
+        var iscomplete = true;
+        if (txt[txt.length - 1].trim() == "")
+            iscomplete = false;
+        if (iscomplete) {
+            $("#txtTitle").autocomplete({
+                focus: function () {
+                    return false;
+                },
+                search: function (e, u) {
+                    $(this).addClass('loader');
+                },
+                source: function (request, response) {
+                    var param = {
+                        keyword: $('#txtTitle').val()
+
+                    };
+                    $.ajax({
+                        url: URL_PopulateTitle,
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+                            if (data.length == 0) {
+                                data[0] = 'Result Not Found';
+                                response($.map(data, function (v, i) {
+                                    $('#txtTitle').removeClass('loader');
+                                    return {
+                                        label: '@objMessageKey.ResultNotFound',
+                                        val: '0'
+                                    }
+                                }))
+                            }
+                            else {
+                                response($.map(data, function (v, i) {
+                                    $('#txtTitle').removeClass('loader');
+                                    return {
+                                        label: v.Title_Name,
+                                        val: v.Title_Code
+                                    }
+                                }))
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                            alert("Error" + textStatus);
+                        }
+                    });
+                },
+                select: function (event, i) {
+                    debugger;
+                    if (i.item.value != "@objMessageKey.ResultNotFound") {
+                        var text = this.value.split(/﹐\s*/);
+                        text.pop();
+                        text.push(i.item.value);
+                        text.push("");
+                        this.value = text;
+                        this.value = text.join("﹐");
+                        var value = $("#hdnTitleCode").val().split(/,\s*/);
+                        value.pop();
+                        value.push(i.item.val);
+                        value.push("");
+                        $("#hdnTitleCode")[0].value = value.join(", ");
+                        return false;
+                    }
+                    else
+                    {
+                        $('#txtTitle').val("");
+                        return false;
+                    }
+                },
+                minLength: 3,
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("position", "absolute");
+                    $(".ui-autocomplete").css("max-height", "200px");
+                    $(".ui-autocomplete").css("max-width", "350px");
+                    $(".ui-autocomplete").css("overflow-y", "auto");
+                    $(".ui-autocomplete").css("overflow-x", "hidden");
+                    $(".ui-autocomplete").css("z-index", "2147483647");
+                    $(".ui-autocomplete").css("direction", "@objMessageKey.LayoutDirection");
+                },
+
+            });
+        }
+        else
+            return false;
+    }
+    function isNumber(evt) {
+        evt = (evt) ? evt : window.event;
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        return true;
+    }
+    function ShowHideSearchCriteria(show) {
+        if (show == 'S') {
+            $('#divFilter').show();
+            $('#tdShowImg').hide();
+            $('#tdHideImg').show();
+            $('#divFilter').width = '100%';
+        }
+        else if (show == 'H') {
+            debugger;
+            $('#divFilter').hide();
+            $('#tdHideImg').hide();
+            $('#tdShowImg').show();
+            $('#divFilter').width = '100%';
+        }
+    }
+</script>
+<style>
+   .SumoSelect {
+    width: 157px;
+}
+    #divFilter {
+        background: #eee;
+        padding: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    #divResult {
+        margin-top: 10px;
+    }
+
+    #ddlBusinessUnit_chosen {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    input.isDatepicker {
+        width: 100px;
+        z-index: auto;
+    }
+    input.smallTextBox{
+    width : 62px !important;
+}
+</style>
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="title_block dotted_border clearfix">
+                <h2 style="direction:@objMessageKey.LayoutDirection">@objMessageKey.MusicExceptionReport</h2>
+            </div>
+            <div id="divFilter">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td style="width:8%"><b>@objMessageKey.Type : </b></td>
+                            <td style="width:15%">
+                                @Html.DropDownList("Type", new List<SelectListItem>
+                                {new SelectListItem{Text="Aired", Value="Y"},
+                                    new SelectListItem{Text="Not Aired", Value="N"}}, new { @id = "ddlType", style = "width: 158px;", @class = "form_input chosen-select" })
+                            </td>
+                            <td style="width:8%"><b>@objMessageKey.FromDate : </b></td>
+                            <td style="width:10%">
+                                <input type="text" class="isDatepicker" id="txtFrom" name="From_Date" placeholder="DD/MM/YYYY" style="width: 156px;"
+                                       title="@objMessageKey.FromDate" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" />
+                            </td>
+                            <td style="width:7%"><b>@objMessageKey.ToDate : </b></td>
+                            <td style="width:10%">
+                                <input type="text" class="isDatepicker" id="txtTo" name="To_Date" placeholder="DD/MM/YYYY" style="width: 156px;"
+                                       title="@objMessageKey.ToDate" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" />
+                            </td>
+                            <td style="width:10%">@objMessageKey.EpisodeFrom : </td>
+                            <td>
+                                <input type="text" class="smallTextBox" id="txtEpisodeFrom" maxlength="4" onkeypress="return isNumber(event);" />
+                            </td>
+
+                            <td style="width:20%;"><input type="button" id="btnShow" class="btn btn-primary" value="@objMessageKey.Show" onclick="btnShow_OnClick()"> </td>
+                        </tr>
+                        <tr>
+                            <td style="width:8%"><b>@objMessageKey.Channel : </b></td>
+                            <td style="width:15%">
+                                @Html.DropDownList("Channel", (List<SelectListItem>)ViewBag.Channel, new { @id = "ddlChannel", @multiple = "multiple" })
+                            </td>
+                            <td style="width:10%"><b>@objMessageKey.MusicLabel : </b></td>
+                            <td style="width:15%">
+                                @Html.DropDownList("MusicLabel", (List<SelectListItem>)ViewBag.MusicLabel, new { @id = "ddlMusicLabel", @multiple = "multiple" })
+                            </td>
+                            <td style="width:7%"><b>@objMessageKey.Content : </b></td>
+                            <td style="width:15%">
+                                <input type="text" id="txtTitle" class="search" maxlength="100" style="width:95%;" placeholder="Content" onkeyup="PopulateTitle(event)" autocomplete="on" />
+                                <input type="hidden" id="hdnTitleCode" value="0" />
+                            </td>
+                            <td style="width:8%">@objMessageKey.EpisodeTo : </td>
+                            <td style="width:10%">
+                                <input type="text" class="smallTextBox" id="txtEpisodeTo" maxlength="4" onkeypress="return isNumber(event);" />
+                            </td>
+                            <td colspan="2" style="width:10%;"><input type="button" id="btnShow" class="btn btn-primary" value="@objMessageKey.Reset" onclick="btnClear_OnClick()"> </td>
+                        </tr>
+
+                        <tr>
+                            <td style="width:11%"><b>@objMessageKey.TimeFormat:</b></td>
+                            <td style="width:15%">
+                                @Html.DropDownList("TimeFormat", (List<SelectListItem>)ViewBag.TimeFormat, new { @id = "ddlTimeFormat", @class = "form_input chosen-select" })
+                            </td>
+                            <td style="width:11%"><b>@objMessageKey.DateFormat:</b></td>
+                            <td style="width:15%">
+                                @Html.DropDownList("DateFormat", (List<SelectListItem>)ViewBag.DateFormat,  new { @id = "ddlDateFormat", @class = "form_input chosen-select" })
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="title_block dotted_border clearfix">
+            </div>
+            <div>
+                <table>
+                    <tr align="left" id="trImg">
+                        <td id='tdShowImg' align='left' style="display: none">
+                            <input type="image" title="Expand" alt="Expand Search Criteria" style="cursor:pointer;" src="~/Images/expand.jpg" onclick="return ShowHideSearchCriteria('S');" />
+                        </td>
+                        <td id='tdHideImg' align="left">
+                            <input type="image" title="Collapse" alt="Collapse Search Criteria" style="cursor:pointer;" src="~/Images/collapse.jpg" onclick="return ShowHideSearchCriteria('H');" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div id="divResult">
+
+            </div>
+        </div>
+    </section>
+</div>

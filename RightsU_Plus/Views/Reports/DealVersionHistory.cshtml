@@ -1,0 +1,222 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+
+<script>
+    var URL_BindDealVersionHistoryReport = '@Url.Action("BindDealVersionHistoryReport", "Reports")',
+    URL_PopulateAgreementNo = '@Url.Action("PopulateAgreementNoOnBU_Code", "Reports")';
+    $(document).ready(function () {
+        $("#ddlDeal").change(function () {
+            debugger;
+            $("#ddlBusinessUnit").val("");
+            $("#ddlBusinessUnit").trigger("chosen:updated");
+            $("#txtAgreementNo").val("");
+        });
+        $("#ddlBusinessUnit").change(function () {
+            $("#txtAgreementNo").val("");
+            $('#hdnAcqDealCode').val(0);
+
+        });
+    });
+
+    function btnShow_OnClick() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var dealCode = $('#ddlDeal').val();
+        var businessUnitcode = $('#ddlBusinessUnit').val();
+        var acqDealCode = $('#hdnAcqDealCode').val();
+        var returnVal = true;
+        if (businessUnitcode == 0) {
+            $('#ddlBusinessUnit').attr('required', true);
+            returnVal = false;
+        }
+
+        if (acqDealCode == "0") {
+            $('#txtAgreementNo').val('');
+            $('#txtAgreementNo').addClass('required');
+            var agreementNo = $.trim($('#txtAgreementNo').val());
+            returnVal = false;
+            if (agreementNo != "")
+                showAlert("E", "Invalid Agreement No.", 'txtAgreementNo')
+        }
+
+        if (returnVal) {
+            $.ajax({
+                type: "POST",
+                url: URL_BindDealVersionHistoryReport,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    acqDealCode: acqDealCode,
+                    businessUnitcode: businessUnitcode,
+                    dealCode: dealCode,
+                    dateformat: $('#ddlDateFormat').val()
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        $('#divResult').empty();
+                        $('#divResult').html(result);
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    }
+
+    function populateAgreementNo(evt) {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var dealCode = $('#ddlDeal').val();
+        var businessUnitcode = $('#ddlBusinessUnit').val();
+        var selectedtxt = $('#txtAgreementNo').val()
+        var returnVal = true;
+        if (businessUnitcode == 0) {
+            $('#ddlBusinessUnit').attr('required', true);
+            returnVal = false;
+        }
+
+        if (returnVal) {
+            $("#txtAgreementNo").autocomplete({
+                focus: function () {
+                    // prevent value inserted on focus
+                    return false;
+                },
+                search: function (e, u) {
+                    $(this).addClass('loader');
+                },
+                source: function (request, response) {
+                    $('#hdnAcqDealCode').val('0')
+                    $('#hdnAgreementNo').val('')
+                    var param = {
+                        searchPrefix: $('#txtAgreementNo').val(),
+                        module: dealCode,
+                        BU_Code: $("#ddlBusinessUnit").val()
+                    };
+                    $.ajax({
+                        url: URL_PopulateAgreementNo,
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+                            if (data.length == 0) {
+                                data[0] = 'Result Not Found';
+                                response($.map(data, function (v, i) {
+                                    $('#txtAgreementNo').removeClass('loader');
+                                    return {
+                                        label: 'Result Not Found',
+                                        val: '0'
+                                    }
+                                }))
+                            }
+                            else {
+                                response($.map(data, function (v, i) {
+                                    $('#txtAgreementNo').removeClass('loader');
+                                    return {
+                                        label: v.Text,
+                                        val: v.Code
+                                    }
+                                }))
+                            }
+                           
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            alert("Error" + textStatus);
+                        }
+                    });
+                },
+                select: function (event, i) {
+                    var code = i.item.val;
+                    $('#hdnAcqDealCode').val(code);
+                    $('#hdnAgreementNo').val(i.item.value);
+                },
+                minLength: 2,
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("position", "absolute");
+                    $(".ui-autocomplete").css("max-height", "200px");
+                    $(".ui-autocomplete").css("overflow-y", "auto");
+                    $(".ui-autocomplete").css("overflow-x", "hidden");
+                    $(".ui-autocomplete").css("z-index", "2147483647");
+                    $(".ui-autocomplete").css("direction", "@objMessageKey.LayoutDirection")
+                },
+
+            });
+        }
+    }
+</script>
+<style>
+    #divFilter {
+        background: #eee;
+        padding: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    #divResult {
+        margin-top: 10px;
+    }
+
+    #ddlBusinessUnit_chosen {
+        max-width: 100%;
+    }
+
+    /*#ReportViewer1 {
+        width:100% !important;
+        height:100% !important;
+    }*/
+</style>
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <h2 style="direction:@objMessageKey.LayoutDirection">@objMessageKey.DealVersionHistoryReport</h2>
+            <div id="divFilter">
+                <table>
+                    <tr>
+                        <td style="width:20%;">
+                            @Html.DropDownList("DealList", ViewBag.DealList as SelectList, new { @id = "ddlDeal", @class = "form_input chosen-select" })
+                        </td>
+                        <td style="width:10%;"><label class="bold">@objMessageKey.BusinessUnit</label></td>
+                        <td style="width:20%;">
+                            @Html.DropDownList("BusinessUnit", ViewBag.BusinessUnitList as SelectList, "Please Select", new { @id = "ddlBusinessUnit", @class = "form_input chosen-select" })
+                        </td>
+                        <td style="width:10%;"><label class="bold">@objMessageKey.AgreementNo</label></td>
+                        <td style="width:15%;">
+                            <input type="text" id="txtAgreementNo" maxlength="20" style="width:150px" placeholder="@objMessageKey.AgreementNo" onkeyup="populateAgreementNo(this)" />
+                            <input type="hidden" id="hdnAcqDealCode" value="0" />
+                            <input type="hidden" id="hdnAgreementNo" value="0" />
+                        </td>
+                        <td style="width:10%"><b>@objMessageKey.DateFormat:</b></td>
+                        <td style="width:17%">
+                            @Html.DropDownList("DateFormat", (List<SelectListItem>)ViewBag.DateFormat, new { @id = "ddlDateFormat", @class = "form_input chosen-select" })
+                    </td>
+
+                        <td style="width:20%;"><input type="button" id="btnShow" class="btn btn-primary" value="@objMessageKey.Show" onclick="btnShow_OnClick()"> </td>
+                    </tr>
+                </table>
+            </div>
+            <div id="divResult">
+
+            </div>
+        </div>
+    </section>
+</div>

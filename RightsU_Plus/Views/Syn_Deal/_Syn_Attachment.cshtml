@@ -1,0 +1,517 @@
+﻿@model List<RightsU_Entities.Syn_Deal_Attachment>
+<link type="text/css" rel="stylesheet" href="~/CSS/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script type="text/javascript">
+    var PaymentIntCode = 0;
+    var IsAddEditMode = "N";
+    var canSave = 0;
+    var URL_Download = '@Url.Action("DownloadFile", "Syn_Attachment")'
+    $(document).ready(function () {
+
+        var dealmode = '@ViewBag.PageMode';
+
+        if("@ViewBag.Message" !="")
+        {
+            showAlert("S","@ViewBag.Message");
+        }
+
+        $('.expandable').expander({
+            slicePoint: 20,
+            expandPrefix: '',
+            expandText: '@objMessageKey.readmore',
+            collapseTimer: 0,
+            userCollapseText: '<span>[^]</span>'
+        });
+        addNumeric();
+        LoadSynDealAttachment(0,'Y');
+
+        if ('@ViewBag.Record_Locking_Code' != '')
+        {
+            var fullUrl = '@Url.Action("Refresh_Lock", "Global", null, Request.Url.Scheme)'
+            Call_RefreshRecordReleaseTime(@ViewBag.Record_Locking_Code , fullUrl);
+        }
+    });
+    function addNumeric() {
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
+    function ValidatePageSize() {
+        var recordPerPage = $('#txtPageSize').val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize').addClass("required");
+        return false;
+    }
+    function PageSize_OnChange() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        var IsValid = ValidatePageSize();
+        if (IsValid) {
+            LoadSynDealAttachment(0, 'Y');
+        }
+        else
+            return false;
+    }
+    function pageBinding() {
+        LoadSynDealAttachment(0, 'Y');
+    }
+    function DownloadFileImage(SystemFilename, FileName,attachmentCode) {
+        debugger;
+        if (CheckEditMode()) {
+            var System_File_Name = SystemFilename;
+            var Attachment_File_Name = FileName;
+            $.ajax({
+                type: "POST",
+                url: URL_Download,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    System_File_Name: System_File_Name,
+                    Attachment_File_Name: Attachment_File_Name
+                }),
+                success: function (result) {
+                    debugger;
+                    var AttachFileName = Attachment_File_Name;
+                    if (result.path == "")
+                        showAlert('S',"@objMessageKey.FileNotFound");
+
+                    else {
+                        debugger;
+                        @*var parameter = "?&Attachment_File_Name=" + result.attachFileName + "&System_File_Name=" + SystemFilename;
+                        var URL = '@Url.Action("download", "Syn_Attachment"  ,new { SearchedTitle = "Searched_Text" })';
+                        URL = URL.replace("Searched_Text",parameter);
+                        // var URL = @Url.Action("download", "Acq_Attachment");
+                        window.location.href = URL;*@    /// comment by sayali becoz special character not working
+                        window.location.href = '@Url.Action("download", "Syn_Attachment")?SearchedTitle=' + "?" + '&Attachment_Code=' + attachmentCode;
+
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    }
+    function CheckEditMode(){
+        if(IsAddEditMode == 'Y'){
+            message = '@objMessageKey.PleasecompletetheAddEditfirst';
+            showAlert('E',message);
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+
+    function checkForsave(NewRow) {
+        debugger;
+        canSave = 0;
+        var returnVal = true;
+        var ddlTitle_Code = $("#Title_Code").val();
+        var Attachment_Title = $("#Attachment_Title").val();
+        var Document_Type_Code = $("#Document_Type_Code").val();
+        var Attachment_File_Name = $("#Attachment_File_Name").val();
+        $('.required').removeClass('required');
+
+        //if (ddlTitle_Code == "0") {
+        //    $('#Title_Code').addClass('required');
+        //    canSave=1;
+        //    returnVal = false;
+        //}
+        if (Attachment_Title == "0" || Attachment_Title == "") {
+            $('#Attachment_Title').addClass('required');
+            canSave=1;
+            returnVal = false;
+        }
+        else if (Document_Type_Code == "0" ) {
+            $('#Document_Type_Code').addClass('required');
+            canSave=1;
+            returnVal = false;
+        }
+        else if (Attachment_File_Name == ""  || Attachment_File_Name == null) {
+            if(NewRow == 0){
+                $('#Attachment_File_Name').addClass('required');
+                canSave=1;
+                returnVal = false;
+            }
+        }
+
+        if (returnVal){
+            var Syn_Deal_Attachment_Code = 0
+            var Title_Code= $("#Title_Code option:selected").text();
+            var files = $("#Attachment_File_Name").get(0).files;
+
+            if (NewRow == 1){
+                Syn_Deal_Attachment_Code = $("#Syn_Deal_Attachment_Code").val();
+            }
+
+            $("#Title_Name").val(Title_Code);
+
+            if (files.length > 0) {
+                SaveFile();
+            }
+
+            SaveAttachment(Syn_Deal_Attachment_Code, ddlTitle_Code, Attachment_Title, Document_Type_Code);
+        }
+    }
+
+    function SaveFile()
+    {
+        var data = new FormData();
+        var files = $("#Attachment_File_Name").get(0).files;
+
+        if (files.length > 0) {
+            data.append("InputFile", files[0]);
+        }
+
+        $.ajax({
+            url: '@Url.Action("SaveFile", "Syn_Attachment")',
+            type:"POST",
+            processData: false,
+            contentType: false,
+            async:false,
+            data: data,
+            success: function (response) {
+                if (response == "true") {
+                    redirectToLogin();
+                }
+            },
+            error: function (er) {
+                //alert(er);
+            }
+        });
+    }
+
+    function SaveAttachment(Syn_Deal_Attachment_Code, Title_Code, Attachment_Title, Document_Type_Code)
+    {
+        var pageNo = $('#hdnpage_index').val();
+        var data = new FormData();
+        var files = $("#Attachment_File_Name").get(0).files;
+        var Attachment_File_Name ="";
+
+        if(files.length > 0)
+            Attachment_File_Name = files[0].name;
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("Save", "Syn_Attachment")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                Syn_Deal_Attachment_Code:Syn_Deal_Attachment_Code,
+                Title_Code: Title_Code,
+                Attachment_Title: Attachment_Title,
+                Document_Type_Code:Document_Type_Code,
+                Attachment_File_Name:Attachment_File_Name
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else{
+                    initializeTooltip();
+                    hideLoading();
+                    var strMessage='@objMessageKey.Attachmentaddedsuccessfully';
+
+                    if(Syn_Deal_Attachment_Code > 0)
+                        strMessage='@objMessageKey.Attachmentupdatedsuccessfully';
+
+                    showAlert('S', strMessage);
+                    IsAddEditMode="N";
+                    LoadSynDealAttachment(pageNo,'Y');
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function OnDeleteClick(Syn_Deal_Attachment_Code)
+    {
+        if(CheckEditMode())
+        {
+            PaymentIntCode = Syn_Deal_Attachment_Code;
+            showAlert("I",'@objMessageKey.Areyousureyouwanttodeletethisattachment',"OKCANCEL");
+        }
+    }
+
+    function handleOk() {
+        showLoading();
+        var txtPageSize = $("#txtPageSize").val();
+        var pageNo = $('#hdnpage_index').val();
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("Delete", "Syn_Attachment")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                Syn_Deal_Attachment_Code: PaymentIntCode,
+                txtPageSize: txtPageSize,
+                pageNo: pageNo
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else{
+                    hideLoading();
+                    initializeTooltip();
+                    $('#dvDealSynAttachment').html(result);
+                    showAlert('S', '@objMessageKey.Attachmentdeletedsuccessfully');
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function handleCancel() {
+        return false;
+    }
+
+    function ValidateSave() {
+        if(CheckEditMode())
+        {
+            showLoading();
+            var Isvalid = true;
+            var Mode = '@ViewBag.PageMode';
+
+            if (Mode == 'APRV') {
+                var approvalremarks = $('#approvalremarks').val();
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("SetSynApprovalRemarks", "Global")',
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    async: true,
+                    data: JSON.stringify({
+                        approvalremarks: $('#approvalremarks').val()
+                    }),
+                    success: function (result) {
+                        if (result == "true") {
+                            redirectToLogin();
+                        }
+                        else{
+                            Isvalid = true;
+                        }
+                    },
+                    error: function (result) {
+                        Isvalid = false;
+                    }
+                });
+            }
+            else
+                Isvalid = true;
+
+            //Code end for approval
+            if(Isvalid){
+                hideLoading();
+                var tabName = $('#hdnTabName').val()
+                BindPartialTabs(tabName);
+            }
+            hideLoading();
+            return Isvalid;
+        }
+    }
+
+    /*Bind Attachment Grid*/
+    function LoadSynDealAttachment(pagenumber,isLoad) {
+        showLoading();
+        var txtPageSize = $("#txtPageSize").val();
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindGridSynAttachment", "Syn_Attachment")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                txtPageSize: txtPageSize,
+                page_No: pagenumber
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else{
+                    $('#dvDealSynAttachment').html(result);
+                    SetPaging(txtPageSize);
+                    hideLoading();
+                    initializeTooltip();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    /*On Add or Cancel Click*/
+    function AddCancelAttachment(isAdd) {
+        if ($("#txtPageSize").val() == "") {
+            return false;
+        }
+        var txtPageSize = $("#txtPageSize").val();
+        var pageNo = $('#hdnpage_index').val();
+        if (isAdd == "0" || (CheckEditMode() && isAdd == "1")) {
+            showLoading();
+            if(isAdd == "0")
+                IsAddEditMode="N";
+            else
+                IsAddEditMode="Y";
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("Create", "Syn_Attachment")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                data: JSON.stringify({
+                    isAdd: isAdd,
+                    txtPageSize: txtPageSize,
+                    pageNo: pageNo
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else{
+                        $('#dvDealSynAttachment').html(result);
+                        initializeChosen();
+                        initializeTooltip();
+                        hideLoading();
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    }
+
+    /*Edit Attachment*/
+    function EditAttachment(Syn_Deal_Attachment_Code) {
+        var txtPageSize = $("#txtPageSize").val();
+        var pageNo = $('#hdnpage_index').val();
+        if (CheckEditMode()) {
+            IsAddEditMode="Y";
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("Edit", "Syn_Attachment")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                data: JSON.stringify({
+                    Syn_Deal_Attachment_Code: Syn_Deal_Attachment_Code,
+                    txtPageSize: txtPageSize,
+                    pageNo: pageNo
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else{
+                        $('#dvDealSynAttachment').html(result);
+                        initializeChosen();
+                        initializeDatepicker();
+                        initializeTooltip();
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    }
+</script>
+<style>
+    .navigation_tabs {
+        overflow: visible !important;
+    }
+
+    span::after {
+        content: "\200E‎";
+    }
+
+    label::after {
+        content: "\200E‎";
+    }
+
+    .active-result::after {
+        content: "\200E‎";
+    }
+</style>
+<div class="grid_area">
+    <div class="navigation_tabs">
+        <div class="tabbable">
+            <div class="tab-content clearfix table-wrapper scale_table_container syn">
+                <div class="tab-pane active" id="tabPayTerm">
+                    <div class="scale_table_block">
+                        <div class="sub_block clearfix">
+                            <div class="pull-right">
+                                <input type="hidden" id="hdnTabName" name="hdnTabName" />
+                                @if (ViewBag.PageMode != "V" && ViewBag.PageMode != "APRV")
+                                {
+                                    <a class="btn btn-primary" title="@objMessageKey.AddAttachment" onclick="return AddCancelAttachment(1);">@objMessageKey.Add</a>
+                                }
+                            </div>
+                        </div>
+                        <div class="paging_area clearfix">
+                            <span id="spanRecordCount" class="pull-left">@objMessageKey.TotalRecords:  @ViewBag.RecordCount</span>
+                            <input type="hidden" id="hdnpage_index" name="hdnpage_index" value="1" />
+                            <div class="pagination" id="Pagination"></div>
+                            <span class="pull-right">
+                                @objMessageKey.PageSize:
+                                <input type="text" class="smallTextBox pagingSize" value="10" id="txtPageSize" onchange="return PageSize_OnChange();" onblur="setDefaultPaging('txtPageSize')"/>
+                            </span>
+                        </div>
+                        <div class="scale_table_block" id="dvDealSynAttachment">
+                        </div>
+
+                    </div>
+                </div>
+                @if (ViewBag.PageMode == "APRV")
+                {
+                    @Html.Partial("_Syn_Approved_List")
+                    <br />
+                }
+                <div class="bottom_action">
+                    <ul class="form_link_nav clearfix">
+                        <li>
+                            @if (ViewBag.PageMode != "APRV")
+                            {
+                                <input type="button" id="btnCancelDeal" title="@objMessageKey.Cancel" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                       onclick="if(CheckEditMode()) location.href='@Url.Action("Cancel", "Syn_Attachment")    '">
+                            }
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

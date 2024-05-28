@@ -1,0 +1,796 @@
+﻿@model RightsU_Entities.Acq_Deal_Rights_Holdback
+@using UTOFrameWork.FrameworkClasses;
+@using RightsU_BLL;
+@{
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+
+    RightsU_Entities.Acq_Deal_Rights Obj_Acq_Deal_Rights = null;
+
+    if (Session["ACQ_DEAL_RIGHTS"] != null)
+    { Obj_Acq_Deal_Rights = (RightsU_Entities.Acq_Deal_Rights)Session["ACQ_DEAL_RIGHTS"]; }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+
+}
+<link rel="stylesheet" href="~/CSS/Rights_Tab.css" />
+<script src="~/JS_Core/jquery.slimscroll.js"></script>
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
+<script type="text/javascript">
+
+    var counter = '';
+    var TmpstrPlts = '';
+    var URL_Edit_Holdback = '@Url.Action("Edit_Holdback", "Acq_Rights_Holdback")';
+    var URL_View_Holdback = '@Url.Action("View_Holdback", "Acq_Rights_Holdback")';
+    var URL_BindPlatform_HB = '@Url.Action("BindPlatform_HB", "Acq_Rights_Holdback")';
+    var IsHoldbackEditable = 'Y';
+    var isTitleReleaseDateExist = function (Counter) {
+
+        $.ajax({
+            url: '@Url.Action("CheckIfTitleReleaseDateExist","Acq_Rights_Holdback")',
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: { DummyProperty: Counter },
+            async: false,
+            success: function (data) {
+                if (data != 0) {
+                    IsHoldbackEditable = 'N';
+                }
+                else {
+                    IsHoldbackEditable = 'Y';
+                }
+            }
+        });
+        return IsHoldbackEditable;
+    }
+
+    $(document).ready(function () {
+        $('.expandable').expander({
+            slicePoint: 40,
+            expandPrefix: '...',
+            expandText: '<span>@objMessageKey.readmore</span>',
+            userCollapseText: '<span>[^]</span>',
+        });
+        $('.show_hide').click(function () {
+            hideSubTitle();
+            hideDubbing();
+            $('.MoreRegionDiv').slideUp();
+            $(this).parent().find('.MoreRegionDiv').slideToggle('fast');
+            return false;
+        });
+        $('.show_hide_SubTitle').click(function () {
+            hideRegion();
+            hideDubbing();
+            $('.MoreSubtitleDiv').slideUp();
+            $(this).parent().find('.MoreSubtitleDiv').slideToggle('fast');
+            return false;
+        });
+        $('.show_hide_Dubbing').click(function () {
+            hideSubTitle();
+            hideRegion();
+            $('.MoreDubbingDiv').slideUp();
+            $(this).parent().find('.MoreDubbingDiv').slideToggle('fast');
+            return false;
+        });
+    });
+    function hideRegion() {
+        $('.MoreRegionDiv').hide('slow');
+    }
+    function hideSubTitle() {
+        $('.MoreSubtitleDiv').hide('slow');
+    }
+    function hideDubbing() {
+        $('.MoreDubbingDiv').hide('slow');
+    }
+
+    function Holdback_Type_Change(Counter) {
+        if ($('input[name=optHBType_' + Counter + ']:radio:checked').val() == 'D') {
+            $('#divHBTypeDate_' + Counter).show();
+            $('#divHBTypeRelease_' + Counter).hide()
+        }
+        else {
+            $('#divHBTypeDate_' + Counter).hide();
+            $('#divHBTypeRelease_' + Counter).show()
+        }
+
+    }
+    function Cancel_Holdback(dummyPropery) {
+        Bind_Holdback();
+    }
+    function Delete_Holdback(dummyProperty) {
+        IsHoldbackEditable = isTitleReleaseDateExist(dummyProperty);
+        if (IsHoldbackEditable == 'N') {
+            showAlert('I', "@objMessageKey.Titlereleasedateisalreadysetforthiscombination");
+            return false;
+        }
+
+        $('#dummyProperty').val(dummyProperty);
+        showAlert('I', "@objMessageKey.Areyousurewanttodeletethisholdback?", 'OKCANCEL');
+        return true;
+    }
+    function Edit_Holdback(Counter) {
+        debugger
+        var Is_Exclusive = $('input[name=hdnExclusive]:checked').val();
+        var Term = $('#Right_Type').val();
+        var Period = '';
+        var isTentative = 'No';
+        var PeriodTerm = '';
+
+
+        IsHoldbackEditable = isTitleReleaseDateExist(Counter);
+
+        if (Term == YearBased) {
+            var txtStartDate = $('#Start_Date');
+            var txtEndDate = $('#End_Date');
+
+            if ($('#Is_Tentative').prop('checked')) {
+                isTentative = 'Yes';
+                Period = MakeDateFormate(txtStartDate.val());
+            }
+            else
+                Period = MakeDateFormate(txtStartDate.val()) + ' To ' + MakeDateFormate(txtEndDate.val());
+
+            PeriodTerm = $('#Term_YY').val() + ' Year' + $('#Term_MM').val() + ' Month';
+        }
+        else if (Term == Milestone) {
+            if ($("#txtMilestone_No_Of_Unit").val() != "")
+                PeriodTerm = $('#ddlMilestone_Type_Code option:selected').text() + ' Valid For ' + $("#txtMilestone_No_Of_Unit").val()
+                            + ' ' + $('#ddlMilestone_Unit_Type option:selected').text();
+
+            if ($('#Milestone_SD').text() != '' && $('#Milestone_ED').text() != '')
+                Period = MakeDateFormate($('#Milestone_SD').text()) + ' To ' + MakeDateFormate($('#Milestone_ED').text());
+        }
+        else if (Term == Perpetuity) {
+            if ($('#txtPerpetuity_Date').val() != "" && $('#txtPerpetuity_Date').val() != "DD/MM/YYYY") {
+                Period = MakeDateFormate($('#txtPerpetuity_Date').val());
+                PeriodTerm = 'Perpetuity';
+            }
+        }
+
+        var region_type = $("#rdoCountryHB").prop('checked') ? $("#rdoCountryHB").val() : $("#rdoTerritoryHB").val();
+        var region_Code = '';
+        region_type = region_type == "G" ? "T" : region_type;
+
+        if ($("#lbTerritory option:selected").length > 0) {
+            $("#lbTerritory option:selected").each(function () {
+                if (region_Code == '')
+                    region_Code = $(this).val();
+                else
+                    region_Code = region_Code + ',' + $(this).val();
+            });
+        }
+
+        var SL_Type = $("#rdoSubL").prop('checked') ? $("#rdoSubL").val() : $("#rdoSubLG").val();
+        var SL_Code = '';
+        if ($("#lbSub_Language option:selected").length > 0) {
+            $("#lbSub_Language option:selected").each(function () {
+                if (SL_Code == '')
+                    SL_Code = $(this).val();
+                else
+                    SL_Code = SL_Code + ',' + $(this).val();
+            });
+        }
+
+        var DL_Type = $("#rdoDubbingL").prop('checked') ? $("#rdoDubbingL").val() : $("#rdoDubbingLG").val();
+        var DL_Code = '';
+
+        if ($("#lbDub_Language option:selected").length > 0) {
+            $("#lbDub_Language option:selected").each(function () {
+                if (DL_Code == '')
+                    DL_Code = $(this).val();
+                else
+                    DL_Code = DL_Code + ',' + $(this).val();
+            });
+        }
+
+        var titles = $("#lbTitles option:selected").map(function () {
+            return $(this).text();
+        }).get().join();
+        var title_Code = $('#lbTitles').val().join(',');
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: URL_Edit_Holdback,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                R_Type: region_type,
+                SL_Type: SL_Type,
+                DL_Type: DL_Type,
+                R_Code: region_Code,
+                SL_Code: SL_Code,
+                DL_Code: DL_Code,
+                DummyProperty: Counter,
+                Titles: titles,
+                Period: Period,
+                IsTentative: isTentative,
+                PeriodTerm: PeriodTerm,
+                strPlatform: $("#hdnTVCodes").val(),
+                title_Code: title_Code,
+                Is_Exclusive: Is_Exclusive
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                $('#popEditHB').html(result);
+                initializeChosen();
+                initializeDatepicker();
+                hideLoading();
+                $('#popEditHB').modal();
+                if (IsHoldbackEditable == 'N') {
+                    $('#ddlHoldBackOnPlatform').attr('disabled', true).trigger('chosen:updated');
+                    $('#lbTerritory_Popup').attr('disabled', true).trigger('chosen:updated');
+                }
+                else {
+                    $('#ddlHoldBackOnPlatform').attr('disabled', false).trigger('chosen:updated');
+                    $('#lbTerritory_Popup').attr('disabled', false).trigger('chosen:updated');
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function View_Holdback(Counter) {
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: URL_View_Holdback,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                DummyProperty: Counter
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                $('#BindHoldbackReleaseView').html(result);
+                initializeChosen();
+                $('#popupHoldbackReleaseView').modal();
+                hideLoading();
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function BindPlatform_HB(dummyProperty, CallFrom, strPlts) {
+        counter = dummyProperty;
+        TmpstrPlts = strPlts;
+        showLoading();
+
+
+        var hdnPlatform_Codes_HB = $('#hdnPlatform_Codes_HB_View').val();
+        $.ajax({
+            type: "POST",
+            url: URL_BindPlatform_HB,
+            data: ({
+                hdnPlatform_Codes_HB: TmpstrPlts,
+                dummyProperty: dummyProperty,
+                CallFrom: CallFrom
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                $('#tree_HB').html(result);
+                $('#popPlatformRights').modal();
+                hideLoading();
+            },
+            error: function (result) {
+                hideLoading();
+                alert('Error Validate_Save_Rights: ' + result.responseText);
+            }
+        });
+        return false;
+    }
+    function SavePlatform() {
+        if ($('#hdnPlatform_Codes_HB_' + counter).val() != '') {
+            var platformCodes = $('#hdnPlatform_Codes_HB_' + counter).val();
+            var length = platformCodes.replace(/0\,/g, '').split(',').length;
+            $('#lnkAddPlatform_' + counter).html(length + ' Selected');
+        }
+        else
+            $('#lnkAddPlatform_' + counter).html('Platform / Rights');
+        $('#popPlatformRights').hide();
+    }
+</script>
+<style>
+        #Tree_Filter_Rights_HB_Platform_View {   
+            width:546px;
+            position:relative!important;
+        }
+        #Rights_HB_Platform_View{
+            margin:0px 0px 0px 0px!important;
+        }
+
+    .grid_item > ul > li.yes_no {
+        text-align: left !important;
+    }
+
+    .grid_item > ul > li.sub {
+        width: 10.3%;
+    }
+    .grid_item > ul > li.regions {
+        width: 19%;
+    }
+    .grid_item > ul > li.dub {
+        width: 31%;
+    }
+
+    .grid_item > ul > li.yes_no {
+        width: 37%;
+    }
+
+    /*.grid_item > ul > li.region {
+        width: 35%;
+    }*/
+
+    .grid_item > ul > li.action {
+        width: 15%;
+    }
+
+    .grid_item > ul > li.comment {
+        width: 37%;
+    }
+
+    .grid_item > ul > li.platform {
+        width: 20%;
+    }
+</style>
+<form id="frm_Save_Holdback" method="post">
+    <div class="deal clearfix" onclick="hideRegion(); hideSubTitle(); hideDubbing();">
+        @{
+        @Html.Hidden("Holdback_Type")
+        @Html.Hidden("hdnCounter")
+        @Html.Hidden("dummyProperty")
+        @Html.Hidden("Title_Language_Added_For_Holdback", ViewBag.Title_Language_Added_For_Holdback as string)
+
+        if (Obj_Acq_Deal_Rights.Acq_Deal_Rights_Holdback.Count() > 0)
+        {
+        string Counter = "0";
+        foreach (var objADRH in Obj_Acq_Deal_Rights.Acq_Deal_Rights_Holdback.Where(w => w.EntityState != RightsU_Entities.State.Deleted))
+        {
+        Counter = objADRH.strDummyProp;
+        @Html.Hidden("hdnHoldback_Type_" + Counter, objADRH.Holdback_Type)
+        @Html.Hidden("hdnPlatform_Codes_HB_View", objADRH.strPlatformCodes)
+
+        string platcode = "";
+        int countP = 0; var countC = 0;
+        var countT = 0;
+        var count = false;
+        int?[] Title_Code = new Acq_Deal_Rights_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Acq_Deal_Rights_Code == (int)objADRH.Acq_Deal_Rights_Code).Select(x => (int?)x.Title_Code).ToArray();
+        int?[] Title_Release_Code = new Title_Release_Service(objLoginEntity.ConnectionStringName).SearchFor(x => Title_Code.Contains(x.Title_Code)).Select(x => (int?)x.Title_Release_Code).ToArray();
+        //string ReleaseType = new Title_Release_Service().SearchFor(x => x.Title_Code == Title_Code).Select(x => x.Release_Type).FirstOrDefault();
+        //var platformCount = new Title_Release_Platform_Service().SearchFor(x => Title_Release_Code.Contains(x.Title_Release_Code)).Select(x => x.Platform_Code).ToArray();
+        string[] platformCount = new Title_Release_Platform_Service(objLoginEntity.ConnectionStringName).SearchFor(x => Title_Release_Code.Contains(x.Title_Release_Code)).Select(x => x.Platform_Code.ToString()).ToArray();
+
+        int?[] TerritoryCount = new Title_Release_Region_Service(objLoginEntity.ConnectionStringName).SearchFor(x => Title_Release_Code.Contains(x.Title_Release_Code)).Select(x => x.Territory_Code).ToArray();
+
+        int?[] CountryCount = new Title_Release_Region_Service(objLoginEntity.ConnectionStringName).SearchFor(x => Title_Release_Code.Contains(x.Title_Release_Code)).Select(x => x.Country_Code).ToArray();
+
+        int?[] Territorycountrycode = new Territory_Details_Service(objLoginEntity.ConnectionStringName).SearchFor(x => TerritoryCount.Contains(x.Territory_Code)).Select(x => (int?)x.Country_Code).ToArray();
+        int?[] RegionCode = objADRH.Acq_Deal_Rights_Holdback_Territory.Where(x => CountryCount.Contains(x.Country_Code)).Select(x => x.Country_Code).ToArray();
+        // var count = objADRH.Acq_Deal_Rights_Holdback_Platform.Where(x => platformCount.Contains(x.Platform_Code)).Count();
+        string HPCode = objADRH.Holdback_On_Platform_Code.ToString();
+        if (platformCount.Count() == 1)
+        {
+        platcode = platformCount.ElementAt(0);
+        }
+        else if (platformCount.Count() > 1)
+        {
+        for (int i = 0; i < platformCount.Count(); i++)
+        {
+        platcode = platcode + platformCount.ElementAt(i) + ",";
+        }
+        platcode = platcode.Remove(platcode.Length - 1);
+        }
+        if (HPCode != "")
+        {
+        count = platcode.Contains(HPCode);
+        }
+        if (count == true)
+        {
+        countP = 1;
+        }
+
+
+        if (Territorycountrycode.Count() > 0)
+        {
+        countT = objADRH.Acq_Deal_Rights_Holdback_Territory.Where(x => Territorycountrycode.Contains(x.Country_Code)).Count();
+        }
+        if (RegionCode.Count() > 0)
+        {
+        countC = objADRH.Acq_Deal_Rights_Holdback_Territory.Where(x => CountryCount.Contains(x.Country_Code)).Count();
+        }
+
+        if (objADRH.EntityState != RightsU_Entities.State.Deleted)
+        {
+        <div class="grid_item">
+            <ul>
+                <li class="platform">
+                    <a id="lnkAddPlatform_@Counter" title="@objMessageKey.HoldbackOn" href="#" onclick="return BindPlatform_HB('@Counter','LIST','@objADRH.strPlatformCodes');">
+                        @objADRH.Acq_Deal_Rights_Holdback_Platform.Where(p => p.EntityState != RightsU_Entities.State.Deleted).Count().ToString() @objMessageKey.Platform
+                    </a>
+                </li>
+
+                @{RightsU_BLL.Country_Service objCTS = new RightsU_BLL.Country_Service(objLoginEntity.ConnectionStringName);
+                    string[] arr_Cname = objADRH.strCountryCodes.Split(',');
+                    List<string> lstregion = objCTS.SearchFor(SV => arr_Cname.Contains(SV.Country_Code.ToString())).OrderBy(o => o.Country_Name).Select(s => s.Country_Name).ToList();
+                    string Region_Names = string.Join(", ", lstregion);
+                }
+                <li style="width:90px">
+                    @if (lstregion.Count > 2)
+                    { <span title="@objMessageKey.Region">@lstregion.Count() @objMessageKey.Region</span>}
+                </li>
+                <li class="regions">
+                    <div id="slimscroll">
+                        @if (lstregion.Count > 2)
+                        {
+                        @*<span title="Region">@regions.Count() Region</span>*@
+                        <a title="@objMessageKey.MoreRegions" id="show_hide_@Counter" href="#" class="glyphicon glyphicon-triangle-right show_hide"></a>
+                        <div id="extent_@Counter" class="MoreRegionDiv" style="display:none;">
+                            <ul>
+                                @foreach (var item in lstregion)
+                                {
+                                <li class="liRegion" id="lblRegion_Names_@Counter" style="border-bottom:1px solid #dddddd;width:135px">
+                                        @item
+                                </li>
+                                <br />
+                                }
+                            </ul>
+                        </div>
+                        }
+                        else
+                        {
+                        <span id="lblRegion_Names_@Counter" title="@objMessageKey.Region">
+                            @Region_Names
+                        </span>
+
+                        }
+                    </div>
+                </li>
+                <li class="yes_no">
+                    @if (objADRH.Holdback_Type == "D")
+                    {
+                    <label title="@objMessageKey.HoldbackType">@objMessageKey.Date</label>
+                    }
+                    else
+                    {
+                    <label title="@objMessageKey.HoldbackType">@objMessageKey.Release</label>
+                    }
+
+                    <span class="seperator">| </span>
+
+                    @if (objADRH.Holdback_Type == "D")
+                    {
+                    if (objADRH.Holdback_Release_Date != null)
+                    {
+                    @Html.Label("HoldbackReleaseDate", Convert.ToDateTime(objADRH.Holdback_Release_Date).ToString(GlobalParams.DateFormat_Display))
+                    }
+                    }
+                    else
+                    {
+                    string str_RunAfterReleaseUnits = "";
+
+                    if (objADRH.HB_Run_After_Release_No < 0)
+                    {
+                    <label>@objMessageKey.Before</label>
+                    @Html.Label("lbl_HB_Run_After_Release_No", objADRH.HB_Run_After_Release_No.ToString().TrimStart('-') + ' ', new { @id = "lblHB_Run_After_Release_No_" + Counter })
+                    }
+                    else
+                    {
+                    <label>@objMessageKey.After</label>
+                    @Html.Label("lbl_HB_Run_After_Release_No", objADRH.HB_Run_After_Release_No.ToString() + ' ', new { @id = "lblHB_Run_After_Release_No_" + Counter })
+                    }
+                    if (objADRH.HB_Run_After_Release_Units != null && objADRH.HB_Run_After_Release_Units != "")
+                    {
+                    switch (objADRH.HB_Run_After_Release_Units)
+                    {
+                    case "1":
+                    str_RunAfterReleaseUnits = "Day";
+                    break;
+                    case "2":
+                    str_RunAfterReleaseUnits = "Week";
+                    break;
+                    case "3":
+                    str_RunAfterReleaseUnits = "Month";
+                    break;
+                    case "4":
+                    str_RunAfterReleaseUnits = "Year";
+                    break;
+                    }
+
+                    if (objADRH.HB_Run_After_Release_No > 1)
+                    {
+                    str_RunAfterReleaseUnits += "s";
+                    }
+                    else if (Convert.ToInt32(objADRH.HB_Run_After_Release_No.ToString().TrimStart('-')) > 1)
+                    {
+                    str_RunAfterReleaseUnits += "s";
+                    }
+                    }
+                    @Html.Label("str_RunAfterReleaseUnits", str_RunAfterReleaseUnits, new { @id = "lblstr_RunAfterReleaseUnits_" + Counter, @Title = "Holdback Period" })
+
+                    var Platform_name = new Platform_Service(objLoginEntity.ConnectionStringName).SearchFor(p => p.Platform_Code == (int)objADRH.Holdback_On_Platform_Code).ToList().FirstOrDefault().Platform_Name;
+
+                    <label title="@objMessageKey.HoldbackPeriod">On @Platform_name </label>
+                    }
+
+                    <span class="seperator">| </span>
+
+                    @if (objADRH.Is_Title_Language_Right == null || objADRH.Is_Title_Language_Right == "Y")
+                    {
+                    <label title="@objMessageKey.TitleLanguage">@objMessageKey.Yes</label>
+                    }
+                    else
+                    {
+                    <label title="@objMessageKey.TitleLanguage">@objMessageKey.NO</label>
+                    }
+                </li>
+                <li class="action">
+                    @if (ViewBag.CommandName_HB != GlobalParams.DEAL_MODE_VIEW && @ViewBag.CommandName_HB != GlobalParams.DEAL_MODE_APPROVE)
+                    {
+                    if (countP > 0 && (countC > 0 || countT > 0))
+                    {
+                    <a title="@objMessageKey.View" id="View" class="glyphicon glyphicon-eye-open" onclick="View_Holdback('@Counter')"></a>
+                    <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" onclick="Edit_Holdback('@Counter')"></a>
+
+                    <a title="@objMessageKey.CannotdeletethisholdbackasitislinkedwithTitleRelease" id="Delete" href="#" class="glyphicon glyphicon-trash disabled" onclick="return false"></a>
+                    }
+                    else
+                    {
+                    <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" onclick="Edit_Holdback('@Counter')"></a>
+
+                    <a title="@objMessageKey.Delete" class="glyphicon glyphicon-trash" onclick="return Delete_Holdback('@Counter')"></a>
+                    }
+                    }
+                    else
+                    {
+                    <label>&nbsp;</label>
+                    }
+                    @if (ViewBag.CommandName_HB == GlobalParams.DEAL_MODE_VIEW)
+                    {
+                    if (countP > 0 && (countC > 0 || countT > 0))
+                    {
+                    <a title="@objMessageKey.View" id="View" class="glyphicon glyphicon-eye-open" onclick="View_Holdback('@Counter')"></a>
+                    }
+                    }
+                </li>
+            </ul>
+            <ul>
+                @{RightsU_BLL.Language_Service objLS = new RightsU_BLL.Language_Service(objLoginEntity.ConnectionStringName);
+                    string Sub_Names = "";
+                    string Dub_Names = "";
+                    List<string> lstSubtitle = new List<string>();
+                    List<string> lstDubbing = new List<string>(); 
+
+                    if (objADRH.strSubtitlingCodes != null && objADRH.strSubtitlingCodes != "")
+                    {
+                        string[] arr_SubNames = objADRH.strSubtitlingCodes.Split(',');
+                        lstSubtitle = objLS.SearchFor(SV => arr_SubNames.Contains(SV.Language_Code.ToString())).OrderBy(o => o.Language_Name).Select(S => S.Language_Name).ToList();
+                        Sub_Names = string.Join(", ", lstSubtitle);
+                        // SubTitle = Sub_Names.Split(',').ToArray();
+                    }
+
+                    if (objADRH.strDubbingCodes != null && objADRH.strDubbingCodes != "")
+                    {
+                        string[] arr_DubNames = objADRH.strDubbingCodes.Split(',');
+                        lstDubbing = objLS.SearchFor(SV => arr_DubNames.Contains(SV.Language_Code.ToString())).OrderBy(o => o.Language_Name).Select(S => S.Language_Name).ToList();
+                        Dub_Names = string.Join(", ", lstDubbing);
+                        //Dubbing = Dub_Names.Split(',').ToArray();
+                    }
+                }
+                <li style="width:100px">
+                    @if (lstSubtitle.Count > 2)
+                    { <span title="@objMessageKey.Subtitle">@lstSubtitle.Count() @objMessageKey.Subtitle</span>}
+                </li>
+                <li class="sub">
+                    <div>
+                        @if (lstSubtitle.Count > 2)
+                        {
+                        @*<span title="SubTitle">@SubTitle.Count() SubTitle</span>*@
+                        <a title="@objMessageKey.MoreSubTitle" id="show_hide_SubTitle_@Counter" href="#" class="glyphicon glyphicon-triangle-right show_hide_SubTitle"></a>
+                        <div id="extent_SubTitle_@Counter" class="MoreSubtitleDiv" style="display:none;">
+                            <ul>
+                                @foreach (var item in lstSubtitle)
+                                {
+                                <li class="liSubTitle" id="lblSub_Names_@Counter" style="border-bottom:1px solid #dddddd;width:135px">
+                                        @item
+                                </li>
+                                <br />
+                                }
+                            </ul>
+                        </div>
+                        }
+                        else
+                        {
+                        <span id="lblSub_Names_@Counter" title="@objMessageKey.Subtitle">
+                            @Sub_Names
+                        </span>
+                        }
+                    </div>
+                </li>
+                <li style="width:100px">
+                    @if (lstDubbing.Count > 2)
+                    { <span title="Dubbing">@lstDubbing.Count() @objMessageKey.Dubbing</span>}
+                </li>
+                <li class="dub">
+                    <div>
+
+                        @if (lstDubbing.Count > 2)
+                        {
+                        @*<span title="Dubbing">@Dubbing.Count() Dubbing</span>*@
+
+                        <a title="@objMessageKey.MoreDubbing" id="show_hide_Dubbing_@Counter" href="#" class="glyphicon glyphicon-triangle-right show_hide_Dubbing"></a>
+                        <div id="extent_SubTitle_@Counter" class="MoreDubbingDiv" style="display:none;">
+                            <ul>
+                                @foreach (var item in lstDubbing)
+                                {
+                                <li class="liSubTitle" id="lblSub_Names_@Counter" style="border-bottom:1px solid #dddddd;width:135px">
+                                        @item
+                                </li>
+
+                                <br />
+                                }
+                            </ul>
+                        </div>
+
+                        }
+                        else
+                        {
+                        <span id="lblSub_Names_@Counter" title="@objMessageKey.Dubbing">
+                            @Dub_Names
+                        </span>
+                        }
+                    </div>
+
+                </li>
+                <li class="comment">
+                    <div class="expandable" title="@objMessageKey.HoldbackComment">
+                        @Html.Label("Holdback_Comment", Convert.ToString(objADRH.Holdback_Comment), new { @id = "lblHoldback_Comment_" + Counter })
+                    </div>
+                </li>
+            </ul>
+        </div>
+        }
+        }
+        }
+        }
+    </div>
+
+</form>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade" id="popPlatformRights" role="dialog" tabindex="-1" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form">
+                <div class="form_wrapper">
+                    <div class="form_fields acq">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>@objMessageKey.PlatformRights</h2>
+                        </div>
+                        <div class="modal_block">
+                            <div id="tree_HB" class="treeClass">
+                            </div>
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li>
+                                        <a data-dismiss="modal" class="btn btn-primary" href="#">@objMessageKey.Back</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div aria-labelledby="myModalLabel" id="popEditHB" data-backdrop="static" data-keyboard="false" class="form_wrapper modal fade in big_popup scroll" role="dialog" tabindex="-1" aria-hidden="true" style="display: none; max-width:80%">
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade in big_popup scroll" id="popupHoldbackReleaseView" role="dialog" tabindex="-1" aria-hidden="false" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form" id="frm_set_milestone">
+                <div>
+                    <div class="form_fields acq">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>@objMessageKey.HoldbackRelease</h2>
+                        </div>
+                        <div class="modal_block">
+                            <div id="BindHoldbackReleaseView"></div>
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li>
+                                        <a data-dismiss="modal" class="btn btn-primary" href="#">@objMessageKey.Cancel</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<style>
+    .MoreRegionDiv {
+        padding: 2px;
+        background: #ffffff; /*#2B5F8E;*/
+        width: 150px;
+        max-height: 95px;
+        box-shadow: 0 0 5px #aaa;
+        font-size: 12px;
+        color: #000;
+        text-align: left;
+        position: absolute;
+        z-index: 99;
+        left: auto;
+        overflow-y: auto;
+        display: none;
+        line-height: 18px !important;
+        overflow-x: hidden;
+    }
+
+    .MoreSubtitleDiv {
+        padding: 2px;
+        background: #ffffff; /*#2B5F8E;*/
+        width: 150px;
+        max-height: 95px;
+        box-shadow: 0 0 5px #aaa;
+        font-size: 12px;
+        color: #000;
+        text-align: left;
+        position: absolute;
+        z-index: 99;
+        left: auto;
+        overflow-y: auto;
+        display: none;
+        line-height: 18px !important;
+        overflow-x: hidden;
+    }
+
+    .MoreDubbingDiv {
+        padding: 2px;
+        background: #ffffff; /*#2B5F8E;*/
+        width: 150px;
+        max-height: 95px;
+        box-shadow: 0 0 5px #aaa;
+        font-size: 12px;
+        color: #000;
+        text-align: left;
+        position: absolute;
+        z-index: 99;
+        left: auto;
+        overflow-y: auto;
+        display: none;
+        line-height: 18px !important;
+        overflow-x: hidden;
+    }
+</style>

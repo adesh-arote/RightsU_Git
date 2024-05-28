@@ -1,0 +1,193 @@
+﻿@model List<RightsU_Entities.Acq_Deal_Attachment>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+}
+
+
+<link type="text/css" rel="stylesheet" href="~/CSS/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]">
+<script type="text/javascript">
+    var PaymentIntCode = 0;
+    var IsAddEditMode="N";
+    var canSave=0;
+    var message_G = '@ViewBag.Message';
+    var dealMode_G = '@ViewBag.PageMode';
+    var recordLockingCode_G = @ViewBag.Record_Locking_Code;
+
+    var URL_Global_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global", null, Request.Url.Scheme)';
+    var URL_SaveFile = '@Url.Action("SaveFile", "Acq_Attachment")';
+    var URL_Save = '@Url.Action("Save", "Acq_Attachment")';
+    var URL_Delete = '@Url.Action("Delete", "Acq_Attachment")';
+    var URL_Global_SetApprovalRemarks = '@Url.Action("SetApprovalRemarks", "Global")';
+    var URL_BindGridAcqAttachment = '@Url.Action("BindGridAcqAttachment", "Acq_Attachment")';
+    var URL_Create = '@Url.Action("Create", "Acq_Attachment")';
+    var URL_Edit = '@Url.Action("Edit", "Acq_Attachment")'
+    var URL_DownloadFileImage = '@Url.Action("DownloadFile", "Acq_Attachment")';
+    var URL_Download = '@Url.Action("Download", "Acq_Attachment")';
+    var ShowMessage = {
+        "MsgForAddEdit": '@objMessageKey.PleasecompletetheAddEditfirst',
+        "ReadMore": '@objMessageKey.readmore',
+        "MsgForAttAdd": '@objMessageKey.Attachmentaddedsuccessfully',
+        "MsgForAttUpd": '@objMessageKey.Attachmentupdatedsuccessfully',
+        "MsgForAttConf":'@objMessageKey.Areyousureyouwanttodeletethisattachment',
+        "MsgForAttDelete": '@objMessageKey.Attachmentdeletedsuccessfully'
+    }
+
+    $(document).ready(function () {
+        debugger;
+        //  $("#ancFileName").attr('href','Help/index.html?IntCode=@Session["FileName"]');
+        //$("#ancFileName").attr('href', 'Help/Masters/Layout.html?acq_Attachments');
+        addNumeric();
+    });
+
+
+    function addNumeric() {
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
+
+    function ValidatePageSize() {
+        var recordPerPage = $('#txtPageSize').val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize').addClass("required");
+        return false;
+    }
+    function PageSize_OnChange() {
+        if (CheckEditMode()) {
+            $('.required').removeClass('required');
+            $("[required='required']").removeAttr("required");
+            var IsValid = ValidatePageSize();
+            if (IsValid) {
+               
+            }
+            else
+                return false;
+        }
+    }
+    function DownloadFileImage(SystemFilename, FileName,attachmentCode) {
+        debugger;
+        if (CheckEditMode()) {
+            var System_File_Name = SystemFilename;
+            var Attachment_File_Name = FileName;
+            $.ajax({
+                type: "POST",
+                url: URL_DownloadFileImage,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    System_File_Name: System_File_Name,
+                    Attachment_File_Name: Attachment_File_Name
+                }),
+                success: function (result) {
+                    debugger;
+                    var AttachFileName = Attachment_File_Name;
+                    if (result.path == "")
+                        showAlert('S',"File Not Found");
+                    else {
+                        debugger;
+                        @*var parameter = "?&Attachment_File_Name=" + result.attachFileName + "&System_File_Name=" + SystemFilename;
+                        var URL = '@Url.Action("download", "Acq_Attachment"  ,new { SearchedTitle = "Searched_Text" })';
+                        URL = URL.replace("Searched_Text",parameter);
+                        window.location.href =URL;*@ /// comment by sayali becoz special character not working
+                        @*window.location.href = '@Url.Action("download", "Acq_Attachment")?SearchedTitle=' + "?" + '&Attachment_File_Name=' + result.attachFileName + '&System_File_Name=' + SystemFilename;*@
+                        window.location.href = '@Url.Action("download", "Acq_Attachment")?SearchedTitle=' + "?" + '&Attachment_Code=' + attachmentCode;
+
+                    }
+
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    }
+</script>
+<script src="~/Custom_Scripts/Acq_Deal_Attachment.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<style>
+    .navigation_tabs {
+        overflow: visible !important;
+    }
+</style>
+<div class="grid_area">
+    <div class="navigation_tabs">
+        <div class="tabbable">
+            <div class="tab-content clearfix table-wrapper scale_table_container acq">
+                <div class="tab-pane active" id="tabPayTerm">
+                    <div class="scale_table_block">
+                        <div class="sub_block clearfix">
+                            <div class="pull-right">
+                                @if (ViewBag.PageMode != "V" && ViewBag.PageMode != "APRV" && ViewBag.PageMode != "EWOA")
+                                {
+                                    <a class="btn btn-primary" title="@objMessageKey.AddAttachment" onclick="return AddCancelAttachment(1);">@objMessageKey.Add</a>
+                                }
+                            </div>
+                        </div>
+                        <div class="paging_area clearfix">
+                            <span id="spanRecordCount" class="pull-left">@objMessageKey.TotalRecords:  @ViewBag.RecordCount</span>
+                            <input type="hidden" id="hdnpage_index" name="hdnpage_index" value="1" />
+                            <div class="pagination" id="Pagination"></div>
+                            <span class="pull-right">
+                                @objMessageKey.PageSize:
+                                <input type="text" class="smallTextBox pagingSize" value="10" id="txtPageSize" onchange="return PageSize_OnChange();"
+                                       onfocus="CheckEditMode()" onblur="setDefaultPaging('txtPageSize')" />
+                            </span>
+                        </div>
+                        <div class="scale_table_block" id="dvDealAcqAttachment">
+                        </div>
+                    </div>
+                </div>
+                @if (ViewBag.PageMode == "EWOA")
+                {
+                    @Html.Partial("_Edit_Without_Approval")
+                }
+                @if (ViewBag.PageMode == "APRV")
+                {
+                    @Html.Partial("_Approved_List")
+                    <br />
+                }
+                <div class="bottom_action">
+                    <ul class="form_link_nav clearfix">
+                        <li>
+                            @if (ViewBag.PageMode != "APRV" && ViewBag.PageMode != "EWOA")
+                            {
+                                var Show_Acq_SubDeal_List = new RightsU_BLL.System_Parameter_New_Service(objLoginEntity.ConnectionStringName)
+                                .SearchFor(x => x.Parameter_Name == "Show_Acq_SubDeal_List").Select(x => x.Parameter_Value).FirstOrDefault();
+
+
+                                if (Show_Acq_SubDeal_List == "Y" &&  Convert.ToInt32(ViewBag.prevAcq_Deal) > 0)
+                                {
+                                    <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                           onclick="location.href='@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = ViewBag.prevAcq_Deal })'">
+                                }
+                                else
+                                {
+                                    <input type="button" id="btnCancelDeal" title="Cancel" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                           onclick="if(CheckEditMode()) location.href='@Url.Action("Cancel", "Acq_Attachment")'">
+                                }
+                            }
+                        </li>
+                    </ul>
+                    <input type="hidden" id="hdnTabName" name="hdnTabName" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

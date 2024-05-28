@@ -1,0 +1,204 @@
+﻿@model List<RightsU_Entities.USP_List_Rights_Result>
+@using UTOFrameWork.FrameworkClasses
+@{
+    RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
+    if (Session[RightsU_Entities.RightsU_Session.Syn_DEAL_SCHEMA] != null)
+    {
+        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.Syn_DEAL_SCHEMA];
+    }
+       MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<link href="~/CSS/Rights_Tab.css" rel="stylesheet" />
+<script src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<style>
+         #popupFade .modal_header{
+        background:#c3c3c3;
+    }
+</style>
+<script>
+    //var URL_Clone_Pushback = '@Url.Action("Clone_Pushback", "Syn_Pushback")';
+    var URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global", null, Request.Url.Scheme)'
+    , URL_BindGrid = '@Url.Action("BindGrid", "Syn_Pushback")'
+, URL_DeletePushback = '@Url.Action("DeletePushback", "Syn_Pushback")'
+, URL_SetApprovalRemarks = '@Url.Action("SetApprovalRemarks", "Global")'
+, URL_Show_Error_Popup = '@Url.Action("Show_Error_Popup", "Syn_Pushback")'
+, URL_GetSynRightsStatus = '@Url.Action("GetSynRightsStatus", "Syn_Rights_List")'
+, URL_Edit_Pushback = '@Url.Action("Edit_Pushback", "Syn_Pushback")'
+, URL_Clone_Pushback = '@Url.Action("Clone_Pushback", "Syn_Pushback")'
+, URL_Add = '@Url.Action("Add", "Syn_Pushback")'
+, URL_Reprocess = '@Url.Action("Reprocess", "Syn_Rights_List")'
+, URL_ValidateRightsTitleWithAcq = '@Url.Action("ValidateRightsTitleWithAcq", "Syn_Rights_List")'
+, URL_GetSynRightStatus = '@Url.Action("GetSynRightStatus", "Syn_Deal")';
+
+    var Record_Locking_Code_G = '@ViewBag.Record_Locking_Code'
+, Mode_G = '@objSchema.Mode'
+, Pushback_View_G = '@objSchema.Pushback_View'
+, Pushback_Titles_G = '@objSchema.Pushback_Titles'
+, Pushback_PageSize_G = '@objSchema.Pushback_PageSize'
+, Pushback_PageNo_G = '@objSchema.Pushback_PageNo';
+    var URL_BindRightsFilterData = '@Url.Action("BindRightsFilterData","Syn_Pushback")';
+    var rightsRegion_G = '@objSchema.Pushback_Region'.split(',');
+    var rightsPlatform_G = '@objSchema.Pushback_Platform';
+  //  var rightsTitle_G = '@objSchema.Pushback_Title'.split(',');
+    var rightsExclusive_G = '@objSchema.Pushback_Exclusive';
+    $(document).ready(function () {
+        BindRightsFilterData();
+        $('#hdnModuleCode').val(@GlobalParams.ModuleCodeForSynDeal)
+
+    });
+    function BindRightsFilterData() {
+        $.ajax({
+            type: "POST",
+            url: URL_BindRightsFilterData,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            async: false,
+            data: JSON.stringify({
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divRightsFilter').empty();
+                    $('#divRightsFilter').html(result);
+                    initializeExpander();
+                    initializeTooltip();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    var ShowMessage = {
+        "Pleaseselectatleastonecriteriatoview": '@objMessageKey.Pleaseselectatleastonecriteriatoview',
+        "Cannotdeleterightasitisalreadysyndicated": '@objMessageKey.Cannotdeleterightasitisalreadysyndicated',
+        "Areyousureyouwanttodeletethisright": '@objMessageKey.Areyousureyouwanttodeletethisright',
+        "CannoteditReverseHoldbackascorrespondingAcquisitionDeal": '@objMessageKey.CannoteditReverseHoldbackascorrespondingAcquisitionDealisinAmendmentstate',
+        "ReverseHoldbackReprocessedSuccessfully": '@objMessageKey.ReverseHoldbackReprocessedSuccessfully',
+        "MsgPlaceSearch": '@objMessageKey.Search'
+    }
+</script>
+<script src="~/Custom_Scripts/Syn_Deal_Pushback.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<style>
+    /*.sumo_ddlTitleCode {
+        width: 372px !important;
+        font-weight: 100 !important;
+    }*/
+</style>
+@*<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container syn main_col">*@
+@*@using (Html.BeginForm("ChangeTab", "Syn_Pushback", FormMethod.Post))
+    {*@
+@*@using (Ajax.BeginForm("ChangeTab", "Syn_Pushback", new AjaxOptions { }))
+    {*@
+<div class="grid_area" onclick="FadeOutPopup1();">
+    <div class="navigation_tabs">
+        <div class="tabbable">
+            <div class="tab-content clearfix table-wrapper scale_table_container">
+                <div class="tab-pane active" id="tabRights">
+                    <div class="scale_table_block">
+                        <div id="divRightsFilter">
+                        </div>
+                        @*<table class="table">
+                            <tr>
+                                <td class="bold" style="width: 10%;">Page View:</td>
+                                <td style="width: 25%;">
+                                    <div>
+                                        @Html.Hidden("ViewType", "")
+                                        <input type="hidden" id="hdnTabName" name="hdnTabName" />
+                                        <label class="radio-inline">
+                                            <input type="radio" name="optLicnsorHB" id="G" value="G" checked onchange="BindGridNew(this,'N');" />
+                                            @Html.Hidden("hdnCurrentPageNo")
+                                            Group
+                                        </label>
+                                        <label class="radio-inline">
+                                            <input type="radio" name="optLicnsorHB" id="S" value="S" onchange="BindGridNew(this,'N');" />
+                                            Summary
+                                        </label>
+                                        <label class="radio-inline">
+                                            <input type="radio" name="optLicnsorHB" id="D" value="D" onchange="BindGridNew(this,'N');" />
+                                            Detail
+                                        </label>
+                                    </div>
+                                </td>
+                                <td class="bold" style="width: 5%;">
+                                    Titles
+                                </td>
+                                <td class="bold" style="width: 40%;">
+                                    @*<select name="" id="ddlTitle" class="form_input chosen-select" multiple>
+                                        </select>
+                                    <div class="ddlTitleCode" style="width: 374px;">
+                                        @Html.ListBox("ddlTitleCode", ViewBag.TitleList as MultiSelectList, new { @multiple = "multiple"  })
+                                    </div>
+                                </td>
+                                <td style="width: 10%;">
+                                    <input type="button" class="button" value="Show All" id="btnShowAll">
+                                </td>
+                                @if (ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_APPROVE)
+                                {
+                                    <td style="width: 10%;">
+                                        <div class="pull-right">
+                                            <a class="btn btn-primary" href="#" data-toggle="modal" id="btnAdd" onclick="Add('popEditRevHB');">Add</a>
+                                        </div>
+                                    </td>
+                                }
+                            </tr>
+                        </table>*@
+                    </div>
+                    <div class="paging_area clearfix">
+                        <span class="pull-left" id="lblTotal"></span>
+                        <div id="Pagination" class="pagination">
+                        </div>
+                        <span class="pull-right">
+                            @objMessageKey.PageSize:
+                            <input type="text" id="txtPageSize" class="smallTextBox pagingSize" value="10" 
+                                   onchange="return PageSize_OnChange();" onblur="setDefaultPaging('txtPageSize')"/>
+                        </span>
+                        @*@if (ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_APPROVE)
+                        {
+                              
+                                    <a class="btn btn-primary pull-right" href="#" data-toggle="modal" id="btnAdd" onclick="Add('popEditRevHB');">Add</a>
+                                
+                        }*@
+                    </div>
+                    <div class="scale_table_block">
+                        <div class="div_BindGrid">
+                        </div>
+                    </div>
+                </div>
+                @if (objSchema.Mode == GlobalParams.DEAL_MODE_APPROVE)
+                {
+                    @Html.Partial("_Syn_Approved_List")
+                }
+                else
+                {
+                    <div class="bottom_action">
+                        <ul class="form_link_nav clearfix">
+                            <li>
+                                <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                       onclick="location.href='@Url.Action("Cancel", "Syn_Pushback")    '">
+                            </li>
+                        </ul>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+@*}*@
+@*</div>
+        </section>
+    </div>*@
+<div aria-labelledby="myModalLabel" id="popEditRevHB" class="form_wrapper modal fade big_popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+</div>

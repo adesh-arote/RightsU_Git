@@ -1,0 +1,88 @@
+﻿@model List<RightsU_Entities.USPRUBVMappingList_Result>
+@using UTOFrameWork.FrameworkClasses;
+   <script>
+    $(document).ready(function () {
+        debugger;
+        $("#hdnRecordCount").val(@(ViewBag.RecordCount));
+        SetPaging();
+    });
+</script>
+<table class="table table-bordered table-hover" id="vendortable">
+        @if ((string)Session["SelectedValue2"] == "M")
+        {
+            <tr>
+                <th width="5%"></th>
+                <th width="25%">Vendor Name</th>
+                <th width="15%">RU ID</th>
+                <th width="15%">BV ID</th>
+                <th width="25%">Request Time</th>
+                <th width="15%">Record Status</th>
+            </tr>
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.CheckBox("checkbox1", new { @value = @item.RUID, @required = "required" })
+                    </td>
+                    <td>@item.VendorName</td>
+                    <td>@item.RUID</td>
+                    <td><input type="text" id="txtbvid_@item.RUID"></td>
+                    @if (item.RecordStatus == "Waiting")
+                    {
+                        <td>@item.RequestTime</td>
+                    }
+                    else
+                    {
+                        <td></td>}
+                    <td>@item.RecordStatus</td>
+                </tr>
+            }
+        }
+        else if ((string)Session["SelectedValue2"] == "E")
+        {    <tr>
+                <th width="20%">Vendor Name</th>
+                <th width="12%">RU ID</th>
+                <th width="12%">BV ID</th>
+                <th width="15%">Request Time</th> 
+                <th width="20.5%">Error Description</th>
+                <th width="20.5%">Record Status</th>
+            </tr>
+            foreach (var item in Model)
+             {
+                <tr>
+                    <td>@item.VendorName</td>
+                    <td>@item.RUID</td>
+                    <td>@item.BVID</td>
+                    <td>@Convert.ToDateTime(item.RequestTime).ToString(GlobalParams.DateFormat_Display).Trim()</td>
+                    <td>@item.ErrorDescription</td>
+                    <td>@item.RecordStatus</td>
+               </tr>
+            }
+        }
+        else if ((string)Session["SelectedValue2"] == "P")
+        {
+      <tr>
+        <th width="30%">Vendor Name</th>
+        <th width="15%">RU ID</th>
+        <th width="15%">BV ID</th>
+          <th width="20%">Request Time</th>
+        <th width="20%">Record Status</th>
+    </tr>
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.VendorName</td>
+                    <td>@item.RUID</td>
+                    <td>@item.BVID</td>
+                    @if (item.RecordStatus == "Waiting")
+                    {
+                        <td>@item.RequestTime</td>
+                    }
+                    else
+                    {
+                        <td></td>}
+                    <td>@item.RecordStatus</td>
+                </tr>
+            }
+        }
+    </table>

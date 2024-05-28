@@ -1,0 +1,272 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="RightsU_PlusModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="MQ_Config">
+          <Key>
+            <PropertyRef Name="MQ_Config_Code" />
+          </Key>
+          <Property Name="MQ_Config_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MQ_Name" Type="varchar(max)" />
+          <Property Name="MQ_Manager" Type="varchar(max)" />
+          <Property Name="MQ_Channel" Type="varchar(max)" />
+          <Property Name="Config_For" Type="char" MaxLength="1" />
+          <Property Name="Config_Type" Type="varchar(max)" />
+          <Property Name="Execution_Order" Type="int" />
+          <Property Name="Is_Active" Type="char" MaxLength="1" />
+        </EntityType>
+        <EntityType Name="MQ_Log">
+          <Key>
+            <PropertyRef Name="MQ_Log_Code" />
+          </Key>
+          <Property Name="MQ_Log_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MQ_Config_Code" Type="int" />
+          <Property Name="Message_Key" Type="nvarchar(max)" />
+          <Property Name="Request_Text" Type="nvarchar(max)" />
+          <Property Name="Request_Time" Type="datetime" />
+          <Property Name="Module_Code" Type="int" />
+          <Property Name="Record_Code" Type="int" />
+          <Property Name="Record_Status" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="Vendor">
+          <Key>
+            <PropertyRef Name="Vendor_Code" />
+          </Key>
+          <Property Name="Vendor_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Vendor_Name" Type="nvarchar" MaxLength="1000" />
+          <Property Name="Address" Type="nvarchar" MaxLength="3000" />
+          <Property Name="Phone_No" Type="varchar" MaxLength="100" />
+          <Property Name="Fax_No" Type="varchar" MaxLength="100" />
+          <Property Name="ST_No" Type="varchar" MaxLength="100" />
+          <Property Name="VAT_No" Type="varchar" MaxLength="100" />
+          <Property Name="TIN_No" Type="varchar" MaxLength="100" />
+          <Property Name="PAN_No" Type="varchar" MaxLength="100" />
+          <Property Name="Inserted_On" Type="datetime" />
+          <Property Name="Inserted_By" Type="int" />
+          <Property Name="Lock_Time" Type="datetime" />
+          <Property Name="Last_Updated_Time" Type="datetime" />
+          <Property Name="Last_Action_By" Type="int" />
+          <Property Name="Is_Active" Type="char" MaxLength="1" />
+          <Property Name="Reference_Id_1" Type="varchar" MaxLength="50" />
+          <Property Name="Reference_Id_2" Type="varchar" MaxLength="50" />
+          <Property Name="Reference_Id_3" Type="varchar" MaxLength="50" />
+          <Property Name="CST_No" Type="varchar" MaxLength="200" />
+          <Property Name="SAP_Vendor_Code" Type="varchar" MaxLength="200" />
+          <Property Name="Is_External" Type="char" MaxLength="1" />
+          <Property Name="CIN_No" Type="varchar" MaxLength="100" />
+          <Property Name="Ref_Vendor_Key" Type="int" />
+          <Property Name="Province" Type="varchar" MaxLength="40" />
+          <Property Name="PostalCode" Type="varchar" MaxLength="20" />
+          <Property Name="ExternalId" Type="varchar" MaxLength="20" />
+          <Property Name="Record_Status" Type="char" MaxLength="1" />
+          <Property Name="Error_Description" Type="varchar(max)" />
+          <Property Name="Request_Time" Type="datetime" />
+          <Property Name="Response_Time" Type="datetime" />
+          <Property Name="GST_No" Type="varchar" MaxLength="50" />
+          <Property Name="MDM_Code" Type="nvarchar(max)" />
+          <Property Name="MQ_Ref_Code" Type="int" />
+          <Property Name="Is_BV_Push" Type="char" MaxLength="1" />
+          <Property Name="Short_Code" Type="varchar" MaxLength="10" />
+          <Property Name="Party_Category_Code" Type="int" />
+          <Property Name="Party_Type" Type="char" MaxLength="1" />
+        </EntityType>
+        <Function Name="USP_MQ_Customer_CRUD" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="read" Type="nvarchar(max)" Mode="In" />
+          <Parameter Name="mq_config_code" Type="int" Mode="In" />
+        </Function>
+        <Function Name="USP_MQ_Vendor_CRUD" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="read" Type="nvarchar(max)" Mode="In" />
+          <Parameter Name="mq_config_code" Type="int" Mode="In" />
+        </Function>
+        <EntityContainer Name="RightsU_PlusModelStoreContainer">
+          <EntitySet Name="MQ_Config" EntityType="Self.MQ_Config" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MQ_Log" EntityType="Self.MQ_Log" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Vendor" EntityType="Self.Vendor" Schema="dbo" store:Type="Tables" />
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="RightsU_PlusModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="MQ_Config">
+          <Key>
+            <PropertyRef Name="MQ_Config_Code" />
+          </Key>
+          <Property Name="MQ_Config_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MQ_Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="MQ_Manager" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="MQ_Channel" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Config_For" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Config_Type" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Execution_Order" Type="Int32" />
+          <Property Name="Is_Active" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+        </EntityType>
+        <EntityType Name="MQ_Log">
+          <Key>
+            <PropertyRef Name="MQ_Log_Code" />
+          </Key>
+          <Property Name="MQ_Log_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MQ_Config_Code" Type="Int32" />
+          <Property Name="Message_Key" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Request_Text" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Request_Time" Type="DateTime" Precision="3" />
+          <Property Name="Module_Code" Type="Int32" />
+          <Property Name="Record_Code" Type="Int32" />
+          <Property Name="Record_Status" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="Vendor">
+          <Key>
+            <PropertyRef Name="Vendor_Code" />
+          </Key>
+          <Property Name="Vendor_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Vendor_Name" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="Address" Type="String" MaxLength="3000" FixedLength="false" Unicode="true" />
+          <Property Name="Phone_No" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Fax_No" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="ST_No" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="VAT_No" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="TIN_No" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="PAN_No" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Inserted_On" Type="DateTime" Precision="3" />
+          <Property Name="Inserted_By" Type="Int32" />
+          <Property Name="Lock_Time" Type="DateTime" Precision="3" />
+          <Property Name="Last_Updated_Time" Type="DateTime" Precision="3" />
+          <Property Name="Last_Action_By" Type="Int32" />
+          <Property Name="Is_Active" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Reference_Id_1" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Reference_Id_2" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Reference_Id_3" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CST_No" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="SAP_Vendor_Code" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="Is_External" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="CIN_No" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Ref_Vendor_Key" Type="Int32" />
+          <Property Name="Province" Type="String" MaxLength="40" FixedLength="false" Unicode="false" />
+          <Property Name="PostalCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="ExternalId" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Record_Status" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Error_Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Request_Time" Type="DateTime" Precision="3" />
+          <Property Name="Response_Time" Type="DateTime" Precision="3" />
+          <Property Name="GST_No" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="MDM_Code" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="MQ_Ref_Code" Type="Int32" />
+          <Property Name="Is_BV_Push" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Short_Code" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Party_Category_Code" Type="Int32" />
+          <Property Name="Party_Type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+        </EntityType>
+        <EntityContainer Name="RightsU_PlusEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="MQ_Config" EntityType="Self.MQ_Config" />
+          <EntitySet Name="MQ_Log" EntityType="Self.MQ_Log" />
+          <EntitySet Name="Vendors" EntityType="Self.Vendor" />
+          <FunctionImport Name="USP_MQ_Customer_CRUD" ReturnType="Collection(String)">
+            <Parameter Name="read" Mode="In" Type="String" />
+            <Parameter Name="mq_config_code" Mode="In" Type="Int32" />
+          </FunctionImport>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="RightsU_PlusModelStoreContainer" CdmEntityContainer="RightsU_PlusEntities">
+          <EntitySetMapping Name="MQ_Config">
+            <EntityTypeMapping TypeName="RightsU_PlusModel.MQ_Config">
+              <MappingFragment StoreEntitySet="MQ_Config">
+                <ScalarProperty Name="MQ_Config_Code" ColumnName="MQ_Config_Code" />
+                <ScalarProperty Name="MQ_Name" ColumnName="MQ_Name" />
+                <ScalarProperty Name="MQ_Manager" ColumnName="MQ_Manager" />
+                <ScalarProperty Name="MQ_Channel" ColumnName="MQ_Channel" />
+                <ScalarProperty Name="Config_For" ColumnName="Config_For" />
+                <ScalarProperty Name="Config_Type" ColumnName="Config_Type" />
+                <ScalarProperty Name="Execution_Order" ColumnName="Execution_Order" />
+                <ScalarProperty Name="Is_Active" ColumnName="Is_Active" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MQ_Log">
+            <EntityTypeMapping TypeName="RightsU_PlusModel.MQ_Log">
+              <MappingFragment StoreEntitySet="MQ_Log">
+                <ScalarProperty Name="MQ_Log_Code" ColumnName="MQ_Log_Code" />
+                <ScalarProperty Name="MQ_Config_Code" ColumnName="MQ_Config_Code" />
+                <ScalarProperty Name="Message_Key" ColumnName="Message_Key" />
+                <ScalarProperty Name="Request_Text" ColumnName="Request_Text" />
+                <ScalarProperty Name="Request_Time" ColumnName="Request_Time" />
+                <ScalarProperty Name="Module_Code" ColumnName="Module_Code" />
+                <ScalarProperty Name="Record_Code" ColumnName="Record_Code" />
+                <ScalarProperty Name="Record_Status" ColumnName="Record_Status" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Vendors">
+            <EntityTypeMapping TypeName="RightsU_PlusModel.Vendor">
+              <MappingFragment StoreEntitySet="Vendor">
+                <ScalarProperty Name="Vendor_Code" ColumnName="Vendor_Code" />
+                <ScalarProperty Name="Vendor_Name" ColumnName="Vendor_Name" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="Phone_No" ColumnName="Phone_No" />
+                <ScalarProperty Name="Fax_No" ColumnName="Fax_No" />
+                <ScalarProperty Name="ST_No" ColumnName="ST_No" />
+                <ScalarProperty Name="VAT_No" ColumnName="VAT_No" />
+                <ScalarProperty Name="TIN_No" ColumnName="TIN_No" />
+                <ScalarProperty Name="PAN_No" ColumnName="PAN_No" />
+                <ScalarProperty Name="Inserted_On" ColumnName="Inserted_On" />
+                <ScalarProperty Name="Inserted_By" ColumnName="Inserted_By" />
+                <ScalarProperty Name="Lock_Time" ColumnName="Lock_Time" />
+                <ScalarProperty Name="Last_Updated_Time" ColumnName="Last_Updated_Time" />
+                <ScalarProperty Name="Last_Action_By" ColumnName="Last_Action_By" />
+                <ScalarProperty Name="Is_Active" ColumnName="Is_Active" />
+                <ScalarProperty Name="Reference_Id_1" ColumnName="Reference_Id_1" />
+                <ScalarProperty Name="Reference_Id_2" ColumnName="Reference_Id_2" />
+                <ScalarProperty Name="Reference_Id_3" ColumnName="Reference_Id_3" />
+                <ScalarProperty Name="CST_No" ColumnName="CST_No" />
+                <ScalarProperty Name="SAP_Vendor_Code" ColumnName="SAP_Vendor_Code" />
+                <ScalarProperty Name="Is_External" ColumnName="Is_External" />
+                <ScalarProperty Name="CIN_No" ColumnName="CIN_No" />
+                <ScalarProperty Name="Ref_Vendor_Key" ColumnName="Ref_Vendor_Key" />
+                <ScalarProperty Name="Province" ColumnName="Province" />
+                <ScalarProperty Name="PostalCode" ColumnName="PostalCode" />
+                <ScalarProperty Name="ExternalId" ColumnName="ExternalId" />
+                <ScalarProperty Name="Record_Status" ColumnName="Record_Status" />
+                <ScalarProperty Name="Error_Description" ColumnName="Error_Description" />
+                <ScalarProperty Name="Request_Time" ColumnName="Request_Time" />
+                <ScalarProperty Name="Response_Time" ColumnName="Response_Time" />
+                <ScalarProperty Name="GST_No" ColumnName="GST_No" />
+                <ScalarProperty Name="MDM_Code" ColumnName="MDM_Code" />
+                <ScalarProperty Name="MQ_Ref_Code" ColumnName="MQ_Ref_Code" />
+                <ScalarProperty Name="Is_BV_Push" ColumnName="Is_BV_Push" />
+                <ScalarProperty Name="Short_Code" ColumnName="Short_Code" />
+                <ScalarProperty Name="Party_Category_Code" ColumnName="Party_Category_Code" />
+                <ScalarProperty Name="Party_Type" ColumnName="Party_Type" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="USP_MQ_Customer_CRUD" FunctionName="RightsU_PlusModel.Store.USP_MQ_Customer_CRUD" />
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="true" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

@@ -1,0 +1,33 @@
+﻿@model List<RightsU_Entities.Glossary>
+@{
+    ViewBag.Title = "ReportsUsage";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    //$(document).ready(function () {
+    //    $("#ancFileName").attr('href', '../Help/Masters/Layout.html?Glossary_ReportsUsage');
+    //});
+</script>
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="top_area">
+                <h2 class="pull-left">Reports and Usage</h2>
+                <div class="right_nav pull-right">
+                </div>
+            </div>
+            <div id="accordion">
+                @foreach (var item in Model)
+                {
+                    <h3><b>@item.Name</b></h3>
+                    <div>
+                        <p>@item.Description</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+</div>
+<script>
+    $('#accordion').accordion({ heightStyle: "content" });
+</script>

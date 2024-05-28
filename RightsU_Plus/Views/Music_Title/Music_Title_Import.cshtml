@@ -1,0 +1,488 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string Message = Convert.ToString(Session["Message"]);
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+    @*<meta name="viewport" content="width=device-width" />*@
+    <title>RightsU</title>
+    <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+    <style>
+    
+        #ddlFilterBy_chosen {
+            width: 100%;
+            /*text-align: left;*/
+        }
+    
+        .search_area {
+            border-bottom: 1px dotted #777;
+            margin-bottom: 5px;
+        }
+
+        #divSearch {
+            padding: 6px 10px;
+            margin-bottom: 5px;
+            border: 1px solid #ddd;
+            background-color: #eee;
+        }
+
+            /*#divSearch > ul > li {
+                float: left;
+                min-height: 32px;
+                list-style-type: none;
+                padding: 0 3px;
+            }
+
+            #divSearch .chosen-container {
+                margin: 0;
+            }*/
+
+            #divSearch .checkbox-inline {
+                margin-bottom: 7px;
+            }
+
+        .top_filter {
+            margin-top: 22px;
+        }
+        /*ul.first > li
+            {
+                width: 23%;
+            }
+            ul.first > li:nth-child(2)
+            {
+                width: 20%;
+            }
+            ul.first > li:nth-child(3)
+            {
+                width: 22%;
+            }
+            ul.first > li:last-child
+            {
+                width: 30%;
+            }*/
+    </style>
+    <script>
+        var URL_Cancel = '@Url.Action("List", "Music_Title")';
+        var URL_GetMusicFileImportStatus = '@Url.Action("GetMusicFileImportStatus", "DM_Master_Import")';
+        $(document).ready(function () {
+
+             $('#ddlFilterBy').val('@ViewBag.FilterbyStatus').trigger('chosen:updated');
+            $('#hdnPageNo').val('@ViewBag.PageNoBack');
+            $('#txtPageSize').val('@ViewBag.txtPageSizeBack');
+            PopulateMusicGrid($('#hdnPageNo').val());
+            $("#ddlFilterBy").change(function () {
+            $('#hdnPageNo').val(1);
+             PopulateMusicGrid('0');
+         });
+            if ('@objMessageKey.LayoutDirection' == "RTL") {
+                $('#FirstUl').css({ float: 'right', direction: 'rtl' });
+                $('#divSearch > ul > li').css({ float: 'right' });
+                $('#divSearch .pull-right').css('direction', 'rtl')
+                $('#PaginationMusic').css({ direction: 'rtl',marginTop:'-1px' });
+            }
+            addNumeric();
+        });
+        function addNumeric() {
+            $(".pagingSize").numeric({
+                allowMinus: false,
+                allowThouSep: false,
+                allowDecSep: false,
+                max: 99,
+                min: 1
+            });
+        }
+        function UploadTitle() {
+            debugger;
+            showLoading();
+            var txtpageSize = $('#txtPageSize').val();
+            $('#ddlFilterBy').val('A').trigger('chosen:updated');
+            var FilterBy = $('#ddlFilterBy').val();
+            var formdata = new FormData();
+            var files = $("#fileUpload").get(0).files;
+            if (files.length > 0) {
+                formdata.append("InputFile", files[0]);
+                formdata.append("FilterBy", FilterBy);
+                formdata.append("txtpageSize", txtpageSize);
+            }
+            else {
+                showAlert("a", "@objMessageKey.PleaseselectFile");
+                hideLoading();
+                return false;
+            }
+
+            $.ajax({
+
+                type: "POST",
+                url: '@Url.Action("UploadTitle", "DM_Master_Import")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                async: true,
+                contentType: false,
+                processData: false,
+                data: formdata,
+                success: function (result) {
+                    $('#gvArea').html(result);
+                    SetPaging();
+                    GetMusicFileImportStatus();
+                    hideLoading();
+                },
+
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+
+        }
+        function PopulateMusicGrid(PageNo) {
+            debugger;
+            showLoading();
+            var txtP = $('#txtPageSize').val();
+            var FilterBy = $('#ddlFilterBy').val();
+            if (txtP == null)
+                txtP = 10;
+
+            $.ajax({
+
+                type: "POST",
+                url: '@Url.Action("PopulateMusicGrid", "DM_Master_Import")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    txtPageSize: txtP,
+                    PgNo: PageNo,
+                    FilterBy: FilterBy
+                }),
+                success: function (result) {
+                    $('#gvArea').empty();
+                    $('#gvArea').html(result);
+                    SetPaging();
+                    GetMusicFileImportStatus();
+                    hideLoading();
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+
+        }
+        function PageSize_OnChange() {
+            $('.required').removeClass('required');
+            $("[required='required']").removeAttr("required");
+            var IsValid = ValidatePageSize();
+            if (IsValid) {
+                PopulateMusicGrid('0');
+                SetPaging();
+            }
+            else
+                return false;
+        }
+        var IsCall = 'Y';
+        function SetPaging() {
+            debugger
+            IsCall = 'N';
+            var PageNo, recordCnt;
+
+            if ('@ViewBag.PageNo' != null)
+                PageNo = '@ViewBag.PageNo';
+
+            if ('@ViewBag.RecordCount' != null)
+                recordCnt = '@ViewBag.RecordCount';
+
+            PageNo = PageNo - 1;
+
+            var opt = { callback: pageselectCallback };
+            opt["items_per_page"] = 10;
+            opt["num_display_entries"] = 5;
+            opt["num"] = 10;
+            opt["prev_text"] = "<<";
+            opt["next_text"] = ">>";
+            opt["current_page"] = PageNo;
+            $("#PaginationMusic").pagination(recordCnt, opt);
+        }
+        function pageselectCallback(page_index, jq) {
+            debugger
+            if (IsCall == 'Y') {
+                PopulateMusicGrid(page_index);
+                $("#hdnPageNo").val(page_index);
+            }
+            else
+                IsCall = 'Y';
+        }
+        function Cancel() {
+            debugger;
+            $('.required').removeClass('required');
+            $("[required='required']").removeAttr("required");
+            var PageNo = '@ViewBag.Query_String_Page_No';
+            var PageSize = '@ViewBag.Page_Size';
+            $.ajax({
+                type: "POST",
+                url: URL_Cancel,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    SearchedTitle: "",
+                    isback: "Y"
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                    hideLoading();
+                }
+            });
+        }
+        function ValidatePageSize() {
+            var recordPerPage = $('#txtPageSize').val();
+            if ($.trim(recordPerPage) != '') {
+                var pageSize = parseInt(recordPerPage);
+                if (pageSize > 0)
+                    return true;
+            }
+            $('#txtPageSize').addClass("required");
+            return false;
+        }
+        //function Validate_PagingMusic() {
+        //    var pageSize = $('#txtPageSize').val();
+        //    if (pageSize < 1) {
+        //        $('#txtPageSize').val('10')
+        //        PopulateMusicGrid('0');
+        //        SetPaging();
+        //    }
+        //}
+        function pageBinding() {
+            debugger
+            PopulateMusicGrid('0');
+            SetPaging();
+
+        }
+        function isNumber(evt) {
+            evt = (evt) ? evt : window.event;
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+            if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                return false;
+            }
+            return true;
+        }
+        function GetMusicFileImportStatus() {
+            debugger
+            var pendingRecord = 0;
+            $(".deal_action").each(function () {
+                debugger
+                var SiblingClass = $(this).attr('class').split(' ')[1];
+                if (isNaN(SiblingClass.substr(SiblingClass.length - 1))) {
+                    var dealCode = SiblingClass.slice(12, SiblingClass.length - 1);
+                    //if (SiblingClass.substr(SiblingClass.length - 1) != 'E') {
+
+                    if (SiblingClass.substr(SiblingClass.length - 1) == 'W' || SiblingClass.substr(SiblingClass.length - 1) == 'N' || SiblingClass.substr(SiblingClass.length - 1) == 'R' || SiblingClass.substr(SiblingClass.length - 1) == 'I' || SiblingClass.substr(SiblingClass.length - 1) == 'Q') {
+                        $.ajax({
+                            type: "POST",
+                            url: URL_GetMusicFileImportStatus,
+                            traditional: true,
+                            enctype: 'multipart/form-data',
+                            contentType: "application/json; charset=utf-8",
+                            async: false,
+                            data: JSON.stringify({
+                                dealCode: dealCode
+                            }),
+                            success: function (result) {
+                                debugger
+                                if (result == "true") {
+                                    redirectToLogin();
+                                }
+                                if (result.RecordStatus == "N") {
+                                    $("#imgLoading_" + dealCode).css("display", '');
+                                    pendingRecord++;
+                                }
+                                else if (result.RecordStatus == "W") {
+                                    $("#imgLoading_" + dealCode).css("display", '');
+                                    pendingRecord++;
+                                }
+                                else if (result.RecordStatus == "I") {
+                                    $("#imgLoading_" + dealCode).css("display", '');
+                                    pendingRecord++;
+                                }
+                                else if (result.RecordStatus == "Q") {
+                                    $("#imgLoading_" + dealCode).css("display", '');
+                                    pendingRecord++;
+                                }
+                                else if (result.RecordStatus == "S") {
+                                    $("#imgLoading_" + dealCode).css("display", 'none');
+                                    $('.' + SiblingClass).empty();
+
+                                    var a = '<a  title="View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindViewData(' + dealCode + ')"></a>';
+
+                                    $('.' + SiblingClass).append(a);
+                                    $('.clsTdStatus_' + dealCode).empty();
+                                    $('.clsTdStatus_' + dealCode).append('Success');
+                                    var a = '<div title="Proper Records" id="Success_' + dealCode + '" class="progress-bar bg-success" role="progressbar" data-placement="top" style="width: ' + result.Completion + '%;" aria-valuenow="' + result.SuccessCount + '" aria-valuemin="0" aria-valuemax="' + result.TotalCount + '">' + result.SuccessCount + '</div><div title="Ignored Records" id="Ignored_' + dealCode + '" class="progress-bar bg-info" role="progressbar" data-placement="top" style="width:' + result.IgnoreCompletion + '%" aria-valuenow="' + result.IgnoreCount + '" aria-valuemin="0" aria-valuemax="' + result.TotalCount + '">' + result.IgnoreCount + '</div><div title="Error Records" id="Error_' + dealCode + '" data-placement="top" class="progress-bar bg-danger"  role="progressbar" style="width:' + result.ErrorCompletion + '%" aria-valuenow="' + result.ErrorCount + '" aria-valuemin="0" aria-valuemax="' + result.TotalCount + '">' + result.ErrorCount + '</div><div title="Conflict Records" id="Conflict_' + dealCode + '" class="progress-bar bg-warning" role="progressbar" style="width:' + result.ConflictCompletion + '%" data-placement="top" aria-valuenow="' + result.ConflictCount + '" aria-valuemin="0" aria-valuemax="' + result.TotalCount + '">' + result.ConflictCount + '</div><div title="No Error Records" id="NoError_' + dealCode + '" class="progress-bar" role="progressbar" data-placement="top" style="width: ' + result.WaitingCompletion + '%" aria-valuenow="' + result.WaitingCount + '" aria-valuemin="0" aria-valuemax="' + result.TotalCount + '">' + result.WaitingCount + '</div>'
+                                    $('#statusbar_' + dealCode).empty();
+                                    $('#statusbar_' + dealCode).append(a);
+                                    initializeTooltip();
+                                }
+                                else if (result.RecordStatus == "R") {
+                                    $("#imgLoading_" + dealCode).css("display", 'none');
+                                    $('.' + SiblingClass).empty();
+                                    var a = '<a title="View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindViewData(' + dealCode + ')"></a> <a title="Resolve Conflict" class="glyphicon glyphicon-link" style="cursor: pointer;" onclick="BindResolveConflict(' + dealCode + ')"></a>'
+
+                                    $('.' + SiblingClass).append(a);
+                                    $('.clsTdStatus_' + dealCode).empty();
+                                    $('.clsTdStatus_' + dealCode).append('Resolve Conflict');
+                                    var a = '<div title="Proper Records" id="Success_' + dealCode + '" class="progress-bar bg-success" role="progressbar" data-placement="top" style="width: ' + result.Completion + '%;" aria-valuenow="' + result.SuccessCount + '" aria-valuemin="0" aria-valuemax="' + result.TotalCount + '">' + result.SuccessCount + '</div><div title="Ignored Records" id="Ignored_' + dealCode + '" class="progress-bar bg-info" role="progressbar" data-placement="top" style="width:' + result.IgnoreCompletion + '%" aria-valuenow="' + result.IgnoreCount + '" aria-valuemin="0" aria-valuemax="' + result.TotalCount + '">' + result.IgnoreCount + '</div><div title="Error Records" id="Error_' + dealCode + '" data-placement="top" class="progress-bar bg-danger"  role="progressbar" style="width:' + result.ErrorCompletion + '%" aria-valuenow="' + result.ErrorCount + '" aria-valuemin="0" aria-valuemax="' + result.TotalCount + '">' + result.ErrorCount + '</div><div title="Conflict Records" id="Conflict_' + dealCode + '" class="progress-bar bg-warning" role="progressbar" style="width:' + result.ConflictCompletion + '%" data-placement="top" aria-valuenow="' + result.ConflictCount + '" aria-valuemin="0" aria-valuemax="' + result.TotalCount + '">' + result.ConflictCount + '</div><div title="No Error Records" id="NoError_' + dealCode + '" class="progress-bar" role="progressbar" data-placement="top" style="width: ' + result.WaitingCompletion + '%" aria-valuenow="' + result.WaitingCount + '" aria-valuemin="0" aria-valuemax="' + result.TotalCount + '">' + result.WaitingCount + '</div>'
+                                    $('#statusbar_' + dealCode).empty();
+                                    $('#statusbar_' + dealCode).append(a);
+                                    initializeTooltip();
+                                }
+                                else if (result.RecordStatus == "T") {
+                                    $("#imgLoading_" + dealCode).css("display", 'none');
+                                    $('.' + SiblingClass).empty();
+                                    var a = '<a title="There is some issue. Contact the administrator" class="glyphicon glyphicon-exclamation-sign" style="cursor: pointer;" ></a>'
+                                    $('.' + SiblingClass).append(a);
+                                    $('.clsTdStatus_' + dealCode).empty();
+                                    $('.clsTdStatus_' + dealCode).append('There is some issue Contact to administrator');
+                                    var a = '<div title="Proper Records" id="Success_' + dealCode + '" class="progress-bar bg-success" role="progressbar" data-placement="top" style="width: ' + result.Completion + '%;" aria-valuenow="' + result.SuccessCount + '" aria-valuemin="0" aria-valuemax="' + result.TotalCount + '">' + result.SuccessCount + '</div><div title="Ignored Records" id="Ignored_' + dealCode + '" class="progress-bar bg-info" role="progressbar" data-placement="top" style="width:' + result.IgnoreCompletion + '%" aria-valuenow="' + result.IgnoreCount + '" aria-valuemin="0" aria-valuemax="' + result.TotalCount + '">' + result.IgnoreCount + '</div><div title="Error Records" id="Error_' + dealCode + '" data-placement="top" class="progress-bar bg-danger"  role="progressbar" style="width:' + result.ErrorCompletion + '%" aria-valuenow="' + result.ErrorCount + '" aria-valuemin="0" aria-valuemax="' + result.TotalCount + '">' + result.ErrorCount + '</div><div title="Conflict Records" id="Conflict_' + dealCode + '" class="progress-bar bg-warning" role="progressbar" style="width:' + result.ConflictCompletion + '%" data-placement="top" aria-valuenow="' + result.ConflictCount + '" aria-valuemin="0" aria-valuemax="' + result.TotalCount + '">' + result.ConflictCount + '</div><div title="No Error Records" id="NoError_' + dealCode + '" class="progress-bar" role="progressbar" data-placement="top" style="width: ' + result.WaitingCompletion + '%" aria-valuenow="' + result.WaitingCount + '" aria-valuemin="0" aria-valuemax="' + result.TotalCount + '">' + result.WaitingCount + '</div>'
+                                    $('#statusbar_' + dealCode).empty();
+                                    $('#statusbar_' + dealCode).append(a);
+                                    initializeTooltip();
+
+                                }
+                               else if (result.RecordStatus == "SR") {
+                                    $("#imgLoading_" + dealCode).css("display", 'none');
+                                    $('.' + SiblingClass).empty();
+                                    var a = '<a title="View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindViewData(' + dealCode + ')"></a> <a title="Verify and Map" class="glyphicon glyphicon-link" style="cursor: pointer;" onclick="BindResolveConflict(' + dealCode + ')"></a>'
+
+                                    $('.' + SiblingClass).append(a);
+                                    $('.clsTdStatus_' + dealCode).empty();
+                                    $('.clsTdStatus_' + dealCode).append('Verify and Map');
+                                    var a = '<div title="Proper Records" id="Success_' + dealCode + '" class="progress-bar bg-success" role="progressbar" data-placement="top" style="width: ' + result.Completion + '%;" aria-valuenow="' + result.SuccessCount + '" aria-valuemin="0" aria-valuemax="' + result.TotalCount + '">' + result.SuccessCount + '</div><div title="Ignored Records" id="Ignored_' + dealCode + '" class="progress-bar bg-info" role="progressbar" data-placement="top" style="width:' + result.IgnoreCompletion + '%" aria-valuenow="' + result.IgnoreCount + '" aria-valuemin="0" aria-valuemax="' + result.TotalCount + '">' + result.IgnoreCount + '</div><div title="Error Records" id="Error_' + dealCode + '" data-placement="top" class="progress-bar bg-danger"  role="progressbar" style="width:' + result.ErrorCompletion + '%" aria-valuenow="' + result.ErrorCount + '" aria-valuemin="0" aria-valuemax="' + result.TotalCount + '">' + result.ErrorCount + '</div><div title="Conflict Records" id="Conflict_' + dealCode + '" class="progress-bar bg-warning" role="progressbar" style="width:' + result.ConflictCompletion + '%" data-placement="top" aria-valuenow="' + result.ConflictCount + '" aria-valuemin="0" aria-valuemax="' + result.TotalCount + '">' + result.ConflictCount + '</div><div title="No Error Records" id="NoError_' + dealCode + '" class="progress-bar" role="progressbar" data-placement="top" style="width: ' + result.WaitingCompletion + '%" aria-valuenow="' + result.WaitingCount + '" aria-valuemin="0" aria-valuemax="' + result.TotalCount + '">' + result.WaitingCount + '</div>'
+                                    $('#statusbar_' + dealCode).empty();
+                                    $('#statusbar_' + dealCode).append(a);
+                                    initializeTooltip();
+                                }
+                            },
+                            error: function (result) {
+                            }
+                        });
+                    }
+                }
+            });
+
+            if (pendingRecord > 0) {
+                setTimeout(GetMusicFileImportStatus, 5000);
+            }
+        }
+        function BindResolveConflict(masterImportCode) {
+            var URL = '@Url.Action("BindDMMasterLog", "DM_Master_Import", new
+                  {
+                      DM_Import_Master_Code = "_DM_Import_Master_Code_",
+                      fileType = "_fileType_"
+                  })';
+            URL = URL.replace("_DM_Import_Master_Code_", masterImportCode);
+            URL = URL.replace("_fileType_", "M");
+            URL = URL.replace(/amp;/g, "");
+            window.location.href = URL;
+        }
+        function BindViewData(masterImportCode) {
+            debugger
+            var URL = '@Url.Action("BindMusicView", "DM_Master_Import", new
+                  {
+                      DM_Master_Import_Code = "_DM_Import_Master_Code_",
+                      fileType = "_fileType_"
+                  })';
+            URL = URL.replace("_DM_Import_Master_Code_", masterImportCode);
+            URL = URL.replace("_fileType_", "M");
+            URL = URL.replace(/amp;/g, "");
+            window.location.href = URL;
+        }
+    </script>
+</head>
+<body>
+    <div class="main_section">
+        <section class="rightsU_container clearfix">
+            <div class="container acq main_col">
+                <div class="top_area">
+                    <h2 class="pull-left">@objMessageKey.MusicTrackBulkImport</h2>
+
+                </div>
+                <div class="">
+                    <div id="divSearch" class="search_area clearfix">
+                        <div class="">
+                            <table>
+                                <tr id="FirstUl">
+                                    <td style="width:8%;">
+                                        @objMessageKey.UploadFile :
+                                    </td>
+                                    <td style="width:25%;">
+                                        <input id="fileUpload" type="file" style="background-color: white" name="" runat="server" accept=".xls,.xlsx" />
+                                    </td>
+                                    <td style="width:8%;">
+                                        <input type="button" onclick="return UploadTitle();" class="btn btn-primary" value="@objMessageKey.Upload" />
+                                    </td>
+                                    <td>
+                                        <input type="button" id="submit" value="@objMessageKey.SampleDownload" class="btn btn-primary"
+                                               onclick="@("window.location.href='" + @Url.Action("SampleDownload", "Music_Title") + "'")    ;" />
+                                    </td>
+                                    <td style="width:20%; text-align:right">Filter By Status : </td>
+                                    <td style="width:15%">
+                                        @Html.DropDownList("ddlFilterBy", (List<SelectListItem>)ViewBag.FilterBy, new { @id = "ddlFilterBy", @class = "form_input chosen-select" })
+                                    </td>
+                                   
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div style="border-bottom: 1px dotted #777; display:none;"></div>
+                    <div class="paging_area clearfix">
+                        <span class="pull-left">Total Records: </span>
+                        <span class="pull-left" id="lblTotal"></span>
+                        <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                        <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                        <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+                        <div id="PaginationMusic" class="pagination">
+                        </div>
+                        <span class="pull-right">
+                            @objMessageKey.PageSize:
+                            <input type="text" id="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="return PageSize_OnChange();" onkeypress="return isNumber(event);"
+                                   maxlength="2" onblur="setDefaultPaging('txtPageSize')" />
+                        </span>
+                    </div>
+                    <div class="tab-content clearfix table-wrapper scale_table_container">
+                        <div class="scale_table_block">
+                            <div id="gvArea" class="deal clearfix">
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div id="divBack">
+                        <input type="button" id="btnBack" class="btn btn-primary" value="@objMessageKey.Back" onclick="@("window.location.href='" + @Url.Action("List", "Music_Title", new { @SearchedTitle = "", @IsMenu = "N"}) + "'");" />
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <div>
+    </div>
+    <div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup in" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content clearfix">
+                <div class="form_fields acq" id="pupupHtml">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

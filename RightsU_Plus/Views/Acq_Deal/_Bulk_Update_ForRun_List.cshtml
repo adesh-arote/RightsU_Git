@@ -1,0 +1,367 @@
+﻿@model List<RightsU_Entities.USP_Acq_List_Runs_Result>
+@using UTOFrameWork.FrameworkClasses;
+@{
+    RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
+    if (Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA] != null)
+    {
+        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA];
+    }
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        if ($('#BulkValue').text() === "Bulk Update:") {
+            $('.blkUpRun').hide();
+            $('.blkUpRunshow').show();
+            
+        }
+
+        initializeTooltip();
+        if ($('#Pagination'))
+            SetPaging1();
+        $('.expandable').expander({
+            slicePoint: 20,
+            expandPrefix: '',
+            expandText: '...readmore',
+            collapseTimer: 0,
+            userCollapseText: '<span>[^]</span>'
+        });
+        $('#spanRecordCount').html('TotalRecords: @ViewBag.RecordCount');
+        $('#spanRecordCount').css("float", "right");
+    });
+
+
+    function SetPaging1() {
+        IsCall = 'N';
+        var PageNo, recordCnt;
+
+        if ('@ViewBag.PageNo' != null)
+            PageNo = '@ViewBag.PageNo';
+
+        if ('@ViewBag.RecordCount' != null)
+            recordCnt = '@ViewBag.RecordCount';
+
+
+        $("#lblTotal").text('Total Records : ' + recordCnt);
+        PageNo = PageNo - 1;
+
+        var opt = { callback: pageselectCallback1 };
+        opt["items_per_page"] = $('#txtPageSize').val();
+        opt["num_display_entries"] = 5;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = PageNo;
+        $("#Pagination").pagination(recordCnt, opt);
+    }
+
+    function pageselectCallback1(page_index, jq) {
+        if (IsCall == 'Y') {
+            $("#hdnPageIndex").val(page_index+1);
+            LoadGrid(page_index);
+        }
+        else
+            IsCall = 'Y';
+    }
+    $('#chkAll').click(function (event) {
+        if (this.checked) {
+            // Iterate each checkbox
+            $(':checkbox').each(function () {
+                if (!this.disabled) {
+                    this.checked = true;
+                }
+            });
+        } else {
+            $(':checkbox').each(function () {
+                if (!this.disabled) {
+                    this.checked = false;
+                }
+            });
+        }
+    });
+
+
+</script>
+<style>
+    .container {
+        /* width: 900px; */
+        width: 95%;
+        margin: 0 auto;
+        /* min-height: 710px; */
+        padding: 0px 0 55px 80px;
+    }
+
+    .help {
+        text-align: center;
+        border-left: 1px solid #000;
+        border-right: 1px solid #000;
+        border-bottom: 1px solid #000;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+        padding: 0px 2px 2px 2px;
+        width: 80px;
+        float: right;
+    }
+
+        .help:hover {
+            background: #e0e0e0;
+        }
+
+    .collapse {
+        position: absolute;
+        right: 3px;
+        top: 72px;
+        width: 180px;
+        height: 280px;
+        z-index: 99;
+        background-color: #f3f3f3;
+        border: 1px solid #000000;
+    }
+
+        .collapse div {
+            padding: 15px;
+            border-bottom: 1px solid #dddddd;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+            .collapse div:hover {
+                background-color: #0080c0;
+                color: #ffffff;
+            }
+
+    .rowBorder td {
+        border-bottom: 1px dotted #dddddd !important;
+        background-color: #ffffff !important;
+    }
+
+    .rowBg {
+        background-color: #eaeaea;
+    }
+
+        .rowBg td {
+            border-bottom: 1px dotted #dddddd !important;
+        }
+
+    .PlatformExpand {
+        position: absolute;
+        display: none;
+        z-index: 1000;
+        background-color: black;
+        color: white;
+        border: 1px solid black;
+        padding: 5px;
+    }
+
+    #popupFade {
+        position: absolute;
+        display: none;
+        width: 300px;
+        overflow: hidden;
+        border: #bbb 1px solid;
+        z-index: 100;
+    }
+
+        #popupFade .modal-dialog ul.fancytree-container {
+            height: 100%;
+            border: 0;
+            overflow-y: auto;
+        }
+
+        #popupFade form .modal_block {
+            padding: 3px 10px;
+        }
+
+        #popupFade #Rights_List_Platform {
+            max-height: 300px;
+        }
+
+    #divPlatformTree {
+        overflow-x: hidden;
+        /*overflow-y:auto;*/
+    }
+
+    #Tree_Filter_Rights_List_Platform {
+        margin-left: -10px;
+        width: 300px;
+        margin-top: -3px;
+    }
+
+    .checkbox {
+        float: left;
+        margin-right: 3% !important;
+    }
+
+    .tooltip-wrapper {
+        display: inline-block; /* display: block works as well */
+    }
+
+        .tooltip-wrapper input[disabled] {
+            /* don't let button block mouse events from reaching wrapper */
+            pointer-events: none;
+        }
+
+        .tooltip-wrapper.disabled {
+            /* OPTIONAL pointer-events setting above blocks cursor setting, so set it here */
+            cursor: not-allowed;
+        }
+</style>
+<div class="deal clearfix">
+    @{
+        int counter = 0;
+        <table class="table table-bordered table-hover" id="tblMain">
+            <thead>
+                <tr>
+                    @*<th>
+                            <ul>
+                                <li class="glyphicon glyphicon-triangle-bottom list-toggle"></li>
+                            </ul>
+                        </th>*@
+                    <th style="width:1%; text-align: center" rowspan="2">
+                        @if (ViewBag.ShowCheckAll == "SHOW")
+                        {
+                            @Html.CheckBox("chkAll", new { @id = "chkAll", @onclick = "return chkBxEnableOrDisable(this);", @class = "checkbox" })
+                        }
+                        else
+                        {
+                            @Html.CheckBox("chkAll", new { disabled = "disabled" })
+                        }
+                    </th>
+                    <th style="width: 20%; text-align:center;" rowspan="2">
+                        Title
+                    </th>
+                    <th style="width: 35%; text-align:center;" rowspan="2">Channels</th>
+                    <th style="width: 15%; text-align:center;" rowspan="2">Run Definition Type</th>
+                    <th style="width: 10%; text-align:center;" colspan="3">Runs</th>
+                    <th style="width: 10%; text-align:center;" rowspan="2">Is Rule Right</th>
+                </tr>
+                <tr>
+
+                    <th style="width: 5%; text-align:center;"><span title="TotalRuns">Runs</span></th>
+                    <th style="width: 5%; text-align:center;"><span title="SyndicationRuns">Syn</span></th>
+                    <th style="width: 5%; text-align:center;"><span title="RunsSelf">Self</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Count() != 0)
+                {
+                    foreach (var item in Model)
+                    {
+                        counter += 1;
+                        @Html.Hidden("hdnRunCode", item.Acq_Deal_Run_Code, new { id = counter + "_hdnRunCode" })
+                        @Html.Hidden("hdnRunCode1w3123", (string)ViewBag.CalFor, new { id = counter + "_hdnRunCode2" })
+
+                        <tr>
+                            @if (ViewBag.CalFor == "BLK_RUN")
+                            {
+                                <td>
+                                    @Html.CheckBox("chkRecord", new { @id = counter + "_chkRecord", @onclick = "return chkBxEnableOrDisable(this);",
+                                           @class = "checkbox" })
+                                </td>
+                            }
+                            else
+                            {
+                                <td>
+                                    @if (item.No_Of_Runs_Sched > 0)
+                                    {
+                                        <div class="tooltip-wrapper disabled blkUpRun" title="Reference exist in schedule">
+                                            @Html.CheckBox("chkRecord", new { disabled = "disabled" })
+                                        </div>
+                                        <div class="blkUpRunshow" style="display:none">
+                                            @Html.CheckBox("chkRecord", new { @id = counter + "_chkRecord", @onclick = "return chkBxEnableOrDisable(this);", @class = "checkbox" })
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        if (Convert.ToString(ViewBag.SelectedAcqDealRunCodes).Contains(item.Acq_Deal_Run_Code.ToString()))
+                                        {
+                                            @Html.CheckBox("chkRecord", new { @id = counter + "_chkRecord", @onclick = "return chkBxEnableOrDisable(this);", @class = "checkbox", @checked = true })
+                                        }
+                                        else
+                                        {
+                                            @Html.CheckBox("chkRecord", new { @id = counter + "_chkRecord", @onclick = "return chkBxEnableOrDisable(this);", @class = "checkbox" })
+                                        }
+                                    }
+                                </td>
+                            }
+                            <td>
+
+                                @item.Title_Name&#x200E;
+                            </td>
+                            <td>
+                                @if (item.ChannelNames != null)
+                                {
+                                    <div class="expandable">@Html.Label(Convert.ToString(item.ChannelNames))<a href="#"><span></span></a></div>
+                                }
+                            </td>
+
+                            @if (item.Run_Definition_Type.TrimEnd() == "C")
+                            {
+                                <td>
+                                    Channel Wise
+                                </td>
+                            }
+                            else
+                                if (item.Run_Definition_Type.TrimEnd() == "CS")
+                            {
+                                <td>Channel Wise Shared</td>
+                            }
+                            else
+                                    if (item.Run_Definition_Type.TrimEnd() == "A")
+                            {
+                                <td>All Channel One Run</td>
+                            }
+                            else
+                                      if (item.Run_Definition_Type.TrimEnd() == "S")
+                            {
+                                <td>Shared</td>
+                            }
+                            else
+                                            if (item.Run_Definition_Type.TrimEnd() == "N")
+                            {
+                                <td>Not Applied</td>
+                            }
+                            @*</td>*@
+                            @if (item.Run_Type == "U")
+                            {
+                                <td colspan="3">
+                                    Unlimited
+                                </td>
+                            }
+                            else
+                            {
+                                <td>
+                                    @if (item.Syndication_Runs == null)
+                                    {
+                                        item.Syndication_Runs = 0;
+                                    }
+                                    @if (item.No_Of_Runs == null)  
+                                    {
+                                        item.No_Of_Runs = 0;
+                                    }
+                                    @((item.No_Of_Runs + item.Syndication_Runs).ToString())
+                                </td>
+                                <td>@item.Syndication_Runs.ToString()</td>
+                                <td>@item.No_Of_Runs.ToString()</td>
+                            }
+                            @if (item.Is_Rule_Right.TrimEnd() == "Y")
+                            {
+                                <td>Yes</td>
+                            }
+                            else
+                            {
+                                <td>No</td>
+                            }
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="8">Result Not Found!</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @Html.Hidden("hdnCount", counter);
+    }
+</div>

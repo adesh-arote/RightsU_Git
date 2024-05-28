@@ -1,0 +1,326 @@
+<div class="spinner" *ngIf="isLoading">
+  <i class="fa fa-spinner fa-spin"></i>
+  <span class="loader-txt">{{LABEL.LOADING_TEXT}}...</span>
+</div>
+<div class="row divCenter">
+  <span class="headerCls bold-font">
+    {{LABEL.SEARCH_SCREEN}}
+  </span>
+</div>
+<form [formGroup]="searchForm" [ngClass]="{'blur-background': isLoading ? true: false}">
+  <div class="search-container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="col-md-2 event-div">{{LABEL.EVENT}}:</div>
+        <div class="col-md-2 divMargin">
+          <p-multiSelect class="dropdownPanel" placeholder="Select Value" formControlName="event" [options]="events" optionLabel="Name" (onChange)="onEventChange($event)"
+                         [selectedItemsLabel]="'{0} items selected'"></p-multiSelect>
+        </div>
+        <div class="col-md-2 trans-div divMargin2">{{LABEL.Transaction_Type}}:</div>
+        <div class="col-md-2 divMargin">
+          <p-multiSelect class="dropdownPanel" placeholder="Select Value" formControlName="trasactionType" [options]="transType" optionLabel="Name" (onChange)="onTransTypeChange($event)"
+                         [selectedItemsLabel]="'{0} items selected'"></p-multiSelect>
+        </div>
+        <div class="col-md-2 status-div divMargin2">{{LABEL.Status}}:<span class="error-messages-style">*</span></div>
+        <div class="col-md-2 divMargin">
+          <p-dropdown [options]="statusArray" placeholder="Select Value" class="singleSelectDrpdwn"
+                      (onChange)="onStatusChange($event)" optionLabel="Name" formControlName="status"></p-dropdown>
+          <div *ngIf="submitted && searchForm.get('status').invalid" class="box-danger">
+            <span *ngIf="searchForm.get('status').errors.required" class="box-danger error-msgs">
+              {{MESSAGE.This_field_is_required}}
+            </span>
+          </div>
+        </div>
+        <div class="col-md-2 noOfRetry-div divMargin3">{{LABEL.No_Of_Retry}}:</div>
+        <div class="col-md-2 divMargin">
+          <p-dropdown [options]="noOfRetry" placeholder="Select Value" formControlName="noofretry" class="singleSelectDrpdwn"
+                      (onChange)="onNoOfRetryChange($event)" optionLabel="label">
+          </p-dropdown>
+        </div>
+      </div>
+
+    </div>
+    <div class="row top-margin">
+      <div class="col-md-12">
+        <div class="col-md-2 notification-div">
+          {{LABEL.Notification_Type}}:<span class="error-messages-style">*</span>
+        </div>
+        <div class="col-md-2 divMargin2">
+          <p-dropdown [options]="notificationType" placeholder="Select Value" class="singleSelectDrpdwn"
+                      (onChange)="onNtfTypeChange($event)" formControlName="ntfType" optionLabel="Name"></p-dropdown>
+          <div *ngIf="submitted && searchForm.get('ntfType').invalid" class="box-danger">
+            <span *ngIf="searchForm.get('ntfType').errors.required" class="box-danger error-msgs">
+              {{MESSAGE.This_field_is_required}}
+            </span>
+          </div>
+        </div>
+        <div class="col-md-2 user-div">{{LABEL.User}}:</div>
+        <div class="col-md-2 divMargin4">
+          <p-dropdown [options]="users" placeholder="Select Value" formControlName="user" class="singleSelectDrpdwn"
+                      (onChange)="onUserChange($event)" optionLabel="label">
+          </p-dropdown>
+        </div>
+        <div class="col-md-1 recepient-div divMargin2">{{LABEL.Recipient}}:</div>
+        <div class="col-md-2 recepientInput-div">
+          <input type="text" class="recipient-input" [(ngModel)]="recipient"
+                 [ngModelOptions]="{standalone: true}" pInputText />
+        </div>
+        <div class="col-md-1 subject-div">{{LABEL.Subject}}:</div>
+        <div class="col-md-2 divMargin5">
+          <input type="text" class="subject-input" [(ngModel)]="subject" [ngModelOptions]="{standalone: true}"
+                 pInputText />
+        </div>
+      </div>
+    </div>
+    <div class="top-margin ">
+      <div class="row left-margin">
+        <div class="col-md-3 bold-font">
+          {{LABEL.Schedule_Date_Time_Between}}
+          <!--<span class="error-messages-style">*</span>-->
+          :
+        </div>
+        <div class="col-md-3 bold-font divMargin6">{{LABEL.Sent_Date_Time_Between}}:</div>
+      </div>
+      <div class="row left-margin">
+        <div class="col-md-2 bold-font divMargin7">{{LABEL.Start_Date}} </div>
+        <div class="col-md-2 bold-font divMargin8">{{LABEL.End_Date}}</div>
+        <div class="col-md-2 bold-font divMargin9">{{LABEL.Start_Date}} </div>
+        <div class="col-md-2 bold-font divMargin10">{{LABEL.End_Date}}</div>
+      </div>
+      <div class="row left-margin">
+        <div class="col-md-2 bold-font divMargin11">
+          <p-calendar [showIcon]="true" [showTime]="true" inputId="icon" formControlName="schedulSDate"
+                      dateFormat="dd-M-yy" [(ngModel)]="sStartDate" class="CalenderClass"
+                      (onSelect)="calculateDateDiff(sStartDate,sEndDate,'schedule')">
+          </p-calendar>
+          <div *ngIf="submitted && searchForm.get('schedulSDate').invalid" class="box-danger">
+            <span *ngIf="searchForm.get('schedulSDate').errors.required" class="box-danger error-msgs">
+              {{MESSAGE.This_field_is_required}}
+            </span>
+          </div>
+          <span *ngIf="dateValidation" class="error-msgs period-val">
+            End date cannot be less than start
+            date
+          </span>
+          <span *ngIf="showScheduleVal" class="error-msgs period-val">{{MESSAGE.Period_Validation}}</span>
+        </div>
+        <div class="col-md-2 bold-font divMargin12">
+          <p-calendar [showIcon]="true" [showTime]="true" inputId="icon" formControlName="schedulEDate"
+                      dateFormat="dd-M-yy" [(ngModel)]="sEndDate"
+                      (onSelect)="calculateDateDiff(sStartDate,sEndDate,'schedule')">
+          </p-calendar>
+          <div *ngIf="submitted && searchForm.get('schedulEDate').invalid" class="box-danger">
+            <span *ngIf="searchForm.get('schedulEDate').errors.required" class="box-danger error-msgs">
+              {{MESSAGE.This_field_is_required}}
+            </span>
+          </div>
+        </div>
+        <div class="col-md-2 bold-font divMargin13">
+          <p-calendar [showIcon]="true" [showTime]="true" inputId="icon" dateFormat="dd-M-yy"
+                      formControlName="sentSDate" [(ngModel)]="sentStartDate"
+                      (onSelect)="calculateDateDiff(sentStartDate,sentEndDate,'sent')"></p-calendar>
+          <span *ngIf="sentdateValidation" class="error-msgs period-val">
+            End date cannot be less than start
+            date
+          </span>
+          <span *ngIf="showSentVal" class="error-msgs period-val">{{MESSAGE.Period_Validation}}</span>
+        </div>
+        <div class="col-md-2 bold-font divMargin14">
+          <p-calendar [showIcon]="true" [showTime]="true" inputId="icon" dateFormat="dd-M-yy"
+                      formControlName="sentEDate" [(ngModel)]="sentEndDate"
+                      (onSelect)="calculateDateDiff(sentStartDate,sentEndDate,'sent')"></p-calendar>
+        </div>
+      </div>
+    </div>
+    <div class="row top-margin ">
+      <button type="button" class="btn btnClass" (click)="searchData()" style="margin-left: 38%;">{{LABEL.Search}}</button>
+      <button type="button" class="btn btnClass" (click)="clearData()">Reset</button>
+    </div>
+  </div>
+</form>
+
+<div class="row table-div" [ngClass]="{'blur-background': isLoading ? true: false}">
+  <p-table [columns]="scrollableCols" #dt [value]="listData" [rows]="20" [scrollable]="true" [virtualRowHeight]="10"
+           [paginator]="true"
+           [virtualScroll]="isVirtualScroll" (onLazyLoad)="loadDataOnScroll($event)" [lazyLoadOnInit]="false"
+           [totalRecords]="totalRecords" [loading]="loading" [lazy]="true" scrollHeight="calc(100vh - 200px)"
+           [globalFilterFields]="['transCode','transType','notificationType','message','recipient','status','noOfRetry','sentDateTime','scheduleDateTime']">
+    <ng-template pTemplate="caption">
+      <div class="p-d-flex">
+        <span class="p-input-icon-left p-ml-auto">
+          <i class="pi pi-search"></i>
+          <input pInputText type="text" class="searchInput"
+                 (input)="dt.filterGlobal(getEventValue($event), 'contains')" placeholder="Search keyword" />
+        </span>
+        <span class="p-input-icon-right p-ml-auto span1">
+          <button type="button" pButton pRipple icon="pi pi-file-o" (click)="exportCSV(dt)"
+                  class="p-button-success p-mr-2 export-btn" [pTooltip]="LABEL.Export_CSV"
+                  tooltipPosition="top"></button>
+        </span>
+      </div>
+
+    </ng-template>
+    <ng-template pTemplate="colgroup" let-columns>
+      <colgroup>
+        <col *ngFor="let col of columns" style="width:30px">
+      </colgroup>
+    </ng-template>
+    <ng-template pTemplate="header" let-columns>
+      <tr>
+        <th class="column-name" *ngFor="let col of columns" tooltipPosition="bottom" pTooltip="{{col.header}}">
+          {{col.header}}
+        </th>
+        <th class="column-name">{{LABEL.Action}}</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-columns="columns">
+      <tr>
+        <td class="column-data" *ngFor="let col of columns" tooltipPosition="bottom"
+            pTooltip="{{rowData[col.field]}}">
+          <span class="col-text">{{rowData[col.field]}}</span>
+        </td>
+        <td class="column-data">
+          <button class="action-buttons" tooltipPosition="left" [pTooltip]="LABEL.View"
+                  (click)="openViewPopup(rowData)">
+            <i class="fa fa-eye" aria-hidden="true"></i>
+          </button>
+          <!-- *ngIf="showResendBtn && rowData['showBtn']" -->
+          <button class="action-buttons" tooltipPosition="right" *ngIf="showResendBtn && rowData['showBtn']"
+                  [pTooltip]="LABEL.Resend" (click)="showConfirmPopup=true;selectedData=rowData">
+            <i class="fa fa-repeat" aria-hidden="true"></i>
+          </button>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" let-columns>
+      <tr>
+        <td [attr.colspan]="columns?.length" class="no-records-found nodataFound">
+          {{LABEL.No_Records_Found}}
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+<p-dialog header="Confirmation" [(visible)]="showConfirmPopup" class="confirmBox" [modal]="true" [responsive]="true"
+          [focusOnShow]="false" [closable]="true">
+  <span> {{MESSAGE.Are_Sure_Want_To_Resend}} </span>
+  <p-footer>
+    <button type="button" pButton (click)="onResendClick(selectedData)" label="{{LABEL.Yes}}"></button>
+    <button type="button" pButton (click)="showConfirmPopup=false" label="{{LABEL.No}}"></button>
+  </p-footer>
+</p-dialog>
+<p-dialog header="Information" [(visible)]="showViewPopup" class="viewPopup" [modal]="true" [responsive]="true"
+          [focusOnShow]="false" [closable]="true">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="col-md-4">
+        <span>
+          <span class="bold-font">
+            {{LABEL.Transaction_Code}}:
+          </span>
+          <span pTooltip="{{popupData.TransactionCode}}"
+                tooltipPosition="top">{{popupData.TransactionCode}}</span>
+        </span>
+      </div>
+      <div class="col-md-4">
+        <span>
+          <span class="bold-font">
+            {{LABEL.Transaction_Type}}:
+          </span>
+          <span pTooltip="{{popupData.TransactionType}}"
+                tooltipPosition="top">{{popupData.TransactionType}}</span>
+        </span>
+      </div>
+      <div class="col-md-4">
+        <span>
+          <span class="bold-font">
+            {{LABEL.Message_Type}}:
+          </span>
+          <span pTooltip="{{popupData.MessageType}}" tooltipPosition="top">{{popupData.MessageType}}</span>
+        </span>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="col-md-4">
+        <span>
+          <span class="bold-font">
+            {{LABEL.No_Of_Retry}}:
+          </span>
+          <span pTooltip="{{popupData.NoOfRetry}}" tooltipPosition="top">{{popupData.NoOfRetry}}</span>
+        </span>
+      </div>
+      <div class="col-md-4">
+        <span>
+          <span class="bold-font">
+            {{LABEL.Sent_Date_Time}}:
+          </span>
+          <span pTooltip="{{popupData.SentDateTime}}" tooltipPosition="top">{{popupData.SentDateTime}}</span>
+        </span>
+      </div>
+      <div class="col-md-4">
+        <span>
+          <span class="bold-font">
+            {{LABEL.Schedule_Date_Time}}:
+          </span>
+          <span pTooltip="{{popupData.ScheduleDateTime}}"
+                tooltipPosition="top">{{popupData.ScheduleDateTime}}</span>
+        </span>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="col-md-4">
+        <span>
+          <span class="bold-font">
+            {{LABEL.EVENT}}:
+          </span>
+          <span pTooltip="{{popupData.EventCategory}}"
+                tooltipPosition="top">{{popupData.EventCategory}}</span>
+        </span>
+      </div>
+      <div class="col-md-4">
+        <span>
+          <span class="bold-font">
+            {{LABEL.Subject}}:
+          </span>
+          <span pTooltip="{{popupData.Subject}}" tooltipPosition="top">{{popupData.Subject}}</span>
+        </span>
+      </div>
+    </div>
+  </div> <br>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="col-md-4">
+        <span>
+          <span class="bold-font">
+            {{LABEL.Status}}:
+          </span>
+          <span pTooltip="{{popupData.Status}}" tooltipPosition="top">{{popupData.Status}}</span>
+        </span>
+      </div>
+      <div class="col-md-4">
+        <span>
+          <span class="bold-font">
+            {{LABEL.Sent_To}}:
+          </span>
+          <span pTooltip="{{popupData.SentTo}}" tooltipPosition="top">{{popupData.SentTo}}</span>
+        </span>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div class="row">
+    <div class="col-md-12">
+      <span class="bold-font">
+        {{LABEL.Message}}:
+      </span>
+      <div [innerHTML]="popupData.Message"></div>
+    </div>
+  </div>
+</p-dialog>
+<p-toast position="top-center" styleClass="toasterStyle"></p-toast>

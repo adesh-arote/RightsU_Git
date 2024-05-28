@@ -1,0 +1,153 @@
+﻿body {
+}
+/* START :Paging Css */
+.search_area {
+    border-bottom: 1px dotted #777;
+    padding: 5px;
+    background-color: #eee;
+}
+
+table#CphdBody_dtLst {
+    display: initial;
+    padding: 0;
+    float: right;
+    width: auto;
+}
+
+input.pagingbtn {
+    background-color: #fff;
+    padding: 5px 10px;
+    color: #428bca;
+    margin: 2px 0px;
+    border: 1px solid #ddd;
+    text-decoration: none;
+}
+
+.pagingbtn:disabled {
+    font-weight: 700;
+    margin: 5px 2px;
+}
+.paging_area {
+    border-bottom: 1px dotted #777;
+    height: 33px !important;
+}
+/* END: Paging Css */
+/*START: Datepick  */
+select, textarea {
+    font-family: Arial,Helvetica,Sans-serif;
+    font-size: 100%;
+}
+
+.demo .ui-datepicker-row-break {
+    font-size: 100%;
+}
+
+
+.ui-datepicker td {
+    padding: 0px;
+    vertical-align: inherit;
+}
+
+.ui-datepicker-header.ui-widget-header.ui-helper-clearfix.ui-corner-all {
+    width: 180px;
+}
+
+table.ui-datepicker-calendar {
+    width: 181px;
+}
+
+/*END: Datepick css*/
+
+.ajax__validatorcallout {
+    max-width: 400px;
+}
+
+table td {
+    font-weight: 400 !important;
+}
+
+.radio input[type=radio], .radio-inline input[type=radio], .checkbox input[type=checkbox], .checkbox-inline input[type=checkbox] {
+    position: absolute;
+    margin-top: 4px;
+    margin-left: 0px !important;
+}
+
+input, button, select, textarea {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    padding: 3px 3px !important;
+    border-radius: 3px;
+    border: 1px solid #bbb;
+    color: #555;
+}
+
+.four_column tr > td:nth-child(2n+1) {
+    font-weight: 700 !important;
+    width: 17%;
+}
+
+textarea {
+    overflow: auto;
+    width: 97% !important;
+    height: 50px !important;
+}
+.radio, .checkbox {
+    position: relative;
+    display: inline !important;
+    min-height: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.divBlock div {
+  display: block;
+}
+ table #CphdBody_chkType
+{
+    font-weight: 400 !important;
+    /*max-width: 400px;*/
+}
+#CphdBody_chkType tr > td
+{
+    white-space: nowrap;
+}
+#CphdBody_chkType tr > td:nth-child(2n+1)
+{
+    font-weight: 400 !important;
+}
+ .divCheckbox input[type=checkbox]
+{
+    margin: 3px;
+    display: inline-block;
+}
+
+.divCheckbox td
+{
+    display: inline;
+    margin-right: 10px;
+}
+div.required
+{
+    background-color: rgba(155,0,0,0.1);
+    box-shadow:none;
+}
+
+
+textarea.required, input.required, select.required, select.required + .chosen-container > ul, select.required + .chosen-container > a {
+    background-color: rgba(155,0,0,0.1);
+    border-color: red;
+    /* box-shadow: 0 0 5px rgba(255,0,0,0.5); */
+}
+.text4 {
+    Height:0px; 
+    Width:0px; 
+    border:0px solid #FFF;
+    display:none;
+}
+.bottom_action {
+    margin: 8px -5px !important;
+}
+.paging_area span.pull-right {
+    margin: 4px 12px !important;
+}
+ 

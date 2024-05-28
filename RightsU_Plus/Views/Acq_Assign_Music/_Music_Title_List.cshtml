@@ -1,0 +1,130 @@
+﻿@model IEnumerable<RightsU_Entities.USP_List_Assign_Music_Result>
+@using UTOFrameWork.FrameworkClasses
+@{
+    RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
+    if (Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA] != null)
+    {
+        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA];
+    }
+}
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            @if (objSchema.Deal_Type_Condition != GlobalParams.Deal_Music)
+            {
+                <th style="width: 15%;">Program</th>
+                <th style="width: 10%;">Episode</th>
+                <th style="width: 12%;">Music Agreement</th>
+            }
+            <th style="width: 15%;">Music Library</th>
+            <th style="width: 15%;">Music Title</th>
+
+            @if (objSchema.Deal_Type_Condition != GlobalParams.Deal_Music)
+            {
+                <th style="width: 15%;">Label</th>
+            }
+
+            @if (objSchema.Deal_Type_Condition == GlobalParams.Deal_Music)
+            {
+                <th style="width: 15%;">Album / Movie</th>
+            }
+
+            <th style="width: 17%;">Singer</th>
+
+            @if (objSchema.Deal_Type_Condition == GlobalParams.Deal_Music)
+            {
+                <th style="width: 15%;">Music Composer</th>
+                <th style="width: 15%;">Lyricist</th>
+            }
+
+            <th style="width: 8%;">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+        {
+            foreach (var objRow in Model)
+            {
+            <tr>
+                @if (objSchema.Deal_Type_Condition != GlobalParams.Deal_Music)
+                {
+                    <td>
+                        <div class="expandable">
+                            @objRow.Program
+                        </div>
+                    </td>
+                    <td>
+                        <span class="pending" onclick="BindEpisodeDetail('@objRow.Int_Code')">@objRow.Episode_Numbers</span>
+                    </td>
+                    <td>@objRow.Music_Agreement</td>
+                }
+
+                <td>
+                    <div class="expandable">
+                        @objRow.Music_Library
+                    </div>
+                </td>
+                <td>
+                    <div class="expandable">@objRow.Music_Title<a href="#"><span></span></a></div>
+                </td>
+
+                @if (objSchema.Deal_Type_Condition != GlobalParams.Deal_Music)
+                {
+                    <td>
+                        <div class="expandable">
+                            @objRow.Label
+                        </div>
+                    </td>
+                }
+
+                @if (objSchema.Deal_Type_Condition == GlobalParams.Deal_Music)
+                {
+                    <td>
+                        <div class="expandable">
+                            @objRow.Movie_Album
+                        </div>
+                    </td>
+                }
+
+                <td>
+                    <div class="expandable">
+                        @objRow.Singer
+                    </div>
+                </td>
+
+                @if (objSchema.Deal_Type_Condition == GlobalParams.Deal_Music)
+                {
+                    <td>
+                        <div class="expandable">
+                            @objRow.Music_Composer
+                        </div>
+                    </td>
+                    <td>
+                        <div class="expandable">
+                            @objRow.Lyricist
+                        </div>
+                    </td>
+                }
+
+                <td>
+                    @if (ViewBag.RightForDelete == "Y")
+                    {
+                        <a title="Delete" class="glyphicon glyphicon-trash" onclick="Ask_Confirmation('@objRow.Int_Code')"></a>
+                    }
+                    @if (objSchema.Deal_Type_Condition == GlobalParams.Deal_Music)
+                    {
+                        if (ViewBag.RightForLinkShow == "Y")
+                        {
+                        <a title="Link Show" class="glyphicon glyphicon-link" onclick="LinkShow_Click(@objRow.Int_Code)"></a>
+                        }
+                        
+                        <a title="View Linked Show" class="glyphicon glyphicon-eye-open" onclick="ViewLinkedShow_Click(@objRow.Int_Code)"></a>
+                    }
+
+                </td>
+            </tr>
+            }
+        }
+    </tbody>
+</table>

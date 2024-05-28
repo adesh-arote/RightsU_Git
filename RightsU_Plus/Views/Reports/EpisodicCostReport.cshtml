@@ -1,0 +1,392 @@
+﻿@{
+    ViewBag.Title = "EpisodicCostReport";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+}
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+
+<script>
+    var URL_Bind_Title = '@Url.Action("Bind_Title", "Reports")';
+    var URL_Bind_Aggrement = '@Url.Action("Bind_Aggrement", "Reports")';
+    var URL_BindDealNo = '@Url.Action("BindDeal", "Reports")';
+    var URL_BindEpisodicCostReport = '@Url.Action("BindEpisodicReport", "Reports")';
+
+    $(function () {
+        $(".episodeRange").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 9999,
+            min: 1
+        });
+        $("#ddlBusinessUnit").change(function () {
+            $('.required').removeClass('required');
+            $("[required='required']").removeAttr("required");
+            $('#autoc_Title').val('');
+            $("#hdnautoc_Title").val('0');
+        });
+    });
+
+    function Validate_Save() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        var returnVal = true;
+        if ($.trim($('#autoc_Title').val()) == "") {
+            $('#autoc_Title').val('')
+            $('#autoc_Title').attr('required', true)
+            returnVal = false;
+        }
+        if ($.trim($('#txtEpisodeFrm').val()) == "") {
+            $('#txtEpisodeFrm').val('')
+            $('#txtEpisodeFrm').attr('required', true)
+            returnVal = false;
+        }
+        if ($.trim($('#txtEpisodeTo').val()) == "") {
+            $('#txtEpisodeTo').val('')
+            $('#txtEpisodeTo').attr('required', true)
+            returnVal = false;
+        }
+        if (parseInt($.trim($('#txtEpisodeFrm').val())) > parseInt($.trim($('#txtEpisodeTo').val()))) {
+            showAlert("E", "@objMessageKey.EpisodeFromcannotbeLessthanEpisodeTo")
+            returnVal = false;
+        }
+        return returnVal;
+    }
+
+    function btnShow_OnClick() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        var returnVal = true;
+        if (!Validate_Save()) {
+            return false;
+        }
+        var dealCode = $.trim($('#hdnautoc_AggrNo').val());
+        if (dealCode == "")
+            dealCode = "0";
+
+        if (returnVal) {
+            $.ajax({
+                type: "POST",
+                url: URL_BindEpisodicCostReport,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    AcqDealCode: dealCode,
+                    TitleCode: $.trim($('#autoc_Title').val()),
+                    BUCode: $.trim($('#ddlBusinessUnit').val()),
+                    Eps_From: $.trim($('#txtEpisodeFrm').val()),
+                    Eps_To: $.trim($('#txtEpisodeTo').val()),
+                    DealTypeCode: $('#ddlDeal_Type').val(),
+                    numberformat: $('#ddlNumberFormat').val()
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        $('#divResult').empty();
+                        $('#divResult').html(result);
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    }
+</script>
+
+<style>
+    #divFilter {
+        background: #eee;
+        padding: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    #divResult {
+        margin-top: 10px;
+    }
+
+    #ddlDealType_chosen {
+        width: 250px !important;
+    }
+
+    #ddlTitle_chosen {
+        width: 250px !important;
+    }
+
+    #ddlDealNo_chosen {
+        width: 250px !important;
+    }
+
+    #ddlBusinessUnit_chosen {
+        width: 161px !important;
+    }
+</style>
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="title_block dotted_border clearfix">
+
+                <h2 style="direction:@objMessageKey.LayoutDirection">@objMessageKey.EpisodicCostReport</h2>
+            </div>
+            <div id="divFilter">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td style="width: 10%;">
+                                <b>@objMessageKey.BusinessUnit :</b>
+                            </td>
+                            <td style="width: 15%;">
+                                @Html.DropDownList("BusinessUnit", ViewBag.BusinessUnit as SelectList, new { @id = "ddlBusinessUnit", @class = "form_input chosen-select" })
+                            </td>
+                            <td style="width: 10%;">
+                                <b>@objMessageKey.TitleType :</b>
+                            </td>
+                            <td style="width: 24%;">
+                                @Html.DropDownList("Deal_Type", ViewBag.Deal_Type as SelectList, new { @id = "ddlDeal_Type", @class = "form_input chosen-select" })
+                            </td>
+                            <td class="bold" style="width: 10%;">
+                                @objMessageKey.Title:
+                            </td>
+                            <td style="width: 26%;">
+                                <input type="text" placeholder="@objMessageKey.Title" id="autoc_Title" autocomplete="on" style="width:95%" onkeyup="populateTitle(event)" />
+                                @Html.Hidden("hdnautoc_Title")
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <b> @objMessageKey.episode # :</b>
+                            </td>
+                            <td>
+                                <input type="text" placeholder="@objMessageKey.From" id="txtEpisodeFrm" class="episodeRange" style="width: 35%;">&nbsp;&nbsp;
+                                <input type="text" placeholder="@objMessageKey.To" id="txtEpisodeTo" class="episodeRange" style="width:30%;">&nbsp;&nbsp;
+                            </td>
+                            <td>
+                                <b>@objMessageKey.AgreementNo :</b>
+                            </td>
+                            <td>
+                                <input type="text" placeholder="@objMessageKey.AgreementNo" id="autoc_AggrNo" autocomplete="on" style="width:95%" onkeyup="populateTitleAggr(event)" />
+                                @Html.Hidden("hdnautoc_AggrNo")
+                            </td>
+
+                            <td><b>@objMessageKey.NumberFormat:</b></td>
+                            <td>
+                                @Html.DropDownList("NumberFormat", (List<SelectListItem>)ViewBag.NumberFormat, new { @id = "ddlNumberFormat", @class = "form_input chosen-select" })
+                            </td>
+
+                            <td style="width: 50px;" class="pull-right">
+                                <input type="button" id="btnShow" class="btn btn-primary" value="@objMessageKey.Show" onclick="btnShow_OnClick()">
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="title_block dotted_border clearfix">
+            </div>
+
+
+            <div id="divResult">
+
+            </div>
+        </div>
+    </section>
+</div>
+<script>
+    function populateTitle(evt) {
+        var Selected_Title_Codes = "";
+        var Selected_BUCode = $('#ddlBusinessUnit').val();
+        var selectedtxt = $('#autoc_Title').val();
+        var selectedDeal_Type = $('#ddlDeal_Type').val();
+        var txt = selectedtxt.split('﹐');
+        var iscomplete = true;
+        if (txt[txt.length - 1].trim() == "")
+            iscomplete = false;
+        if (iscomplete) {
+            $("#autoc_Title").autocomplete({
+                focus: function () {
+                    return false;
+                },
+                search: function (e, u) {
+                    $(this).addClass('loader');
+                },
+                source: function (request, response) {
+                    var param = {
+                        Selected_BUCode: Selected_BUCode,
+                        Selected_Title_Codes: Selected_Title_Codes,
+                        Searched_Title: $('#autoc_Title').val(),
+                        selectedDeal_Type: selectedDeal_Type
+                    };
+                    $.ajax({
+                        url: URL_Bind_Title,
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+                            debugger;
+                            if (data.length == 0) {
+                                data[0] = 'Result Not Found';
+                                response($.map(data, function (v, i) {
+                                    $('#autoc_Title').removeClass('loader');
+                                    return {
+                                        label: '@objMessageKey.ResultNotFound',
+                                        val: '0'
+                                    }
+                                }))
+                            }
+                            else {
+                                response($.map(data, function (v, i) {
+                                    $('#autoc_Title').removeClass('loader');
+                                    return {
+                                        label: v.TitleName,
+                                        val: v.TitleCode
+                                    }
+                                }))
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                            alert("Error" + textStatus);
+                        }
+                    });
+                },
+                select: function (event, i) {
+                    if (i.item.value != "@objMessageKey.ResultNotFound") {
+                        var text = this.value.split(/﹐\s*/);
+                        text.pop();
+                        text.push(i.item.value);
+                        text.push("");
+                        this.value = text;
+                        this.value = text.join("﹐");
+                        var value = $("#hdnautoc_Title").val().split(/,\s*/);
+                        value.pop();
+                        value.push(i.item.val);
+                        value.push("");
+                        $("#hdnautoc_Title")[0].value = value.join(", ");
+                        return false;
+                    }
+                    else {
+                        $('#autoc_Title').val('');
+                        return false;
+                    }
+                },
+                minLength: 3,
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("position", "auto");
+                    $(".ui-autocomplete").css("max-height", "200px");
+                    $(".ui-autocomplete").css("max-width", "300px");
+                    $(".ui-autocomplete").css("overflow-y", "auto");
+                    $(".ui-autocomplete").css("overflow-x", "hidden");
+                    $(".ui-autocomplete").css("z-index", "2147483647");
+                    $(".ui-autocomplete").css("direction", "@objMessageKey.LayoutDirection");
+                },
+
+            });
+        }
+        else
+            return false;
+    }
+    function populateTitleAggr(evt) {
+        debugger;
+        var Selected_Aggr_Codes = "";
+        var Selected_BUCode = $('#ddlBusinessUnit').val();
+        var selectedtxt = $('#autoc_AggrNo').val();
+        var txt = selectedtxt.split('﹐');
+        var iscomplete = true;
+        if (txt[txt.length - 1].trim() == "")
+            iscomplete = false;
+        if (iscomplete) {
+            $("#autoc_AggrNo").autocomplete({
+                focus: function () {
+                    return false;
+                },
+                search: function (e, u) {
+                    $(this).addClass('loader');
+                },
+                source: function (request, response) {
+                    var param = {
+                        Selected_BUCode: Selected_BUCode,
+                        Selected_Aggr_Codes: Selected_Aggr_Codes,
+                        Searched_Aggr: $('#autoc_AggrNo').val()
+                    };
+                    $.ajax({
+                        url: URL_Bind_Aggrement,
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+                            debugger;
+                            if (data.length == 0) {
+                                data[0] = 'Result Not Found';
+                                response($.map(data, function (v, i) {
+                                    $('#autoc_AggrNo').removeClass('loader');
+                                    return {
+                                        label: 'Result Not Found',
+                                        val: '0'
+                                    }
+                                }))
+                            }
+                            else {
+                                response($.map(data, function (v, i) {
+                                    $('#autoc_AggrNo').removeClass('loader');
+                                    return {
+                                        label: v.AgreementName,
+                                        val: v.Deal_Code
+                                    }
+                                }))
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                            alert("Error" + textStatus);
+                        }
+                    });
+                },
+                select: function (event, i) {
+                    debugger;
+                    var text = this.value.split(/,\s*/);
+                    text.pop();
+                    text.push(i.item.value);
+                    // text.push("");
+                    this.value = text;
+                    // this.value = text.join("﹐");
+                    var value = $("#hdnautoc_AggrNo").val().split(/,\s*/);
+                    value.pop();
+                    value.push(i.item.val);
+                    //value.push("");
+                    $("#hdnautoc_AggrNo")[0].value = value.join(", ");
+                    return false;
+                },
+                minLength: 3,
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("position", "auto");
+                    $(".ui-autocomplete").css("max-height", "200px");
+                    $(".ui-autocomplete").css("max-width", "300px");
+                    $(".ui-autocomplete").css("overflow-y", "auto");
+                    $(".ui-autocomplete").css("overflow-x", "hidden");
+                    $(".ui-autocomplete").css("z-index", "2147483647");
+                    $(".ui-autocomplete").css("direction", "@objMessageKey.LayoutDirection");
+                },
+
+            });
+        }
+        else
+            return false;
+    }
+</script>

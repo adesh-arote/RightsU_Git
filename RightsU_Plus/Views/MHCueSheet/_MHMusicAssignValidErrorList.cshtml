@@ -1,0 +1,258 @@
+﻿@model List<RightsU_Entities.MHCueSheetSong>
+    @{ 
+        LoginEntity objLoginEntity = new LoginEntity();
+        if (Session["objLoginEntity"] != null)
+        {
+            objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+
+        }
+
+    }
+<script>
+    $(document).ready(function () {
+        initializeChosen();
+        $("#lblRecordCount").text(@ViewBag.RecordCount);
+        $("#hdnPageNo").val(@((ViewBag.PageNo ?? 1)));
+        $("#hdnRecordCount").val(@ViewBag.RecordCount);
+        $("#txtPageSize").val(@ViewBag.PageSize);
+        SetPaging();
+
+        if ($('#hdnTabName').val() == "CM") {
+            $('#btnMap').hide()
+            $('.remarks_area').show()
+            $('#btnSubmit').show()
+        }
+        else {
+            $('#btnMap').show()
+            $('.remarks_area').hide()
+            $('#btnSubmit').hide()
+        }
+
+        $("input[id*='chkAllOther']:checkbox").click(function () {
+            $("input[id*='chkCreateNewOther']:checkbox").prop('checked', $(this).is(':checked'));
+        });
+    });
+    function onCheckboxCheck(e) {
+        if (!e.checked) {
+            RemoveMHCueSheetSongs_List(parseInt(e.className.split('~')[0]));
+        }
+    }
+</script>
+<table class="table table-bordered table-hover table-striped" id="tblConsume">
+    <thead>
+        <tr>
+            @if (ViewBag.currentTabName != "CM")
+            {
+                <th><input type="checkbox" id="chkAllOther" /></th>
+            }
+            else
+            {
+                <th align="center">Sr.No.</th>
+            }
+
+            <th>Show Name</th>
+            <th>Episode No</th>
+            <th>Music Track</th>
+            <th>Movie / Album Name</th>
+            <th>Song Type</th>
+            <th>TC In</th>
+            <th>TC Out</th>
+            <th>Duration</th>
+            @if (ViewBag.currentTabName != "CM")
+            {
+                <th>Error Tag</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count > 0)
+        {
+            string errorcodes = "";
+            int count = 0;
+            bool isApr = false;
+            bool chkDis = false;
+            count = (ViewBag.PageSize * (ViewBag.PageNo - 1)) + 1;
+            foreach (var item in Model)
+            {
+
+                if (ViewBag.currentTabName != "CM")
+                {
+                    errorcodes = item.ErrorMessage.Replace("~", ",");
+                    errorcodes = errorcodes.TrimStart(',');
+                    errorcodes = errorcodes.TrimEnd(',');
+
+                }
+                if (item.IsApprove != null)
+                {
+                    isApr =  item.IsApprove == "Y"  ? true : false;
+                    chkDis = item.IsApprove == "Y" ? true : false;
+                }
+                <tr>
+                    <td hidden>
+                        @count
+                    </td>
+                    @if (ViewBag.currentTabName != "CM")
+                    {
+                        <td align="center">
+                            <input type="hidden" id="hdnMHCSCode_@count" value="@item.MHCueSheetSongCode" />
+                            <input type="hidden" id="hdnMHTitleContentCode_@count" value="@item.TitleContentCode" />
+                            @Html.CheckBox("chkbox", isApr, new { @id = "chkCreateNewOther_" + count, onclick = "onCheckboxCheck(this);", @class = "" + item.MHCueSheetSongCode + "~" + item.IsApprove + "" + item.ErrorMessage })
+                        </td>
+                    }
+                    else
+                    {
+                        <td align="center">
+                            @count
+                        </td>
+                    }
+
+                    @if (ViewBag.currentTabName != "CM" && (item.ErrorMessage.Contains("~MHSNNF~") || item.ErrorMessage.Contains("~MHENIV~")))
+                    {
+                        <td>
+                            <input type="text" class="ShowName" placeholder="Show Name" id="txtTitleSearch_@count" autocomplete="on"
+                                   value="@item.TitleName" onkeyup="populateTitle(event,@count,@item.EpisodeNo)" />
+                            @Html.Hidden("hdnTitleSearch" + count, item.TitleCode)
+                            <input type="hidden" id="hdnTitleCode_@count" value="@item.TitleCode" />
+
+                        </td>
+                        <td class="ddlRule_No_List" style="width : 228px">
+                            <select id="ddl_txtTitleSearch_@count" class="form_input chosen-select" style="width: 174px;"></select>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>@item.TitleName</td>
+                        <td align="center">
+                            @item.EpisodeNo
+                            @*<input type="hidden" value="" id="ddl_txtTitleSearch_@count" />*@
+                        </td>
+                    }
+
+                    @if (ViewBag.currentTabName != "CM" && item.ErrorMessage.Contains("~MHMTNF~"))
+                    {
+                        <td>
+                            <input type="text" class="MusicTrack" placeholder="Music Track" id="txtTrackSearch_@count" autocomplete="on"
+                                   value="@item.MusicTrackName" onkeyup="populateTrack(event,@count)" />
+                            @Html.Hidden("hdnTrackSearch" + count)
+                            <input type="hidden" id="hdnTrackCode_@count" value="@item.MusicTitleCode" />
+                        </td>
+                        <td>
+                            <span id="ddl_txtTrackSearch_@count"></span>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            @item.MusicTrackName
+                            <input type="hidden" class="MusicTrack" id="hdnTrackCode_@count" value="@((item.MusicTitleCode ?? 0))" />
+                        </td>
+                        <td><span id="ddl_txtTrackSearch_@count"></span></td>
+                    }
+                    <td>@item.SongType</td>
+                    <td>@item.FromTime / @((item.FromFrame < 10 ? "0"+ item.FromFrame.ToString() : item.FromFrame.ToString()))</td>
+                    <td>@item.ToTime /  @((item.ToFrame < 10 ? "0" + item.ToFrame.ToString() : item.ToFrame.ToString()))</td>
+                    <td>@item.DurationTime /  @((item.DurationFrame < 10 ? "0" + item.DurationFrame.ToString() : item.DurationFrame.ToString()))</td>
+                    @if (ViewBag.currentTabName != "CM")
+                    {
+                        var errorDesc = new RightsU_BLL.USP_Service(objLoginEntity.ConnectionStringName).USPMHGetErrorList(errorcodes).FirstOrDefault();
+                        <td><span title="">@errorDesc</span> </td>
+                    }
+                </tr>
+                count++;
+            }
+        }
+        else
+        {
+            if (ViewBag.currentTabName != "CM")
+            {
+                <tr>
+                    <td colspan="9">No Record Found</td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <td colspan="7">No Record Found</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+
+<script>
+    $(document).ready(function () {
+        if ($('#hdnTabName').val() != "CM") {
+
+
+            $('input[name=chkbox]').each(function (e) {
+
+                var CurrentCount = $(this)[0].id.slice(18);
+                var id = $(this)[0].id;
+                var className = $(this)[0].className;
+                if ($(this)[0].checked) {
+                    if (className.split('~').indexOf("MHSNNF") > 0 || className.split('~').indexOf("MHENIV") > 0) {
+                        var currentElement = "txtTitleSearch_" + CurrentCount;
+                        var TitleName = $('#' + currentElement).val();
+                        var TitleContent = $('#hdnMHTitleContentCode_' + CurrentCount).val();
+
+                        if (TitleContent != "") {
+                            BindEpsNo(TitleName, currentElement, TitleContent)
+                        }
+                        else {
+                            $('#ddl_txtTitleSearch_' + CurrentCount).hide();
+                            $("#ddl_txtTitleSearch_" + CurrentCount).css("display", "none");
+                        }
+                    }
+                    if (className.split('~').indexOf("MHMTNF") > 0 || className.split('~').indexOf("MHENIV") > 0) {
+
+                        var currentElement = "txtTrackSearch_" + CurrentCount;
+                        var TitleName = $('#' + currentElement).val();
+                        var MusicTrackCode = $('#hdnTrackCode_' + CurrentCount).val();
+                        if (MusicTrackCode != "") {
+                            BindAlbumName(MusicTrackCode, CurrentCount);
+                        }
+                    }
+                    else {
+                        var currentElement = "txtTrackSearch_" + CurrentCount;
+                        var TitleName = $('#' + currentElement).val();
+                        var MusicTrackCode = $('#hdnTrackCode_' + CurrentCount).val();
+                        if (MusicTrackCode != "") {
+                            BindAlbumName(MusicTrackCode, CurrentCount);
+                        }
+                    }
+                }
+                else {
+                    if (className.split('~').indexOf("MHMTNF") > 0 || className.split('~').indexOf("MHENIV") > 0) {
+                        var currentElement = "txtTrackSearch_" + CurrentCount;
+                        var TitleName = $('#' + currentElement).val();
+                        var MusicTrackCode = $('#hdnTrackCode_' + CurrentCount).val();
+                        if (MusicTrackCode != "") {
+                            BindAlbumName(MusicTrackCode, CurrentCount);
+                        }
+                    }
+                    else {
+                        var currentElement = "txtTrackSearch_" + CurrentCount;
+                        var TitleName = $('#' + currentElement).val();
+                        var MusicTrackCode = $('#hdnTrackCode_' + CurrentCount).val();
+                        if (MusicTrackCode != "") {
+                            BindAlbumName(MusicTrackCode, CurrentCount);
+                        }
+                    }
+                }
+            });
+        }
+        else {
+            debugger;
+            $('.MusicTrack').each(function (e) {
+
+                var CurrentCount = $(this)[0].id.slice(13);
+                var value = $(this)[0].value;
+                var MusicTrackCode = $('#hdnTrackCode_' + CurrentCount).val();
+                if (parseInt(value) > 0) {
+                    BindAlbumName(MusicTrackCode, CurrentCount);
+                }
+            });
+        }
+    });
+</script>

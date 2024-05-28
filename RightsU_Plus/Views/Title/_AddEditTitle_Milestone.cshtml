@@ -1,0 +1,321 @@
+﻿@model RightsU_Entities.Title_Milestone
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+
+    }
+}
+
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script>
+    $(document).ready(function () {
+        debugger;
+        initializeDatepicker();
+        initializeChosen();
+        if ('@objMessageKey.LayoutDirection' == "RTL") {
+            $('.modal_header .close').css("padding-left", "0px");
+        }
+
+        if ($('#txtTitleMilestoneName').val() == "") {
+            $('#txtTitleMilestoneName').prop('disabled', false);
+        } else {
+            $('#txtTitleMilestoneName').prop('disabled', true);
+        }
+        var $radios = $('input:radio[name=Abandoned]');
+        if ($radios.is(':checked') === false) {
+            $('#AbandonedN').prop('checked', true);
+        }
+      
+            $('.expand_Remark').expander({
+                slicePoint: 100,
+                expandPrefix: '',
+                expandText: '...read more',
+                collapseTimer: 0,
+                userCollapseText: '<span>[^]</span>'
+            });
+            initializeExpander();
+    })
+
+</script>
+
+<style>
+    #ddlSecurityGroup_chosen {
+        width: 50% !important;
+    }
+
+    #ddlBusinessUnit {
+        width: 50% !important;
+    }
+
+    #divddlTalentName > div {
+        width: 54% !important;
+    }
+
+    #divddlTalent {
+        width: 50% !important;
+    }
+
+    #divddlMilestoneNatureName > div {
+        width: 54% !important;
+    }
+
+    #divddlMilestoneNature {
+        width: 50% !important;
+    }
+
+    #ddlLanguage_chosen {
+        width: 50% !important;
+    }
+
+    #ddlVendors_chosen {
+        width: 50% !important;
+    }
+
+    input.isDatepicker {
+        width: 135px !important;
+        z-index: auto;
+    }
+
+    .modal td > input[type="text"] {
+        width: 340px;
+    }
+
+    .modal .scale_table_block {
+        margin-left: -6px !important;
+    }
+</style>
+
+@using (Ajax.BeginForm("SaveTitleMilestone", "Title", new AjaxOptions() { OnSuccess = "SaveSuccess" }))
+{
+    <div class="modal_block modal_header">
+        <a class="close" onclick="ClosePopup()">
+            <span>X</span>
+            <span class="sr-only">Close</span>
+        </a>
+        @if (Model.Title_Milestone_Code > 0)
+        {
+            if (ViewBag.Mode == "V")
+            {
+                <h2>View Title Milestone Details</h2>
+            }
+            else
+            {
+                 <h2>Edit Title Milestone Details</h2>
+                 @Html.HiddenFor(m => Model.Title_Milestone_Code)
+            }
+        }
+        else
+        {
+            <h2>Add Title Milestone Details</h2>
+        }
+    </div>
+
+    if (ViewBag.Mode == "V")
+    {
+        <div class="modal_block">
+            <table class="add_title_popup">
+                <tr>
+                    <td style="width:23%"><b>Name of the Project  </b></td>
+                    <td>
+                        @*<input type="text" id="txtTitleMilestoneName" value="@ViewBag.TitleMilestonename" name="Login_Name" class="form-control input-sm" style="width:50%" />*@
+                        <label id="lblTitleMilestoneName">
+                            @ViewBag.TitleMilestonename
+                            <input type="hidden" id="hdnTitleMilestoneCode" name="hdnTitleMilestoneCode" value="@ViewBag.TitleMilestoneCode" />
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Name of the Counterparty </b>
+                    </td>
+                    <td>
+                        <div id="divddlTalentName">
+                            <label>@ViewBag.TalentName</label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Nature of Deal </b>
+                    </td>
+                    <td>
+                        <div id="divddlMilestoneNatureName">
+                            <label>@ViewBag.MilestoneNatureName</label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Expiry Date  </b>
+                    </td>
+                    <td>
+                        <div id="divExpiryDate">
+                           @Convert.ToDateTime(Model.Expiry_Date).ToString("dd-MMM-yyyy")
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Milestone </b>
+                    </td>
+                    <td>
+                        @Model.Milestone
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Action item </b>
+                    </td>
+                    <td>
+                        @Model.Action_Item
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Abandoned/Closed </b>
+                    </td>
+                    @{ 
+                        string IsAbandoned = "";
+                        if (Model.Is_Abandoned == "Y")
+                        {
+                            IsAbandoned = "Yes";
+                        }
+                        else
+                        {
+                            IsAbandoned = "No";
+                        }
+                    }
+                    <td>
+                        @IsAbandoned
+                    </td>
+                </tr>
+            </table>
+            <div class="scale_table_block">
+                <div class="divBlock">
+                    <div class="bold" style="padding-right: 87%;">Remarks</div>
+                </div>
+                <div class="expand_Remark" style="max-height: 100px;overflow: auto;">
+                    @Model.Remarks
+                </div>
+            </div>
+
+        </div>
+        <div class="modal_block_full">
+            <div class="form_links">
+                <ul class="modal_block clearfix" style="padding-left:10px; padding-top: 0px;">
+                    <li>
+                        <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="ClosePopup()" />
+                    </li>
+                </ul>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="modal_block">
+            <table class="add_title_popup">
+                <tr>
+                    <td style="width:23%"><b>Name of the Project  </b></td>
+                    <td>
+                        @*<input type="text" id="txtTitleMilestoneName" value="@ViewBag.TitleMilestonename" name="Login_Name" class="form-control input-sm" style="width:50%" />*@
+                        <label id="lblTitleMilestoneName">
+                            @ViewBag.TitleMilestonename
+                            <input type="hidden" id="hdnTitleMilestoneCode" name="hdnTitleMilestoneCode" value="@ViewBag.TitleMilestoneCode" />
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Name of the Counterparty </b>
+                    </td>
+                    <td>
+                        <div id="divddlTalentName">
+                            @*@Html.DropDownList("divddlTalent", ViewBag.TalentList as SelectList, new { @id = "divddlTalent", @class = "form_input chosen-select" })*@
+                            @Html.DropDownListFor(m => Model.Talent_Code, ViewBag.TalentList as SelectList, "Please Select", new { @id = "divddlTalent", @class = "form_input chosen-select" })
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Nature of Deal </b>
+                    </td>
+                    <td>
+                        <div id="divddlMilestoneNatureName">
+                            @* @Html.DropDownList("divddlMilestoneNature", ViewBag.MilestoneNatureList as SelectList, new { @id = "divddlMilestoneNature", @class = "form_input chosen-select" })*@
+                            @Html.DropDownListFor(m => Model.Milestone_Nature_Code, ViewBag.MilestoneNatureList as SelectList, "Please Select", new { @id = "divddlMilestoneNature", @class = "form_input chosen-select" })
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Expiry Date  </b>
+                    </td>
+                  
+                    <td>
+                        <div id="divExpiryDate">
+
+                            @*<input type="text" class="isDatepicker" id="txtStart" name="Expiry_Date" placeholder="DD/MM/YYYY" width="100"
+        title="Expiry Date" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" value="@Convert.ToDateTime(Model.Expiry_Date).ToString("dd/MM/yyyy")" />*@
+
+
+                            @Html.TextBoxFor(model => model.Expiry_Date, new
+                                                            {
+                                                                @name = "Expiry_Date",
+                                                                @class = "isDatepicker",
+                                                                @placeholder = "dd-MMM-yyyy",
+                                                                id = "txtStart",
+                                                                Value = String.Format("{0:dd/MM/yyyy}", Model.Expiry_Date)
+                                                            })
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Milestone </b>
+                    </td>
+                    <td>
+                        <input type="text" name="txtMilestone" id="txtMilestone" class="form-control input-sm" maxlength="500" value="@Model.Milestone" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Action item </b>
+                    </td>
+                    <td>
+                        <input type="text" name="txtAction" id="txtAction" class="form-control input-sm" maxlength="500" value="@Model.Action_Item" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Abandoned                                                                                                                                       /Closed </b>
+                    </td>
+                    <td>
+                        <label class="radio-inline">@Html.RadioButtonFor(m => Model.Is_Abandoned, "Y", new { @id = "AbandonedY", @Name = "Abandoned" })@objMessageKey.Yes</label>
+                        <label class="radio-inline" >@Html.RadioButtonFor(m => Model.Is_Abandoned, "N", new { @id = "AbandonedN", @Name = "Abandoned" })@objMessageKey.NO</label>
+                    </td>
+                </tr>
+            </table>
+            <div class="scale_table_block">
+                <div class="divBlock">
+                    <div class="bold" style="padding-right: 87%;">Remarks</div>
+                    <div class="charNum" style="float:right">4000</div>
+                </div>
+                @Html.TextAreaFor(m => Model.Remarks, new { @id = "txtRemark", @class = "textarea", @row = "2", @cols = "20", @onkeyup = "countChar(this)" })
+            </div>
+
+        </div>
+        <div class="modal_block_full">
+            <div class="form_links">
+                <ul class="modal_block clearfix" style="padding-left:10px; padding-top: 0px;">
+                    <li>
+                        <input type="submit" class="btn btn-primary" value="@objMessageKey.Save" onclick="return Validate_SaveTM();" />
+                        <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="ClosePopup()" />
+                    </li>
+                </ul>
+            </div>
+        </div>
+    }
+
+}

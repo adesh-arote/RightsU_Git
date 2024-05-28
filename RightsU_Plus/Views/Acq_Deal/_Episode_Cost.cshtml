@@ -1,0 +1,63 @@
+﻿@using UTOFrameWork.FrameworkClasses;
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script type="text/javascript" src="~/JS_Core/autoNumeric-1.8.1.js"></script>
+<style>
+    .tableScroll_CML {
+        overflow-y: scroll;
+        height: auto;
+        display: block;
+        padding: 0px !important;
+    }
+</style>
+<div class="modal_block modal_header">
+    <h2>Episode Cost</h2>
+</div>
+<div class="modal_block">
+
+    <div class="grid_area" style="margin: 0 auto; width: 98%;">
+        <div style="border-bottom: 1px dotted #777; display:none;"></div>
+
+        <table class="table">
+            <tr>
+                <td>
+                  <b>@objMessageKey.CostAmount</b> : @GlobalParams.CurrencyFormat(Convert.ToDouble(ViewBag.Amount))
+                    <b>@objMessageKey.TitleName</b> : @ViewBag.Titel_Name &nbsp;(@ViewBag.Episode_Starts_From - @ViewBag.Episode_End_To)
+                    @if (ViewBag.Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Mode != GlobalParams.DEAL_MODE_APPROVE)
+                    {
+                        <input type="button" value="@objMessageKey.Add" onclick="AddEditEpisodeCost_List('','ADD')" id="btnAdd" class="btn btn-primary pull-right" style="margin-bottom: 4px;">
+                    }
+                </td>
+            </tr>
+        </table>
+     
+        <input type="hidden" id="hdnTotalAmt" value="@ViewBag.Amount" />
+        <input type="hidden" id="hdnEpisode_Starts_From" value="@ViewBag.Episode_Starts_From" />
+        <input type="hidden" id="hdnEpisode_End_To" value="@ViewBag.Episode_End_To" />
+        <input type="hidden" id="hdnAcqDealCostTypeCode" value="@ViewBag.AcqDealCostTypeCode" />
+        <input type="hidden" id="hdnrowIndex" value="@ViewBag.rowIndex" />
+        <div class="tab-content clearfix table-wrapper scale_table_container">
+            <div class="scale_table_block">
+                <input type="hidden" id="hdnAction" value="" />
+                <div id="divEpisodeCostList" class="deal clearfix">
+
+                </div>
+            </div>
+        </div>
+        <div id="note" style="display: block;color: red;"><i> @objMessageKey.Note : @objMessageKey.PleasemakesuretheTotalAmountshouldbeequaltoActualCostTypeAmount</i></div>
+    </div>
+</div>
+<div class="modal_block_full">
+    <div class="form_links">
+        <ul class="modal_block clearfix" style="padding-left:10px; padding-top: 0px;">
+            <li>
+                <input type="button" class="btn btn-primary" id="btn_ClseEC" style="margin-left: 13px;margin-top: 10px;" value="@objMessageKey.Close" onclick="ClosePopup()" />
+            </li>
+        </ul>
+    </div>
+</div>

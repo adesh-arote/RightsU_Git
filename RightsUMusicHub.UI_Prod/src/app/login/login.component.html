@@ -1,0 +1,131 @@
+
+<div class="container">
+  <aside id="sidebar">
+    <div class="imgScroll-top">
+      <div class="inner">
+        <span class="mf mf-musicNote1"></span>
+        <img src="../../assets/Images/Login/MNotes1.png" alt="">
+      </div>
+      <div class="inner2">
+        <img src="../../assets/Images/Login/MNotes2.png" alt="">
+      </div>
+      <div class="inner3">
+        <img src="../../assets/Images/Login/MNotes3.png" alt="">
+      </div>
+      <div class="inner4">
+        <img src="../../assets/Images/Login/MNotes4.png" alt="">
+      </div>
+      <div class="inner5">
+        <img src="../../assets/Images/Login/MNotes5.png" alt="">
+      </div>
+      <div class="inner6">
+        <img src="../../assets/Images/Login/MNotes6.png" alt="">
+      </div>
+      <div class="inner7">
+        <img src="../../assets/Images/Login/MNotes7.png" alt="">
+      </div>
+      <div class="inner8">
+        <img src="../../assets/Images/Login/MNotes8.png" alt="">
+      </div>
+      <div class="inner9">
+        <img src="../../assets/Images/Login/MNotes9.png" alt="">
+      </div>
+    </div>
+  </aside>
+  <div class="row viacomlogo">
+
+    <img class="rounded" src="../../assets/Images/viacom18_small.png" alt="Viacom18" />
+  </div>
+
+  <div class="row">
+
+    <div class="col-lg-4 ">
+
+    </div>
+    <div class="col-lg-4">
+      <div class="row login">
+        <form [formGroup]="userform">
+          <img class="rounded" src="../../assets/Images/mhLogo_home.png" alt="Music Hub" />
+          <br>
+
+          <div *ngIf="islogin ">
+            <span class="ui-float-label">
+              <input id="username" class="form-control logintextbox" autocomplete="off" formControlName="userName" [(ngModel)]="userName" type="text" size="30" pInputText>
+              <label for="username" class="loginLabel">
+                <i class="fa fa-user-circle" aria-hidden="true"></i> User Name
+              </label>
+            </span>
+            <br>
+            <!-- <div class="row"> -->
+            <span class="ui-float-label">
+              <input id="Password" class="form-control logintextbox" formControlName="userPassword" [(ngModel)]="userPassword" type="password" (keyup.enter)="onEnter(userform.valid)" size="30" autocomplete="off"
+                     pInputText>
+              <label for="password" class="loginLabel">
+                <i class="fa fa-key" aria-hidden="true"></i> Password
+              </label>
+            </span>
+            <br>
+            <div class="row">
+
+              <div class="col-lg-4">
+                <button type="button" class="btn btn-black text-muted button" (click)="LoginClick()" [disabled]="!userform.valid">
+                  <span>Login</span>
+                </button>
+              </div>
+              <div class="col-lg-4">
+              </div>
+            </div>
+            <div class="row">
+
+              <div class="col-lg-6 forgetLink">
+                <a (click)="forgotClick()">Forgot Password?</a>
+              </div>
+              <div class="col-lg-2">
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="!islogin">
+            <h1>Password Assistance</h1>
+            <h6>
+              Please contact Viacom18 system administrator at
+              <a href="#">Viacom18</a> support.
+            </h6>
+            <button type="submit" (click)="continueClick()" class="btn btn-black text-muted button">
+              <span>Continue</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="col-lg-4">
+    </div>
+  </div>
+  <!-- Forgot Password Dialog Box -->
+  <p-dialog header="Password Assistance" [(visible)]="displayForgot" [draggable]="false" [positionTop]="60" [modal]="true" [responsive]="false" [width]="500" [blockScroll]="true">
+
+    <form #forgotForm="ngForm">
+      <div class="row">
+        <div class="col-lg-12 col-md-6">
+          <label>Email ID :</label>&nbsp;
+          <input id="inputForgort" class="forgotTextBox" type="text" autocomplete="off" placeholder="Email ID" size="30" pInputText [(ngModel)]="forgotEmailId" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" required name="EmailId" #EmailId="ngModel">
+        </div>
+      </div>
+    </form>
+    <p-footer>
+      <button type="button" Class="btn btn-info" [disabled]="!forgotForm.form.valid && !forgotForm.form.pattern" (click)="submitForgotPasswordRequest()">Submit</button>
+    </p-footer>
+  </p-dialog>
+  <!-- //For Change Password -->
+
+  <div *ngIf="displayalertMessage">
+    <app-message-box [messageData]="messageData"></app-message-box>
+  </div>
+  <p-confirmDialog></p-confirmDialog>
+</div>
+<footer class="login-footer">
+  <div class="pull-right hidden-xs">
+    <b>Version: {{currentApplicationVersion}} | Last Modified On: {{lastModified}}</b>
+  </div>
+  <strong>Product of <a href="http://www.uto.in/RightsUNew.aspx" target="_blank">U-TO solutions</a>.</strong>
+</footer>

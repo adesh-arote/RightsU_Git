@@ -1,0 +1,482 @@
+﻿@*@model List<RightsU_Entities.Security_Group>*@
+@using System.Web.Script.Serialization;
+@model RightsU_Plus.Controllers.ModuleContainer
+@{
+    ViewBag.Title = "_AddEditSecurityGroup";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var g = ViewBag.SelectedNode;
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+
+}
+<script src="~/JS_Core/jstree.min.js"></script>
+<link href="~/JS_Core/style.min.css" rel="stylesheet" />
+<style>
+    .table-wrapper {
+                background-color: #eee;
+                padding: 10px;
+                direction:rtl !important;
+            }
+</style>
+<script>
+
+    var URL_SaveSecurity_Group = '@Url.Action("SaveSecurity_Group", "Security_Group")';
+    var URL_UpdateSecurity_Group = '@Url.Action("UpdateSecurityGroup", "Security_Group")';
+    var URL_BindSecurityGroup = '@Url.Action("Index", "Security_Group")';
+
+    $(function () {
+
+        $('#jstree').jstree({
+           
+            "plugins": ["wholerow", "checkbox"]
+        });
+
+
+        $('button').on('click', function () {
+
+        });
+
+
+        $('#jstree').on('changed.jstree', function (e, data) {
+            debugger;
+            var i, j, r = [];
+            for (i = 0, j = data.selected.length; i < j; i++) {
+                r.push(data.instance.get_node(data.selected[i]).id.trim());
+            }
+            $('#event_result').html('Selected: ' + r.join(', '));
+            $('#SubmitHidden').val(r);
+        })
+    });
+
+    function btnSubmit() {
+        $("#frmSecurity").submit();
+    }
+    function btnUpdate() {
+        $("#frmSecurityUpdate").submit();
+    }
+
+    $(document).ready(function () {
+        $("#jstree").on('ready.jstree', function (e, data) {
+
+            var selectedNode;
+            if (selectedNode == "" || selectedNode == null) {
+                selectedNode = @Html.Raw(new JavaScriptSerializer().Serialize(ViewBag.SelectedNode));
+            }
+
+            //var selectedNode = @Session["SelectedNode"];
+            for (var i = 0; i < selectedNode.length; i++) {
+                $('#jstree').jstree('select_node', selectedNode[i]);         
+            }
+            $("#jstree").jstree('close_all');
+          
+        })
+
+    });
+    function SaveSecurityGroup() {
+        debugger;
+        if(validateSave())
+        {
+            debugger;
+            var formData = new FormData();
+            var txtModuleRights = $("#SubmitHidden").val();
+            var txtSecurityName = $("#txtSecurityName").val();
+            var formData = new FormData();
+            formData.append("txtModuleRights", txtModuleRights);
+            formData.append("txtSecurityName", txtSecurityName);
+            $.ajax({
+                type: "POST",
+                url: URL_SaveSecurity_Group,
+                method: "POST",
+                data: formData,
+                dataType: 'json',
+                contentType: false,
+                processData: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        if (result.Status == "S") {
+                            showAlert("I", result.Message);
+                            BindSecurityGroup();
+                            window.location='Index';
+                        }
+                        else {
+                            showAlert("E", result.Message);
+                        }
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                    hideLoading();
+                }
+            });
+        }
+    }
+    function UpdateSecurityGroup() {
+        debugger;
+        if(validateSave())
+        {
+            debugger;
+            var formData = new FormData();
+            var txtModuleRights = $("#SubmitHidden").val();
+            var txtSecurityName = $("#txtSecurityName").val();
+            var txtSecurityGroupCode = $("#txtSecurityGroupCode").val();
+            var formData = new FormData();
+
+            formData.append("txtModuleRights", txtModuleRights);
+            formData.append("txtSecurityName", txtSecurityName);
+            formData.append("txtSecurityGroupCode", txtSecurityGroupCode);
+
+
+            $.ajax({
+                type: "POST",
+                url: URL_UpdateSecurity_Group,
+                method: "POST",
+                data: formData,
+                dataType: 'json',
+                contentType: false,
+                processData: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        if (result.Status == "S") {
+                            showAlert("I", result.Message);
+                            BindSecurityGroup();
+                            window.location='Index';
+                        }
+                        else {
+                            showAlert("E", result.Message);
+                        }
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                    hideLoading();
+                }
+            });
+        }
+    }
+    function validateSave() {
+        var retrunmsg = true;
+        var securityName = $.trim($('#txtSecurityName').val());
+        if(securityName == '')
+        {
+            $('#txtSecurityName').val('');
+            $('#txtSecurityName').attr('required', true)
+            retrunmsg = false;
+        }
+        if($('#SubmitHidden').val()==null || $('#SubmitHidden').val()=="")
+        {
+            $('#jstree').attr('required', true)
+            showAlert("E", "Please select atleast one User Right");
+            retrunmsg = false;
+        }
+        return retrunmsg;
+    }
+    function BindSecurityGroup() {
+        $.ajax({
+            type: "POST",
+            url: URL_BindSecurityGroup,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    initializeChosen();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+</script>
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="">
+                <div class="title_block dotted_border clearfix">
+                    <h2 class="pull-left">
+                        @if (TempData["Action"] == "Edit")
+                        {
+                            <span>@objMessageKey.EditSecurityGroup</span>
+                        }
+                        else
+                        {
+                            <span>@objMessageKey.AddSecurityGroup</span>
+                        }
+                        <span></span>
+                    </h2>
+                    <div class="right_nav pull-right">
+                    </div>
+                </div>
+                <div class="grid_area">
+                    <div style="border-bottom: 1px dotted #777; display:none;"></div>
+
+                    <div class="tab-content clearfix table-wrapper scale_table_container">
+                        <div class="scale_table_block">
+
+
+                            <table class="table table-bordered table-hover">
+
+                                @if (TempData["Action"] == "Add")
+                                {
+                                    var icon = "../../JS_Core/fileIcon.png";
+                                    using (Html.BeginForm("SaveSecurity_Group", "Security_Group", FormMethod.Post, new { id = "frmSecurity" }))
+                                    {
+                                        <tr>
+                                            <td width="30%"><b>@objMessageKey.SecurityGroupID</b></td>
+                                            <td>
+                                                <span>@objMessageKey.New</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>@objMessageKey.SecurityGroupName</b></td>
+                                            <td>
+                                                @Html.TextBox("txtSecurityName", "", new { id = "txtSecurityName" })
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">
+                                                <div style="height: 100%; width: 100%;">
+                                                    <div style="height: 550px; overflow: scroll; width: 726px;">
+                                                        @* Start TreeView *@
+
+                                                        <div id="jstree">
+                                                            <ul>
+                                                                <li data-jstree='{"opened":true}'>
+                                                                    Root
+                                                                    <ul>
+                                                                        @*@foreach (var item in Model.lstParent)
+                                                                            {*@
+
+                                                                        @for (int i = 0; i < Model.lstParent.Count; i++)
+                                                                        {
+                                                                            var lstModuleRights = from a in Model.lstSR
+                                                                                                  join sr in Model.lstSMR on a.Right_Code equals sr.Right_Code
+                                                                                                  select new { Module_Code = sr.Module_Code, Right_Name = a.Right_Name, Right_Code = a.Right_Code, ModuleRightCode = sr.Module_Right_Code };
+                                                                            <li>
+                                                                                @Model.lstParent[i].Module_Name
+                                                                                <ul>
+
+                                                                                    @if (Model.lstSubMod != null && Model.lstSubMod.Count > 0)
+                                                                                    {
+                                                                                        //foreach (var subItem in Model.lstSubMod.Where(s => (s.Parent_Module_Code ?? 0) == Model.lstParent[i].Module_Code))
+                                                                                        //{
+                                                                                        var subItem = Model.lstSubMod.Where(s => (s.Parent_Module_Code ?? 0) == Model.lstParent[i].Module_Code).ToList();
+                                                                                        for (int j = 0; j < subItem.Count; j++)
+                                                                                        {
+                                                                                            <li>
+                                                                                                @subItem[j].Module_Name
+
+                                                                                                <ul>
+                                                                                                    @if (Model.lstChild != null && Model.lstChild.Count > 0)
+                                                                                                    {
+                                                                                                        //foreach (var childItem in Model.lstChild.Where(s => (s.Parent_Module_Code ?? 0) == subItem.Module_Code))
+                                                                                                        //{
+                                                                                                        var subItemChild = Model.lstChild.Where(s => (s.Parent_Module_Code ?? 0) == subItem[j].Module_Code).ToList();
+                                                                                                        for (int k = 0; k < subItemChild.Count; k++)
+                                                                                                        {
+                                                                                                            var ModuleRight = lstModuleRights.Where(a => a.Module_Code == subItemChild[k].Module_Code).ToList();
+                                                                                                            <li>
+                                                                                                                @subItemChild[k].Module_Name
+                                                                                                                <ul>
+                                                                                                                    @for (int l = 0; l < ModuleRight.Count; l++)
+                                                                                                                    {
+                                                                                                                        @*<li id="@ModuleRight[l].Module_Code - @ModuleRight[l].Right_Code">@ModuleRight[l].Right_Name</li>*@
+                                                                                                                        <li id="@ModuleRight[l].ModuleRightCode" data-jstree='{"icon":"@icon"}'>@ModuleRight[l].Right_Name</li>
+                                                                                                                    }
+                                                                                                                </ul>
+                                                                                                            </li>
+                                                                                                        }
+                                                                                                        if (subItemChild.Count <= 0)
+                                                                                                        {
+
+                                                                                                            var ModuleRight = lstModuleRights.Where(a => a.Module_Code == subItem[j].Module_Code).ToList();
+
+                                                                                                            for (int l = 0; l < ModuleRight.Count; l++)
+                                                                                                            {
+                                                                                                                @*<li id="@ModuleRight[l].Module_Code - @ModuleRight[l].Right_Code">@ModuleRight[l].Right_Name</li>*@
+                                                                                                                <li id="@ModuleRight[l].ModuleRightCode" data-jstree='{"icon":"@icon"}'>@ModuleRight[l].Right_Name</li>
+                                                                                                            }
+
+                                                                                                        }
+                                                                                                    }
+
+                                                                                                </ul>
+                                                                                            </li>
+                                                                                        }
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        var ModuleRight = lstModuleRights.Where(a => a.Module_Code == @Model.lstParent[i].Module_Code).ToList();
+
+                                                                                        for (int l = 0; l < ModuleRight.Count; l++)
+                                                                                        {
+                                                                                            @*<li id="@ModuleRight[l].Module_Code - @ModuleRight[l].Right_Code">@ModuleRight[l].Right_Name</li>*@
+                                                                                            <li id="@ModuleRight[l].ModuleRightCode" data-jstree='{"icon":"@icon"}'>@ModuleRight[l].Right_Name</li>
+                                                                                        }
+                                                                                    }
+
+                                                                                </ul>
+                                                                            </li>
+                                                                        }
+                                                                    </ul>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                        @Html.Hidden("txtModuleRights", "", new { id = "SubmitHidden" })
+
+                                                        @* End treeView *@
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else if (TempData["Action"] == "Edit")
+                                {
+                                    var icon = "../../JS_Core/fileIcon.png";
+                                    using (Html.BeginForm("UpdateSecurityGroup", "Security_Group", FormMethod.Post, new { id = "frmSecurityUpdate" }))
+                                    {
+                                        var code = Model.lstSecurityRel.Select(a => a.Security_Group_Code).First();
+                                        var selectedNode = Model.lstSecurityRel.Select(a => a.System_Module_Rights_Code).ToList();
+                                        var c = "SG";
+                                        <tr>
+                                            <td width="30%"><b>@objMessageKey.SecurityGroupID</b></td>
+                                            <td>
+                                                <span>@Html.TextBox("txtSecurityGroupCode", Model.lstSecurityRel.Select(a => a.Security_Group_Code).First(), new { hidden = true, id = "txtSecurityGroupCode" })</span>
+                                                <span>@c@code</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>@objMessageKey.SecurityGroupName</b></td>
+                                            <td>
+                                                @Html.TextBox("txtSecurityName", Model.lstSecurityRel.Select(a => a.Security_Group.Security_Group_Name).First(), new { id = "txtSecurityName" })
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">
+                                                <div style="height: 100%; width: 100%;">
+                                                    <div style="height: 550px; overflow: scroll; width: 726px;">
+                                                        @* Start TreeView *@
+
+
+                                                        <div id="jstree">
+                                                            <ul>
+                                                                <li data-jstree='{"opened":true}'>
+                                                                    Root
+                                                                    <ul>
+                                                                        @for (int i = 0; i < Model.lstParent.Count; i++)
+                                                                        {
+                                                                            var lstModuleRights = from a in Model.lstSR
+                                                                                                  join sr in Model.lstSMR on a.Right_Code equals sr.Right_Code
+                                                                                                  select new { Module_Code = sr.Module_Code, Right_Name = a.Right_Name, Right_Code = a.Right_Code, ModuleRightCode = sr.Module_Right_Code };
+
+                                                                            <li>
+                                                                                @Model.lstParent[i].Module_Name
+                                                                                <ul>
+
+                                                                                    @if (Model.lstSubMod != null && Model.lstSubMod.Count > 0)
+                                                                                    {
+                                                                                        var subItem = Model.lstSubMod.Where(s => (s.Parent_Module_Code ?? 0) == Model.lstParent[i].Module_Code).ToList();
+                                                                                        for (int j = 0; j < subItem.Count; j++)
+                                                                                        {
+                                                                                            <li>
+                                                                                                @subItem[j].Module_Name
+
+                                                                                                <ul>
+                                                                                                    @if (Model.lstChild != null && Model.lstChild.Count > 0)
+                                                                                                    {
+                                                                                                        var subItemChild = Model.lstChild.Where(s => (s.Parent_Module_Code ?? 0) == subItem[j].Module_Code).ToList();
+                                                                                                        for (int k = 0; k < subItemChild.Count; k++)
+                                                                                                        {
+                                                                                                            var ModuleRight = lstModuleRights.Where(a => a.Module_Code == subItemChild[k].Module_Code).ToList();
+                                                                                                            <li>
+                                                                                                                @subItemChild[k].Module_Name
+                                                                                                                <ul>
+                                                                                                                    @for (int l = 0; l < ModuleRight.Count; l++)
+                                                                                                                    {
+                                                                                                                        <li id="@ModuleRight[l].ModuleRightCode" data-jstree='{"icon":"@icon"}'>@ModuleRight[l].Right_Name</li>
+                                                                                                                    }
+                                                                                                                </ul>
+                                                                                                            </li>
+                                                                                                        }
+                                                                                                        if (subItemChild.Count <= 0)
+                                                                                                        {
+
+                                                                                                            var ModuleRight = lstModuleRights.Where(a => a.Module_Code == subItem[j].Module_Code).ToList();
+
+                                                                                                            for (int l = 0; l < ModuleRight.Count; l++)
+                                                                                                            {
+
+                                                                                                                <li id="@ModuleRight[l].ModuleRightCode" data-jstree='{"icon":"@icon"}'>@ModuleRight[l].Right_Name</li>
+                                                                                                            }
+
+                                                                                                        }
+                                                                                                    }
+
+                                                                                                </ul>
+                                                                                            </li>
+                                                                                        }
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        var ModuleRight = lstModuleRights.Where(a => a.Module_Code == @Model.lstParent[i].Module_Code).ToList();
+
+                                                                                        for (int l = 0; l < ModuleRight.Count; l++)
+                                                                                        {
+                                                                                            <li id="@ModuleRight[l].ModuleRightCode" data-jstree='{"icon":"@icon"}'>@ModuleRight[l].Right_Name</li>
+                                                                                        }
+                                                                                    }
+
+                                                                                </ul>
+                                                                            </li>
+                                                                        }
+                                                                    </ul>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                        @Html.Hidden("txtModuleRights", "", new { id = "SubmitHidden" })
+                                                        @* End treeView *@
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </table>
+                        </div>
+                    </div>
+                    <div class="bottom_action">
+                        <ul>
+                            @if (TempData["Action"] == "Add")
+                            {
+                                <li><input type="button" class="btn btn-primary" value="@objMessageKey.Save" onclick="SaveSecurityGroup();" /></li>
+                                <li><input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="location.href='@Url.Action("Index", "Security_Group")'" /></li>
+                            }
+                            else if (TempData["Action"] == "Edit")
+                            {
+                                <li><input type="button" class="btn btn-primary" value="@objMessageKey.Save" onclick="UpdateSecurityGroup();" /></li>
+                                <li><input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="location.href='@Url.Action("Index", "Security_Group")'" /></li>
+                            }
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

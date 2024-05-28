@@ -1,0 +1,1585 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<link type="text/css" rel="stylesheet" href="~/CSS/chosen.min.css">
+@*<link type="text/css" rel="stylesheet" href="~/CSS/pagination.css" />*@
+@*<link type="text/css" rel="stylesheet" href="~/CSS/common.css">
+        <link type="text/css" rel="stylesheet" href="~/CSS/responsive.css" media="screen and (max-width:960px) and (max-height:640px)">
+        <link type="text/css" rel="stylesheet" href="~/CSS/ui.fancytree.css">
+
+        <script type="text/javascript" src="~/Scripts/jquery-3.0.0.min.js"></script>
+        <script type="text/javascript" src="~/JS_Core/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="~/JS_Core/jquery.expander.js"></script>
+    <script type="text/javascript" src="~/JS_Core/jquery.fancytree.js"></script>
+        <script type="text/javascript" src="~/JS_Core/common.concat.js"></script>*@
+<script type="text/javascript" src="~/JS_Core/chosen.jquery.min.js"></script>
+<script type="text/javascript" src="~/JS_Core/charts_loader.js"></script>
+<script type="text/javascript" src="~/JS_Core/autoNumeric-1.8.1.js"></script>
+
+<script type="text/javascript">
+
+    var panelVisible = false;
+    var RightpanelHideCss = '-350px';
+    var RightpanelShowCss = '0px';
+
+    var LeftpanelHideCss = '-350px';
+    var LeftpanelShowCss = '0px';
+    // Load Charts and the corechart package.
+    google.charts.load('44', { 'packages': ['corechart', 'gauge'] });
+
+    /*
+    //chart-1: Draw the piechart_3d chart is loaded.
+    google.charts.setOnLoadCallback(drawPie3dChart);
+
+    //chart-2: Draw the Stacked Column Chart is loaded.
+    google.charts.setOnLoadCallback(drawStackedColumnChart);
+
+    //chart-3: Draw the piechart_3d chart is loaded.
+    google.charts.setOnLoadCallback(drawPie3dChart2);
+
+    //chart-4: Draw the Stacked Column Chart is loaded.
+    google.charts.setOnLoadCallback(drawStackedColumnChart2);
+
+
+    //chart-1: Start piechart_3d
+    function drawPie3dChart() {
+        var data3 = google.visualization.arrayToDataTable([
+          ['Region', 'Count'],
+          ['Open', 150],
+          ['Active', 50],
+          ['Closed', 300]
+        ]);
+
+        var options3 = {
+            title: '', is3D: true,
+            chartArea: { left: 5, top: 25, 'width': '100%', 'height': '100%' },
+
+        };
+
+        var chart3 = new google.visualization.PieChart(document.getElementById('3_piechart_3d'));
+        chart3.draw(data3, options3);
+    }
+    //chart-2: Start Stacked column charts
+    function drawStackedColumnChart() {
+
+        var data2 = google.visualization.arrayToDataTable(
+			[
+				['', 'Open', 'Active', 'Closed', { role: 'annotation' }],
+				['YRF', 50, 20, 100, ''],
+				['Saregama', 75, 20, 100, ''],
+				['Universal', 25, 10, 100, '']
+
+			]);
+
+        var options2 = {
+            title: '',
+            chartArea: { left: 25, top: 25, 'width': '100%', 'height': '80%' },
+            legend: { position: 'top', 'alignment': 'center', maxLines: 3 },
+            bar: { groupWidth: '50%' },
+            isStacked: true,
+
+        };
+
+        var chart2 = new google.visualization.ColumnChart(document.getElementById('2_StackedColumn_chart'));
+        chart2.draw(data2, options2);
+    }
+
+
+    //chart-3: Start piechart_3d
+    function drawPie3dChart2() {
+        var data4 = google.visualization.arrayToDataTable([
+          ['Region', 'Count'],
+          ['Open', 100],
+          ['Active', 125],
+          ['Closed', 75]
+        ]);
+
+        var options4 = {
+            title: '', is3D: true,
+            chartArea: { left: 5, top: 25, 'width': '100%', 'height': '100%' },
+        };
+
+        var chart4 = new google.visualization.PieChart(document.getElementById('3_piechart_3d_4'));
+        chart4.draw(data4, options4);
+    }
+    //chart-4: Start Stacked column charts
+    function drawStackedColumnChart2() {
+
+        var data5 = google.visualization.arrayToDataTable(
+			[
+				['', 'Open', 'Active', 'Closed', { role: 'annotation' }],
+				['T-Series', 40, 25, 20, ''],
+				['Saregama', 15, 50, 35, ''],
+				['Zee Music', 25, 30, 15, ''],
+				['Sony', 20, 20, 10, '']
+
+			]);
+
+        var options5 = {
+            title: '',
+            chartArea: { left: 25, top: 25, 'width': '100%', 'height': '80%' },
+            legend: { position: 'top', 'alignment': 'center', maxLines: 4 },
+            bar: { groupWidth: '50%' },
+            isStacked: true,
+        };
+
+        var chart5 = new google.visualization.ColumnChart(document.getElementById('2_StackedColumn_chart_5'));
+        chart5.draw(data5, options5);
+    }
+    */
+    var URL_BindAdvanced_Search_Controls = '@Url.Action("BindAdvanced_Search_Controls", "Music_Exception_Handling")';
+    $(document).ready(function () {
+        // debugger;      
+        
+        if ('@objMessageKey.LayoutDirection' == 'RTL') {
+            $('.glyphicon-search').css({ transform: 'rotate(-84deg)' });
+            $('#sideNavi .item1').css({ top: '32px' });
+        }       
+             BindGrid(0, 'Y', 'N');
+        if ('@objMessageKey.LayoutDirection' == 'RTL') {
+            $('.paging_area .pagination').css({ marginTop: '-1px' });
+        }
+       
+        //        BindDropdown();
+        $('.nav-toggle').click(function () {
+            var collapse_content_selector = $(this).attr('href');
+            var toggle_switch = $(this);
+            if ($(this).hasClass('glyphicon-triangle-top')) {
+                toggle_switch.removeClass("glyphicon-triangle-top");
+                toggle_switch.addClass("glyphicon-triangle-bottom");
+            }
+            else {
+                toggle_switch.removeClass("glyphicon-triangle-bottom");
+                toggle_switch.addClass("glyphicon-triangle-top");
+            }
+            $(collapse_content_selector).toggle(function () {
+            });
+        });
+
+        $("td").bind("mousemove", function (event) {
+            $(this).find("span.PlatformExpand").css({
+                top: event.pageY + 5 + "px",
+                left: event.pageX + 5 + "px"
+            }).show();
+        }).bind("mouseout", function () {
+            $("span.PlatformExpand").hide();
+        });
+
+        $('.search_area').hide();
+        $('#txtSearchF').autoNumeric('init', { vMax: '9999999999.99', dGroup: 2 });
+        //setChosenHight('.ddlAdvanceSearch', '120px');
+
+        //RightpanelHideCss = '-90px';
+        //RightpanelShowCss = '60px';
+
+        //$(".RightPanel:not(#pnlSearch)").css("right", RightpanelShowCss);
+        //var panel = document.getElementById(panelID);
+        //panel.style.right = RightpanelShowCss;
+
+        initializeChosen();
+        initializeSubMenu2();
+        AllsubmenuHide();
+        //togglePanelVisibility2('pnlSearch');
+
+       // $("#ancFileName").attr('href', '../Help/Masters/Layout.html?xxxxx');
+    });
+
+    function BindSearch() {
+        BindAdvanced_Search_Controls();
+    }
+    function helpClose() {
+        document.getElementById("collapse1").style.display = 'none';
+
+    }    
+
+    function showAuthorize(obj2) {
+        if (obj2.value == "1") {
+            $('#hdnIgnoreOverride').val('1');
+            document.getElementById("ShowReason").style.display = 'none';
+            document.getElementById("ShowRemarks").style.display = '';
+        }
+
+        if (obj2.value == "2") {
+            $('#hdnIgnoreOverride').val('2');
+            document.getElementById("ShowReason").style.display = '';
+            document.getElementById("ShowRemarks").style.display = '';
+        }
+    }
+    function showAuthorizeWaiting(obj3) {
+        if (obj3.value == "1") {
+            document.getElementById("ShowReason2").style.display = '';
+            document.getElementById("ShowRemarks2").style.display = '';
+        }
+
+        if (obj3.value == "2") {
+            document.getElementById("ShowReason2").style.display = 'none';
+            document.getElementById("ShowRemarks2").style.display = '';
+        }
+    }
+
+    function togglePanelVisibility2(panelID) {
+           if ('@objMessageKey.LayoutDirection' == 'RTL') {
+            document.getElementById('pnlSearch').removeAttribute('hidden')
+            $('.leftPanel').css('right', panelHideCss);
+            $(".RightPanel:not(#" + panelID + ")").css("left", LeftpanelHideCss);
+            var panel = document.getElementById(panelID);
+            if (panel.style.left == LeftpanelShowCss) {
+                panel.style.left = LeftpanelHideCss;
+                panelVisible = false;
+                $('#sideNavi').show();
+            }
+            else {
+                panel.style.left = LeftpanelShowCss;
+                panelVisible = true;
+                $('#sideNavi').hide();
+            }
+            $("#AdvanceSearchPanel").css({
+                direction: 'rtl',
+                marginRight: '5%'
+            });
+            $('.search-field').css({ float: 'right' });
+            $('.chosen-container-multi .chosen-choices li').css({ float: 'right' });
+
+        } else {
+
+            document.getElementById('pnlSearch').removeAttribute('hidden')
+            $('.leftPanel').css('left', panelHideCss);
+            $(".RightPanel:not(#" + panelID + ")").css("right", RightpanelHideCss);
+            var panel = document.getElementById(panelID);
+
+            if (panel.style.right == RightpanelShowCss) {
+                panel.style.right = RightpanelHideCss;
+                panelVisible = false;
+                $('#sideNavi').show();
+                //$('#AdvanceSearchPanel').hide();
+            }
+            else {
+                // BindDropdown();
+                panel.style.right = RightpanelShowCss;
+                panelVisible = true;
+                $('#sideNavi').hide();
+                //$('#AdvanceSearchPanel').show();
+            }
+        }
+    }
+    function initializeSubMenu2() {
+        //$('.RightPanel').hide();
+        //$('#sideNavi').show();
+        $('.RightPanel li.has-sub>a').on('click', function () {
+            $(this).removeAttr('href');
+            var element = $(this).parent('li');
+            if (element.hasClass('open')) {
+                element.removeClass('open');
+                element.find('li').removeClass('open');
+                element.find('ul').slideUp(200);
+            }
+            else {
+                element.addClass('open');
+                element.children('ul').slideDown(200);
+                element.siblings('li').children('ul').slideUp(200);
+                element.siblings('li').removeClass('open');
+                element.siblings('li').find('li').removeClass('open');
+                element.siblings('li').find('ul').slideUp(200);
+            }
+        });
+    }
+
+    function AllsubmenuHide() {
+        $('.RightPanel').css('right', RightpanelHideCss);
+        $('.leftPanel').css('left', panelHideCss);
+        $('#sideNavi').show();
+        //$('.RightPanel').hide();
+    }
+
+    function showHideDS(flag) {
+        showLoading();
+        //google.charts.load('44', { 'packages': ['corechart', 'gauge'] });
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("ShowDashboard", "Music_Exception_Handling")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            async: false,
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Flag: flag
+            }),
+            success: function (result) {
+
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $("#tabNotAired").empty();
+                    $("#tabNotAired").append(result);
+                }
+                hideLoading();
+            },
+            error: function (result) {
+                alert(result);
+            }
+        });
+
+        //$("#dashboardFull").empty();
+        //if (flag == "show") {
+        //    //$("#optDashboard1").prop("checked", true)
+        //    //$("#optDashboard1").attr('checked', 'checked');
+        //    //if($("#optDashboard").val() == "1")
+        //    //{
+        //    $("#tabDashboard").html("_Exception_Dashboard.cshtml");
+        //    //}
+        //    //if($("#optDashboard").val() == "2")
+        //    //{
+        //    //	$("#dashboardFull").load("../AiredDS.html");
+        //    //}
+
+
+        //    //$("#dashboardFull2").load("../AiredDS.html");
+        //    //$("#dashboardFull2").hide();
+        //}
+        //else {
+        //    //$('#dashboardFull').hide();
+        //}
+    }
+
+
+
+    //Anchal Changes
+    function pageselectCallback(page_index, jq) {
+        //debugger;
+        if (IsCall == 'Y') {
+            BindGrid(page_index, $('#hdnIsShowAll').val(), $('#hdnIsAdv').val());
+            $("#hdnPageIndex").val(page_index);
+        }
+        else
+            IsCall = 'Y';
+    }
+
+    function CommonSearch() {
+        ClearAll();
+        $('#hdnIsShowAll').val('N');
+        $('#hdnIsAdv').val('N');
+        if ($('#hdnTabName').val() == 'D') {
+            showHideDS('show');
+        }
+        else
+            BindGrid(0, 'N', 'N')
+    }
+    function PageSizeChange() {
+        BindGrid(0, $('#hdnIsShowAll').val(), $('#hdnIsAdv').val())
+        if (LayoutDirection_G == 'RTL') {
+            $('.paging_area .pagination').css({ direction: 'rtl' ,marginTop: '-1px'});
+        }
+        
+    }
+    //function parseDate(str) {
+    //    var mdy = str.split('/');
+    //    return new Date(mdy[2], mdy[0] - 1, mdy[1]);
+    //}
+    function BindGrid(page_index, ShowAll, IsAdv) {
+        debugger;
+        var isValid = true;
+        var isAired = 'N';
+        if ($('#hdnIsAired').val() == 'Y' || $('#hdnIsAired').val() == 'N' || $('#hdnIsAired').val() == 'D' || $('#hdnIsAired').val() == 'NA') {
+            isAired = $('#hdnIsAired').val();
+          
+        }
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        var startDate = $("#txtStart").val()
+        var endDate = $("#txtEnd").val()
+
+        if ($("#txtStart").val() != "" && $("#txtEnd").val() != "") {
+            var diff = Math.round(Date.parse($.datepicker.parseDate("dd/mm/yy", endDate)) - Date.parse($.datepicker.parseDate("dd/mm/yy", startDate))) / (1000 * 60 * 60 * 24)
+            if(diff > 15 || diff<0)
+               isValid=false
+        }
+        if (isValid) {
+            showLoading();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("BindGrid", "Music_Exception_Handling")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                async: false,
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    IsAired: isAired,
+                    PageIndex: page_index,
+                    pageSize: ($('#PageSize').val() == '' ? 10 : $('#PageSize').val()),
+                    CommonSearch: $('#commonSearch').val(),
+                    IsAdvance: IsAdv,
+                    StartDate: $("#txtStart").val(),
+                    EndDate: $("#txtEnd").val()
+                }),
+                success: function (result) {
+
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        $("#tabNotAired").empty();
+                        $("#tabNotAired").append(result);
+                        if ($('.pagination'))
+                            SetPaging();
+                        if (LayoutDirection_G == 'RTL') {
+                            $('.paging_area .pagination').css({ direction: 'rtl', marginTop: '-1px' });
+                        }
+                        initializeTooltip();
+                        hideLoading();
+                    }
+                },
+                error: function (result) {
+                    alert(result);
+                }
+            });
+        }
+        else {
+            showAlert("E","The difference in dates should be less than 15 and greater than 0")
+        }
+        //initializeExpander();
+
+        $("#hdnPageIndex").val(page_index);
+    }
+    function TabChange(isAired) {
+        showLoading();
+        debugger;
+        $("#txtStart").val('')
+         $("#txtEnd").val('')
+        $("#txtStart").datepicker("option", "minDate", null)
+        $("#txtStart").datepicker("option", "maxDate", null)
+        $("#txtEnd").datepicker("option", "minDate", null)
+        $("#txtEnd").datepicker("option", "maxDate", null)
+        $('#btnSearch').prop('onclick', '')        
+        $('#btnSearch').attr('onclick', 'BindGrid(0, $("#hdnIsShowAll").val(), $("#hdnIsAdv").val())')
+
+        $('#hdnIsAired').val(isAired);
+        $('#hdnTabName').val(isAired);
+        if (isAired == 'D') {
+            $('#hdnIsAiredrb').val('N');
+            $('#btnSearch').prop('onclick', '')                   
+            $('#btnSearch').attr('onclick', 'showDashboard($("input:radio[name=optDashboard]:checked").val())')
+            showHideDS('show');
+        }
+        else {
+            //debugger;
+            //$('#commonSearch').val('');
+            $('#PageSize').val('10');
+            BindGrid(0, $('#hdnIsShowAll').val(), $('#hdnIsAdv').val());
+        }
+        if ('@objMessageKey.LayoutDirection' == 'RTL') {
+            $('.paging_area .pagination').css({ marginTop: '-1px' ,direction:'rtl'});
+        }
+
+    }
+
+    function SendForApprovalpopup(music_Schedule_Transaction_Code, isZeroworkflow) {
+        debugger
+        showLoading();
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("SendForApprovalPopup", "Music_Exception_Handling")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            async: false,
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({ Music_Schedule_Transaction_Code: music_Schedule_Transaction_Code, IsZeroworkflow: isZeroworkflow }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger
+                    hideLoading();
+                    $("#popWaitingAuthorization").html(result);
+                    //$('#popAuthorize').modal('show');
+                    initializeChosen();
+                    if ('@objMessageKey.LayoutDirection' == 'RTL') {
+                        $('#hdnIgnoreOverride + label> input:radio').css({ position: 'relative', margin: '2px 0px 0px 2px', top: '2px' });
+                        $('#hdnIgnoreOverride + label +label > input:radio').css({ position: 'relative', margin: '2px 0px 0px 2px', top: '2px' });
+                    }
+                }
+            },
+            error: function (result) { }
+        });
+        hideLoading();
+    }
+    function SendForApproval(music_Schedule_Transaction_Code) {
+        if ($('#txtRemarks').val() == '') {
+            $('#txtRemarks').addClass('required');
+            //showAlert("E", "Please Enter Remarks", '');
+            return false;
+        }
+        else {
+            //debugger;
+            var reasonCode = $('#ddlReason').val();
+            var ignoreOrOverride = 'I';
+            if ($('#hdnIgnoreOverride').val() == '1')
+                ignoreOrOverride = 'I';
+            if ($('#hdnIgnoreOverride').val() == '2')
+                ignoreOrOverride = 'O';
+            var remarks = $('#txtRemarks').val();
+            showLoading();
+
+            showLoading();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("SendForApproval", "Music_Exception_Handling")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                async: false,
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    ReasonCode: reasonCode,
+                    IgnoreOrOverride: ignoreOrOverride,
+                    Remark: remarks,
+                    Music_Schedule_Transaction_Code: music_Schedule_Transaction_Code
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        debugger;
+                        hideLoading();
+                        showAlert(result.strMsgType, result.Message, '');
+                        initializeChosen();
+                        BindGrid($("#hdnPageIndex").val(), $('#hdnIsShowAll').val(), $('#hdnIsAdv').val());
+                        $("#popAuthorize").modal('hide');
+                        //$(document.getElementsByClassName('popAuthorize')).removeClass('modal-open');
+                        //$(document.getElementsByClassName('popAuthorize')).remove();
+                    }
+                },
+                error: function (result) { }
+            });
+        }
+    }
+
+    function ShowAriedViewHistory(music_Schedule_Transaction_Code, mode, isAired) {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("ShowAriedViewHistory", "Music_Exception_Handling")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            async: false,
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Music_Schedule_Transaction_Code: music_Schedule_Transaction_Code,
+                Mode: mode,
+                IsAired: isAired
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    hideLoading();
+                    if (mode == 'V')
+                        $("#popAriedView").html(result);
+                    else
+                        $("#popWaitingAuthorization").html(result);
+                    //$("#popAuthorize").modal();
+                    initializeChosen();
+                }
+            },
+            error: function (result) { }
+        });
+    }
+
+    function ApproveOrReject(music_Schedule_Transaction_Code, UAction) {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        var remarks = $('#txtRemarks').val();
+        var reasonCode = $('#ddlReason').val();
+        var ignoreOrOverride = 'I';
+        if ($('#hdnIgnoreOverride').val() == '1')
+            ignoreOrOverride = 'I';
+        if ($('#hdnIgnoreOverride').val() == '2')
+            ignoreOrOverride = 'O';
+            //showAlert("E", "Please Enter Remarks", '');
+             if (remarks == "" && (reasonCode == "" && ignoreOrOverride == "O")) {
+                 $('#txtRemarks').addClass('required');
+                 $('#ddlReason').addClass('required');
+                 return false;
+             }
+             else if (remarks == "") {
+                 $('#txtRemarks').addClass('required');
+                 return false;
+             }
+             else if (reasonCode == "" && ignoreOrOverride == "O") {
+                  $('#ddlReason').addClass('required');
+            return false;
+        }
+        else {
+            if (reasonCode == "" && ignoreOrOverride == "I")
+                reasonCode = 0;
+
+                showLoading();
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("ApproveOrReject", "Music_Exception_Handling")',
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    async: false,
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify({
+                        user_Action: UAction,
+                        Remark: remarks,
+                        Music_Schedule_Transaction_Code: music_Schedule_Transaction_Code,
+                        ReasonCode: reasonCode,
+                        IgnoreOrOverride: ignoreOrOverride
+                    }),
+                    success: function (result) {
+                        if (result == "true") {
+                            redirectToLogin();
+                        }
+                        else {
+                            debugger;
+                            hideLoading();
+                            //$("#popWaitingAuthorization").html(result);
+                            $("#popWaitingAuthorization").modal('hide');
+                            showAlert("S", result.Message);
+                            initializeChosen();
+                            BindGrid($("#hdnPageIndex").val(), $('#hdnIsShowAll').val(), $('#hdnIsAdv').val());
+                        }
+                    },
+                    error: function (result) { }
+                });
+            }
+    }
+
+    function BindAdvanced_Search_Controls() {
+        //debugger;
+        if (parseInt($("#ddlMusicTrack option").length) == 0) {
+            $.ajax({
+                type: "POST",
+                url: URL_BindAdvanced_Search_Controls,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                async: true,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        //debugger;
+                        //$("#ddlMusicTrack").empty();
+                        $("#ddlMusicLabel").empty();
+                        $("#ddlChannel").empty();
+                        //$("#ddlContent").empty();
+                        $("#ddlInitialResponse").empty();
+                        $("#ddlExceptionStatus").empty();
+                        var obj_Search = $(result.objPage_Properties);
+
+                        //$(result.lstMusicTrack).each(function (index, item) {
+                        //    $("#ddlMusicTrack").append($("<option>").val(this.Value).text(this.Text));
+                        //});
+                        //$("#ddlMusicTrack").val(obj_Search[0].MusicTrackCode).attr("selected", "true").trigger("chosen:updated")
+
+                        $(result.lstMusicLabel).each(function (index, item) {
+                            $("#ddlMusicLabel").append($("<option>").val(this.Value).text(this.Text));
+                        });
+                        $("#ddlMusicLabel").val(obj_Search[0].MusicLabelCode).attr("selected", "true").trigger("chosen:updated")
+
+                        $(result.lstChannel).each(function (index, item) {
+                            $("#ddlChannel").append($("<option>").val(this.Value).text(this.Text));
+                        });
+                        $("#ddlChannel").val(obj_Search[0].ChannelCode).attr("selected", "true").trigger("chosen:updated")
+
+                        //$(result.lstContent).each(function (index, item) {
+                        //    $("#ddlContent").append($("<option>").val(this.Value).text(this.Text));
+                        //});
+                        //$("#ddlContent").val(obj_Search[0].ContentCode).attr("selected", "true").trigger("chosen:updated")
+
+                        $(result.lstInitialResponse).each(function (index, item) {
+                            $("#ddlInitialResponse").append($("<option>").val(this.Value).text(this.Text));
+                        });
+                        if (obj_Search[0].InitialResponse == null)
+                            $("#ddlInitialResponse").trigger("chosen:updated")
+                        else
+                            $("#ddlInitialResponse").val(obj_Search[0].InitialResponse.split(',')).attr("selected", "true").trigger("chosen:updated")
+
+                        $(result.lstStatus).each(function (index, item) {
+                            $("#ddlExceptionStatus").append($("<option>").val(this.Value).text(this.Text));
+                        });
+                        if (obj_Search[0].Status == null)
+                            $("#ddlExceptionStatus").trigger("chosen:updated")
+                        else
+                            $("#ddlExceptionStatus").val(obj_Search[0].Status.split(',')).attr("selected", "true").trigger("chosen:updated")
+
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    }
+
+    function drawStackedColumnChart2() {
+        debugger;
+        showLoading()
+        var isAired = '';
+        if ($('#hdnIsAiredrb').val() == '' || $('#hdnIsAiredrb').val() == null)
+            isAired = 'N';
+        else
+            isAired = $('#hdnIsAiredrb').val();
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindDashboard", "Music_Exception_Handling")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                IsAired: isAired,
+               StartDate: $("#txtStart").val(),
+                 EndDate:  $("#txtEnd").val()
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger;
+                    $("#txtStart").datepicker("option", "minDate", null)
+                    $("#txtStart1").datepicker("option", "maxDate", null)
+                    $("#txtEnd").datepicker("option", "minDate", null)
+                    $("#txtEnd1").datepicker("option", "maxDate", null)
+                    if ($("input:radio[name=optDashboard]:checked").val() == '1') {
+                        $("#txtStart,#txtEnd,#txtStart1,#txtEnd1").val('')              
+                        
+                        $("#txtStart,#txtStart1").datepicker("option", "minDate", $.datepicker.parseDate("dd/mm/yy", result.NStart_Date));
+                        $("#txtEnd,#txtEnd1").datepicker("option", "minDate", $.datepicker.parseDate("dd/mm/yy", result.NStart_Date));
+                        $('#txtStart,#txtStart1').val(result.NStart_Date);
+                        $('#txtEnd,#txtEnd1').val(result.NEnd_Date);
+
+                    }
+                    else if ($("input:radio[name=optDashboard]:checked").val() == '2') {
+                        $("#txtStart,#txtEnd,#txtStart1,#txtEnd1").val('')
+                        //$('#txtStart,#txtStart1').datepicker("setDate", result.AStart_Date);
+                        //$('#txtEnd,#txtEnd1').datepicker("setDate", result.AEnd_Date);                       
+
+                        //var a = new Date();
+                        //a.setDate(a.getDate() - 15);
+                        $("#txtStart,#txtStart1").datepicker("option", "maxDate", new Date());
+                        $("#txtEnd,#txtEnd1").datepicker("option", "maxDate", new Date());
+                        $('#txtStart,#txtStart1').val(result.AStart_Date);
+                        $('#txtEnd,#txtEnd1').val(result.AEnd_Date);
+                    }
+                    var data4 = google.visualization.arrayToDataTable([
+              ['Region', 'Count'],
+              ['Open', result.OpenCount],
+              ['In Progress', result.InProgressCount],
+              ['Closed', result.ClosedCount]
+                    ]);
+                    var TotRec = 0;
+                    TotRec = parseInt(result.OpenCount) + parseInt(result.InProgressCount) + parseInt(result.ClosedCount);
+                    $('#lblTotalExceptions').html('@objMessageKey.TotalExceptions :' + TotRec)
+                    var options4 = {
+                        title: '', is3D: true,
+                        chartArea: { left: 5, top: 25, 'width': '100%', 'height': '100%' },
+                    };
+
+                    if (TotRec > 0) {
+                        var chart4 = new google.visualization.PieChart(document.getElementById('3_piechart_3d_4'));
+                        chart4.draw(data4, options4);
+                    } else {
+                        $('#3_piechart_3d_4').html('<h1>@objMessageKey.NODATA</h1>')
+                    }
+                    if (TotRec > 0) {
+                        //debugger;
+                        //            var data_arrMusicDash = google.visualization.arrayToDataTable(
+                        //[
+                        //	['', 'Open', 'In Progress', 'Closed', { role: 'annotation' }],
+                        //	['T-Series', 40, 25, 20, ''],
+                        //	['Saregama', 15, 50, 35, ''],
+                        //	['Zee Music', 25, 30, 15, ''],
+                        //	['Sony', 20, 20, 10, '']
+
+                        //]);
+
+                        if (result.arrMusicDashboard.length > 1) {
+                            var data_arrMusicDash1 = google.visualization.arrayToDataTable(result.arrMusicDashboard);
+                            var options_MusicLabelwise = {
+                                is3D: true,
+                                //chartArea: { left: 25, top: 25, bottom: 35, 'width': '100%', 'height': '80%' },
+                                //legend: { position: 'top', 'alignment': 'center', maxLines: 3 },
+                                //bar: { groupWidth: '30%' },
+                                //isStacked: true,
+                                ////bar: { groupWidth: '70%' },
+
+
+                                chartArea: { left: 25, top: 25, bottom: 35, 'width': '100%', 'height': '80%' },
+                                legend: { position: 'top', 'alignment': 'center', maxLines: 6 },
+                                bar: { groupWidth: '30%' },
+                                isStacked: true,
+                                seriesType: 'bars',
+                                series: { 5: { type: 'line', lineWidth: 0 } },
+
+                                //  hAxis: { textStyle: { fontSize: 10 } }
+                            };
+                            //var option_TitleRegion = {
+
+                            //    chartArea: { left: 25, top: 25, bottom: 35, 'width': '100%', 'height': '80%' },
+                            //    legend: { position: 'top', 'alignment': 'center', maxLines: 5 },
+                            //    bar: { groupWidth: '70%' },
+                            //    seriesType: 'bars',
+                            //    series: { 5: { type: 'line', lineWidth: 0 } },
+                            //    hAxis: { textStyle: { fontSize: 10 } }
+                            //};
+
+                            var chart_arrMusicDash = new google.visualization.ColumnChart(document.getElementById('2_StackedColumn_chart_5'));
+                            chart_arrMusicDash.draw(data_arrMusicDash1, options_MusicLabelwise);
+                            
+                        }
+                        else {
+                            $('#2_StackedColumn_chart_5').html('<h1>@objMessageKey.NODATA</h1>')
+                        }
+
+                    } else {
+                        $('#2_StackedColumn_chart_5').html('<h1>@objMessageKey.NODATA</h1>')
+                    }
+
+                }
+                hideLoading()
+            }
+            
+        });
+    }
+
+    function SearchList() {
+        //debugger
+        var isValid = 'Y';
+        var isAired = 'N';
+        if ($('#hdnIsAired').val() == 'Y' || $('#hdnIsAired').val() == 'N' || $('#hdnIsAired').val() == 'D')
+            isAired = $('#hdnIsAired').val();
+        var tmpMusicTrack = '', tmpMusicLabel = '', tmpChannel = '', tmpContent = '', tmpEpsFrom = '', tmpEpsTo = '', tmpInitialResponse = '', tmpExceptionStatus = '';
+        //if ($('#ddlMusicTrack').val())
+        //    tmpMusicTrack = $('#ddlMusicTrack').val().join(',');
+
+        if ($('#txtTitleSearch').val())
+            tmpMusicTrack = $('#txtTitleSearch').val();
+
+
+        if ($('#ddlMusicLabel').val())
+            tmpMusicLabel = $('#ddlMusicLabel').val().join(',');
+
+        if ($('#ddlChannel').val())
+            tmpChannel = $('#ddlChannel').val().join(',');
+
+        //if ($('#ddlContent').val())
+        //    tmpContent = $('#ddlContent').val().join(',');
+        if ($('#txtContentSearch').val())
+            tmpContent = $('#txtContentSearch').val();
+
+        if ($('#ddlInitialResponse').val())
+            tmpInitialResponse = $('#ddlInitialResponse').val().join(',');
+
+        if ($('#ddlExceptionStatus').val())
+            tmpExceptionStatus = $('#ddlExceptionStatus').val().join(',');
+
+
+        if ($('#txtTitleSearch').val())
+            tmptxtTitleSearch = $('#txtTitleSearch').val();
+
+        tmpEpsFrom = $('#txtfrom').val();
+        tmpEpsTo = $('#txtto').val();
+        $('#commonSearch').val('');
+        $('#hdnIsShowAll').val('N');
+        $('#hdnIsAdv').val('Y');
+        if (tmpMusicTrack != '' || tmpMusicLabel != '' || tmpChannel != '' || tmpContent != '' || tmpEpsFrom != '' || tmpEpsTo != '' || tmpInitialResponse != '' || tmpExceptionStatus != '') {
+            if (tmpEpsFrom != '' && tmpEpsTo != '') {
+                if (tmpEpsFrom > tmpEpsTo) {
+                    isValid = 'N';
+                    showAlert("E", "@objMessageKey.EpisodeFromshouldbelessthenEpisodeTo", '');
+                    return false;
+                }
+            }
+
+        }
+        else {
+            isValid = 'N';
+            showAlert("E", "@objMessageKey.Pleaseselectatleastonesearchcriteria", '');
+            return false;
+        }
+        if (isValid = 'Y') {
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("SearchList", "Music_Exception_Handling")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                async: false,
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    IsAired: isAired,
+                    MusicTrackCode: tmpMusicTrack,
+                    MusicLabelCode: tmpMusicLabel,
+                    ChannelCode: tmpChannel,
+                    Contents: tmpContent,
+                    EpsFrom: tmpEpsFrom,
+                    EpsTo: tmpEpsTo,
+                    Status: tmpExceptionStatus,
+                    InitialResponse: tmpInitialResponse
+                }),
+                success: function (result) {
+
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        //$("#tabNotAired").empty();
+                        //$("#tabNotAired").append(result);
+                        //if ($('.pagination'))
+                        //    SetPaging();
+
+                        //initializeTooltip();
+
+                    }
+                },
+                error: function (result) {
+                    alert(result);
+                }
+            });
+            showLoading();
+            if ($('#hdnTabName').val() == 'D') {
+                showHideDS('show');
+            }
+            else {
+                BindGrid(0, 'N', 'Y');
+            }
+            hideLoading();
+        }
+    }
+
+    function ClearAll() {
+        debugger;
+        //$("#ddlMusicTrack").find("option").attr("selected", false);
+        //$("#ddlMusicTrack").val('').trigger("chosen:updated");
+       
+
+        $("#ddlMusicLabel").find("option").attr("selected", false);
+        $("#ddlMusicLabel").val('').trigger("chosen:updated");
+
+        $("#ddlChannel").find("option").attr("selected", false);
+        $("#ddlChannel").val('').trigger("chosen:updated");
+
+        //$("#ddlContent").find("option").attr("selected", false);
+        //$("#ddlContent").val('').trigger("chosen:updated");
+
+        $("#ddlInitialResponse").find("option").attr("selected", false);
+        $("#ddlInitialResponse").val('').trigger("chosen:updated");
+
+        $("#ddlExceptionStatus").find("option").attr("selected", false);
+        $("#ddlExceptionStatus").val('').trigger("chosen:updated");
+
+        $("#txtStart1").datepicker("setDate", null)
+        $("#txtEnd1").datepicker("setDate", null)
+        $("#txtfrom").val('');
+        $("#txtto").val('');
+        $("#txtTitleSearch").val('');
+        $("#txtContentSearch").val('');
+    }
+    function ShowAll() {
+        ClearAll();
+        var isAired = 'N';
+        if ($('#hdnIsAired').val() == 'Y' || $('#hdnIsAired').val() == 'N' || $('#hdnIsAired').val() == 'D')
+            isAired = $('#hdnIsAired').val();
+        if ($('#hdnTabName').val() == 'D') {
+            showHideDS('showAll');
+        }
+        else {
+            // BindGrid(0, 'N', 'Y');
+            showLoading();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("ShowAll", "Music_Exception_Handling")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                async: false,
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    IsAired: isAired
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        $("#tabNotAired").empty();
+                        $("#tabNotAired").append(result);
+                        if ($('.pagination'))
+                            SetPaging();
+
+                        initializeTooltip();
+                        hideLoading();
+                    }
+                },
+                error: function (result) {
+                    alert(result);
+                }
+            });
+        }
+    }
+
+    function isNumber(evt) {
+        evt = (evt) ? evt : window.event;
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        return true;
+    }
+
+    function exceptionclick(thistext) {
+        //debugger;
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("ShowException", "Music_Exception_Handling")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            async: false,
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                ErrorCode: thistext.text.trim()
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    hideLoading();
+                    //alert(result.Error_Description);
+                    $("#lblException").html(result.Error_Description);
+                    //$("#popException").html(result);
+                    $("#popException").modal();
+                    $("#popException").show();
+                    initializeChosen();
+                }
+            },
+            error: function (result) { }
+        });
+
+
+    }
+    //Anchal Changes
+</script>
+<style>
+    .search_area {
+        border-bottom: 1px dotted #777;
+        margin-bottom: 5px;
+    }
+
+    #divSearch {
+        padding: 6px 10px;
+        margin-bottom: 3px;
+        border: 1px solid #ddd;
+        background-color: #eee;
+    }
+
+        #divSearch > ul > li {
+            float: left;
+            min-height: 56px;
+            list-style-type: none;
+            padding: 0 3px;
+        }
+
+        #divSearch .chosen-container {
+            margin: 0;
+        }
+
+        #divSearch .checkbox-inline {
+            margin-bottom: 7px;
+        }
+
+    ul.first > li {
+        width: 25%;
+    }
+
+        ul.first > li:nth-child(2) {
+            width: 25%;
+        }
+
+        ul.first > li:last-child {
+            width: 25%;
+        }
+
+    ul.second > li {
+        width: 35%;
+    }
+
+        ul.second > li:last-child {
+            width: 25%;
+        }
+
+        ul.second > li:last-child {
+            width: 25%;
+        }
+
+    #divSearch label {
+        display: inline-block;
+    }
+
+    /*  .container {
+        /* width: 900px;
+        width: 95%;
+        margin: 0 auto;
+        /* min-height: 710px;
+        padding: 0px 0 55px 80px !important;
+    }*/
+
+    .help {
+        text-align: center;
+        border-left: 1px solid #000;
+        border-right: 1px solid #000;
+        border-bottom: 1px solid #000;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+        padding: 0px 2px 2px 2px;
+        width: 80px;
+        float: right;
+    }
+
+        .help:hover {
+            background: #e0e0e0;
+        }
+
+    .collapse {
+        position: absolute;
+        right: 3px;
+        top: 72px;
+        width: 180px;
+        height: 280px;
+        z-index: 99;
+        background-color: #f3f3f3;
+        border: 1px solid #000000;
+    }
+
+        .collapse div {
+            padding: 15px;
+            border-bottom: 1px solid #dddddd;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+            .collapse div:hover {
+                background-color: #0080c0;
+                color: #ffffff;
+            }
+
+    .rowBorder td {
+        border-bottom: 1px dotted #dddddd !important;
+    }
+
+    .rowBg {
+        background-color: #eaeaea;
+    }
+
+        .rowBg td {
+            border-bottom: 1px dotted #dddddd !important;
+        }
+
+    .PlatformExpand {
+        position: absolute;
+        display: none;
+        z-index: 1000;
+        background-color: black;
+        color: white;
+        border: 1px solid black;
+        padding: 5px;
+    }
+
+    .dashboard {
+        min-height: 245px !important;
+    }
+
+    .tab-content #2_StackedColumn_chart {
+        width: 520px !important;
+    }
+
+    /*.form .modal_block, form .modal_block {
+        overflow-y: auto !important;
+        max-height: 400px !important;
+    }*/
+  #ui-id-1 {
+    position:fixed;
+    }
+    .tinyADSearch {
+        top:70px;
+    }
+
+</style>
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div id="sideNavi">
+            <div class="side-navi-item item1" style="top:0px ;width: 46px !important;" onclick="javascript: togglePanelVisibility2('pnlSearch'); BindSearch();"><div><span class="glyphicon glyphicon-search" style="transform: rotate(-270deg);"></span></div></div>
+        </div>
+        <div class="RightPanel" id="pnlSearch" hidden="hidden">
+            <div id="AdvanceSearchPanel">
+                <h4>@objMessageKey.AdvanceSearch</h4>
+                <a class="close" href="#" onclick="javascript: panelVisible=true;togglePanelVisibility2('pnlSearch');"><span class="Reviewclose">x</span></a>
+                <ul>
+                    <li>
+                        <label>@objMessageKey.MusicTrack :</label><br>
+                        @*<select id="ddlMusicTrack" multiple class="chosen-select ddlAdvanceSearch"></select>*@
+
+                        <input type="text" placeholder="@objMessageKey.MusicTrack" id="txtTitleSearch" autocomplete="on" style="width:321px" onkeyup="populateTitle(event)" />
+                        @Html.Hidden("hdnTitleSearch")
+
+                    </li>
+                    <li>
+                        <label>@objMessageKey.MusicLabel:</label>
+                        <select id="ddlMusicLabel" multiple class="chosen-select"></select>
+                    </li>
+                    <li>
+                        <label>@objMessageKey.Channel:</label>
+                        <select id="ddlChannel" multiple class="chosen-select">
+                            @*<option value="0" selected="selected">All</option>
+                                <option value="1">Colors India</option>
+                                <option value="2">Colors Gujarati</option>*@
+                        </select>
+                    </li>
+                    <li>
+                        <label>@objMessageKey.Content:</label>
+                        <br />
+                        @*<select id="ddlContent" multiple class="chosen-select"></select>*@
+                        <input type="text" placeholder="@objMessageKey.MusicTrack" id="txtContentSearch" autocomplete="on" style="width:321px" onkeyup="populateContent(event)" />
+                        @Html.Hidden("hdnContentSearch")
+
+                    </li>
+                    <li>
+                        <label>@objMessageKey.episode:</label><br>
+                        <input type="text" class="text" id="txtfrom" placeholder="@objMessageKey.From" title="From" style="width:120px;" onkeypress="return isNumber(event);" maxlength="4">
+                        <input type="text" class="text" id="txtto" placeholder="@objMessageKey.To" title="To" style="width:150px;" onkeypress="return isNumber(event);" maxlength="4">
+                    </li>
+                    <li>
+                        <label>Date:</label><br>
+                        <input type="text" class="isDatepicker" id="txtStart1" name="StartDate" placeholder="From" width="100"
+                               title="@objMessageKey.StartDate" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" />
+                        &nbsp; To &nbsp;
+                        <input type="text" class="isDatepicker" id="txtEnd1" name="End_Date" placeholder="To" width="100"
+                               title="@objMessageKey.EndDate" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" />
+                    </li>
+                    <li>
+                        <label>@objMessageKey.Authorize:</label>
+                        <select id="ddlInitialResponse" multiple class="chosen-select"></select>
+                    </li>
+                    <li>
+                        <label>@objMessageKey.ExceptionStatus:</label>
+                        <select id="ddlExceptionStatus" multiple class="chosen-select"></select>
+                    </li>
+                </ul>
+                <div style="margin-top:5px">
+                    <a class="btn btn-primary" href="#" onclick="SearchList();">@objMessageKey.Search</a>
+                    <a class="btn btn-primary" href="#" onclick="ShowAll();">@objMessageKey.ClearAll</a>
+                </div>
+            </div>
+        </div>
+        @*<div onclick="$('.RightPanel').css('right', RightpanelHideCss);">*@
+        <div class="container acq main_col" onclick="AllsubmenuHide();">
+            <div class="top_area">
+                <div class="title_block  clearfix">
+                    <h2 class="pull-left">
+                        @objMessageKey.MusicExceptionHandling
+                        <span></span>
+                    </h2>
+                    <span class="pull-right" style="margin:15px 80px 0 0;">
+                        <input type="text" class="isDatepicker" id="txtStart" name="StartDate" placeholder="From" width="100"
+                               title="@objMessageKey.StartDate" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" />
+                        &nbsp; To &nbsp;
+                        <input type="text" class="isDatepicker" id="txtEnd" name="End_Date" placeholder="To" width="100"
+                               title="@objMessageKey.EndDate" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" />
+                        
+                        <input type="button" class="btn btn-primary" value="Search" id="btnSearch" onclick="BindGrid(0, $('#hdnIsShowAll').val(), $('#hdnIsAdv').val())"/>
+                    </span>
+                    <div class="right_nav pull-right" style="margin-right:100px;margin-top: -0px !important;">
+                        @Html.Hidden("hdnIsAdv", new { @id = "hdnIsAdv" })
+                        @Html.Hidden("hdnIsShowAll", new { @id = "hdnIsShowAll" })
+                        <ul>
+                            <li><input type="text" class="search" id="commonSearch" onkeyup="return CommonSearch()" placeholder="@objMessageKey.MusicTrack, @objMessageKey.MusicLabel, @objMessageKey.Channel, @objMessageKey.Content" /></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="grid_area">
+                <div class="navigation_tabs">
+                    @Html.Hidden("hdnIsAired", new { @id = "hdnIsAired" })
+                    @Html.Hidden("hdnTabName", new { @id = "hdnTabName" })
+                    @Html.Hidden("hdnIsAiredrb", new { @id = "hdnIsAiredrb" })
+                    <div class="tabbable">
+
+                        <ul class="nav nav-tabs nav-tab pull-left">
+                            <li class="active">
+                                <a data-toggle="tab" role="tab" onclick="TabChange('N');">@objMessageKey.NotAired</a>
+                            </li>
+                            <li class="">
+                                <a data-toggle="tab" role="tab" onclick="TabChange('Y');">@objMessageKey.Aired</a>
+                            </li>
+                            <li class="">
+                                <a data-toggle="tab" onclick="TabChange('D')" role="tab">@objMessageKey.Dashboard</a>
+                            </li>
+                            <li class="">
+                                <a data-toggle="tab" onclick="TabChange('NA');" role="tab">@objMessageKey.Dealnotfound</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content clearfix table-wrapper scale_table_container">
+                            <div class="tab-pane active" id="tabNotAired">
+
+                            </div>
+                            @*<div class="tab-pane" id="tabAired">
+
+                                </div>
+                                <div class="tab-pane" id="tabDashboard">
+
+                                </div>*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @*</div>*@
+    </section>
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade" id="popAuthorize" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;"></div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade" id="popAriedView" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;"></div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade" id="popWaitingAuthorization" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;"></div>
+
+
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade" id="popException" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form" id="new_syndication_bundle_form">
+                <div class="form_wrapper">
+                    <div class="form_fields acq">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>Exception</h2>
+                        </div>
+                        <div class="modal_block" style="overflow-y: auto !important; max-height: 400px !important">
+                            <label id="lblException"></label>
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li>
+                                        <a data-dismiss="modal" class="btn-primary" href="#">Ok</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    var URL_Bind_Title = '@Url.Action("Bind_Title", "Music_Exception_Handling")';
+
+    var URL_Bind_Content = '@Url.Action("Bind_Content", "Music_Exception_Handling")';
+
+    function populateTitle(evt) {
+        //debugger;
+        var Selected_BUCode = 0;
+        var Selected_Title_Codes = "";
+        var selectedtxt = $('#txtTitleSearch').val()
+        var txt = selectedtxt.split('﹐');
+        var iscomplete = true;
+        if (txt[txt.length - 1].trim() == "")
+            iscomplete = false;
+        if (iscomplete) {
+            $("#txtTitleSearch").autocomplete({
+                focus: function () {
+                    return false;
+                },
+                search: function (e, u) {
+                    $(this).addClass('loader');
+                },
+                source: function (request, response) {
+                    var param = {
+                        Selected_deal_type_Code: '0',
+                        Selected_BUCode: Selected_BUCode,
+                        Selected_Title_Codes: Selected_Title_Codes,
+                        Searched_Title: $('#txtTitleSearch').val()
+                    };
+                    $.ajax({
+                        url: URL_Bind_Title,
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+                            if (data.length == 0) {
+                                data[0] = '@objMessageKey.ResultNotFound';
+                                response($.map(data, function (v, i) {
+                                    $('#txtTitleSearch').removeClass('loader');
+                                    return {
+                                        label: 'Result Not Found',
+                                        val: '0'
+                                    }
+                                }))
+                            }
+                            else {
+                                response($.map(data, function (v, i) {
+                                    $('#txtTitleSearch').removeClass('loader');
+                                    //debugger;
+                                    return {
+                                        label: v.Music_Title_Name,
+                                        val: v.Music_Title_Code
+                                    }
+                                }))
+                            }
+                            //$("#lbTitle_Code").val('');
+                            //response($.map(data, function (v, i) {
+                            //    return {
+                            //        label: v.Music_Title_Name,
+                            //        val: v.Music_Title_Code
+                            //    }
+                            //}))
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                            alert("Error" + textStatus);
+                        }
+                    });
+                },
+                select: function (event, i) {
+                    //debugger;
+                    var text = this.value.split(/﹐\s*/);
+                    text.pop();
+                    text.push(i.item.value);
+                    text.push("");
+                    this.value = text;
+                    this.value = text.join("﹐");
+                    var value = $("#hdnTitleSearch").val().split(/,\s*/);
+                    value.pop();
+                    value.push(i.item.val);
+                    value.push("");
+                    $("#hdnTitleSearch")[0].value = value.join(", ");
+                    return false;
+                },
+                minLength: 3,
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("position", "auto");
+                    $(".ui-autocomplete").css("max-height", "200px");
+                    $(".ui-autocomplete").css("max-width", "250px");
+                    $(".ui-autocomplete").css("overflow-y", "auto");
+                    $(".ui-autocomplete").css("overflow-x", "hidden");
+                    $(".ui-autocomplete").css("z-index", "2147483647");
+                },
+
+            });
+        }
+        else
+            return false;
+    }
+
+    function populateContent(evt) {
+        //debugger;
+        var Selected_BUCode = 0;
+        var Selected_Content_Codes = "";
+        var selectedtxt = $('#txtContentSearch').val()
+        var txt = selectedtxt.split('﹐');
+        var iscomplete = true;
+        if (txt[txt.length - 1].trim() == "")
+            iscomplete = false;
+        if (iscomplete) {
+            $("#txtContentSearch").autocomplete({
+                focus: function () {
+                    return false;
+                },
+                search: function (e, u) {
+                    $(this).addClass('loader');
+                },
+                source: function (request, response) {
+                    var param = {
+                        Selected_deal_type_Code: '0',
+                        Selected_BUCode: Selected_BUCode,
+                        Selected_Content_Codes: Selected_Content_Codes,
+                        Searched_Content: $('#txtContentSearch').val()
+                    };
+                    $.ajax({
+                        url: URL_Bind_Content,
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+                            if (data.length == 0) {
+                                data[0] = 'Result Not Found';
+                                response($.map(data, function (v, i) {
+                                    $('#txtContentSearch').removeClass('loader');
+                                    return {
+                                        label: 'Result Not Found',
+                                        val: '0'
+                                    }
+                                }))
+                            }
+                            else {
+                                response($.map(data, function (v, i) {
+                                    $('#txtContentSearch').removeClass('loader');
+                                    //debugger;
+                                    return {
+                                        label: v.Title_Content_Name,
+                                        val: v.Title_Content_Code
+                                    }
+                                }))
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            alert("Error" + textStatus);
+                        }
+                    });
+                },
+                select: function (event, i) {
+                    //debugger;
+                    var text = this.value.split(/﹐\s*/);
+                    text.pop();
+                    text.push(i.item.value);
+                    text.push("");
+                    this.value = text;
+                    this.value = text.join("﹐");
+                    var value = $("#hdnContentSearch").val().split(/,\s*/);
+                    value.pop();
+                    value.push(i.item.val);
+                    value.push("");
+                    $("#hdnContentSearch")[0].value = value.join(", ");
+                    return false;
+                },
+                minLength: 3,
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("position", "auto");
+                    $(".ui-autocomplete").css("max-height", "200px");
+                    $(".ui-autocomplete").css("max-width", "250px");
+                    $(".ui-autocomplete").css("overflow-y", "auto");
+                    $(".ui-autocomplete").css("overflow-x", "hidden");
+                    $(".ui-autocomplete").css("z-index", "2147483647");
+                },
+
+            });
+        }
+        else
+            return false;
+    }
+
+</script>

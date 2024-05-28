@@ -1,0 +1,886 @@
+﻿@model ICollection<RightsU_Entities.Syn_Deal_Payment_Terms>
+@using UTOFrameWork.FrameworkClasses
+@{
+    RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
+    if (Session[RightsU_Entities.RightsU_Session.Syn_DEAL_SCHEMA] != null)
+    {
+        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.Syn_DEAL_SCHEMA];
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<style>
+    #ddl_Payment_Term_Code_chosen {
+        width: 292px !important;
+    }
+</style>
+<script type="text/javascript">
+    var IsAddEditMode="N";
+    var PaymentIntCode = 0;
+    var canSave=0;
+    var MessageFrom = '';
+    var CostTypeCode_G = "";
+    var Syn_Deal_Payment_Terms_Code_G = 0;
+     var URL_AddPaymentTerm = '@Url.Action("Save_Payment_Term", "Syn_Payment_Term")';
+    $(document).ready(function () {
+        debugger;
+        var dealmode = '@ViewBag.PageMode';
+        if (dealmode == 'APRV') {
+            var approvalremarks = '@ViewBag.Approver_Remark';
+            $('#approvalremarks').val(approvalremarks);
+        }
+
+        setChosenWidth("#Payment_Term_Code","85%");
+        setChosenWidth("#Cost_Type_Code","40%");
+
+
+        if("@ViewBag.Message" !="")
+        {
+            showAlert("E","@ViewBag.Message");
+        }
+        $("#Days_After").numeric({
+            allowMinus   : false,
+            allowThouSep : false,
+            allowDecSep  : false
+        });
+
+        var Percentage = $(this).find("input[id*='Percentage']");
+        Percentage.numeric({
+            allowMinus   : false,
+            allowThouSep : false,
+            allowDecSep  : true,
+            maxDecimalPlaces : 3
+        });
+        if('@ViewBag.PageMode' !="V" && '@ViewBag.PageMode' !="APRV")
+        {
+            var txtRemark = document.getElementById('Payment_Terms_Conditions');
+            countChar(txtRemark);
+        }
+
+        LoadSynDealPayment(0,'Y');
+        if ('@ViewBag.Record_Locking_Code' != '')
+        {
+            var fullUrl = '@Url.Action("Refresh_Lock", "Global", null, Request.Url.Scheme)'
+            Call_RefreshRecordReleaseTime(@ViewBag.Record_Locking_Code,fullUrl);
+        }
+    });
+
+    function AddPaymentTerm() {
+        $("#Payment_Term_Name").val('');
+        $("#popAddPaymentTerm").modal();
+    }
+
+    function validate() {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var Payment_Term_Name = $.trim($("#Payment_Term_Name").val());
+        if (Payment_Term_Name == "") {
+            $("#Payment_Term_Name").val('');
+            $("#Payment_Term_Name").attr('required', true);
+            return false;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: URL_AddPaymentTerm,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Payment_Term_Name: Payment_Term_Name
+            }),
+            success: function (result) {
+
+                if (result.Status == "S") {
+                    showAlert("S", result.Message);
+                    $("#popAddPaymentTerm").modal('hide');
+                    $('#ddl_Payment_Term_Code').append("<option selected='selected' value=" + result.Value + ">" + result.Text + "</option>");
+                    $('#ddl_Payment_Term_Code').trigger("chosen:updated");
+
+                }
+                else {
+                    showAlert("E", result.Message);
+                    ("#popAddPaymentTerm").modal();
+                }
+            },
+            error: function (result) { }
+        });
+    }
+
+    function CheckEditMode(){
+        if(IsAddEditMode == 'Y'){
+            message = '@objMessageKey.PleasecompletetheAddEditfirst';
+            showAlert('E',message);
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+
+    function validatePercentOnEdit(Percentage, CostType, Payment_Term_Code)
+    {
+        debugger;
+        var CurrentAmount = $("#txt_Percentage").val();
+        var totalSumPercent = 0;
+        var tempSumPercent = 0;
+        var valtxtFPercent = 0;
+        var valddlFCostType = 0;
+        var valddlFPaymentTerm = 0;
+        var tCount = 0;
+        var PaymentTermName = '';
+        var rowNum;
+        var txtFPercent = $("#txt_Percentage");
+        var ddlFCostType = $("#ddl_Cost_Type_Code");
+        var Payment_Term_Code = $("#ddl_Payment_Term_Code");
+
+        if (txtFPercent != null) {
+            if (txtFPercent.value != "")
+                valtxtFPercent = txtFPercent.val();
+        }
+
+        if (ddlFCostType != null)
+            valddlFCostType = ddlFCostType.val();
+
+        if (Payment_Term_Code != null)
+            valddlFPaymentTerm = Payment_Term_Code.val();
+
+        $("#TableMain tr:not(:has(th))").each(function () {
+
+            var Payment_Terms_Code = $(this).find("label[id*='Payment_Terms_Code_Edit']").text();
+            var Cost_Type_Code = $(this).find("label[id*='Cost_Type_Code_Edit']").text();
+            var Percentage =  $(this).find("label[id*='Percentage_Edit']").text();
+            debugger
+            if(Payment_Terms_Code!=null && Cost_Type_Code!=null && Percentage!=null)
+            {
+                if(Payment_Terms_Code == valddlFPaymentTerm && Cost_Type_Code == valddlFCostType)
+                {
+                    tempSumPercent =  parseFloat( tempSumPercent)+ parseFloat(Percentage);
+                }
+                else if(Cost_Type_Code == valddlFCostType)
+                {
+                    tempSumPercent =  parseFloat( tempSumPercent)+ parseFloat(Percentage);
+                }
+            }
+        });
+        if( parseFloat(  tempSumPercent)>0)
+        {
+            totalSumPercent =  parseFloat(CurrentAmount)+ parseFloat(tempSumPercent);
+        }
+        else
+            totalSumPercent =  parseFloat(CurrentAmount);
+
+        if (parseFloat(totalSumPercent) > 100) {
+            debugger;
+            $("#txt_Percentage").val('');
+            $('#txt_Percentage').focus();
+            showAlert('E','@objMessageKey.SumofPercentageshouldbeequalorlessthan100');
+            return false;
+        }
+
+        if (parseFloat(CurrentAmount) == 0) {
+            debugger;
+            $("#txt_Percentage").val('');
+            $('#txt_Percentage').focus();
+            showAlert('E','@objMessageKey.Percentageshouldbegreaterthanzero');
+            return false;
+        }
+    }
+
+    function validatePercent(Percentage,Amount, CostType, Payment_Term_Code, NewRow) {
+        canSave=0;
+        //"Sum of percentage should be less than or equal to 100"
+        var i = 1;
+        var CurrentAmount =  $(Percentage).val();
+        var totalSumPercent = 0;
+        var totalSumAmount = 0;
+        var tempSumPercent = 0;
+        var tempSumAmount = 0;
+        var valtxtFPercent = 0;
+        var valddlFCostType = 0;
+        var valddlFPaymentTerm = 0;
+        var tCount = 0;
+        var PaymentTermName = '';
+        var rowNum;
+        var txtFPercent =  $(Percentage);
+        var ddlFCostType =  $(CostType);
+        var Payment_Term_Code =  $(Payment_Term_Code);
+        debugger;
+
+        if (txtFPercent != null) {
+            if (txtFPercent.value != "")
+                valtxtFPercent = txtFPercent.val();
+        }
+
+        if (ddlFCostType != null)
+        {
+            valddlFCostType = ddlFCostType.val();
+        }
+
+        if (Payment_Term_Code != null)
+            valddlFPaymentTerm = Payment_Term_Code.val();
+
+
+        $("#TableMain tr:not(:has(th))").each(function () {
+            debugger;
+            var Payment_Terms_Code = $(this).find("label[id*='Payment_Terms_Code']").text();
+            var Cost_Type_Code = $(this).find("label[id*='Cost_Type_Code']").text();
+            var Percentage =  $(this).find("label[id*='Percentage']").text();
+
+            if(Payment_Terms_Code!=null && Cost_Type_Code!=null && Percentage!=null)
+            {
+                if(Payment_Terms_Code == valddlFPaymentTerm && Cost_Type_Code == valddlFCostType)
+                {
+                    tempSumPercent = parseFloat(tempSumPercent) + parseFloat(Percentage);
+                    tempSumAmount = parseFloat(tempSumAmount) + parseFloat(Amount);
+                }
+                else if(Cost_Type_Code == valddlFCostType)
+                {
+                    tempSumPercent = parseFloat(tempSumPercent) + parseFloat(Percentage);
+                    tempSumAmount = parseFloat(tempSumAmount) + parseFloat(Amount);
+                }
+            }
+        });
+
+        if( parseFloat(  tempSumPercent)>0)
+        {
+            totalSumPercent =  parseFloat(CurrentAmount)+ parseFloat(tempSumPercent);
+        }
+        else
+            totalSumPercent =  parseFloat(CurrentAmount);
+
+
+      if (NewRow == 1) {
+            if (parseFloat(totalSumPercent) > 100) {
+                $("#txtPercentageSR_" + i).val('');
+                $('#txtPercentageSR_' + i).focus();
+                showAlert('E', "@objMessageKey.SumofPercentageshouldbeequalorlessthan100");
+                canSave = 1;
+                return false;
+            }
+        }
+        else {
+            if (parseFloat(totalSumPercent) > 100) {
+             $("#txtPercentageSR_0").val('');
+             $('#txtPercentageSR_0').focus();
+             showAlert('E',"@objMessageKey.SumofPercentageshouldbeequalorlessthan100");
+             canSave=1;
+             return false;
+             }
+        }
+
+    }
+
+    function checkForsave(NewRow) {
+        debugger;
+        $('.required').removeClass('required');
+        var i = 1;
+        var returnVal = true;
+        var Syn_Deal_Payment_Terms_Code = 0
+        if (NewRow == 1) {
+            Syn_Deal_Payment_Terms_Code = $("#Syn_Deal_Payment_Terms_Code").val();
+            var Cost_Type_Code1 = $('#ddl_Cost_Type_Code_' + i).val();
+            var Percentage1 = $('#txtPercentageSR_' + i).val();
+            var Amount1 = $('#txtAmountSR_' + i).val();
+            CostTypeEDIT();
+            var AmtNew = $('#hdn_BudgetedAmt_' + i).val();
+            var CTCODE = $('#hdn_CostTypeCode_' + i).val();
+            CostTypeCode_G = CTCODE;
+            Syn_Deal_Payment_Terms_Code_G = Syn_Deal_Payment_Terms_Code;
+        }
+        else {
+            Syn_Deal_Payment_Terms_Code_G = 0;
+            var Cost_Type_Code1 = $('#ddl_Cost_Type_Code_0').val();
+            var Percentage1 = $('#txtPercentageSR_0').val();
+            var Amount1 = $('#txtAmountSR_0').val();
+            CostTypeADD();
+            var AmtNew = $('#hdn_BudgetedAmt_0').val();
+            var CTCODE = $('#hdn_CostTypeCode_0').val();
+            CostTypeCode_G = CTCODE;
+        }
+
+        var Payment_Term_Code = $("#ddl_Payment_Term_Code").val();
+        var Due_Date=$('#Due_Date').val();
+        var Days_After1=$('#txt_Days_After').val();
+
+        if (Payment_Term_Code == "0") {
+            $("#ddl_Payment_Term_Code").addClass('required');
+            $('#ddl_Payment_Term_Code').focus();
+            canSave = 1;
+            returnVal = false;
+        }
+        if (Days_After1 == "") {
+            $('#txt_Days_After').attr('required', true);
+            $('#txt_Days_After').focus();
+            canSave=1;
+            returnVal = false;
+        }
+        if (Percentage1 == "") {
+            $('#txtPercentageSR_0').attr('required', true);
+            $('#txtPercentageSR_0').focus();
+            canSave=1;
+            returnVal = false;
+        }
+
+        if (Amount1 == "") {
+            $('#txtAmountSR_0').attr('required', true);
+            $('#txtAmountSR_0').focus();
+            canSave = 1;
+            returnVal = false;
+        }
+        if( parseFloat( Percentage1) == "0")
+        {
+            showAlert('E','@objMessageKey.PercentageamountshouldbegreaterthanZero');
+            $('#txtPercentageSR_0').focus();
+            canSave=1;
+            returnVal = false;
+        }
+        if (parseFloat(Amount1) == "0")
+        {
+            showAlert('E','Amount Should be greater than zero');
+            $('#txtAmountSR_0').focus();
+            canSave=1;
+            returnVal = false;
+        }
+
+         if (parseFloat(Percentage1) > 100) {
+            $("#txtPercentageSR_0").val('');
+            $('#txtPercentageSR_0').focus();
+            showAlert('E',"@objMessageKey.SumofPercentageshouldbeequalorlessthan100");
+            canSave=1;
+            return false;
+        }
+        if (parseFloat(AmtNew) < parseFloat(Amount1)) {
+            showAlert('E', 'Sum of cost should not exceed cost type amount defined');
+            return false;
+             canSave=1;
+        }
+        if (Cost_Type_Code1 == "0") {
+            $('#ddl_Cost_Type_Code_0').addClass('required');
+            $('#ddl_Cost_Type_Code_0').focus();
+            canSave=1;
+            returnVal = false;
+        }
+
+        if (returnVal) {
+            if (NewRow == 1) {
+                validatePercent($("#txtPercentageSR_" + i), $("#txtAmountSR_" + i), $("#ddl_Cost_Type_Code_" + i), $("#ddl_Payment_Term_Code"), 1);
+            }
+            else {
+                validatePercent($("#txtPercentageSR_0"), $("#txtAmountSR_0"), $("#ddl_Cost_Type_Code_0"), $("#ddl_Payment_Term_Code"), 0);
+            }
+
+        }
+        else {
+            return false;
+        }
+         returnVal = ChkDuplicatePaymentTerm();
+        if(canSave==0)
+        {
+            SavePaymentTerms(Syn_Deal_Payment_Terms_Code, Payment_Term_Code, Cost_Type_Code1, Percentage1, Amount1,Days_After1,Due_Date)
+        }
+        return returnVal;
+    }
+
+
+      function ChkDuplicatePaymentTerm() {
+        debugger;
+        var ISDuplicate = "";
+          var Payment_Term_Code = $("#ddl_Payment_Term_Code").val();
+         
+             $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("ValidateIsDuplicate", "Syn_Payment_Term")',
+                        traditional: true,
+                        enctype: 'multipart/form-data',
+                        async: false,
+                         data: JSON.stringify({
+                             Syn_Deal_Payment_Term_Code: Syn_Deal_Payment_Terms_Code_G,
+                            PaymentTermCode: Payment_Term_Code,
+                            CostTypeCode: CostTypeCode_G
+                        }),
+                        contentType: "application/json; charset=utf-8",
+                          success: function (result) {
+                     debugger;
+                            if (result.Message != "") {
+                                ISDuplicate = result.Message;
+                                showAlert("E", ISDuplicate);
+                                canSave = 1;
+                                return false;
+                            }
+                        },
+                        error: function (result) {
+                        }
+                    });
+    }
+
+    function CancelSaveDeal() {
+        $('#hdn_Command_Name').val('CANCEL_SAVE_DEAL');
+        showAlert("I", '@objMessageKey.AllUnsavedDataWillBeLostStillWantToGoAhead', "OKCANCEL");
+    }
+    function OnDeleteClick(Syn_Deal_Payment_Terms_Code)
+    {
+        if(CheckEditMode())
+        {
+            $('#hdn_Command_Name').val('DELETE');
+            PaymentIntCode = Syn_Deal_Payment_Terms_Code;
+            showAlert("I",'@objMessageKey.Areyousureyouwanttodeletethispaymentterm',"OKCANCEL");
+        }
+    }
+
+    function handleOk() {
+        if (MessageFrom == 'SV') {
+            if ($('#hdnTabName').val() == '') {
+                $('#hdn_Command_Name').val('');
+                window.location.href = '@Url.Action("Index", "Syn_List")';
+            }
+        }
+        if ($('#hdn_Command_Name').val() != undefined && $('#hdn_Command_Name').val() != '' && $('#hdn_Command_Name').val() == "CANCEL_SAVE_DEAL") {
+            location.href = '@Url.Action("Cancel", "Syn_Payment_Term")';
+        } else if ($('#hdn_Command_Name').val() != undefined && $('#hdn_Command_Name').val() != '' && $('#hdn_Command_Name').val() == "DELETE") {
+            DeletePaymentTerm();
+        }
+    }
+
+    function handleCancel() {
+        return false;
+    }
+
+    function DeletePaymentTerm() {
+        showLoading();
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("Delete", "Syn_Payment_Term")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                Syn_Deal_Payment_Terms_Code: PaymentIntCode
+            }),
+            success: function (result) {
+                if (result == "true")
+                {
+                    redirectToLogin();
+                }
+                else{
+                    hideLoading();
+                    initializeTooltip();
+                    $('#dvDealSynPaymentList').empty();
+                    $('#dvDealSynPaymentList').html(result);
+                    showAlert('S', '@objMessageKey.PaymentTermdeletedsuccessfully');
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+
+    }
+    function handleCancel() {
+        return false;
+    }
+
+    function OnFinalSaveClick()
+    {
+        var Isvalid = true;
+
+        if (!clickedOnTab) {
+            if ($(event.target).val().toUpperCase() == "SAVE & APPROVE") {
+                $('input[name=hdnReopenMode]').val('RO');
+            }
+            else {
+                $('input[name=hdnReopenMode]').val('E');
+            }
+        }
+        else {
+            $('input[name=hdnReopenMode]').val('E');
+        }
+
+        if(CheckEditMode())
+        {
+            $("#HdnPaymentTermRemark").val($("#Payment_Terms_Conditions").val());
+        }
+        else
+        {
+            Isvalid=false;
+        }
+        return Isvalid;
+    }
+
+    function ValidateSave() {
+        showLoading();
+        var Isvalid = true;
+        var Mode = '@ViewBag.PageMode';
+        if(Mode==dealMode_View || Dealmode_G == 'APRV')
+        {
+            hideLoading();
+            var tabName = $('#hdnTabName').val();
+            BindPartialTabs(tabName);
+        }
+        else
+        {
+            if(CheckEditMode())
+            {
+                debugger;
+                $("#HdnPaymentTermRemark").val($("#Payment_Terms_Conditions").val());
+                // Code for Maintaining approval remarks in session
+                if (Mode == 'APRV') {
+                    var approvalremarks = $('#approvalremarks').val();
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("SetSynApprovalRemarks", "Global")',
+                        traditional: true,
+                        enctype: 'multipart/form-data',
+                        contentType: "application/json; charset=utf-8",
+                        async: true,
+                        data: JSON.stringify({
+                            approvalremarks: $('#approvalremarks').val()
+                        }),
+                        success: function (result) {
+                            if (result == "true")
+                            {
+                                redirectToLogin();
+                            }
+                            else{
+                                Isvalid = true;
+                            }
+                        },
+                        error: function (result) {
+                            Isvalid = false;
+                        }
+                    });
+                }
+                else
+                    Isvalid = true;
+            }
+            //Code end for approval
+            hideLoading();
+            return Isvalid;
+        }
+        }
+
+    /*On Add or Cancel Click*/
+    function AddCancelPaymentTerms(isAdd) {
+        debugger;
+        if (isAdd == "0" || (CheckEditMode() && isAdd == "1")) {
+            if(isAdd == "0")
+                IsAddEditMode="N";
+            else
+                IsAddEditMode="Y";
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("Create", "Syn_Payment_Term")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                data: JSON.stringify({
+                    isAdd: isAdd
+                }),
+                success: function (result) {
+                    if (result == "true")
+                    {
+                        redirectToLogin();
+                    }
+                    else{
+                        $('#dvDealSynPaymentList').html(result);
+                        initializeChosen();
+                        initializeDatepicker();
+                        initializeTooltip();
+                        $(".numberDaysText").numeric({
+                            allowMinus   : false,
+                            allowThouSep : false,
+                            allowDecSep  : false
+                        });
+
+                        $('.numberText').numeric({
+                            allowMinus   : false,
+                            allowThouSep : false,
+                            allowDecSep  : true,
+                            maxDecimalPlaces : 3
+                        });
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    }
+
+    /*Bind Payment Terms Grid*/
+    function LoadSynDealPayment(pagenumber,isLoad) {
+        showLoading();
+        if(pagenumber < 0){
+            pagenumber = 0;
+        }
+        var txtPageSize=10;
+        if(isLoad=="N")
+        {
+            if($('#txtPageSize')!=null || $('#txtPageSize')!='')
+                txtPageSize=parseInt($('#txtPageSize').val());
+        }
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindGridSynPaymentTerms", "Syn_Payment_Term")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                txtPageSize: txtPageSize,
+                page_No: pagenumber
+            }),
+            success: function (result) {
+                if (result == "true")
+                {
+                    redirectToLogin();
+                }
+                else{
+                    $('#dvDealSynPaymentList').empty();
+                    $('#dvDealSynPaymentList').html(result);
+                    hideLoading();
+                    initializeTooltip();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    /*Edit PaymentTerms*/
+    function EditPaymentTerm(Syn_Deal_Payment_Terms_Code) {
+        if (CheckEditMode()) {
+            IsAddEditMode="Y";
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("Edit", "Syn_Payment_Term")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                data: JSON.stringify({
+                    Syn_Deal_Payment_Terms_Code: Syn_Deal_Payment_Terms_Code
+                }),
+                success: function (result) {
+                    if (result == "true")
+                    {
+                        redirectToLogin();
+                    }
+                    else{
+                        $('#dvDealSynPaymentList').empty();
+                        $('#dvDealSynPaymentList').html(result);
+                        initializeChosen();
+                        initializeDatepicker();
+                        initializeTooltip();
+                        $(".numberDaysText").numeric({
+                            allowMinus   : false,
+                            allowThouSep : false,
+                            allowDecSep  : false
+                        });
+
+                        $('.numberText').numeric({
+                            allowMinus   : false,
+                            allowThouSep : false,
+                            allowDecSep  : true,
+                            maxDecimalPlaces : 3
+                        });
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    }
+
+    /*Save/Update Payment Terms */
+    function SavePaymentTerms(Syn_Deal_Payment_Terms_Code,Payment_Term_Code,Cost_Type_Code,Percentage,Amount,Days_After,Due_Date)
+    {
+        debugger;
+        IsAddEditMode="N";
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("SavePaymentTerms", "Syn_Payment_Term")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            async:false,
+            data: JSON.stringify({
+                Syn_Deal_Payment_Terms_Code: Syn_Deal_Payment_Terms_Code,
+                Payment_Term_Code: Payment_Term_Code,
+                Cost_Type_Code: Cost_Type_Code,
+                Percentage: Percentage,
+                Amount: Amount,
+                Days_After:Days_After,
+                Due_Date:Due_Date
+            }),
+            success: function (result) {
+                if (result == "true")
+                {
+                    redirectToLogin();
+                }
+                else{
+                    hideLoading();
+                    initializeTooltip();
+                    $('#dvDealSynPaymentList').empty();
+                    $('#dvDealSynPaymentList').html(result);
+                    var strMessage='@objMessageKey.PaymentTermaddedsuccessfully';
+                    if(Syn_Deal_Payment_Terms_Code>0)
+                        strMessage='@objMessageKey.PaymentTermupdatedsuccessfully';
+                    showAlert('S', strMessage);
+                    var IsAddEditMode="N";
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function ClearHidden() {
+        $("#hdnTabName").val('');
+    }
+
+    function Save_Success(message) {
+        debugger;
+        hideLoading();
+        if (message == "true") {
+            redirectToLogin();
+        }
+        else
+        {
+            if(message.Status == "SA")
+            {
+                debugger;
+                $.ajax({
+                    type: "POST",
+                    url: URL_Syn_Approve_Reject,
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify({
+                        user_Action: 'A',
+                        approvalremarks: ""
+                    }),
+                    async: false,
+                    success: function (data) {
+                    }
+                });
+            }
+            if (message.Success_Message != "") {
+                MessageFrom = "SV"
+                showAlert('S', message.Success_Message, 'OK');
+            }
+            else {
+                var tabName = $('#hdnTabName').val();
+                BindPartialTabs(tabName);
+            }
+        }
+    }
+</script>
+<script>
+    $('.expand_Payment_Terms_Conditions').expander({
+        slicePoint: 520,
+        expandPrefix: '',
+        expandText: '@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+</script>
+@using (Ajax.BeginForm("ChangeTab", "Syn_Payment_Term", new AjaxOptions { OnSuccess = "Save_Success" }))
+{
+    <input type="hidden" id="hdnTabName" name="hdnTabName" />
+    @Html.Hidden("HdnPaymentTermRemark")
+    @Html.Hidden("hdn_Command_Name")
+    <div class="grid_area">
+        <div class="navigation_tabs">
+            <div class="tabbable">
+                <div class="tab-content clearfix table-wrapper scale_table_container syn">
+                    <div class="tab-pane active" id="tabPayTerm">
+                        <div class="scale_table_block">
+                            <div class="sub_block clearfix">
+                                <div class="pull-right">
+                                    @*@if (ViewBag.PageMode != "V" && ViewBag.PageMode != "APRV")
+                                        {
+                                            <a class="btn btn-primary" title="Add Payment Term" onclick="return AddCancelPaymentTerms(1);">Add</a>}*@
+                                </div>
+                            </div>
+                            <div class="scale_table_block" id="dvDealSynPaymentList">
+                            </div>
+                            <br>
+                            <div>
+                                <span class="remarks">@objMessageKey.PaymentTermsandConditions:</span>
+                                @if (ViewBag.PageMode != "V" && ViewBag.PageMode != "APRV")
+                                {
+                                    <textarea name="Payment_Terms_Conditions" id="Payment_Terms_Conditions" style="margin-left:5px;" class="textarea" onkeypress="countChar(this)" onkeyup="countChar(this)">@ViewBag.Remark</textarea>
+                                    <div class="divBlock">
+                                        <div id="CharNum" class="charNum">4000</div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <br />
+                                    <div class="expand_Payment_Terms_Conditions" style="margin-left:5px;">
+                                        @Html.Raw(ViewBag.Remark.Replace("\r\n", "<br/>").Replace("\n", "<br/>"))
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    @if (ViewBag.PageMode == "APRV")
+                    {
+                        @Html.Partial("_Syn_Approved_List")
+                    }
+                    else
+                    {
+
+                        <div class="bottom_action">
+
+                            @Html.Hidden("HdnRemark")
+                            <ul class="form_link_nav clearfix">
+                                @if (ViewBag.PageMode != "V" && ViewBag.PageMode != "APRV")
+                                {
+                                    <li>
+                                        <input type="submit" id="btnSaveDeal" title="@objMessageKey.Save" value="@objMessageKey.Save" class="btn btn-primary save" onclick="return OnFinalSaveClick();" />
+                                        <input type="hidden" id="hdnReopenMode" name="hdnReopenMode" value="E" />
+                                        @*<input type="submit" value="Save" class="btn btn-primary"  />*@
+
+                                    </li>
+                                    if (objSchema.Deal_Workflow_Flag.ToUpper() == GlobalParams.DEAL_MODE_REOPEN)
+                                    {
+                                        <li>
+                                            <input type="submit" id="btnSaveApproveDeal" class="btn btn-primary saveapprove" value="Save & Approve" onclick="ClearHidden(); return OnFinalSaveClick();">
+                                        </li>
+                                    }
+                                    <li>
+                                        <input type="button" id="btnCancelDeal" title="@objMessageKey.Cancel" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                               onclick="if(CheckEditMode()) CancelSaveDeal()">
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li>
+                                        <input type="button" id="btnCancel_Deal" title="@objMessageKey.Cancel" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                               onclick="if(CheckEditMode()) location.href='@Url.Action("Cancel", "Syn_Payment_Term")    '">
+                                    </li>
+                                }
+                            </ul>
+
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}

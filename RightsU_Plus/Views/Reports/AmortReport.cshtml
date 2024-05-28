@@ -1,0 +1,122 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/CSS/sumoselect.css" rel="stylesheet" />
+<script src="~/JS_Core/jquery.sumoselect.js"></script>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#ddlTitle').SumoSelect({ selectAll: true });
+    });
+
+    function showReport() {
+        $('#divResult').show();
+    }
+</script>
+<style>
+    #divFilter {
+        background: #eee;
+        padding: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    #divResult {
+        margin-top: 10px;
+    }
+
+        #divResult table th {
+            font-size: 12px;
+        }
+
+        #divResult table td {
+            font-size: 12px;
+        }
+
+        #divResult table th.tdGreen {
+            background-color:forestgreen;
+            color:white;
+        }
+
+        #divResult table th.tdBalance {
+            background-color: #c58013;
+            color:white;
+        }
+
+        #divResult table th.tdGray {
+            background-color: #4a4a4a;
+            color:white;
+        }
+</style>
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="title_block dotted_border clearfix">
+                <h2>Amort Report</h2>
+            </div>
+            <div id="divFilter">
+                <table>
+                    <tr>
+                        <td style="width:50px">
+                            <span class="bold">Title</span> :
+                        </td>
+                        <td>
+                            <select id="ddlTitle" multiple="multiple">
+                                <option value="1">Dangal</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="button" id="btnShow" class="btn btn-primary" value="Show" style="float:right;padding-right:10px" onclick="showReport()">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="title_block dotted_border clearfix">
+            </div>
+            <div id="divResult" style="display:none">
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th style="width: 10%;"class="tdGray">Deal No.</th>
+                            <th style="width: 10%;"class="tdGray">Title</th>
+                            <th style="width: 10%;"class="tdGray">Latest Amort Rule</th>
+                            <th style="width: 5%;" class="tdGray">Cost</th>
+                            <th style="width: 5%;" class="tdGray">Amorted As On Mar-2017</th>
+                            <th style="width: 10%;" class="tdBalance">Balance to Amort</th>
+                            <th style="width: 5%;" class="tdGreen" nowrap>Apr-2017</th>
+                            <th style="width: 5%;" class="tdGreen" nowrap>May-2017</th>
+                            <th style="width: 5%;" class="tdGreen" nowrap>Jun-2017</th>
+                            <th style="width: 5%;" class="tdGreen" nowrap>Jul-2017</th>
+                            <th style="width: 5%;" class="tdGreen" nowrap>Aug-2017</th>
+                            <th style="width: 5%;" class="tdGreen" nowrap>Sep-2017</th>
+                            <th style="width: 5%;" class="tdGreen" nowrap>Oct-2017</th>
+                            <th style="width: 5%;" class="tdGreen" nowrap>Nov-2017</th>
+                            <th style="width: 5%;" class="tdGreen" nowrap>Dec-2017</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>A-2017-00005</td>
+                            <td>Dangal</td>
+                            <td>Period Defined Manually for 12 month</td>
+
+                            <td style="text-align:right;">50,000.00</td>
+                            <td style="text-align:right;">12,500.00</td>
+                            <td style="text-align:right;">37,500.00</td>
+                            <td style="text-align:right;">4,166.66</td>
+                            <td style="text-align:right;">4,166.66</td>
+                            <td style="text-align:right;">4,166.66</td>
+                            <td style="text-align:right;">4,166.67</td>
+                            <td style="text-align:right;">4,166.67</td>
+                            <td style="text-align:right;">4,166.67</td>
+                            <td style="text-align:right;">4,166.67</td>
+                            <td style="text-align:right;">4,166.67</td>
+                            <td style="text-align:right;">4,166.67</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</div>

@@ -1,0 +1,72 @@
+﻿@model List<RightsU_Entities.Royalty_Recoupment>
+@using UTOFrameWork.FrameworkClasses
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }     
+}
+
+<table class="table table-bordered table-hover" id="tblRoyaltyRecoupment">
+    <thead>
+        <tr>
+            <th style="width:85%;">@objMessageKey.RoyaltyRecoupment</th>
+            <th style="width:15%;">@objMessageKey.Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <span>@item.Royalty_Recoupment_Name</span>
+                    </td>
+                    <td style="text-align:center">
+                        @if (item.Is_Active == "Y")
+                        {
+                            if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForEdit + "~"))
+                            {
+                                <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer;" onclick="CheckRecordLock('ADDEDIT', @item.Royalty_Recoupment_Code)"></a>
+                            }
+                            if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForDeactivate + "~"))
+                            {
+                                if (item.Acq_Deal_Cost.Count > 0)
+                                {
+                                    <a title="@objMessageKey.CannotdeactivatethisRoyaltyRecoupmentasitisusedinAcquisitionDealCost" class="glyphicon glyphicon-thumbs-down disabled" onclick="return false;"></a>
+                                }
+                                else if (item.Syn_Deal_Revenue.Count > 0)
+                                {
+                                    <a title="@objMessageKey.CannotdeactivatethisRoyaltyRecoupmentasitisusedinSyndicationDealRevenue" class="glyphicon glyphicon-thumbs-down disabled" onclick="return false;"></a>
+                                }
+                                else
+                                {
+                                    <a title="@objMessageKey.Deactivate" class="glyphicon glyphicon-thumbs-down" style="cursor: pointer;" onclick="ActiveDeactiveRoyalty(@item.Royalty_Recoupment_Code,'N')"></a>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForEdit + "~"))
+                            {
+                                <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil disabled" onclick="AddEditBVException(@item.Royalty_Recoupment_Code)"></a>
+                            }
+                            if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForActivate + "~"))
+                            {
+                                <a title="@objMessageKey.Activate" class="glyphicon glyphicon-thumbs-up" style="cursor: pointer;" onclick="ActiveDeactiveRoyalty(@item.Royalty_Recoupment_Code,'Y')"></a>
+                            }
+                        }
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="2">@objMessageKey.Norecordfound</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,450 @@
+﻿@model List<RightsU_Entities.USP_List_Title_Milestone_Result>
+@using UTOFrameWork.FrameworkClasses
+@{
+                /**/
+
+                MessageKey objMessageKey = new MessageKey();
+                if (Session["objMessageKey"] != null)
+                {
+                    objMessageKey = (MessageKey)Session["objMessageKey"];
+                }
+}
+<script>
+    
+    $(document).ready(function () {
+        debugger
+        initializeTooltip();
+        $(".btnCancel").click(function () {
+            $('#popAddDealMovie').modal('hide');
+        });
+        $("#hdnRecordCount").val(@ViewBag.RecordCount);
+        $("#lblRecordCount").text(@ViewBag.RecordCount);
+        SetPaging1();
+        //$('.expandable').expander({
+        //    slicePoint: 20,
+        //    expandPrefix: '',
+        //    expandText: '...read more',
+        //    collapseTimer: 0,
+        //    userCollapseText: '<span>[^]</span>'
+        //});
+
+        //$('.expand_TermY').expander({
+        //    slicePoint: 45,
+        //    expandPrefix: '',
+        //    expandText: '...read more',
+        //    collapseTimer: 0,
+        //    userCollapseText: '<span>[^]</span>'
+        //});
+        $('.expand_Territory').expander({
+            slicePoint: 40,
+            expandPrefix: '',
+            expandText: '@objMessageKey.readmore',
+            collapseTimer: 0,
+            userCollapseText: '<span>[^]</span>'
+        });
+        $('.expand_Title_Name').expander({
+            slicePoint: 55,
+            expandPrefix: '',
+            expandText: '@objMessageKey.readmore',
+            collapseTimer: 0,
+            userCollapseText: '<span>[^]</span>'
+        });
+        @*if(@ViewBag.RecordCount>0)
+        {
+            $('#btnBulkUpdate').show();
+        }
+        else
+        {
+            $('#btnBulkUpdate').hide();
+        }*@
+    });
+    var IsCall = 'Y';
+    function SetPaging(txtPageSize) {
+        IsCall = 'N';
+        var PageNo, recordCnt = 3;
+        var Page_Index = 0;
+        PageNo = 1;
+        PageNo = '@ViewBag.PageNo';
+        recordCnt = '@ViewBag.RecordCount';
+        $("#lblTotal").text('@objMessageKey.TotalRecords ' + recordCnt);
+        Page_Index = parseInt(PageNo) - 1;
+        $('#hdnCurrentPageNo').val(PageNo);
+        var opt = { callback: pageselectCallback };
+        opt["items_per_page"] = txtPageSize;
+        opt["num_display_entries"] = 5;
+        opt["num"] = 1;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = Page_Index;
+        $("#Pagination").pagination(recordCnt, opt);
+    }
+    function pageselectCallback(page_index, jq) {
+        initializeExpander();
+        if (ValidatePageSize()) {
+            if (IsCall == 'Y') {
+                var hdnCurrentPageNo = parseInt(page_index) + 1;
+                $('#hdnCurrentPageNo').val(hdnCurrentPageNo);
+                BindGridNew($("#G")[0], 'Y');
+            }
+            else
+                IsCall = 'Y';
+        }
+    }
+    function PageSize_OnChange() {
+        showLoading();
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        var IsValid = ValidatePageSize();
+        if (IsValid) {
+            BindGridNew($("#G")[0], 'Y');
+            hideLoading();
+        }
+        else {
+            hideLoading();
+            return false;
+        }
+    }
+    function Show_Restriction_Remark_popupl(Counter) {
+        debugger;
+        var Remark = $("#hdnRemarks_" + Counter).val();
+        if (Remark != "") {
+            $("#lblRestRemark").text(Remark);
+            $('#popAddDealMovie').modal();
+        }
+        else {
+            $("#lblRestRemark").text('NO');
+            $('#popAddDealMovie').modal();
+        }
+    }
+
+ 
+
+</script>
+<style>
+    #divPlatformTree {
+        overflow-x: hidden;
+        /*overflow-y:auto;*/
+    }
+
+    .chosen-choices li.search-choice.primary {
+        /* background: #ddd; */
+        color: #2b64a5;
+        font-weight: 700;
+        border: 1px solid #2b64a5;
+    }
+
+    .expandable li {
+        float: none;
+        line-height: initial;
+        list-style: none;
+        margin: 0;
+    }
+
+        .expandable li:before {
+            content: "\0BB \020";
+        }
+
+    #popupFade {
+        position: absolute;
+        display: none;
+        width: 300px;
+        overflow: hidden;
+        border: #bbb 1px solid;
+        z-index: 100;
+    }
+
+        #popupFade .modal-dialog ul.fancytree-container {
+            height: 100%;
+            border: 0;
+            overflow-y: auto;
+        }
+
+        #popupFade form .modal_block {
+            padding: 3px 10px;
+        }
+
+        #popupFade #Rights_Platform {
+            max-height: 300px;
+        }
+
+    .clsPlatformPopup {
+        color: #2b64a5;
+        font-size: 11px;
+        font-style: italic;
+    }
+
+    #Tree_Filter_Rights_Platform {
+        margin-left: -10px;
+        width: 300px;
+        margin-top: -3px;
+    }
+</style>
+<script language="javascript" type="text/javascript">
+    var pos = null
+    var URL_BindPlatformTreePopup = '@Url.Action("BindPlatformTreePopup", "Syn_Rights_List")';
+    $(document).ready(function () {
+        $('.nav-toggle').click(function () {
+            var collapse_content_selector = $(this).attr('onclick');
+            var toggle_switch = $(this);
+            if ($(this).hasClass('glyphicon-triangle-top')) {
+                toggle_switch.removeClass("glyphicon-triangle-top");
+                toggle_switch.addClass("glyphicon-triangle-bottom");
+                $(collapse_content_selector).hide();
+            }
+            else {
+                toggle_switch.removeClass("glyphicon-triangle-bottom");
+                toggle_switch.addClass("glyphicon-triangle-top");
+                $(collapse_content_selector).show();
+            }
+        });
+
+        $('.list-toggle').click(function () {
+            var totalCount = @Model.Count;
+
+            for (var i = 1; i <= totalCount; i++) {
+                var collapse_content_selector = "#coll"+i;
+                var toggle_switch = $(this);
+                var toggle_switch_Col = $(".expander");
+                if ($(this).hasClass('glyphicon-triangle-top')) {
+
+                    if (i == totalCount) {
+                        toggle_switch.removeClass("glyphicon-triangle-top");
+                        toggle_switch.addClass("glyphicon-triangle-bottom");
+                    }
+                    toggle_switch_Col.removeClass("glyphicon-triangle-top");
+                    toggle_switch_Col.addClass("glyphicon-triangle-bottom");
+                    $(collapse_content_selector).hide();
+                }
+                else {
+                    if (i == totalCount) {
+                        toggle_switch.removeClass("glyphicon-triangle-bottom");
+                        toggle_switch.addClass("glyphicon-triangle-top");
+                    }
+                    toggle_switch_Col.removeClass("glyphicon-triangle-bottom");
+                    toggle_switch_Col.addClass("glyphicon-triangle-top");
+                    $(collapse_content_selector).show();
+                }
+            }
+        });
+        $("td").bind("mousemove", function (event) {
+            $(this).find("span.PlatformExpand").css({
+                top: event.pageY + 5 + "px",
+                left: event.pageX + 5 + "px"
+            }).show();
+        }).bind("mouseout", function () {
+            $("span.PlatformExpand").hide();
+        });
+        $('.clsPlatformPopup').on('click', function(e) {
+            var btdId = e.target.id;
+            var hdnRightCodeID = btdId.replace("_aViewPlatform", "_hdnRightCode");
+            var rightCode = $('#' + hdnRightCodeID).val();
+            pos = $('#' + btdId).offset();
+            $.ajax({
+                type: "POST",
+                url: URL_BindPlatformTreePopup,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    rightCode: rightCode
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    $('#divPlatformTree').html(result);
+                    $('#popupFade').offset({ top: pos.top, left: pos.left}).fadeIn();
+                    $('#popupFade').offset({ top: pos.top, left: pos.left}).fadeIn();
+                },
+                error: function (result) { }
+            });
+            return false;
+        });
+
+        $( "#popupFade" ).click(function( event ) {
+            event.stopPropagation();
+        });
+    });
+
+    function helpClose() {
+        document.getElementById("collapse1").style.display = 'none';
+    }
+
+    function FadeOutPopup()
+    {
+        $('#divPlatformTree').empty();
+        $('#popupFade').offset({ top: pos.top, left: pos.left}).fadeOut();
+    }
+</script>
+@*<div class="paging_area clearfix">
+    <span class="pull-left">@objMessageKey.TotalRecords: @ViewBag.RecordCount</span>
+    <span class="pull-left" id="lblRecordCount"></span>
+    <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+    <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+    <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+
+    <div class="pagination">
+    </div>
+    <span class="pull-right">
+        @objMessageKey.PageSize
+        <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10"
+               onchange="txtPageSize_OnChange()" onblur="setDefaultPaging('txtPageSize')">
+    </span>
+</div>*@
+<div class="deal clearfix">
+    @{
+        int counter = 0;
+        string Concat = " To ";
+
+        string ClassName = "rowBg";
+
+        <input type="hidden" id="hdnCurrentID" />
+        @Html.Hidden("hdnSynDealCode")
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>
+                        <ul>
+                            <li class="glyphicon glyphicon-triangle-bottom list-toggle"></li>
+                        </ul>
+                    </th>
+                    <th style="width:20%; text-align:center">Name of the Project</th>
+                    <th style="width:20%; text-align:center">Name of the Counterparty</th>
+                    <th style="width:23%; text-align:center">Nature of Deal</th>
+                    <th style="width:23%; text-align:center">Expiry Date</th>
+                    <th style="width:14%; text-align:center">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    counter += 1;
+                    if (counter % 2 == 0)
+                    {
+                        ClassName = "rowBorder";
+                    }
+                    else
+                    {
+                        ClassName = "rowBg";
+                    }
+
+                    @*@Html.Hidden("hdnRightCode", item.Rights_Code, new { id = counter + "_hdnRightCode" })
+                        @Html.Hidden("hdnDealCode", item.Deal_Code, new { id = counter + "_hdnDealCode" })
+                        @Html.Hidden("hdnTitleCode", item.Title_Code, new { id = counter + "_hdnTitleCode" })
+                        @Html.Hidden("hdnPlatformCode", item.Platform_Code, new { id = counter + "_hdnPlatformCode" })
+                        @Html.Hidden("hdnEpisodeFrom", item.Episode_From, new { id = counter + "_hdnEpisodeFrom" })
+                        @Html.Hidden("hdnEpisodeTo", item.Episode_To, new { id = counter + "_hdnEpisodeTo" })
+                        @Html.Hidden("hdnIsDelete", item.IsDelete, new { id = counter + "_hdnIsDelete" })
+                        @Html.Hidden("hdnIs_Ref_Close_Title", item.Is_Ref_Close_Title, new { id = counter + "_hdnIs_Ref_Close_Title" })
+                        @Html.Hidden("hdnIs_Syn_Acq_Mapp", item.Is_Syn_Acq_Mapp, new { id = counter + "_hdnIs_Syn_Acq_Mapp" })
+                        @Html.Hidden("hdnRightStatus", item.Right_Status, new { id = counter + "_hdnRightStatus" })*@
+
+                    <tr class=@ClassName>
+                        <td>
+                            <ul>
+                                <li class="glyphicon glyphicon-triangle-bottom nav-toggle expander" onclick="@("#coll"+counter)"></li>
+                            </ul>
+                        </td>
+                        <td>
+                            <div class="expand_Title_Name">@Html.Label("Title_Name", item.Title_Name)&#x200E;<a href=""><span></span></a></div>
+                        </td>
+
+                        <td class="action">
+                            @item.Talent_Name
+                        </td>
+                        <td class="action">
+                            @item.Milestone_Nature_Name
+                        </td>
+                        <td>
+                            @Convert.ToDateTime(item.Expiry_Date).ToString("dd-MMM-yyyy")
+                        </td>
+                        <td class="action">
+                            <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" onclick="AddEditTitle_Milestone(@item.Title_Milestone_Code, 'V')"></a>
+
+                            @if (@ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL && @ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_APPROVE && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                            {
+
+                                <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" onclick="AddEditTitle_Milestone(@item.Title_Milestone_Code, 'E')"></a>
+                                <a title="@objMessageKey.Delete" class="glyphicon glyphicon-trash " onclick="OnDeleteClick(@item.Title_Milestone_Code);"></a>
+                            }
+                        </td>
+                    </tr>
+                    <tr class=@ClassName id="@("coll"+counter)" style="display: none;">
+                        <td></td>
+                        <td>
+                            <div class="expandable">
+                                <strong>Milestone - </strong>
+                                @if (item.Milestone != "")
+                                {
+                                    @Html.Label("Milestone", @item.Milestone)
+                                }
+                                else
+                                {
+                                    <sapn>NA</sapn>
+                                }
+                            </div>
+                            </td>
+                        <td>
+                            <div class="expandable">
+                                <strong>Action Item - </strong>
+                                @if (item.Action_Item != "")
+                                {
+                                    @Html.Label("Milestone", @item.Action_Item)
+                                }
+                                else
+                                {
+                                    <span>NA</span>
+                                }
+                            </div></td>
+                        <td><strong>Abandoned/Closed -</strong> @Html.Label("Milestone", @item.Is_Abandoned)</td>
+                        <td>
+                            <b>Remarks -</b>
+                            <a title="Remarks" class="view_link btnRestriction"
+                               data-toggle="modal" onclick="Show_Restriction_Remark_popupl('@counter');">
+                                @Html.Hidden("hdnRemarks_" + @counter, item.Remarks)
+                                <img src="~/Images/remarks.png" alt="" style="border: 0px; cursor:pointer" />
+                            </a>
+                        </td>
+                        <td></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    }
+</div>
+
+
+
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade in" id="popAddDealMovie" role="dialog" tabindex="-1" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form" id="movie_popup">
+                <div class="form_wrapper">
+                    <div class="form_fields acq">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>Remarks</h2>
+                        </div>
+                        <div class="modal_block" style="overflow: auto;max-height: 200px;">
+                            <span id="lblRestRemark" style="white-space:pre-line;"></span>
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li>
+                                        <a data-dismiss="modal" class="btn btn-primary btnCancel" href="#">@objMessageKey.Cancel</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,118 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }     
+}
+
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script>
+    var URL_BindPartialPages = '@Url.Action("BindPartialPages", "Channel")';
+
+    var URL_CheckRecordLock = '@Url.Action("CheckRecordLock", "Channel")';
+    var URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")';
+    var URL_Release_Lock = '@Url.Action("Release_Lock", "Global")';
+    var URL_Reload_Current_Page = '@Url.Action("Index", "Channel")';
+    $(document).ready(function () {
+
+       // $("#ancFileName").attr('href', '../Help/Masters/Layout.html?Channel');
+        BindPartialView("LIST", 0)
+    });
+
+
+    function BindPartialView(key, ChannelCode) {
+        debugger
+        if (key == "ADD" || key == "EDIT") {
+            Search = $('#searchCommon').val();
+            $('#hdnSearch').val($('#searchCommon').val());
+        }
+        if (key == "LIST") {
+            var recordLockingCode = parseInt($('#hdnRecodLockingCode_temp').val())
+            if (recordLockingCode > 0)
+                ReleaseRecordLock(recordLockingCode, URL_Release_Lock);
+        }
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindPartialPages,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                key: key,
+                ChannelCode: ChannelCode
+            }),
+            success: function (result) {
+
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+
+                    $('#divChannelPartial').empty();
+                    $('#divChannelPartial').html(result);
+                    $('#ddlCountry').SumoSelect();
+                    $('#ddlCountry')[0].sumo.reload();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    //--------------------Record Locking---------------------------------------------------
+
+    function CheckRecordLock(key, ChannelCode) {
+        
+        $.ajax({
+            type: "POST",
+            url: URL_CheckRecordLock,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                key: key,
+                ChannelCode: ChannelCode
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Is_Locked == "Y") {
+                        BindPartialView(key, ChannelCode);
+                        $('#hdnRecodLockingCode_temp').val(result.Record_Locking_Code); // This syntax must be after AddEditCountry() this
+                        Call_RefreshRecordReleaseTime(result.Record_Locking_Code, URL_Refresh_Lock);
+                    }
+                    else
+                        showAlert("E", result.Message);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+</script>
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div id="divChannelPartial">
+
+            </div>
+        </div>
+    </section>
+    <input type="hidden" id="hdnRecodLockingCode_temp" name="hdnRecodLockingCode" value="0" />
+    <div class="form_fields acq" id="pupupHtml">
+    </div>

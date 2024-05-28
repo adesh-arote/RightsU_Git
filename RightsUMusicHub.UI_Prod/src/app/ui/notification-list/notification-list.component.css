@@ -1,0 +1,42 @@
+.squareUnRead{
+    height: 14px;
+    width: 14px;
+    display: inline-block;
+    border: 1px solid lightgray;
+    background-color: rgb(248, 175, 147);
+}
+.squareRead{
+    height: 14px;
+    width: 14px;
+    display: inline-block;
+    border: 1px solid lightgray;
+    background-color: white;
+}
+
+
+input.SearchTextBox {
+    width:40% !important;
+    margin-right:2px !important;
+    border: 1px solid #bbb !important;
+    padding:2px 2px !important;
+    border-top-left-radius: 4px !important;
+    border-bottom-left-radius: 4px !important;
+    border-top-right-radius: 4px !important;
+    border-bottom-right-radius: 4px !important;
+    height: 30px;
+  }
+
+  .divRemarks {
+    display: inline-block;
+    font-weight: bold;
+    border-bottom: 1px dotted #777;
+    padding: 5px;
+    background-color: #eee;
+    width: 500px;
+  }
+  
+  .vl {
+    border-left: 2px solid;
+    height: 25px;
+    width: 40px;
+  }

@@ -1,0 +1,344 @@
+﻿@model IEnumerable<RightsU_Entities.Acq_Sport_Ancillary_Wrapper>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script type="text/javascript">
+
+    var CallFromDeleted = '';
+    var URL_BindMonetisation = '@Url.Action("BindMonetisation", "Acq_Sport_Ancillary")';
+    var URL_CreateMonetisation = '@Url.Action("CreateMonetisation", "Acq_Sport_Ancillary")'
+    var URL_DeleteSportMonetisationAncillary = '@Url.Action("DeleteSportMonetisationAncillary", "Acq_Sport_Ancillary")'
+
+    $(document).ready(function () {
+        $('#lblDisplayMonetisationTitle').SumoSelect({ selectAll: true, triggerChangeCombined: false });
+        $('#lblDisplayMonetisationTitle')[0].sumo.reload();
+        $(":radio[name=rdoMoneDisplayType]").change(function (e) {
+            var type = $(this).val();
+
+            if (($('#lblDisplayMonetisationTitle').val() == '' || $('#lblDisplayMonetisationTitle').val() == null) && type == 'D') {
+                showAlert('E', '@objMessageKey.Pleaseselecttitle');
+
+                if (type == 'G')
+                    $('input[name=rdoMoneDisplayType][value=D]').prop('checked', true);
+                else
+                    $('input[name=rdoMoneDisplayType][value=G]').prop('checked', true);
+            }
+            else {
+                var arrTitles = '';
+
+                if ($('#lblDisplayMonetisationTitle').val() != null)
+                    arrTitles = $('#lblDisplayMonetisationTitle').val().join(',');
+
+                if (type == 'G')
+                    arrTitles = '';
+
+                $.ajax({
+                    type: "POST",
+                    url: URL_BindMonetisation,
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify({
+                        displayType: type,
+                        selectedTitle: arrTitles
+                    }),
+                    success: function (result) {
+                        if (result == "true") {
+                            redirectToLogin();
+                        }
+
+                        $('#hdnAcqDealSportMoneAncillaryCode').val('');
+                        $('#divMonetisation').html(result);
+                        initializeChosen();
+                        initializeExpander();
+                        $('#lblDisplayMonetisationTitle').val(arrTitles.split(','))[0].sumo.reload();
+                        $('input[name=rdoMoneDisplayType][value=' + type + ']').prop('checked', true);
+                    },
+                    error: function (result) {
+                        alert('Error: ' + result.responseText);
+                    }
+                });
+            }
+        });
+    });
+
+    function openMonePopUp(obj, titleCode) {
+        debugger;
+      
+        var type = $(":radio[name=rdoMoneDisplayType]:checked").val()
+        showLoading();
+
+        $.ajax({
+            type: "POST",
+            url: URL_CreateMonetisation,
+            traditional: true,
+            async: false,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Acq_Deal_Sport_Monetisation_Ancillary_Code: obj,
+                TitleCode: titleCode,
+                DisplayType: type
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+
+                $('#popSportMoneAncillary').html(result);
+               
+                initializeChosen();
+                var Mode = '@ViewBag.PageMode';
+
+                if (obj >= 0 && Mode != 'V' && Mode != 'APRV' && Mode != 'EWOA') {
+                    setMonetisationOnEdit();
+                    $('#lstMonetizationTitle,#ddlMonetizationType1').SumoSelect({ selectAll: true, triggerChangeCombined: false });
+                    $('#lstMonetizationTitle')[0].sumo.reload();
+                    $('#ddlMonetizationType1')[0].sumo.reload();
+                }
+
+                $('#popSportMoneAncillary').modal();
+                initializeExpander();
+            },
+            error: function (result) { }
+        });
+
+        hideLoading();
+        return false;
+    }
+
+    function closeMonePopUp() {
+        $('#popSportMoneAncillary').modal('hide')
+    }
+    function DeleteSportMoneAncliallary(Acq_Deal_Sport_Sales_Ancillary_Code, titleCode) {
+        $('#hdnAcqDealSportMoneAncillaryCode').val(Acq_Deal_Sport_Sales_Ancillary_Code);
+        $('#hdnTitleCode').val(titleCode);
+        CallFromDeleted = 'Y';
+        showAlert("I", "Are you sure, you want to delete this record ?", "OKCANCEL");
+    }
+    function handleOk() {
+        if (CallFromDeleted == 'Y') {
+            var Acq_Deal_Sport_Sales_Ancillary_Code = $('#hdnAcqDealSportMoneAncillaryCode').val();
+            var type = $(":radio[name=rdoMoneDisplayType]:checked").val();
+            var titleCode = $('#hdnTitleCode').val();
+
+            $.ajax({
+                type: "POST",
+                url: URL_DeleteSportMonetisationAncillary,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                async: false,
+                data: JSON.stringify({
+                    id: Acq_Deal_Sport_Sales_Ancillary_Code,
+                    titleCode: titleCode,
+                    DisplayType: type
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+
+                    if (result == 'Success') {
+                        showAlert("S", "Record Deleted Successfully", "OK");
+                        var arrTitles = '';
+
+                        if ($('#lblDisplayMonetisationTitle').val() != null)
+                            arrTitles = $('#lblDisplayMonetisationTitle').val().join(',');
+
+                        $.ajax({
+                            type: "POST",
+                            url: URL_BindMonetisation,
+                            traditional: true,
+                            enctype: 'multipart/form-data',
+                            contentType: "application/json; charset=utf-8",
+                            data: JSON.stringify({
+                                displayType: type,
+                                selectedTitle: arrTitles
+                            }),
+                            success: function (result) {
+                                $('#hdnAcqDealSportMoneAncillaryCode').val('');
+                                $('#divMonetisation').html(result);
+                                initializeChosen();
+                                initializeExpander();
+                                $('#lblDisplayMonetisationTitle').val(arrTitles)[0].sumo.reload();
+                                $('input[name=rdoMoneDisplayType][value=' + type + ']').prop('checked', true);
+                            },
+                            error: function (result) {
+                                alert('Error: ' + result.responseText);
+                            }
+                        });
+                    }
+                    else {
+                        showAlert("E", result);
+                        return false;
+                    }
+                },
+                error: function (result) { }
+            });
+        }
+
+        $(document.getElementsByClassName('modal-open')).removeClass('modal-open');
+    }
+    function showAllClick() {
+        $.ajax({
+            type: "POST",
+            url: URL_BindMonetisation,
+            traditional: true,
+            async: false,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                displayType: 'G',
+                selectedTitle: ''
+            }),
+            success: function (result) {
+                $('#divMonetisation').html(result);
+                initializeChosen();
+                initializeExpander();
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function closeMonetisation() {
+        $('#popSportMoneAncillary').modal('hide');
+    }
+
+</script>
+<style>
+    .SumoSelect{
+        width : 100% !important;
+    }
+</style>
+<div class="scale_table_block">
+    <table class="table abovePaging">
+        <tr>
+            <td class="bold" style="width: 10%;">@objMessageKey.PageView: </td>
+            <td style="width: 14%;">
+                <label class="radio-inline">
+                    <input type="radio" name="rdoMoneDisplayType" value="G" checked="checked" tabindex="0" />@objMessageKey.Group
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" name="rdoMoneDisplayType" value="D" tabindex="0" />@objMessageKey.Detail
+                </label>
+            </td>
+            <td style="width: 56%;">
+                @Html.ListBox("lblDisplayMonetisationTitle", ViewBag.DisplayMonetisationTitleList as MultiSelectList, new {  })
+            </td>
+            <td>
+                <input type="submit" class="btn-primary" value="@objMessageKey.ShowAll" onclick="showAllClick()" /></td>
+            <td style="width: 10%;">
+                @if (ViewBag.PageMode != "V" && ViewBag.PageMode != "APRV" && ViewBag.PageMode != "EWOA")
+                {
+                    <input type="button" class="btn-primary" value="@objMessageKey.Add" onclick="return openMonePopUp(0);" />
+                }
+            </td>
+        </tr>
+    </table>
+</div>
+<table class="table table-bordered table-hover" id="tblFCT">
+    <thead>
+        <tr>
+            <th style="width: 19%;">@objMessageKey.Title</th>
+            <th style="width: 12%;" class="">@objMessageKey.RighttoAppointBroadcastsponsor</th>
+            <th style="width: 13%;" class="">@objMessageKey.RighttoAppointTitleBroadcastsponsor</th>
+            <th style="width: 26%;">@objMessageKey.MonetisationTypes</th>
+            <th style="width: 26%;">@objMessageKey.Remarks</th>
+            <th style="width: 6%;">@objMessageKey.Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (int i = 0; i < Model.Count(); i++)
+        {
+            if (ViewBag.DisplayType == "G")
+            {
+                int count = Model.Where(m => m.Acq_Deal_Sport_Monetisation_Ancillary_Code == Model.ElementAt(i).Acq_Deal_Sport_Monetisation_Ancillary_Code).Count();
+            <tr>
+                @if ((i + (count - 1)) < Model.Count())
+                {
+                    if (Model.ElementAt(i).Acq_Deal_Sport_Monetisation_Ancillary_Code == Model.ElementAt(i + (count - 1)).Acq_Deal_Sport_Monetisation_Ancillary_Code)
+                    {
+                    <td rowspan="@count">
+                        <div class="expandable">
+                            @Model.ElementAt(i).Title
+                        </div>
+                    </td>
+                    <td rowspan="@count">@Model.ElementAt(i).Broadcast_Sponsor</td>
+                    <td rowspan="@count">@Model.ElementAt(i).Title_Broadcast_Sponsor</td>
+                    }
+                }
+                <td>@Model.ElementAt(i).Monetisations_Type</td>
+                @if ((i + (count - 1)) < Model.Count())
+                {
+                    if (Model.ElementAt(i).Acq_Deal_Sport_Monetisation_Ancillary_Code == Model.ElementAt(i + (count - 1)).Acq_Deal_Sport_Monetisation_Ancillary_Code)
+                    {
+                    <td rowspan="@count">
+                        <div class="expandable">
+                            @Model.ElementAt(i).Remarks
+                        </div>
+                    </td>
+                        if (ViewBag.PageMode != "V" && ViewBag.PageMode != "APRV" && ViewBag.PageMode != "EWOA")
+                        {
+                    <td rowspan="@count"><a title="@objMessageKey.Edit" class = "glyphicon glyphicon-pencil" onclick='openMonePopUp(@Model.ElementAt(i).Acq_Deal_Sport_Monetisation_Ancillary_Code,@Model.ElementAt(i).TitleCode);'/>&nbsp; <a title="@objMessageKey.Delete" class = "glyphicon glyphicon-trash" onclick='DeleteSportMoneAncliallary(@Model.ElementAt(i).Acq_Deal_Sport_Monetisation_Ancillary_Code,@Model.ElementAt(i).TitleCode);'/></td>
+                        }
+                        else
+                        {
+                    <td rowspan="@count"><a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" onclick='openMonePopUp(@Model.ElementAt(i).Acq_Deal_Sport_Monetisation_Ancillary_Code,@Model.ElementAt(i).TitleCode);'/></td> 
+                        }
+                    }
+                }
+            </tr>
+            }
+            else
+            {
+                int count = Model.Where(m => m.Acq_Deal_Sport_Monetisation_Ancillary_Code == Model.ElementAt(i).Acq_Deal_Sport_Monetisation_Ancillary_Code && m.TitleCode == Model.ElementAt(i).TitleCode).Count();
+            <tr>
+                @if ((i + (count - 1)) < Model.Count())
+                {
+                    if (Model.ElementAt(i).Acq_Deal_Sport_Monetisation_Ancillary_Code == Model.ElementAt(i + (count - 1)).Acq_Deal_Sport_Monetisation_Ancillary_Code && Model.ElementAt(i).TitleCode == Model.ElementAt(i + (count - 1)).TitleCode)
+                    {
+                    <td rowspan="@count">
+                        <div class="expandable">
+                            @Model.ElementAt(i).Title
+                        </div>
+                    </td>
+                    <td rowspan="@count">@Model.ElementAt(i).Broadcast_Sponsor</td>
+                    <td rowspan="@count">@Model.ElementAt(i).Title_Broadcast_Sponsor</td>
+                    }
+                }
+                <td>@Model.ElementAt(i).Monetisations_Type</td>
+                @if ((i + (count - 1)) < Model.Count())
+                {
+                    if (Model.ElementAt(i).Acq_Deal_Sport_Monetisation_Ancillary_Code == Model.ElementAt(i + (count - 1)).Acq_Deal_Sport_Monetisation_Ancillary_Code && Model.ElementAt(i).TitleCode == Model.ElementAt(i + (count - 1)).TitleCode)
+                    {
+                    <td rowspan="@count">
+                        <div class="expandable">
+                            @Model.ElementAt(i).Remarks
+                        </div>
+                    </td>
+                        if (ViewBag.PageMode != "V" && ViewBag.PageMode != "APRV" && ViewBag.PageMode != "EWOA")
+                        {
+                    <td rowspan="@count"><a title="@objMessageKey.Edit" class = "glyphicon glyphicon-pencil" onclick='openMonePopUp(@Model.ElementAt(i).Acq_Deal_Sport_Monetisation_Ancillary_Code,@Model.ElementAt(i).TitleCode);'/>&nbsp; <a title="@objMessageKey.Delete" class = "glyphicon glyphicon-trash" onclick='DeleteSportMoneAncliallary(@Model.ElementAt(i).Acq_Deal_Sport_Monetisation_Ancillary_Code,@Model.ElementAt(i).TitleCode);'/></td>
+                        }
+                        else
+                        {
+                    <td rowspan="@count"><a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" onclick='openMonePopUp(@Model.ElementAt(i).Acq_Deal_Sport_Monetisation_Ancillary_Code,@Model.ElementAt(i).TitleCode);'/></td> 
+                        }
+                    }
+                }
+            </tr>   
+            }
+        }
+    </tbody>
+</table>
+@Html.Hidden("hdnAcqDealSportMoneAncillaryCode")
+@Html.Hidden("hdnTitleCode")
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade scroll" id="popSportMoneAncillary"
+    role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+</div>

@@ -1,0 +1,219 @@
+﻿@model RightsU_Entities.Acq_Deal_Budget
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script src="~/JS_Core/jquery.sumoselect.js"></script>
+<link href="~/CSS/sumoselect.css" rel="stylesheet" />
+<script type="text/javascript">
+    var acqDealBudgetCode_G = @Model.Acq_Deal_Budget_Code;
+    var wbsCode_G = '@Model.SAP_WBS_Code';
+
+    var URL_Get_SAP_WBS_By_Id = '@Url.Action("Get_SAP_WBS_By_Id", "Acq_Budget")';
+    var URL_Search_SAP_WBS = '@Url.Action("Search_SAP_WBS", "Acq_Budget")';
+    var URL_ValidateTitle = '@Url.Action("ValidateTitle", "Acq_Budget")';
+
+    $(document).ready(function () {
+        // $("#ancFileName").attr('href', 'Help/index.html?IntCode=@Session["FileName"]');   
+        debugger      
+        $('#lbTitle_Popup').SumoSelect();
+        $('#lbTitle_Popup')[0].sumo.reload();
+        if( acqDealBudgetCode_G > 0)
+        {            
+            $.ajax({
+                type: "POST",
+                url: URL_Get_SAP_WBS_By_Id,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    selectedWBSCode: wbsCode_G
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    $('#divSapWbs').html(result);                  
+                },
+                error: function (result) {
+                }
+            });
+        }
+
+    });
+    function ValidateWBSSearch() {   
+        var filter = $("#txtWBSCode").val();
+
+        if (filter === '') {
+            $("#txtWBSCode").attr("required");
+            showAlert('E', '@objMessageKey.PleaseSelect');
+            return false;            
+        }
+        else {         
+            $.ajax({
+                type: "POST",
+                url: URL_Search_SAP_WBS,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    txtWBSCode: $('#txtWBSCode').val(),
+                    selectedWBSCode: $('#SAP_WBS_Code').val()
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }                 
+                    $('#divSapWbs').html(result);
+                },
+                error: function (result) {
+                }
+            });
+            return true;
+        }
+    }
+    function ValidateBudgetSave() {
+        debugger
+        var code = 0;
+        var sapwbsCode = 0;
+        if ($('#lbTitle_Popup').val() != null && $('#lbTitle_Popup').val() != '0') {
+            $('#lbTitle_Popup').removeClass('required');
+            code =  $('#lbTitle_Popup').val().join(',');
+            $('#hdnlbTitleCode').val(code);
+        }
+        else {
+            $('#lbTitle_Popup').addClass('required');
+            return false;
+        }
+
+        if ($('#SAP_WBS_Code').val() != null && $('#SAP_WBS_Code').val() != '')
+            sapwbsCode = $('#SAP_WBS_Code').val();
+        else {
+            showAlert('E', '@objMessageKey.PleaseselectSAPWBScode');
+            return false;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: URL_ValidateTitle,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                code: code,
+                selectedWBSCode: sapwbsCode
+            }),
+            async: true,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                if (result == "Success") {
+                    return true;
+                }
+                else
+                    return false;
+            },
+            error: function (result) {
+            }
+        });
+    }
+    function onsuccess(message)
+    {
+        $('#popEditBudget').modal('hide');
+        $('#popEditBudget').html('')
+        showAlert('S', message, 'OK');
+    }
+</script>
+@if (objMessageKey.LayoutDirection == "RTL")
+{
+    <style>
+        .chosen-container.chosen-with-drop .chosen-drop {
+            left: 26px;
+            width: 91%;
+        }
+    </style>
+}
+else
+{
+    <style>
+        .chosen-container.chosen-with-drop .chosen-drop {
+            left: 58px;
+            width: 91%;
+        }
+    </style>
+}
+
+<div class="modal-dialog">
+    <div class="modal-content clearfix">
+        @using (Ajax.BeginForm("Save_Budget", "Acq_Budget", new AjaxOptions { OnSuccess = "onsuccess" }))
+        {
+            <div>
+                <div class="form_fields acq">
+                    <div class="modal_block modal_header">
+                        <a class="close" data-dismiss="modal" href="#">
+                            <span>×</span>
+                            <span class="sr-only">Close</span>
+                        </a>
+                        <h2>@objMessageKey.AddEditBudget</h2>
+                    </div>
+                    <div class="modal_block">
+                        <ul class="form_fields_wrapper">
+                            <li class="clearfix">
+                                <label class="bold">@objMessageKey.Title</label>&nbsp;&nbsp;
+                                @*@Html.DropDownList("lbTitle_Popup", ViewBag.BudgetTitle as MultiSelectList, new { @id = "lbTitle_Popup", @class = "form_input chosen-select" })*@
+                                @Html.DropDownList("lbTitle_Popup", ViewBag.BudgetTitle as MultiSelectList, new { @id = "lbTitle_Popup", @multiple = "multiple" })
+                                <input type="hidden" id="hdnlbTitleCode" name="hdnlbTitleCode">
+                            </li>
+                            <li class="clearfix">
+                                @Html.TextBox("txtWBSCode", "", new { @style = "width: 91%;", @placeholder = objMessageKey.WBSCode + "," + objMessageKey.WBSDescription + "," + objMessageKey.StudioVendor + "," + objMessageKey.OriginalDubbed + "," + objMessageKey.ShortID + "," + objMessageKey.Status + "," + objMessageKey.SportType, @onkeydown = "return (event.keyCode!=13);" })
+                                &nbsp;<input type="button" id="btnSearchWBSCode" class="button" value="@objMessageKey.Search" onclick="return ValidateWBSSearch();" />
+                            </li>
+                            <li class="clearfix">
+                                <label class="bold">@objMessageKey.SAPWBSList:</label>&nbsp;&nbsp;
+                                <div id="divSapWbs" style="max-height:200px;  overflow: auto;">
+                                    <table class="table table-bordered table-hover" id="gvWBS">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 5%;text-align:center">Select</th>
+                                                <th style="width: 12%;text-align:center">WBS Code</th>
+                                                <th style="width: 38%;text-align:center">WBS Description</th>
+                                                <th style="width: 10%;text-align:center">Studio/Vendor</th>
+                                                <th style="width: 10%;text-align:center">Original/Dubbed</th>
+                                                <th style="width: 10%;text-align:center">Short ID</th>
+                                                <th style="width: 10%;text-align:center">Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td colspan="7">No record found </td>
+                                            </tr>                                     
+                                        </tbody>
+                                    </table>
+                                </div>
+                                @Html.HiddenFor(m => Model.SAP_WBS_Code)
+                                @Html.HiddenFor(m => Model.Acq_Deal_Budget_Code)
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="modal_block_full">
+                        <div class="form_links">
+                            <ul class="modal_block clearfix">
+                                <li>
+                                    <input type="submit" id="btnSave" class="btn btn-primary" value="@objMessageKey.LinkTitletoBudget" onclick="return ValidateBudgetSave();" />
+                                </li>
+                                <li>
+                                    <a data-dismiss="modal" href="#" class="btn-primary">@objMessageKey.Cancel</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+

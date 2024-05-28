@@ -1,0 +1,502 @@
+﻿@using UTOFrameWork.FrameworkClasses;
+
+@{
+    RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
+    if (Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA] != null)
+    {
+        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA];
+    }
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<style>
+    .container .top_area {
+        margin-bottom: 10px;
+    }
+
+    .stampBg {
+        background-image: none !important;
+        height: 0 !important;
+        width: auto !important;
+        float: right;
+    }
+
+        .stampBg h4 {
+            transform: none !important;
+            float: right;
+            width: auto !important;
+        }
+</style>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('#liDigitalRights').click(function () {
+            debugger;
+            $('#liGeneral').removeClass("active");
+            $('#liDigitalRights').addClass("active");
+
+        });
+
+        $('#liGeneral').click(function () {
+            debugger;
+            $('#liGeneral').addClass("active");
+            $('#liDigitalRights').removeClass("active");
+        })
+        var exists = ImageExists('#imgTitleIcon');
+    });
+
+    $('.tabbable a').click(function (e) {
+        e.preventDefault()
+    })
+
+    function LoadTab(tabName, IsActive) {
+        debugger;
+        showLoading();
+        if (document.location.search == "") {
+            url_page = history.pushState({}, null, window.location.href + "?currentTab=GNR");
+        }
+        else {
+            // var uri = document.location.search.replace(document.location.search,"?currentTab=@ViewBag.currentTab")
+            //url_page = history.pushState({}, null, window.location.href.replace(document.location.search, '') + "?currentTab=" + tabName);
+            if (document.location.search.substring(12) !=  '@ViewBag.currentTab')
+            {
+                if (window.location.href.slice(window.location.href.length - 1) == "#")
+                    url_page = history.pushState({}, null, window.location.href.replace(document.location.search + '#', '') + "?currentTab=" + tabName);
+                else
+                    url_page = history.pushState({}, null, window.location.href.replace(document.location.search, '') + "?currentTab=" + tabName);
+            }
+        }
+        $('#hdn_curent_TabFor_MultiLang_Acq').val(tabName);
+        var dealModeServer = '@objSchema.Mode';
+        if ($.trim(tabName) != CurrentTab) {
+            clickedOnTab = true;
+            $('#hdnTabName').val($.trim(tabName));
+            if (dealModeServer != dealMode_View && dealModeServer != dealMode_Approve && dealModeServer != dealMode_EditWOA) {
+                if (CurrentTab == pageGeneral) {
+                    $('#btnSaveDeal').click();
+                }
+                else if (CurrentTab == pageRights_List) {
+                    $('#btnSaveDeal').click();
+                }
+                else if (CurrentTab == pageRightsDetailAddEdit) {
+                    $('#btnSaveDeal').click();
+                }
+                else if (CurrentTab == pageRunDetailAddEdit) {
+                    $('#btnSaveRun').click();
+                }
+                else if (CurrentTab == pageSupplementaryAddEdit) {
+                    //$('#btnSaveDeal').click();
+                    SuppSave();
+                }
+                else if (CurrentTab == pagePaymentTerm) {
+                    $('#btnSaveDeal').click();
+                }
+                else if (CurrentTab == pageMaterial) {
+                    $('#btnSaveDeal').click();
+                    return true;
+                }
+                else if (CurrentTab == pageCost && GetCostTabConfigFromServer() != 'Y') {
+                    //var isDirectCostGrid = GetCostTabConfigFromServer();
+                    //if (isDirectCostGrid != "Y") {
+                    $('#btnSaveDeal').click();
+                    //}
+                }
+                else if (CurrentTab == 'BLK') {
+                    $('#btnBack').click();
+                    return true;
+                }
+                else {
+                    if (ValidateSave()) {
+                        return true;
+                    }
+                }
+            }
+            else {
+                if (ValidateSave()) {
+                    return true;
+                }
+            }
+
+        }
+        hideLoading();
+        return false;
+    }
+
+    function ImageExists(selector) {
+        var imageFound = $(selector);
+
+        if (!imageFound.get(0).complete) {
+            return false;
+        }
+        else if (imageFound.height() === 0) {
+            return false;
+        }
+
+        return true;
+    }
+</script>
+<div class="top_area">
+    <div class="title_block dotted_border clearfix">
+        <h2 class="pull-left">
+            @if (objSchema.Mode == GlobalParams.DEAL_MODE_ADD)
+            {
+                @Html.Label("Add", objMessageKey.AddAcquisitionDeal, new { @id = "lblDealMainHeader" })
+            }
+            else if (objSchema.Mode == GlobalParams.DEAL_MODE_VIEW || objSchema.Mode == GlobalParams.DEAL_MODE_APPROVE)
+            {
+                @Html.Label("Add", objMessageKey.ViewAcquisitionDeal, new { @id = "lblDealMainHeader" })
+            }
+            else if (objSchema.Mode == GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+            {
+                @Html.Label("Add", objMessageKey.EditWithoutApproval, new { @id = "lblDealMainHeader" })
+            }
+            else
+            {
+                @Html.Label("Add", objMessageKey.EditAcquisitionDeal, new { @id = "lblDealMainHeader" })
+            }
+        </h2>
+        @{
+            if (objSchema.Deal_Code > 0)
+            {
+                objSchema.Deal_Workflow_Status = new RightsU_BLL.USP_Service(objLoginEntity.ConnectionStringName).USP_Get_Deal_DealWorkFlowStatus(objSchema.Deal_Code, objSchema.Deal_Workflow_Flag, 143, "A").First();
+            }
+            else
+            {
+                objSchema.Deal_Workflow_Status = objMessageKey.NewDeal;
+            }
+        }
+        @if (objSchema.Deal_Workflow_Flag == "O" || objSchema.Deal_Workflow_Flag == "AR" || objSchema.Deal_Workflow_Flag == "WA" || objSchema.Deal_Workflow_Flag == GlobalParams.dealWorkFlowStatus_New ||
+     objSchema.Deal_Workflow_Flag == GlobalParams.dealWorkFlowStatus_Ammended)
+        {
+
+            <div class="stampBg approved nobackground" id="divStamp">
+                <h4 title="@objMessageKey.WorkflowStatus">
+                    @Html.Label("Deal_Status", objSchema.Deal_Workflow_Status, new { @id = "lblWorkflowStatus" })
+                </h4>
+            </div>
+
+        }
+        else if (objSchema.Deal_Workflow_Flag == GlobalParams.dealWorkFlowStatus_Approved)
+        {
+
+            <div class="stampBg approved nobackground" id="divStamp">
+                <h4 title="@objMessageKey.WorkflowStatus">
+                    @Html.Label("Deal_Status", objSchema.Deal_Workflow_Status, new { @id = "lblWorkflowStatus" })
+                </h4>
+            </div>
+
+        }
+        else if (objSchema.Deal_Workflow_Flag == GlobalParams.dealWorkFlowStatus_Waiting)
+        {
+
+            <div class="stampBg pending nobackground" id="divStamp">
+                <h4 title="@objMessageKey.WorkflowStatus">
+                    @Html.Label("Deal_Status", objSchema.Deal_Workflow_Status, new { @id = "lblWorkflowStatus" })
+                </h4>
+            </div>
+
+        }
+        else if (objSchema.Deal_Workflow_Flag == GlobalParams.dealWorkFlowStatus_Declined)
+        {
+
+            <div class="stampBg rejected nobackground" id="divStamp">
+                <h4 title="@objMessageKey.WorkflowStatus">
+                    @Html.Label("Deal_Status", objSchema.Deal_Workflow_Status, new { @id = "lblWorkflowStatus" })
+                </h4>
+            </div>
+
+        }
+        else if (objSchema.Deal_Workflow_Flag == "RO")
+        {
+            <div class="stampBg approved nobackground" id="divStamp">
+                <h4 title="@objMessageKey.WorkflowStatus">
+                    @Html.Label("Deal_Status", objSchema.Deal_Workflow_Status, new { @id = "lblWorkflowStatus" })
+                </h4>
+            </div>
+        }
+    </div>
+    <table class="table_brif table">
+        <tbody>
+            <tr>
+                <td class="intro_pic">
+                    <div class="movie_deal" id="divTitleIcon" title="@objSchema.Title_Icon_Tooltip">
+                        @*<img alt="" id="imgTitleIcon" src="@objSchema.Title_Icon_Path" />*@
+                        <img alt="" id="imgTitleIcon" src=@Url.Content(@System.Configuration.ConfigurationManager.AppSettings["TitleImagePath"].ToString() + objSchema.Title_Icon_Path) />
+                        <span class="strip">strip   </span>
+                    </div>
+                </td>
+                <td class="intro">
+                    <table class="four_column table">
+                        <tbody>
+                            <tr>
+                                <td class="td_label">@objMessageKey.AgreementNo.</td>
+                                <td>
+                                    @Html.Label("Agreement_No", ((objSchema.Agreement_No == "" ? "New" : objSchema.Agreement_No) + " Version #: VN " + (objSchema.Version == "" ? "0001" : objSchema.Version)))
+                                </td>
+                                <td class="td_label">@objMessageKey.AgreementDate</td>
+                                <td>
+                                    <span class="required">
+                                        @if (objSchema.Mode == GlobalParams.DEAL_MODE_VIEW || objSchema.Mode == GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL || objSchema.Page_From != GlobalParams.Page_From_General || objSchema.Mode == GlobalParams.DEAL_MODE_APPROVE)
+                                        {
+                                            @Html.Label("Agreement_Date", (objSchema.Agreement_No == "" ? "New" : string.Format("{0:" + GlobalParams.DateFormat_Display + "}", objSchema.Agreement_Date)))
+                                        }
+                                        else
+                                        {
+                                            @Html.TextBox("Agreement_Date", string.Format("{0:" + GlobalParams.DateFormat + "}", objSchema.Agreement_Date), new { @class = "isDatepicker shortDate", @id = "txtAgreement_Date" })
+                                        }
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="td_label">@objMessageKey.Description</td>
+                                <td>
+                                    <span class="required">
+                                        @if (objSchema.Mode == GlobalParams.DEAL_MODE_VIEW || objSchema.Mode == GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL || objSchema.Page_From != GlobalParams.Page_From_General || objSchema.Mode == GlobalParams.DEAL_MODE_APPROVE)
+                                        {
+                                            <div class="expandable">
+                                                @Html.Label("Deal_Desc", objSchema.Deal_Desc)
+                                            </div>
+                                        }
+
+                                        else
+                                        {
+                                            <input type="hidden" id="hdn_AcqSyn_Gen_Deal_Desc" value="@ViewBag.AcqSyn_Gen_Deal_Desc" />
+                                            if (ViewBag.AcqSyn_Gen_Deal_Desc == "Y")
+                                            {
+                                                @Html.DropDownList("Deal_Desc", ViewBag.DealDesc as SelectList, "Please Select", new { @id = "txtDeal_Desc", @class = "form_input chosen-select" })
+                                            }
+                                            else
+                                            {
+                                                @Html.TextBox("Deal_Desc", objSchema.Deal_Desc, new { @class = "", @id = "txtDeal_Desc", @maxlength = "500" })
+                                            }
+                                        }
+
+                                    </span>
+                                </td>
+                                <td class="td_label">@objMessageKey.Status</td>
+                                <td>
+                                    <span class="required">
+                                        @if (objSchema.Mode == GlobalParams.DEAL_MODE_VIEW || objSchema.Mode == GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL || objSchema.Page_From != GlobalParams.Page_From_General || objSchema.Mode == GlobalParams.DEAL_MODE_APPROVE)
+                                        {
+                                            @Html.Label("Deal_Tag", objSchema.Status)
+                                        }
+                                        else
+                                        {
+                                            @Html.DropDownList("Deal_Tag_Code", (List<SelectListItem>)objSchema.List_Deal_Tag, new { @class = "select", @id = "ddlDeal_Tag" });
+                                        }
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+
+                @*@if (objSchema.Deal_Workflow_Flag == "O" || objSchema.Deal_Workflow_Flag == GlobalParams.dealWorkFlowStatus_New ||
+                         objSchema.Deal_Workflow_Flag == GlobalParams.dealWorkFlowStatus_Ammended)
+                    {
+                        <td class="intro_approved">
+                            <div class="stampBg approved" id="divStamp">
+                                <h4 title="Workflow Status">
+                                    @Html.Label("Deal_Status", objSchema.Deal_Workflow_Status, new { @id = "lblWorkflowStatus" })
+                                </h4>
+                            </div>
+                        </td>
+                    }
+                    else if (objSchema.Deal_Workflow_Flag == GlobalParams.dealWorkFlowStatus_Approved)
+                    {
+                        <td class="intro_approved">
+                            <div class="stampBg approved" id="divStamp">
+                                <h4 title="Workflow Status">
+                                    @Html.Label("Deal_Status", objSchema.Deal_Workflow_Status, new { @id = "lblWorkflowStatus" })
+                                </h4>
+                            </div>
+                        </td>
+                    }
+                    else if (objSchema.Deal_Workflow_Flag == GlobalParams.dealWorkFlowStatus_Waiting)
+                    {
+                        <td class="intro_approved">
+                            <div class="stampBg pending" id="divStamp">
+                                <h4 title="Workflow Status">
+                                    @Html.Label("Deal_Status", objSchema.Deal_Workflow_Status, new { @id = "lblWorkflowStatus" })
+                                </h4>
+                            </div>
+                        </td>
+                    }
+                    else if (objSchema.Deal_Workflow_Flag == GlobalParams.dealWorkFlowStatus_Declined)
+                    {
+                        <td class="intro_approved">
+                            <div class="stampBg rejected" id="divStamp">
+                                <h4 title="Workflow Status">
+                                    @Html.Label("Deal_Status", objSchema.Deal_Workflow_Status, new { @id = "lblWorkflowStatus" })
+                                </h4>
+                            </div>
+                        </td>
+                    }*@
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div class="navigation_tabs">
+    <div class="tabbable">
+        <ul class="nav nav-tabs nav-tab pull-left">
+            @{
+                string cssclass = objSchema.Page_From == GlobalParams.Page_From_General ? "active" : "";
+            }
+            <li class="@cssclass" id="liGeneral">
+                <input type="button" role="tab" onclick="return LoadTab('@GlobalParams.Page_From_General    ','@cssclass    ');" value="@objMessageKey.General" />
+                <span></span>
+            </li>
+
+            @if (objSchema.Module_Rights_List.Contains(GlobalParams.RightCodeForAcqRightTab))
+            {
+                cssclass = objSchema.Page_From == GlobalParams.Page_From_Rights ? "active" : "";
+                <li class="@cssclass" id="liRights">
+                    <input type="button" role="tab" onclick="return LoadTab('@GlobalParams.Page_From_Rights    ','@cssclass    ');" value="@objMessageKey.Rights" />
+                    <span></span>
+                </li>
+            }
+
+            @if (objSchema.Module_Rights_List.Contains(GlobalParams.RightCodeForAcqDigitalRights))
+            {
+                cssclass = objSchema.Page_From == GlobalParams.Page_From_Digital_Rights ? "active" : "";
+                <li class="@cssclass" id="liDigitalRights">
+                    <input type="button" role="tab" onclick="return LoadTab('@GlobalParams.Page_From_Digital_Rights    ','@cssclass ');" value="@objMessageKey.OnDemand" />
+                    <span></span>
+                </li>
+            }
+            @if (objSchema.Module_Rights_List.Contains(GlobalParams.RightCodeForAcqPushbackTab))
+            {
+                cssclass = objSchema.Page_From == GlobalParams.Page_From_Pushback ? "active" : "";
+
+                <li class="@cssclass" id="liPushback">
+                    <input type="button" role="tab" onclick="return LoadTab('@GlobalParams.Page_From_Pushback    ','@cssclass    ');" value="@objMessageKey.PushbackText" />
+                    <span></span>
+                </li>
+            }
+            @if (objSchema.Module_Rights_List.Contains(GlobalParams.RightCodeForAcqRunTab))
+            {
+                cssclass = objSchema.Page_From == GlobalParams.Page_From_Run ? "active" : "";
+                <li class="@cssclass" id="liRun">
+                    <input type="button" id="btnRun" role="tab" onclick="return LoadTab('@GlobalParams.Page_From_Run    ','@cssclass    ');" value="@objMessageKey.RunDef" />
+                    <span></span>
+                </li>
+            }
+            @if (objSchema.Module_Rights_List.Contains(GlobalParams.RightCodeForAcqRightTab))
+            {
+                cssclass = objSchema.Page_From == GlobalParams.Page_From_Sports ? "active" : "";
+                if (objSchema.Deal_Type_Code == GlobalParams.Deal_Type_Sports)
+                {
+                    <li class="@cssclass " id="liSports">
+                        <input type="button" role="tab" onclick="return LoadTab('@GlobalParams.Page_From_Sports    ','@cssclass    ');" value="@objMessageKey.SportsRights" />
+                        <span></span>
+                    </li>
+                }
+            }
+            @if (objSchema.Module_Rights_List.Contains(GlobalParams.RightCodeForAncillaryTab))
+            {
+                cssclass = objSchema.Page_From == GlobalParams.Page_From_Ancillary ? "active" : "";
+                <li class="@cssclass" id="liAncillary">
+                    @if (objSchema.Deal_Type_Code == GlobalParams.Deal_Type_Sports)
+                    {
+                        <input type="button" role="tab" onclick="return LoadTab('@GlobalParams.Page_From_Ancillary    ','@cssclass    ');" value="@objMessageKey.SportsAncillary" />
+                    }
+                    else
+                    {
+                        <input type="button" role="tab" onclick="return LoadTab('@GlobalParams.Page_From_Ancillary    ','@cssclass    ');" value="@objMessageKey.Ancillary" />
+                    }
+                    <span></span>
+                </li>
+            }
+            @*@if (objSchema.Module_Rights_List.Contains(GlobalParams.RightCodeForAcqSports))
+                {
+                    <li class="@(objSchema.Page_From == GlobalParams.Page_From_Sports? "active" : "")">
+                        <input type="button" role="tab"  onclick="return LoadTab('@GlobalParams.Page_From_Sports    ');" value="Budget" />
+                        <span></span>
+                    </li>
+                }*@
+            @if (objSchema.Module_Rights_List.Contains(GlobalParams.RightCodeForAcqBudgetTab))
+            {
+                cssclass = objSchema.Page_From == GlobalParams.Page_From_Budget ? "active" : "";
+                <li class="@cssclass" id="liBudget">
+                    <input type="button" role="tab" onclick="return LoadTab('@GlobalParams.Page_From_Budget    ','@cssclass    ');" value="@objMessageKey.Budget" />
+                    <span></span>
+                </li>
+            }
+            @if (objSchema.Module_Rights_List.Contains(GlobalParams.RightCodeForSupplementaryTab))
+            {
+                cssclass = objSchema.Page_From == GlobalParams.Page_From_Supplementary ? "active" : "";
+                <li class="@cssclass" id="liSupplementary">
+                    <input type="button" role="tab" onclick="return LoadTab('@GlobalParams.Page_From_Supplementary    ','@cssclass    ');" value="@objMessageKey.Supplementary" />
+                    <span></span>
+                </li>
+            }
+            @if (objSchema.Module_Rights_List.Contains(GlobalParams.RightCodeForDigitalTab))
+            {
+                cssclass = objSchema.Page_From == GlobalParams.Page_From_Digital ? "active" : "";
+                <li class="@cssclass" id="liDigital">
+                    <input type="button" role="tab" onclick="return LoadTab('@GlobalParams.Page_From_Digital ','@cssclass    ');" value="@objMessageKey.Digital" />
+                    <span></span>
+                </li>
+            }
+            @if (objSchema.Module_Rights_List.Contains(GlobalParams.RightCodeForAcqCostTab))
+            {
+                cssclass = objSchema.Page_From == GlobalParams.Page_From_Cost ? "active" : "";
+                <li class="@cssclass" id="liCost">
+                    <input type="button" role="tab" onclick="return LoadTab('@GlobalParams.Page_From_Cost    ','@cssclass    ');" value="@objMessageKey.Cost" />
+                    <span></span>
+                </li>
+            }
+            @if (objSchema.Module_Rights_List.Contains(GlobalParams.RightCodeForAcqPaymentTermsTab))
+            {
+                cssclass = objSchema.Page_From == GlobalParams.Page_From_PaymentTerm ? "active" : "";
+                <li class="@cssclass" id="liPaymentTerm">
+                    <input type="button" role="tab" onclick="return LoadTab('@GlobalParams.Page_From_PaymentTerm    ','@cssclass    ');" value="@objMessageKey.PaymentTerms" />
+                    <span></span>
+                </li>
+            }
+            @if (objSchema.Module_Rights_List.Contains(GlobalParams.RightCodeForAcqMaterialTab))
+            {
+                cssclass = objSchema.Page_From == GlobalParams.Page_From_Material ? "active" : "";
+                <li class="@cssclass" id="liMaterial">
+                    <input type="button" role="tab" onclick="return LoadTab('@GlobalParams.Page_From_Material    ','@cssclass    ');" value="@objMessageKey.Material" />
+                    <span></span>
+                </li>
+            }
+            @if (objSchema.Module_Rights_List.Contains(GlobalParams.RightCodeForAcqAttachmentTab))
+            {
+                cssclass = objSchema.Page_From == GlobalParams.Page_From_Attachment ? "active" : "";
+                <li class="@cssclass" id="liAttachment">
+                    <input type="button" role="tab" onclick="return LoadTab('@GlobalParams.Page_From_Attachment    ','@cssclass    ');" value="@objMessageKey.Attachment" />
+                    <span></span>
+                </li>
+            }
+            @if (objSchema.Module_Rights_List.Contains(GlobalParams.RightCodeForAcqStatusHistoryTab))
+            {
+                cssclass = objSchema.Page_From == GlobalParams.Page_From_StatusHistory ? "active" : "";
+                <li class="@cssclass" id="liStatusHistory">
+                    <input type="button" role="tab" onclick="return LoadTab('@GlobalParams.Page_From_StatusHistory    ','@cssclass    ');" value="@objMessageKey.StatusHistory" />
+                    <span></span>
+                </li>
+            }
+
+            @if (ViewBag.IsAmort == "Y")
+            {
+                cssclass = objSchema.Page_From == GlobalParams.Page_From_Amort ? "active" : "";
+                <li class="@cssclass" id="liAmort">
+                    <input type="button" role="tab" onclick="return LoadTab('@GlobalParams.Page_From_Amort    ','@cssclass    ');" value="@objMessageKey.Amort" />
+                    <span></span>
+                </li>
+            }
+
+        </ul>
+    </div>
+</div>

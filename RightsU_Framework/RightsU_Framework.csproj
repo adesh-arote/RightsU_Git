@@ -1,0 +1,475 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{B25AF540-BFA8-4CCE-8219-3494116AE501}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RightsU_Framework</RootNamespace>
+    <AssemblyName>RightsU_Framework</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UseIISExpress>false</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <TargetFrameworkProfile />
+    <UseGlobalApplicationHostFile />
+    <Use64BitIISExpress />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AjaxControlToolkit">
+      <HintPath>..\RightsU_WebApp\bin\AjaxControlToolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.Common, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\Microsoft.ReportViewer.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.WebForms, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\Microsoft.ReportViewer.WebForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.WinForms, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\Microsoft.ReportViewer.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Web.Mobile" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Classes\Budget\Paf.cs" />
+    <Compile Include="Classes\Budget\PafBroker.cs" />
+    <Compile Include="Classes\Budget\PafBudgetDummy.cs" />
+    <Compile Include="Classes\Budget\PafCostType.cs" />
+    <Compile Include="Classes\Budget\PafCostTypeBroker.cs" />
+    <Compile Include="Classes\Budget\PafCostTypeMapping.cs" />
+    <Compile Include="Classes\Budget\PafCostTypeMappingBroker.cs" />
+    <Compile Include="Classes\BVTitle_Mapping\BVHouseidData.cs" />
+    <Compile Include="Classes\BVTitle_Mapping\BVHouseidDataBroker.cs" />
+    <Compile Include="Classes\BVTitle_Mapping\BVHouseidDataShows.cs" />
+    <Compile Include="Classes\BVTitle_Mapping\BVHouseidDataShowsBroker.cs" />
+    <Compile Include="Classes\Import\ImportMonthlySales.cs" />
+    <Compile Include="Classes\Import\ImportMonthlySalesBroker.cs" />
+    <Compile Include="Classes\Import\ImportMonthlySalesErrors.cs" />
+    <Compile Include="Classes\Import\ImportMonthlySalesErrorsBroker.cs" />
+    <Compile Include="Classes\Import\MCTABResultMonthlyCopy.cs" />
+    <Compile Include="Classes\Import\MCTABResultMonthlyCopyBroker.cs" />
+    <Compile Include="Classes\Import\MCTABResultYearlyCopy.cs" />
+    <Compile Include="Classes\Import\MCTABResultYearlyCopyBroker.cs" />
+    <Compile Include="Classes\master\AdditionalExpense.cs" />
+    <Compile Include="Classes\master\AdditionalExpenseBroker.cs" />
+    <Compile Include="Classes\master\AncillaryMedium.cs" />
+    <Compile Include="Classes\master\AncillaryMediumBroker.cs" />
+    <Compile Include="Classes\master\AncillaryPlatform.cs" />
+    <Compile Include="Classes\master\AncillaryPlatformBroker.cs" />
+    <Compile Include="Classes\master\AncillaryPlatformMedium.cs" />
+    <Compile Include="Classes\master\AncillaryPlatformMediumBroker.cs" />
+    <Compile Include="Classes\master\AncillaryRight.cs" />
+    <Compile Include="Classes\master\AncillaryRightBroker.cs" />
+    <Compile Include="Classes\master\AncillaryType.cs" />
+    <Compile Include="Classes\master\AncillaryTypeBroker.cs" />
+    <Compile Include="Classes\master\BusinessUnit.cs" />
+    <Compile Include="Classes\master\BusinessUnitBroker.cs" />
+    <Compile Include="Classes\master\BVException.cs" />
+    <Compile Include="Classes\master\BVExceptionBroker.cs" />
+    <Compile Include="Classes\master\BvexceptionChannel.cs" />
+    <Compile Include="Classes\master\BvexceptionChannelBroker.cs" />
+    <Compile Include="Classes\master\BvexceptionUsers.cs" />
+    <Compile Include="Classes\master\BvexceptionUsersBroker.cs" />
+    <Compile Include="Classes\master\Category.cs" />
+    <Compile Include="Classes\master\CategoryBroker.cs" />
+    <Compile Include="Classes\master\CbfcAgent.cs" />
+    <Compile Include="Classes\master\CbfcAgentBroker.cs" />
+    <Compile Include="Classes\master\Channel.cs" />
+    <Compile Include="Classes\master\ChannelBroker.cs" />
+    <Compile Include="Classes\master\ChannelEntity.cs" />
+    <Compile Include="Classes\master\ChannelEntityBroker.cs" />
+    <Compile Include="Classes\master\ChannelTerritory.cs" />
+    <Compile Include="Classes\master\ChannelTerritoryBroker.cs" />
+    <Compile Include="Classes\master\CommissionType.cs" />
+    <Compile Include="Classes\master\CommissionTypeBroker.cs" />
+    <Compile Include="Classes\master\DealTag.cs" />
+    <Compile Include="Classes\master\DealTagBroker.cs" />
+    <Compile Include="Classes\master\ExtendedColumns.cs" />
+    <Compile Include="Classes\master\ExtendedColumnsBroker.cs" />
+    <Compile Include="Classes\master\ExtendedColumnsValue.cs" />
+    <Compile Include="Classes\master\ExtendedColumnsValueBroker.cs" />
+    <Compile Include="Classes\master\Format.cs" />
+    <Compile Include="Classes\master\FormatBroker.cs" />
+    <Compile Include="Classes\master\CostCenter.cs" />
+    <Compile Include="Classes\master\CostCenterBroker.cs" />
+    <Compile Include="Classes\master\CostType.cs" />
+    <Compile Include="Classes\master\CostTypeBroker.cs" />
+    <Compile Include="Classes\master\Currency.cs" />
+    <Compile Include="Classes\master\CurrencyBroker.cs" />
+    <Compile Include="Classes\master\CurrencyExchangeRate.cs" />
+    <Compile Include="Classes\master\CurrencyExchangeRateBroker.cs" />
+    <Compile Include="Classes\master\DealType.cs" />
+    <Compile Include="Classes\master\DealTypeBroker.cs" />
+    <Compile Include="Classes\master\DocumentType.cs" />
+    <Compile Include="Classes\master\DocumentTypeBroker.cs" />
+    <Compile Include="Classes\master\Entity.cs" />
+    <Compile Include="Classes\master\EntityBroker.cs" />
+    <Compile Include="Classes\master\FormatPlatforms.cs" />
+    <Compile Include="Classes\master\FormatPlatformsBroker.cs" />
+    <Compile Include="Classes\master\Genres.cs" />
+    <Compile Include="Classes\master\GenresBroker.cs" />
+    <Compile Include="Classes\master\GradeMaster.cs" />
+    <Compile Include="Classes\master\GradeMasterBroker.cs" />
+    <Compile Include="Classes\master\HouseidType.cs" />
+    <Compile Include="Classes\master\HouseidTypeBroker.cs" />
+    <Compile Include="Classes\master\InternationalTerritory.cs" />
+    <Compile Include="Classes\master\InternationalTerritoryBroker.cs" />
+    <Compile Include="Classes\master\InternationalTerritoryLanguage.cs" />
+    <Compile Include="Classes\master\InternationalTerritoryLanguageBroker.cs" />
+    <Compile Include="Classes\master\Language.cs" />
+    <Compile Include="Classes\master\LanguageBroker.cs" />
+    <Compile Include="Classes\master\LanguageGroup.cs" />
+    <Compile Include="Classes\master\LanguageGroupBroker.cs" />
+    <Compile Include="Classes\master\LanguageGroupDetails.cs" />
+    <Compile Include="Classes\master\LanguageGroupDetailsBroker.cs" />
+    <Compile Include="Classes\master\MapExtendedColumns.cs" />
+    <Compile Include="Classes\master\MapExtendedColumnsBroker.cs" />
+    <Compile Include="Classes\master\MapExtendedColumnsDetails.cs" />
+    <Compile Include="Classes\master\MapExtendedColumnsDetailsBroker.cs" />
+    <Compile Include="Classes\master\MaterialMedium.cs" />
+    <Compile Include="Classes\master\MaterialMediumBroker.cs" />
+    <Compile Include="Classes\master\MaterialType.cs" />
+    <Compile Include="Classes\master\MaterialTypeBroker.cs" />
+    <Compile Include="Classes\master\OnlineVisitorsContainer.cs" />
+    <Compile Include="Classes\master\PaymentTerm.cs" />
+    <Compile Include="Classes\master\PaymentTermBroker.cs" />
+    <Compile Include="Classes\master\Penalty.cs" />
+    <Compile Include="Classes\master\PenaltyBroker.cs" />
+    <Compile Include="Classes\master\Platform.cs" />
+    <Compile Include="Classes\master\PlatformBroker.cs" />
+    <Compile Include="Classes\master\RightRule.cs" />
+    <Compile Include="Classes\master\RightRuleBroker.cs" />
+    <Compile Include="Classes\master\RightsCategory.cs" />
+    <Compile Include="Classes\master\RightsCategoryBroker.cs" />
+    <Compile Include="Classes\master\RightsCategoryPlatforms.cs" />
+    <Compile Include="Classes\master\RightsCategoryPlatformsBroker.cs" />
+    <Compile Include="Classes\master\RoyaltyCommission.cs" />
+    <Compile Include="Classes\master\RoyaltyCommissionBroker.cs" />
+    <Compile Include="Classes\master\RoyaltyCommissionDetails.cs" />
+    <Compile Include="Classes\master\RoyaltyCommissionDetailsBroker.cs" />
+    <Compile Include="Classes\master\RoyaltyRecoupment.cs" />
+    <Compile Include="Classes\master\RoyaltyRecoupmentBroker.cs" />
+    <Compile Include="Classes\master\RoyaltyRecoupmentDetails.cs" />
+    <Compile Include="Classes\master\RoyaltyRecoupmentDetailsBroker.cs" />
+    <Compile Include="Classes\master\SecurityGroup.cs" />
+    <Compile Include="Classes\master\SecurityGroupBroker.cs" />
+    <Compile Include="Classes\master\SecurityGroupRel.cs" />
+    <Compile Include="Classes\master\SecurityGroupRelBroker.cs" />
+    <Compile Include="Classes\master\SystemModule.cs" />
+    <Compile Include="Classes\master\SystemModuleBroker.cs" />
+    <Compile Include="Classes\master\SystemModuleRight.cs" />
+    <Compile Include="Classes\master\SystemModuleRightBroker.cs" />
+    <Compile Include="Classes\master\SystemParam.cs" />
+    <Compile Include="Classes\master\SystemParamBroker.cs" />
+    <Compile Include="Classes\master\SystemRight.cs" />
+    <Compile Include="Classes\master\SystemRightBroker.cs" />
+    <Compile Include="Classes\master\Talent.cs" />
+    <Compile Include="Classes\master\TalentBroker.cs" />
+    <Compile Include="Classes\master\Territory.cs" />
+    <Compile Include="Classes\master\TerritoryBroker.cs" />
+    <Compile Include="Classes\master\TerritoryGroup.cs" />
+    <Compile Include="Classes\master\TerritoryGroupBroker.cs" />
+    <Compile Include="Classes\master\TerritoryGroupDetails.cs" />
+    <Compile Include="Classes\master\TerritoryGroupDetailsBroker.cs" />
+    <Compile Include="Classes\master\UserChannel.cs" />
+    <Compile Include="Classes\master\UserChannelBroker.cs" />
+    <Compile Include="Classes\master\UserEntity.cs" />
+    <Compile Include="Classes\master\UserEntityBroker.cs" />
+    <Compile Include="Classes\master\Users.cs" />
+    <Compile Include="Classes\master\UsersBroker.cs" />
+    <Compile Include="Classes\master\UsersBusinessUnit.cs" />
+    <Compile Include="Classes\master\UsersBusinessUnitBroker.cs" />
+    <Compile Include="Classes\master\Vendor.cs" />
+    <Compile Include="Classes\master\VendorBroker.cs" />
+    <Compile Include="Classes\master\VendorContacts.cs" />
+    <Compile Include="Classes\master\VendorContactsBroker.cs" />
+    <Compile Include="Classes\master\VendorDomesticTerritory.cs" />
+    <Compile Include="Classes\master\VendorDomesticTerritoryBroker.cs" />
+    <Compile Include="Classes\master\VendorInternationalTerritory.cs" />
+    <Compile Include="Classes\master\VendorInternationalTerritoryBroker.cs" />
+    <Compile Include="Classes\master\VendorRole.cs" />
+    <Compile Include="Classes\master\VendorRoleBroker.cs" />
+    <Compile Include="Classes\master\WebsiteVisitor.cs" />
+    <Compile Include="Classes\modules\AmortRule.cs" />
+    <Compile Include="Classes\modules\AmortRuleBroker.cs" />
+    <Compile Include="Classes\modules\AmortRuleDetails.cs" />
+    <Compile Include="Classes\modules\AmortRuleDetailsBroker.cs" />
+    <Compile Include="Classes\modules\AmortRuleWrapper.cs" />
+    <Compile Include="Classes\modules\AmortRuleWrapperBroker.cs" />
+    <Compile Include="Classes\modules\AmortRuleWrapperFormatShow.cs" />
+    <Compile Include="Classes\modules\AmortRuleWrapperFormatShowBroker.cs" />
+    <Compile Include="Classes\modules\AvailabilityExportjob.cs" />
+    <Compile Include="Classes\modules\AvailabilityExportjobBroker.cs" />
+    <Compile Include="Classes\modules\BussinessStatementDetails.cs" />
+    <Compile Include="Classes\modules\BussinessStatementDetailsBroker.cs" />
+    <Compile Include="Classes\modules\CostTypeMapping.cs" />
+    <Compile Include="Classes\modules\CostTypeMappingBroker.cs" />
+    <Compile Include="Classes\modules\DummyLinkData.cs" />
+    <Compile Include="Classes\modules\DummyLinkDataBroker.cs" />
+    <Compile Include="Classes\modules\DummyLinkMusic.cs" />
+    <Compile Include="Classes\modules\DummyLinkMusicBroker.cs" />
+    <Compile Include="Classes\modules\InvoiceOutstandngInfo.cs" />
+    <Compile Include="Classes\modules\InvoiceOutstandngInfoBroker.cs" />
+    <Compile Include="Classes\modules\MaterialOrder.cs" />
+    <Compile Include="Classes\modules\MaterialOrderBroker.cs" />
+    <Compile Include="Classes\modules\MaterialOrderDetails.cs" />
+    <Compile Include="Classes\modules\MaterialOrderDetailsBroker.cs" />
+    <Compile Include="Classes\modules\MaterialReceipt.cs" />
+    <Compile Include="Classes\modules\MaterialReceiptBroker.cs" />
+    <Compile Include="Classes\modules\MaterialReceiptOrder.cs" />
+    <Compile Include="Classes\modules\MaterialReceiptOrderBroker.cs" />
+    <Compile Include="Classes\modules\ModuleStatusHistory.cs" />
+    <Compile Include="Classes\modules\ModuleStatusHistoryBroker.cs" />
+    <Compile Include="Classes\modules\RevenueAccountedInformation.cs" />
+    <Compile Include="Classes\modules\RevenueAccountedInformationBroker.cs" />
+    <Compile Include="Classes\modules\RoyaltyExchangeRate.cs" />
+    <Compile Include="Classes\modules\RoyaltyExchangeRateBroker.cs" />
+    <Compile Include="Classes\MovieClass\ErrorLogForWeb.cs" />
+    <Compile Include="Classes\MovieClass\Roles.cs" />
+    <Compile Include="Classes\MovieClass\RolesBroker.cs" />
+    <Compile Include="Classes\MovieClass\TalentRoles.cs" />
+    <Compile Include="Classes\MovieClass\TalentRolesBroker.cs" />
+    <Compile Include="Classes\MovieClass\Title.cs" />
+    <Compile Include="Classes\MovieClass\TitleAudioDetails.cs" />
+    <Compile Include="Classes\MovieClass\TitleAudioDetailsBroker.cs" />
+    <Compile Include="Classes\MovieClass\TitleAudioDetailsSingers.cs" />
+    <Compile Include="Classes\MovieClass\TitleAudioDetailsSingersBroker.cs" />
+    <Compile Include="Classes\MovieClass\TitleBroker.cs" />
+    <Compile Include="Classes\MovieClass\TitleProducer.cs" />
+    <Compile Include="Classes\MovieClass\TitleProducerBroker.cs" />
+    <Compile Include="Classes\MovieClass\TitleGenres.cs" />
+    <Compile Include="Classes\MovieClass\TitleGenresBroker.cs" />
+    <Compile Include="Classes\MovieClass\TitleLanguage.cs" />
+    <Compile Include="Classes\MovieClass\TitleLanguageBroker.cs" />
+    <Compile Include="Classes\MovieClass\TitleReleasedOn.cs" />
+    <Compile Include="Classes\MovieClass\TitleReleasedOnBroker.cs" />
+    <Compile Include="Classes\MovieClass\TitleStarCast.cs" />
+    <Compile Include="Classes\MovieClass\TitleStarCastBroker.cs" />
+    <Compile Include="Classes\MovieClass\TitleTerritory.cs" />
+    <Compile Include="Classes\MovieClass\TitleTerritoryBroker.cs" />
+    <Compile Include="Classes\Reports\DomesticAvailQuery.cs" />
+    <Compile Include="Classes\Reports\ScheduleAsRunReport.cs" />
+    <Compile Include="Classes\Reports\ScheduleAsRunReportBroker.cs" />
+    <Compile Include="Classes\SystemSetting\ClosingDealMovieEpisode.cs" />
+    <Compile Include="Classes\SystemSetting\ClosingDealMovieEpisodeBroker.cs" />
+    <Compile Include="Classes\SystemSetting\ModulePaymentTerm.cs" />
+    <Compile Include="Classes\SystemSetting\ModulePaymentTermBroker.cs" />
+    <Compile Include="Classes\SystemSetting\ModuleValidation.cs" />
+    <Compile Include="Classes\SystemSetting\ModuleValidationBroker.cs" />
+    <Compile Include="Classes\SystemSetting\ModuleWorkFlowDetail.cs" />
+    <Compile Include="Classes\SystemSetting\ModuleWorkFlowDetailBroker.cs" />
+    <Compile Include="Classes\SystemSetting\PaymentTerms.cs" />
+    <Compile Include="Classes\SystemSetting\PaymentTermsBroker.cs" />
+    <Compile Include="Classes\SystemSetting\Workflow.cs" />
+    <Compile Include="Classes\SystemSetting\WorkflowBroker.cs" />
+    <Compile Include="Classes\SystemSetting\WorkflowBU.cs" />
+    <Compile Include="Classes\SystemSetting\WorkflowBUBroker.cs" />
+    <Compile Include="Classes\SystemSetting\WorkflowBURole.cs" />
+    <Compile Include="Classes\SystemSetting\WorkflowBURoleBroker.cs" />
+    <Compile Include="Classes\SystemSetting\WorkflowModule.cs" />
+    <Compile Include="Classes\SystemSetting\WorkflowModuleBroker.cs" />
+    <Compile Include="Classes\SystemSetting\WorkflowModuleBU.cs" />
+    <Compile Include="Classes\SystemSetting\WorkflowModuleBUBroker.cs" />
+    <Compile Include="Classes\SystemSetting\WorkflowModuleBURole.cs" />
+    <Compile Include="Classes\SystemSetting\WorkflowModuleBURoleBroker.cs" />
+    <Compile Include="Classes\SystemSetting\WorkFlowModuleRole.cs" />
+    <Compile Include="Classes\SystemSetting\WorkFlowModuleRoleBroker.cs" />
+    <Compile Include="Classes\SystemSetting\WorkflowRole.cs" />
+    <Compile Include="Classes\SystemSetting\WorkflowRoleBroker.cs" />
+    <Compile Include="Classes\TitleMaping\BoxSetMapping.cs" />
+    <Compile Include="Classes\TitleMaping\BoxSetMappingBroker.cs" />
+    <Compile Include="Classes\TitleMaping\BoxSetMappingTitles.cs" />
+    <Compile Include="Classes\TitleMaping\BoxSetMappingTitlesBroker.cs" />
+    <Compile Include="Classes\TitleMaping\ExternalTitle.cs" />
+    <Compile Include="Classes\TitleMaping\ExternalTitleBroker.cs" />
+    <Compile Include="Classes\TitleMaping\ExternalTitle_GradeException.cs" />
+    <Compile Include="Classes\TitleMaping\ExternalTitle_GradeExceptionBroker.cs" />
+    <Compile Include="Classes\TitleMaping\GradeException.cs" />
+    <Compile Include="Classes\TitleMaping\GradeExceptionBroker.cs" />
+    <Compile Include="Classes\TitleMaping\TitleMapping.cs" />
+    <Compile Include="Classes\TitleMaping\TitleMappingBroker.cs" />
+    <Compile Include="Classes\TitleMaping\TitlePromotion.cs" />
+    <Compile Include="Classes\TitleMaping\TitlePromotionBroker.cs" />
+    <Compile Include="Classes\UploadExcel\CheckAndGetCodeOnIdFromDB.cs" />
+    <Compile Include="Classes\UploadExcel\SAP_WBS.cs" />
+    <Compile Include="Classes\UploadExcel\ExcelReader.cs" />
+    <Compile Include="Classes\UploadExcel\FileUploadExecption.cs" />
+    <Compile Include="Classes\UploadExcel\HouseIdMap.cs" />
+    <Compile Include="Classes\UploadExcel\HouseIdMapBroker.cs" />
+    <Compile Include="Classes\UploadExcel\IExcelUploadable.cs" />
+    <Compile Include="Classes\UploadExcel\RevenueDataBO.cs" />
+    <Compile Include="Classes\UploadExcel\RevenueDataBOBroker.cs" />
+    <Compile Include="Classes\UploadExcel\SAP_WBSBroker.cs" />
+    <Compile Include="Classes\UploadExcel\ShowHouseId_Dummy.cs" />
+    <Compile Include="Classes\UploadExcel\ShowHouseId_DummyBroker.cs" />
+    <Compile Include="Classes\UploadExcel\MigrateCost.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Classes\UploadExcel\MigrateCostBroker.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Classes\UploadExcel\MigrateHouseID.cs" />
+    <Compile Include="Classes\UploadExcel\MigrateHouseIDBroker.cs" />
+    <Compile Include="Classes\UploadExcel\MyMessShow.cs" />
+    <Compile Include="Classes\UploadExcel\NumericUtils.cs" />
+    <Compile Include="Classes\UploadExcel\RevenueDataHomeVideo.cs" />
+    <Compile Include="Classes\UploadExcel\RevenueDataHomeVideoBroker.cs" />
+    <Compile Include="Classes\UploadExcel\RevenueDataTheatre.cs" />
+    <Compile Include="Classes\UploadExcel\RevenueDataTheatreBroker.cs" />
+    <Compile Include="Classes\UploadExcel\UploadErrorCode.cs" />
+    <Compile Include="Classes\UploadExcel\UploadErrorCodeBroker.cs" />
+    <Compile Include="Classes\UploadExcel\UploadErrorDetail.cs" />
+    <Compile Include="Classes\UploadExcel\UploadErrorDetailBroker.cs" />
+    <Compile Include="Classes\UploadExcel\UploadFile.cs" />
+    <Compile Include="Classes\UploadExcel\UploadFileBroker.cs" />
+    <Compile Include="Classes\UploadExcel\UploadMigrateCost.cs" />
+    <Compile Include="Classes\UploadExcel\UploadMigrateHouseID.cs" />
+    <Compile Include="Classes\UploadExcel\UploadRevenueDataBO.cs" />
+    <Compile Include="Classes\UploadExcel\UploadRevenueDataHomeVideo.cs" />
+    <Compile Include="Classes\UploadExcel\UploadRevenueDataTheatre.cs" />
+    <Compile Include="Classes\UtoSession.cs" />
+    <Compile Include="FrameWorkClasses\ClassError.cs" />
+    <Compile Include="FrameWorkClasses\GlobalParams.cs" />
+    <Compile Include="FrameWorkClasses\GlobalUtil.cs" />
+    <Compile Include="FrameWorkClasses\LoginEntity.cs" />
+    <Compile Include="FrameWorkClasses\MessageShow.cs" />
+    <Compile Include="FrameWorkClasses\ParentPage.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="FrameWorkClasses\SendMail.cs" />
+    <Compile Include="FrameWorkClasses\ServerUtility.cs" />
+    <Compile Include="FrameWorkClasses\TransactionParentPage.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="FrameWorkClasses\UTOFramework.cs" />
+    <Compile Include="Classes\Reports\MovieRightsStatusAvailableReport.cs" />
+    <Compile Include="Classes\Reports\MovieRightsStatusAvailableReportBroker.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReportClassesFramework\ReportColumn.cs" />
+    <Compile Include="ReportClassesFramework\ReportColumnBroker.cs" />
+    <Compile Include="ReportClassesFramework\ReportCondition.cs" />
+    <Compile Include="ReportClassesFramework\ReportConditionBroker.cs" />
+    <Compile Include="ReportClassesFramework\ReportQuery.cs" />
+    <Compile Include="ReportClassesFramework\ReportQueryBroker.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="bin\Debug\AjaxControlToolkit.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="obj\Debug\TempPE\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="web.config" />
+    <None Include="web.Debug.config">
+      <DependentUpon>web.config</DependentUpon>
+    </None>
+    <None Include="web.Release.config">
+      <DependentUpon>web.config</DependentUpon>
+    </None>
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>52839</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>
+          </IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

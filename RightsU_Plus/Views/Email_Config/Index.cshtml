@@ -1,0 +1,134 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<link href="~/Custom_Scripts/Custom_CSS/Acq_Deal_List.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<link type="text/css" rel="stylesheet" href="~/CSS/jquery.timeentry.css">
+<script type="text/javascript" src="~/JS_Core/jquery.plugin.js"></script>
+<script type="text/javascript" src="~/JS_Core/jquery.timeentry.js"></script>
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script src="~/Custom_Scripts/Email_Config.js"></script>
+<div class="main_section" onclick="HideAllPopupDiv()">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <input type="hidden" id="hdnRecordislocked" name="hdnRecordislocked" value="Y" />
+            <input type="hidden" id="hdnRecordLockingCode" name="hdnRecordLockingCode" value="0" />
+            <div id="dvEConfiglList">
+            </div>
+            <div id="dvNoRecords" class="grid_area deal clearfix" style="display: none">
+                No Records Found!!
+            </div>
+        </div>
+    </section>
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade scroll" id="popApprovalRemark" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" onclick="FadeOutPopup()">
+        <div class="modal-content clearfix">
+            <form class="form" id="formApprovalRemark">
+                <div class="form_wrapper">
+                    <div class="form_fields acq">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#" onclick="CloseApprovalRemark()">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>Users</h2>
+                        </div>
+                        <div id="divUsers"
+                             class="modal_block"
+                             style="position:relative">
+
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li>
+                                        <input type="button" class="btn btn-primary" value="Close"
+                                               onclick="CloseApprovalRemark()">
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    var URL_BindGrid = '@Url.Action("BindGrid", "Email_Config")';
+    var URL_AddEditConfigure = '@Url.Action("AddEditConfigure", "Email_Config")';
+    var URL_BindUserGrid = '@Url.Action("BindUserGrid", "Email_Config")';
+    var URL_Save = '@Url.Action("Save", "Email_Config")';
+    var URL_PopulateUsers = '@Url.Action("PopulateUsers", "Email_Config")';
+    var URL_UserSave = '@Url.Action("UserSave", "Email_Config")';
+    var URL_UserDelete = '@Url.Action("UserDelete", "Email_Config")';
+    var
+    URL_CheckRecordLock = '@Url.Action("CheckRecordLock", "Email_Config")',
+    URL_CheckRecordCurrentStatus = '@Url.Action("CheckRecordCurrentStatus", "Email_Config")',
+    URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")',
+    URL_Release_Lock = '@Url.Action("Release_Lock", "Global")';
+    URL_CheckEnableCCBCC = '@Url.Action("CheckEnableCCBCC", "Email_Config")';
+
+    $(document).ready(function () {
+        BindGrid();
+        initializeTooltip();
+    })
+    function HideAllPopupDiv() {
+        try {
+            FadeOutPopup();
+        }
+        catch (err) {
+        }
+    }
+</script>
+<script>
+    function CheckRecordLock(Email_Config_Code) {
+        debugger;
+        showLoading();
+        var returnVal = false;
+        $.ajax({
+            type: "POST",
+            url: URL_CheckRecordLock,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Email_Config_Code: Email_Config_Code
+            }),
+            async: true,
+            success: function (result) {
+                hideLoading();
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Is_Locked == "Y") {
+                        debugger;
+                        $("#hdnRecordislocked").val("Y")
+                        AddEditConfigure(Email_Config_Code);
+                        $('#hdnRecordLockingCode').val(result.Record_Locking_Code); // This syntax must be after AddEditCountry() this
+                        Call_RefreshRecordReleaseTime(result.Record_Locking_Code, URL_Refresh_Lock);
+                        returnVal = true;
+                    }
+                    else {
+                        $("#hdnRecordislocked").val("N")
+                        showAlert("E", result.Message);
+                        returnVal = false;
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error in CheckRecordLock(): ' + result.responseText);
+                hideLoading();
+                returnVal = false;
+            }
+        });
+        return returnVal;
+    }
+</script>

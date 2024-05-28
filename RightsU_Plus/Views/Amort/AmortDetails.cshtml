@@ -1,0 +1,284 @@
+﻿@using UTOFrameWork.FrameworkClasses
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script>
+    var URL_BindTitle = '@Url.Action("BindTitle", "Amort")',
+     URL_BindAmortList = '@Url.Action("BindAmortList", "Amort")',
+     URL_ViewAmortRule = '@Url.Action("ViewAmortRule", "Amort")',
+     URL_BindRuleNo = '@Url.Action("BindRuleNo", "Amort")',
+     URL_BindShowAortRule = '@Url.Action("BindShowAortRule", "Amort")';
+
+    $(document).ready(function () {
+        initializeChosen();
+        $('input:radio[name="Title_Type"]').change(function () {
+            BindAmortList(0);
+            BindTitle($(this).val());
+        });
+        var TitleCode = $('#ddlTitle').val();
+        if (TitleCode == "" || TitleCode == null) {
+            BindAmortList(0);
+        }
+        if('@ViewBag.IsEdit' == 'Y')
+            BindTitle('M');
+            BindAmortList(676);
+
+    });
+
+    function BindTitle(TitleFor) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_BindTitle,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                TitleFor: TitleFor
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true")
+                    redirectToLogin();
+                else {
+                    $("#ddlTitle").empty();
+                    if('@ViewBag.IsEdit' != "Y")
+                        $("#ddlTitle").append($("<option>").val(0).text("Please Select"));
+                    $(result.lstTitle).each(function (index, item) {
+                        $("#ddlTitle").append($("<option>").val(this.Value).text(this.Text));
+                    });
+                    $('#ddlTitle').trigger("chosen:updated");
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+    function BindRuleNo(Rule_Type) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_BindRuleNo,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Rule_Type: Rule_Type
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true")
+                    redirectToLogin();
+                else {
+                    var amortOn = $("#AmortOn").val();
+                    if (amortOn == "C") {
+                        var CostTypeCount = $("#CostTypeCount").val();
+                        for (var i = 1; i <= CostTypeCount; i++) {
+                            $("#ddlRule_No_" + i).empty();
+                            //$("#ddlRule_No_" + i).append($("<option>").val(0).text("Please Select"));
+                            $(result.lstRule_No).each(function (index, item) {
+                                $("#ddlRule_No_" + i).append($("<option>").val(this.Value).text(this.Text));
+                            });
+                            $("#ddlRule_No_" + i).trigger("chosen:updated");
+                            $("#ddlRule_No_" + i + "_chosen").css("width", "200px");
+                            
+                        }
+                        $(".ddlRule_No_List").css("width", "1px");
+                    }
+                    else (amortOn == "D")
+                    {
+                        $("#ddlRule_No").empty();
+                        $("#ddlRule_No").append($("<option>").val(0).text("Please Select"));
+                        $(result.lstRule_No).each(function (index, item) {
+                            $("#ddlRule_No").append($("<option>").val(this.Value).text(this.Text));
+                        });
+                        $('#ddlRule_No').trigger("chosen:updated");
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+    function OnChangeBindTitle() {
+        debugger;
+        var TitleCode = $('#ddlTitle').val();
+        BindAmortList(TitleCode);
+    }
+
+    function BindAmortList(TitleCode) {
+        $.ajax({
+            type: "POST",
+            url: URL_BindAmortList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                TitleCode: TitleCode
+            }),
+            success: function (result) {
+                if (result == "true")
+                    redirectToLogin();
+                else {
+                    $('#divAmortList').empty();
+                    $('#divAmortList').html(result);
+                    initializeTooltip();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function OnChangeBind_Rule_Details() {
+        debugger;
+        var Amort_Rule_Code = $('#ddlRule_No').val();
+        BindShowAortRule(Amort_Rule_Code);
+    }
+
+    function BindShowAortRule(Amort_Rule_Code) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_BindShowAortRule,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                Amort_Rule_Code: Amort_Rule_Code
+            }),
+            success: function (result) {
+                if (result == "true")
+                    redirectToLogin();
+                else {
+                    debugger;
+                    $('#divShowAortRule').empty();
+                    $('#divShowAortRule').html(result);
+                    initializeTooltip();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function ViewAmortRule(Acq_Deal_Code, Counter) {
+        debugger;
+        var Amort_On = "D";
+        if ($('#Cost_Type' + Counter).is(':checked'))
+            Amort_On = "C";
+        var TitleCode = parseInt($('#ddlTitle').val());
+
+        if (TitleCode = "" || TitleCode == null)
+            return false;
+
+        $.ajax({
+            type: "POST",
+            url: URL_ViewAmortRule,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                Acq_Deal_Code: Acq_Deal_Code,
+                Amort_On: Amort_On,
+                TitleCode: parseInt($('#ddlTitle').val())
+            }),
+            success: function (result) {
+                debugger;
+                if (result == "true")
+                    redirectToLogin();
+                else {
+                    $('#popup').modal();
+                    $('#pupupHtml').empty();
+                    $('#pupupHtml').html(result);  
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function ClosePopup() {
+        $('#popup').modal('hide');
+        $('#pupupHtml').empty();
+    }
+</script>
+<style>
+    #ddlTitle_chosen {
+        width: 292px !important;
+    }
+</style>
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="">
+                <div class="title_block dotted_border clearfix">
+                    <h2 class="pull-left">
+                        Amort
+                        <span></span>
+                    </h2>
+                    <h4 class="pull-right" style="margin-top: 19px;">
+                        <b>Month APR 2017</b>  
+                    </h4>
+
+                    <div class="right_nav pull-right">
+                    </div>
+                </div>
+
+                <div class="grid_area">
+                    <div style="border-bottom: 1px dotted #777; display:none;"></div>
+                    <table class="table table-hover">
+                        <tr>
+                            <td style ="padding-top: 10px;width: 171px;">
+                                <input type="hidden" id="isEdit" value="@ViewBag.isEdit" />
+                                @if (ViewBag.isEdit == "Y")
+                                {
+                                    @Html.RadioButton("Title_Type", "M",true, new { style = "cursor: pointer;" }) <text>&nbsp; Movies &nbsp;&nbsp;&nbsp;</text>
+                                }
+                                else
+                                {
+                                    @Html.RadioButton("Title_Type", "M", new { style = "cursor: pointer;" }) <text> Movies &nbsp;&nbsp;&nbsp;</text>
+                                }
+                                
+                                @Html.RadioButton("Title_Type", "P", new { style = "cursor: pointer;" })&nbsp; Program
+                            </td>
+                            <td>
+                                <select id="ddlTitle" class="form_input chosen-select" onchange="OnChangeBindTitle()" style="width: 174px;"></select>&nbsp;&nbsp;&nbsp;
+                                <input type="button" class="btn btn-primary" value="Search Rights" />
+                            </td>
+                        </tr>   
+                    </table>
+                    <br />
+                    <div class="tab-content clearfix table-wrapper scale_table_container">
+                        <div class="scale_table_block">
+                            <div id="divAmortList" class="deal clearfix">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <div class="form_fields acq" id="pupupHtml">
+
+            </div>
+        </div>
+    </div>
+</div>

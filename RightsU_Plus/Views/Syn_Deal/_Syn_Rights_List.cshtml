@@ -1,0 +1,291 @@
+﻿@model List<RightsU_Entities.USP_List_Rights_Result>
+@using UTOFrameWork.FrameworkClasses
+@{
+    RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
+    if (Session[RightsU_Entities.RightsU_Session.Syn_DEAL_SCHEMA] != null)
+    {
+        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.Syn_DEAL_SCHEMA];
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<link href="~/CSS/Rights_Tab.css" rel="stylesheet" />
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
+<style>
+    .modal-open {
+        overflow: scroll !important;
+        overflow-x: hidden !important;
+        padding-right: 1px !important;
+    }
+         #popupFade .modal_header{
+        background:#c3c3c3;
+    }
+    /*.sumo_ddlTitleCode {
+        width: 375px !important;
+        font-weight: 100 !important;
+    }*/
+</style>
+<script>
+    var Dealmode_G = '@objSchema.Mode'
+    , Record_Locking_Code_G = '@ViewBag.Record_Locking_Code'
+, Rights_View_G = '@objSchema.Rights_View'
+, Rights_Titles_G = '@objSchema.Rights_Titles'
+, Rights_PageSize_G = '@objSchema.Rights_PageSize'
+, Rights_PageNo_G = '@objSchema.Rights_PageNo';
+    var rightsRegion_G = '@objSchema.Rights_Region'.split(',');
+    var rightsPlatform_G = '@objSchema.Rights_Platform';
+   // var rightsTitle_G = '@objSchema.Rights_Titles'.split(',');
+    var rightsExclusive_G = '@objSchema.Rights_Exclusive';
+    var URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global", null, Request.Url.Scheme)'
+     , URL_BindGrid = '@Url.Action("BindGrid", "Syn_Rights_List")'
+    , URL_GetSynRightsStatus = '@Url.Action("GetSynRightsStatus", "Syn_Rights_List")'
+    , URL_DeleteRight = '@Url.Action("DeleteRight", "Syn_Rights_List")'
+    , URL_Index = '@Url.Action("Index", "Syn_List")'
+    , URL_Cancel = '@Url.Action("Cancel", "Syn_Rights_List")'
+    , URL_ValidateRightsTitleWithAcq = '@Url.Action("ValidateRightsTitleWithAcq", "Syn_Rights_List")'
+    , URL_Show_Error_Popup = '@Url.Action("Show_Error_Popup", "Syn_Rights_List")'
+    , URL_Reprocess = '@Url.Action("Reprocess", "Syn_Rights_List")'
+    , URL_ChangeTab = '@Url.Action("ChangeTab", "Global")'
+    , URL_SetSynApprovalRemarks = '@Url.Action("SetSynApprovalRemarks", "Global")'
+    , URL_ButtonEvents = '@Url.Action("ButtonEvents", "Syn_Rights_List")'
+    , ShowRestriction_Remarks_Popup_URL = '@Url.Action("ShowRestriction_Remarks_Popup", "Syn_Rights_List")'
+    , URL_GetSynRightStatus = '@Url.Action("GetSynRightStatus", "Syn_Deal")';
+    var URL_BindRightsFilterData = '@Url.Action("BindRightsFilterData","Syn_Rights_List")';
+
+    var ShowMessage = {
+        "Cannotdeleterightasitisalreadysyndicated": '@objMessageKey.Cannotdeleterightasitisalreadysyndicated',
+        "Areyousureyouwanttodeletethisright": '@objMessageKey.Areyousureyouwanttodeletethisright',
+        "CannoteditRightsascorrespondingAcquisitionDealisinAmendmentstate": '@objMessageKey.CannoteditRightsascorrespondingAcquisitionDealisinAmendmentstate',
+        "AllunsavedData": '@objMessageKey.AllUnsavedDataWillBeLostStillWantToGoAhead',
+        "Pleaseselectatleastonecriteriatoview": '@objMessageKey.Pleaseselectatleastonecriteriatoview',
+        "Title": '@objMessageKey.Title',
+        "Platform": '@objMessageKey.Platform',
+        "Region": '@objMessageKey.Region',
+        "RestrictionRemark": '@objMessageKey.RestrictionRemark',
+        "TitleLanguage": '@objMessageKey.TitleLanguage',
+        "Subtitling": '@objMessageKey.Subtitling',
+        "Dubbing": '@objMessageKey.Dubbing',
+        "MsgPlaceSearch": '@objMessageKey.Search'
+    }
+</script>
+<script>
+    $('.expand_AcqRemarks').expander({
+        slicePoint: 490,
+        expandPrefix: '',
+        expandText: '@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        BindRightsFilterData();
+        $('#hdnModuleCode').val(@GlobalParams.ModuleCodeForSynDeal)
+        if (parseInt(Record_Locking_Code_G) > 0) {
+            var fullUrl = URL_Refresh_Lock;
+            Call_RefreshRecordReleaseTime(Record_Locking_Code_G, fullUrl);
+        }
+        $('#ddlTitleCode').SumoSelect();
+        // $("#ddlTitleCode").find("option").attr("selected", false)[0].sumo.reload();
+
+    })
+
+    function bindBulkUpdate() {
+        $("#btnSave").attr("style", "display:none !important");
+        $("#btnCancelDeal").attr("style", "display:none");
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BulkUpdate", "Syn_Rights_List")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: false,
+            success: function (result) {
+                if (result == "true")
+                    redirectToLogin();
+                else {
+                    $("#tabRights").html(result);
+                    initializeDatepicker();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+        return true;
+    }
+    function BindRightsFilterData() {
+        $.ajax({
+            type: "POST",
+            url: URL_BindRightsFilterData,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            async: false,
+            data: JSON.stringify({
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divRightsFilter').empty();
+                    $('#divRightsFilter').html(result);
+                    initializeExpander();
+                    initializeTooltip();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+</script>
+
+<script src="~/Custom_Scripts/Syn_Deal_Rights_List.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
+@*<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container syn main_col">*@
+@using (Ajax.BeginForm("ChangeTab", "Syn_Rights_List", new AjaxOptions { OnSuccess = "Save_Success" }))
+{
+    <div class="grid_area" onclick="FadeOutPopup1();">
+        <div class="navigation_tabs">
+            <div class="tabbable">
+                <div class="tab-content clearfix table-wrapper scale_table_container">
+                    <div class="tab-pane active" id="tabRights">
+                        <div class="scale_table_block">
+                            <div id="divRightsFilter">
+                            </div>
+                            @*<table class="table">
+                                <tr>
+                                    <td class="bold" style="width: 10%;">Page View:</td>
+                                    <td style="width: 25%;">
+                                        <div>
+                                            @Html.Hidden("ViewType", "")
+                                            <label class="radio-inline">
+                                                <input type="radio" name="optViewType" id="G" value="G" checked onchange="showLoading(); BindGridNew(this, 'N');" />
+                                                @Html.Hidden("hdnCurrentPageNo")
+                                                @Html.Hidden("hdn_Command_Name")
+                                                <input type="hidden" id="hdnTabName" name="hdnTabName" />
+                                                Group
+                                            </label>
+                                            <label class="radio-inline">
+                                                <input type="radio" name="optViewType" id="S" value="S" onchange="showLoading(); BindGridNew(this, 'N');" />
+                                                Summary
+                                            </label>
+                                            <label class="radio-inline">
+                                                <input type="radio" name="optViewType" id="D" value="D" onchange="showLoading(); BindGridNew(this, 'N');" />
+                                                Detail
+                                            </label>
+                                        </div>
+                                    </td>
+                                    <td class="bold" style="width: 5%;">
+                                        Titles
+                                    </td>
+                                    <td class="bold" style="width: 40%;">
+                                        <div class="ddlTitleCode" style="width: 377px;">
+                                            @Html.ListBox("ddlTitleCode", ViewBag.TitleList as MultiSelectList, new { @multiple = "multiple" })
+                                        </div>
+                                    </td>
+                                    <td style="width: 10%;">
+                                        <input type="button" class="button" value="Show All" id="btnShowAll">
+                                    </td>
+                                    <td style="width: 5%;">
+                                        @if (ViewBag.ButtonVisibility && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_APPROVE)
+                                        {
+                                            <input type="button" class="button" value="Bulk Update" id="btnBulkUpdate" onclick="BindPartialTabs('@GlobalParams.Page_From_Rights_Bulk_Update');">
+                                        }
+                                    </td>
+                                </tr>
+                            </table>*@
+                        </div>
+                        <div class="paging_area clearfix">
+                            <span class="pull-left" id="lblTotal"></span>
+                            <div id="Pagination" class="pagination">
+                            </div>
+                            <span class="pull-right" >
+                                @objMessageKey.PageSize:
+                                <input type="text" id="txtPageSize" class="smallTextBox pagingSize" value="10" 
+                                       onchange="return PageSize_OnChange();" onblur="setDefaultPaging('txtPageSize')"/>
+                            </span>
+                            @*@if (ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_APPROVE)
+                            {
+                                 
+                                        <a class="btn btn-primary pull-right" onclick="ButtonEvents('@GlobalParams.DEAL_MODE_ADD')">Add Rights</a>
+                                 
+                            }*@
+                        </div>
+                        <div class="scale_table_block">
+                            <div class="div_BindGrid">
+                            </div>
+                        </div>
+                        <br>
+                        <div class="scale_table_block">
+                            <div class="divBlock">
+                                <div class="bold" style="padding-right: 87%;">@objMessageKey.Remarks</div>
+                                @if (objSchema.Mode != GlobalParams.DEAL_MODE_VIEW && objSchema.Mode != GlobalParams.DEAL_MODE_APPROVE)
+                                {
+                                    <div id="CharNum" class="charNum">4000</div>
+                                }
+                            </div>
+                            @if (objSchema.Mode != GlobalParams.DEAL_MODE_VIEW && objSchema.Mode != GlobalParams.DEAL_MODE_APPROVE)
+                            {
+                                <textarea name="txtAcqRemarks" id="txtAcqRemarks" class="textarea" onkeypress="countChar(this)" onkeyup="countChar(this)">@ViewBag.Remark</textarea>
+                            }
+                            else
+                            {
+                                <br />
+                                <div class="expand_AcqRemarks">
+                                    @Html.Raw(ViewBag.Remark.Replace("\r\n", "<br/>").Replace("\n", "<br/>"))
+                                </div>
+                            }
+
+                        </div>
+                    </div>
+                    @if (objSchema.Mode == GlobalParams.DEAL_MODE_APPROVE)
+                    {
+                        @Html.Partial("_Syn_Approved_List")
+                    }
+                    else
+                    {
+                        <div class="bottom_action">
+                            <ul class="form_link_nav clearfix">
+                                @if (objSchema.Mode != GlobalParams.DEAL_MODE_VIEW && objSchema.Mode != GlobalParams.DEAL_MODE_APPROVE)
+                                {
+                                    <li>
+                                        <input type="submit" value="@objMessageKey.Save" id="btnSave" class="btn btn-primary" onclick="return ValidateSave();" />
+                                        <input type="hidden" id="hdnReopenMode" name="hdnReopenMode" value="E" />
+
+                                    </li>
+                                    if (objSchema.Deal_Workflow_Flag == GlobalParams.DEAL_MODE_REOPEN || objSchema.Mode == GlobalParams.DEAL_MODE_REOPEN)
+                                    {
+                                        <li>
+                                            <input type="submit" value="@objMessageKey.SaveApprove" id="btnSaveandApprove" class="btn btn-primary" onclick="return ValidateSave();" />
+
+                                        </li>
+                                    }
+                                    <li>
+                                        <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="CancelSaveDeal();" />
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li>
+                                        <input type="button" id="btnCancel_Deal" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="location.href='@Url.Action("Cancel", "Syn_Rights_List")    '" />
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}

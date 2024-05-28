@@ -1,0 +1,332 @@
+﻿@using UTOFrameWork.FrameworkClasses;
+@{
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    int Count = 0;
+    int tempCount = ViewBag.TempCount;
+    int DealCode = ViewBag.DealCode;
+    string Button_Visibility = ViewBag.Button_Visibility;
+    string Deal_Workflow_Status = ViewBag.Deal_Workflow_Status;
+    string Status = ViewBag.Status;
+    int Deal_Type_Code = ViewBag.Deal_Type_Code;
+    string Agreement_No = ViewBag.Agreement_No;
+    string Controller = ViewBag.Type;
+    string BuybackDisabledForClone = "";
+
+    string toolTipTitle = "Renew / Clone";
+    if (ViewBag.RoleCode == GlobalParams.RoleCode_BuyBack)
+    {
+        BuybackDisabledForClone = "disabled";
+        toolTipTitle = "Cannot clone Buyback deal";
+    }
+}
+
+@if (Button_Visibility != null)
+{
+    if (Button_Visibility.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForView + ","))
+    {
+        Count = Count + 1;
+        if (Controller == "Syn_List")
+        {
+            <a title="View" id="View_@tempCount" class="glyphicon glyphicon-eye-open" href="@Url.Action("ButtonEvents", "Syn_List" , new { CommandName = "View", Syn_Deal_Code = DealCode })"></a>
+        }
+        else
+        {
+            <a title="View" id="View_@tempCount" class="glyphicon glyphicon-eye-open" href="@Url.Action("ButtonEvents", "Acq_List" , new { CommandName = "View", Acq_Deal_Code = DealCode })"></a>
+        }
+        <img id="imgLoading_@DealCode" title="Please Wait.." src="~/Images/square_dots_loading.gif" style="height: 26px; display:none" />
+        <a id="btnShowError_@DealCode" title="Show Error" class="glyphicon glyphicon-exclamation-sign" style="display: none; color: #2b64a5;"></a>
+        if (Count > 3)
+        {
+            <script>
+                $("#extend_@tempCount").append($('#View_@tempCount'));
+            </script>
+        }
+    }
+    if (Button_Visibility.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForEdit + ","))
+    {
+        Count = Count + 1;
+        <a title="Edit" id="Edit_@tempCount" class="glyphicon glyphicon-pencil AT_@DealCode" onclick="return CheckRecordLock(@DealCode,'Edit')"></a>
+
+        if (Count > 3)
+        {
+            <script>
+                $("#extend_@tempCount").append($('#Edit_@tempCount'));
+            </script>
+        }
+    }
+    if (Button_Visibility.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForRightGranted + ","))
+    {
+        Count = Count + 1;
+        if (Controller == "Syn_List")
+        {
+            <a title="Renew / Clone" class="glyphicon glyphicon-duplicate AT_@DealCode" id="RenewClone_@tempCount" href="@Url.Action("ButtonEvents","Syn_List", new { CommandName = "Clone", Syn_Deal_Code = @DealCode })"></a>
+        }
+        else
+        {
+            <a title="@toolTipTitle" class="glyphicon glyphicon-duplicate AT_@DealCode @BuybackDisabledForClone" id="RenewClone_@tempCount"  href="@Url.Action("ButtonEvents","Acq_List", new { CommandName = "Clone", Acq_Deal_Code = @DealCode })"></a>
+        }
+        if (Count > 3)
+        {
+            <script>
+                $("#extend_@tempCount").append($('#RenewClone_@tempCount'));
+            </script>
+        }
+    }
+    if (Button_Visibility.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForAmendment + ","))
+    {
+        Count = Count + 1;
+
+        <a title="Amendment" id="Amendment_@tempCount" class="glyphicon glyphicon-edit AT_@DealCode" onclick="return CheckRecordLock(@DealCode,'Amendment')"></a>
+        if (Count > 3)
+        {
+            <script>
+                $("#extend_@tempCount").append($('#Amendment_@tempCount'));
+            </script>
+        }
+    }
+
+    @* DEAL ARCHIVE STARTS *@
+    if (Button_Visibility.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForSendForArchive + ","))
+    {
+        Count = Count + 1;
+        <a title="Send For Archive" class="glyphicon glyphicon-share-alt  AT_@DealCode" id="SendForArchive_@tempCount" href="#" onclick="HideShow('divAction_@tempCount','View_@tempCount','Y');Ask_Confirmation('SendForArchive',@DealCode,0);"></a>
+        if (Count > 3)
+        {
+            <script>
+                 $("#extend_@tempCount").append($('#SendForArchive_@tempCount'));
+            </script>
+        }
+    }
+
+    if (Button_Visibility.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForDealArchive + ","))
+    {
+        Count = Count + 1;
+        <a title="Archive" id="Archive_Remark_@tempCount" class="glyphicon glyphicon-briefcase AT_@DealCode"
+           @*onclick="HideShow('divAction_@tempCount','View_@tempCount','Y');Ask_Confirmation('Archive',@DealCode,0);"*@
+           href='@Url.Action("Deal_For_Approval", "Global", new { DealCode = DealCode, ModuleCode = 30, Record_Locking_Code = "RecordLockingCode", Is_Menu="N" })'></a>
+        if (Count > 3)
+        {
+            <script>
+                  $("#extend_@tempCount").append($('#Archive_@tempCount'));
+            </script>
+        }
+    }
+
+    @* DEAL ARCHIVE ENDS *@
+    if (Button_Visibility.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForSendForApproval + ","))
+    {
+        string apprName = "Send For Approval";
+        if (Deal_Workflow_Status == "R")
+        {
+            RightsU_BLL.USP_Service objUSP = new RightsU_BLL.USP_Service(objLoginEntity.ConnectionStringName);
+            int CreatorGroupCode = Convert.ToInt32(objUSP.USP_Get_Creator_Group_Code_AfterReject(@DealCode, UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForAcqDeal).ElementAt(0));
+            string Allow_Edit_All_On_Rejection = new RightsU_BLL.System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Allow_Edit_All_On_Rejection" && x.IsActive == "Y").Select(s => s.Parameter_Value).FirstOrDefault();
+
+            if (CreatorGroupCode == @ViewBag.UserSecurityCode || Allow_Edit_All_On_Rejection == "Y")
+            {
+                apprName = "Re-send For Approval";
+            }
+        }
+    }
+
+    if (Button_Visibility.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForCloseMovie + ","))
+    {
+        Count = Count + 1;
+        <a title="Close Title" id="CloseTitle_@tempCount" class="glyphicon glyphicon-copyright-mark AT_@DealCode" onclick="return CheckRecordLock(@DealCode,'CloseMovie')"></a>
+        if (Count > 3)
+        {
+            <script>
+                $("#extend_@tempCount").append($('#CloseTitle_@tempCount'));
+            </script>
+        }
+    }
+    if (Button_Visibility.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForDelete + ","))
+    {
+        Count = Count + 1;
+        <a title="Delete" id="Delete_@tempCount" href="#" class="glyphicon glyphicon-trash delete_@tempCount AT_@DealCode"
+           onclick="Ask_Confirmation('Delete', @DealCode,0)"></a>
+        if (Count > 3)
+        {
+            <script>
+                $("#extend_@tempCount").append($('.delete_@tempCount'));
+            </script>
+        }
+    }
+    if (Button_Visibility.Contains(",Y,"))
+    {
+        Count = Count + 1;
+        <a title="Set Milestone" id="SetMilestone_@tempCount" class="glyphicon glyphicon-modal-window AT_@DealCode" href="#" onclick="BindMilestonePopup(@DealCode)"></a>
+        if (Count > 3)
+        {
+            <script>
+                $("#extend_@tempCount").append($('#SetMilestone_@tempCount'));
+            </script>
+        }
+    }
+    if (Button_Visibility.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForAmendAfterSyn + ","))
+    {
+        Count = Count + 1;
+
+        <a title="Amendment after Syndication" id="AmendmentAfterSyndication_@tempCount" class="glyphicon glyphicon-erase AT_@DealCode" onclick="return CheckRecordLock(@DealCode,'Amendment_Syn')"></a>
+
+        if (Count > 3)
+        {
+            <script>
+                $("#extend_@tempCount").append($('#AmendmentAfterSyndication_@tempCount'));
+            </script>
+        }
+    }
+    if (Button_Visibility.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForApprove + ","))
+    {
+
+        Count = Count + 1;
+        <a title="Approve" class="glyphicon glyphicon-check ApproveCounter_@tempCount AT_@DealCode"
+           onclick="return Validate_Record_Site(@DealCode, 'A', this)" id="A_@tempCount"
+           href='@Url.Action("Deal_For_Approval", "Global", new { DealCode = DealCode, ModuleCode = 30, Record_Locking_Code = "RecordLockingCode", Is_Menu="N" })'></a>
+        if (Count > 3)
+        {
+            <script>
+                $("#extend_@tempCount").append($('.ApproveCounter_@tempCount'));
+            </script>
+        }
+    }
+    if (Button_Visibility.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForAcqContentTab + ","))
+    {
+        Count = Count + 1;
+        <a title="Content" id="Content_@tempCount" class="glyphicon glyphicon-copy AT_@DealCode" href="@Url.Action("ButtonEvents", Controller, new { CommandName = "Content", Acq_Deal_Code = @DealCode })"></a>
+
+        if (Count > 3)
+        {
+            <script>
+                $("#extend_@tempCount").append($('#Content_@tempCount'));
+            </script>
+        }
+    }
+
+    if (Button_Visibility.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForTerminate + ","))
+    {
+        Count = Count + 1;
+        <a title="Terminate" id="Terminate_@tempCount" class="glyphicon glyphicon-eye-close AT_@DealCode" onclick="TerminateDeal(@DealCode, @Deal_Type_Code, '@Agreement_No')"></a>
+        if (Count > 3)
+        {
+            <script>
+                $("#extend_@tempCount").append($('#Terminate_@tempCount'));
+            </script>
+        }
+    }
+
+    if (Button_Visibility != null && Button_Visibility.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForAssignMusic_NonMusic + ",") &&
+        Deal_Type_Code != UTOFrameWork.FrameworkClasses.GlobalParams.Deal_Type_Music)
+    {
+        Count = Count + 1;
+        <a title="Assign Music" id="AssignMusic_@tempCount" class="glyphicon glyphicon-music AT_@DealCode" onclick="return CheckRecordLock(@DealCode,'Assign_Music')"></a>
+
+        if (Count > 3)
+        {
+            <script>
+                $("#extend_@tempCount").append($('#AssignMusic_@tempCount'));
+            </script>
+        }
+    }
+}
+@if (Deal_Type_Code == UTOFrameWork.FrameworkClasses.GlobalParams.Deal_Type_Music && Deal_Workflow_Status
+    .Trim() == "A" && Status != "T")
+{
+    Count = Count + 1;
+    <a title="Music Track" id="MusicTrack_@tempCount" class="glyphicon glyphicon-music AT_@DealCode" onclick="return CheckRecordLock(@DealCode,'Music_Track')"></a>
+
+    if (Count > 3)
+    {
+        <script>
+            $("#extend_@tempCount").append($('#MusicTrack_@tempCount'));
+        </script>
+    }
+}
+@if (Button_Visibility != null)
+{
+    if (Button_Visibility.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForEditWOApproval + ","))
+    {
+        Count = Count + 1;
+        <a title="Edit Without Approval" id="EditWithoutApproval_@tempCount" class="glyphicon_Approval glyphicon-pencil AT_@DealCode" onclick="return CheckRecordLock(@DealCode,'EditWOA')"></a>
+
+        if (Count > 3)
+        {
+            <script>
+                $("#extend_@tempCount").append($('#EditWithoutApproval_@tempCount'));
+            </script>
+        }
+    }
+    if (Button_Visibility.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForRollWOApproval + ","))
+    {
+        Count = Count + 1;
+        <a title="Rollback Without Approval" id="RollbackWithoutApproval_@tempCount" class="glyphicon_Approval glyphicon-repeat AT_@DealCode" onclick="return Ask_Confirmation('RollbackWOApprove',@DealCode,0)"></a>
+
+        if (Count > 3)
+        {
+            <script>
+                $("#extend_@tempCount").append($('#RollbackWithoutApproval_@tempCount'));
+            </script>
+        }
+    }
+    if (Button_Visibility.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForAmort + ","))
+    {
+        Count = Count + 1;
+        <a title="Amort" id="Amort_@tempCount" class="glyphicon glyphicon-stats AT_@DealCode" onclick="return CheckRecordLock(@DealCode,'Amort')"></a>
+
+        if (Count > 3)
+        {
+            <script>
+                $("#extend_@tempCount").append($('#Amort_@tempCount'));
+            </script>
+        }
+    }
+}
+@if (Count > 3)
+{
+    <a title="More Action" id="show_hide_@tempCount" href="#" class="glyphicon glyphicon-option-vertical show_hide_New AT_@DealCode"></a>
+    <div id="extend_@tempCount" class="MoreActionDiv" style="display:none;">
+    </div>
+}
+
+
+<script>
+
+    //function AllsubmenuHide() {
+    //    $('.MoreActionDiv').hide('slow');
+    //}
+
+    $(document).ready(function () {
+        $('.show_hide_New').click(function () {
+            debugger;
+            $(".tooltip").stop().fadeIn();
+            $('.MoreActionDiv').slideUp();
+            $(this).parent().find('.MoreActionDiv').slideToggle('fast');
+            return false;
+        }, function () {
+            debugger;
+            $(".tooltip").stop().fadeOut();
+            $('.MoreActionDiv').slideUp();
+            $(this).parent().find('.MoreActionDiv').slideToggle('fast');
+            return false;
+        });
+    });
+</script>
+<style>
+    .MoreActionDiv {
+        padding: 2px;
+        background: #ffffff; /*#2B5F8E;*/
+        width: 40px;
+        height: inherit;
+        box-shadow: 0 0 5px #aaa;
+        font-size: 15px;
+        color: #fff;
+        text-align: center;
+        position: absolute;
+        z-index: 99;
+        right: 32px;
+    }
+</style>

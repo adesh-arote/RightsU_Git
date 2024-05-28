@@ -1,0 +1,92 @@
+﻿
+@model List<RightsU_Entities.Supplementary_Data>
+@using UTOFrameWork.FrameworkClasses;
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<script>
+    $('.expand_Tab_Name').expander({
+        slicePoint: 38,
+        expandPrefix: '',
+        expandText: '...@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+</script>
+
+<table class="table table-bordered table-hover" id="tblMusicLink">
+    <thead style="position:sticky;top:0;z-index:1;background:white;">
+        <tr>
+            <th style="width:5%;">@objMessageKey.Srno.</th>
+            <th style="width:59%;">Data Description</th>
+            <th style="width:22%;">Supplementary Type</th>
+            <th style="width:35%;">Is Active</th>
+            <th style="width:15%;">@objMessageKey.Action</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @{int rowNumber = 1; }
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                string strIsActive = string.Empty;
+                strIsActive = item.Is_Active == "Y" ? objMessageKey.Active : objMessageKey.Deactive;
+                if (TempData["Action"] == "EditSupplementaryData" && item.Supplementary_Data_Code.ToString() == Convert.ToString(TempData["idSupplementaryData"]))
+                {
+                    <tr>
+                        <td align="center">
+                            <span>@rowNumber</span>
+                        </td>
+                        <td align="center">
+                            @Html.TextBoxFor(x => item.Data_Description, new { @class = "numeric", maxlength = 15, id = "txtData_Description" })
+                        </td>
+                        <td align="center">
+                            @Html.TextBoxFor(x => item.Supplementary_Type, new { @class = "numeric", maxlength = 15, id = "txtSupplementary_Type" })
+                        </td>
+                        <td align="center">
+                            @Html.CheckBox("Is_Active", item.Is_Active == "Y" ? true : false, new { @id = "chkIsActive" })
+                        </td>
+                        <td align="center">
+                            <a title="@objMessageKey.Update" class="glyphicon glyphicon-ok-circle" style="cursor: pointer;" onclick="UpdateSupplementaryDataMaster('@item.Supplementary_Data_Code')"></a>
+                            <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" style="cursor: pointer;" onclick="CancelSupplementaryDataMaster()"></a>
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td align="center">
+                            <span>@rowNumber</span>
+                        </td>
+                        <td class="expand_Tab_Name">
+                            <span>@item.Data_Description</span>
+                        </td>
+                        <td align="center">
+                            <span>@item.Supplementary_Type</span>
+                        </td>
+                        <td style="text-align:center;">
+                            <span>@strIsActive</span>
+                        </td>
+                        <td align="center">
+                            <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer;" onclick="AddSupplementaryDataMaster('EDIT',@item.Supplementary_Data_Code)"></a>
+                        </td>
+                    </tr>
+                }
+                rowNumber++;
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="5">@objMessageKey.Norecordfound</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,162 @@
+﻿
+<script>
+    var IsValidForTab = true;
+
+
+    $(document).ready(function () {
+        addNumeric();
+        BindGrid(true, false, '');
+        if ($('#hdnTabName').val() != "CM") {
+            TabChange($('#hdnTabName').val());
+            var prevElm = $('#ResolveConflictTab > li > a').parents('#ResolveConflictTab').find('li.active')
+            $(prevElm).removeClass('active');
+            $('#ResolveConflictTab > li > a').parents('#ResolveConflictTab').find('li.' + $('#hdnTabName').val()).addClass('active');
+        }
+        else {
+            $('#ResolveConflictTab > li > a').parents('#ResolveConflictTab').find('li.' + $('#hdnTabName').val()).addClass('active')
+        }
+        $('#ResolveConflictTab > li > a').on('click', function () {
+            TabChange($(this).data('tabname'));
+            var prevElm = $(this).parents('#ResolveConflictTab').find('li.active');
+            if (!IsValidForTab) {
+                $(this).removeClass('active');
+                $(prevElm).addClass('active');
+                IsValidForTab = true;
+                return false;
+            }
+            BindSearch();
+        });
+        SetPaging();
+    });
+    function addNumeric() {
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
+    function SetPaging() {
+        IsCall = 'N';
+        var pageNo = parseInt($('#hdnPageNo').val());
+        var recordCount = parseInt($('#hdnRecordCount').val());
+        var pagePerBatch = parseInt($('#hdnPagePerBatch').val());
+        var recordPerPage = parseInt($('#txtPageSize').val());
+
+        var cnt = pageNo * recordPerPage;
+        if (cnt >= recordCount) {
+            var v1 = parseInt(recordCount / recordPerPage);
+            if ((v1 * recordPerPage) == recordCount)
+                pageNo = v1;
+            else
+                pageNo = v1 + 1;
+        }
+        if (pageNo == 0)
+            pageNo = 1;
+        var index = pageNo - 1;
+        $('#hdnPageNo').val(pageNo);
+        var opt = null;
+        opt = { callback: pageselectCallback };
+        opt["items_per_page"] = recordPerPage;
+        opt["num_display_entries"] = pagePerBatch;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = index;
+        $("#Pagination").pagination(recordCount, opt);
+    }
+    function pageselectCallback(page_index, jq) {
+        $('.required').removeClass('required');
+        if (!ValidatePageSize('txtPageSize'))
+            return false;
+        var pageNo = page_index + 1
+        $('#hdnPageNo').val(pageNo);
+        if (IsCall == 'Y')
+            BindGrid(false, false, '');
+        else
+            IsCall = 'Y';
+    }
+    function txtPageSize_OnChange(txtID) {
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        if (!ValidatePageSize(txtID))
+            return false;
+        $('#hdnPageNo').val('1');
+        BindGrid(false, false, '');
+        SetPaging();
+    }
+    function ValidatePageSize(txtID) {
+        var recordPerPage = $('#' + txtID).val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#' + txtID).attr('required', true)
+
+        return false
+    }
+    function TabChange(tabName, DM_Master_Import_Code) {
+        IsValidForTab = true;
+        var previousTabName = $('#hdnTabName').val();
+        $('#hdnTabName').val(tabName);
+        ClearAll();
+        BindGrid(false, true, previousTabName);
+        SetPaging();
+        if ($('#hdnTabName').val() == 'CM') {
+            $('#liSearchShow').show();
+        }
+        else {
+            $('#liSearchShow').hide();
+        }
+    }
+</script>
+<div class="top_area">
+    <div class="title_block clearfix">
+        <h2 class="pull-left">
+            Music Requisition
+            <span> </span>
+        </h2>
+
+    </div>
+</div>
+
+<div class="grid_area">
+    <div class="navigation_tabs">
+        <span class="pull-left" id="lblTotal"></span>
+        <input type="hidden" id="hdnMappedCount" value="0" />
+        <div class="tabbable">
+            <ul class="nav nav-tabs nav-tab pull-left" id="ResolveConflictTab">
+                <li class="CM">
+                    <a data-toggle="tab" role="tab" data-tabname="CM" onclick="javascript: panelVisible = true; togglePanelVisibility2('pnlSearch','Y');">Usage Request</a>
+                </li>
+                <li class="OT">
+                    <a data-toggle="tab" role="tab" data-tabname="OT" onclick="javascript: panelVisible = true; togglePanelVisibility2('pnlSearch','Y');">New Music Tracks</a>
+                </li>
+                <li class="SM">
+                    <a data-toggle="tab" role="tab" data-tabname="SM" onclick="javascript: panelVisible = true; togglePanelVisibility2('pnlSearch','Y');">New Movie</a>
+                </li>
+            </ul>
+
+            <div class="tab-content clearfix table-wrapper scale_table_container">
+                <div class="paging_area clearfix">
+                    <span class="pull-left">Total Records: </span>
+                    <span class="pull-left" id="lblRecordCount">@((ViewBag.RecordCount ?? 0))</span>
+                    <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="@((ViewBag.PageNo ?? 1))" />
+                    <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                    <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="@((ViewBag.RecordCount ?? 0))" />
+
+                    <div id="Pagination" class="pagination">
+                    </div>
+                    <span class="pull-right">
+                        Page Size:
+                        <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="@((ViewBag.PageSize ?? 10))" onchange="txtPageSize_OnChange('txtPageSize')">
+                    </span>
+                </div>
+                <div id="divMHCueSheetSongData"></div>
+            </div>
+            <br />
+        </div>
+    </div>
+</div>

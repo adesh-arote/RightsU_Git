@@ -1,0 +1,476 @@
+﻿@{
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<html>
+<head>
+    <title>RightsU</title>
+    <link rel="stylesheet" href="~/CSS/dashboard.css" />
+    <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+    @*<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>*@
+    <script type="text/javascript" src="~/JS_Core/charts_loader.js"></script>
+    <style>
+        .dashboard {
+            background-color: white;
+            height: 245px;
+        }
+
+        .chart {
+            width: 99%;
+            height: 90%;
+        }
+
+        .divNoData {
+            display: none;
+        }
+
+        .chart_Gauge {
+            position: relative;
+            top: 5%;
+            left: 30%;
+            width: 70%;
+            height: 85%;
+        }
+
+        .chart_Sub {
+            width: 50%;
+            height: 90%;
+            border-right: 1px solid #ccc;
+            float: left;
+        }
+
+        .chart_Dub {
+            width: 50%;
+            height: 90%;
+            float: left;
+        }
+
+        #divBusinessUnit {
+            width: 35%;
+            float: right;
+        }
+
+        #div1 {
+            height: 30px;
+            width: 25%;
+            float: left;
+        }
+
+        #div2 {
+            height: 30px;
+            width: 75%;
+            float: left;
+        }
+
+        #spnBusinessUnit {
+            line-height: 30px;
+        }
+
+        ​ .chosen-container chosen-container-single {
+            width: 30% !important;
+            float: right;
+        }
+    </style>
+    <script type="text/javascript">
+
+        google.charts.load('44', { 'packages': ['corechart', 'gauge'] });
+
+        function drawAllChart() {
+            var statisticsOverview = {
+                init: function () {
+                    showLoading();
+                    this.drawChart();
+                    hideLoading();
+                },
+                drawChart: function () {
+                    var businessUnitCodes = $('#ddlBusinessUnit').val();
+                    if (businessUnitCodes == 0) {
+                        businessUnitCodes = $('#hdnAllBusinessCode').val();
+                    }
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("BindDashBoard_Graph", "Base")',
+                        traditional: true,
+                        enctype: 'multipart/form-data',
+                        contentType: "application/json; charset=utf-8",
+                        data: JSON.stringify({
+                            businessUnitCodes: businessUnitCodes,
+                        }),
+                        async: false,
+                        success: function (result) {
+                            if (result == "true") {
+                                redirectToLogin();
+                            }
+                            else {
+                                // ------- Region Wise Deal Expiry ---------
+                                if (result.RegionWiseDealExpiry.length > 0) {
+                                    var data_RegionWiseDealExpiry = google.visualization.arrayToDataTable(result.RegionWiseDealExpiry);
+                                    var option_RegionWiseDealExpiry = {
+                                        title: '',
+                                        chartArea: { left: 25, top: 25, 'width': '100%', 'height': '80%' },
+                                        legend: { position: 'top', 'alignment': 'center', maxLines: 6 },
+                                        bar: { groupWidth: '100%' },
+                                        vAxis: { format: '###.#' },
+                                    };
+
+                                    var chart_RegionWiseDealExpiry = new google.visualization.LineChart(document.getElementById('chart_RegionWiseDealExpiry'));
+                                    chart_RegionWiseDealExpiry.draw(data_RegionWiseDealExpiry, option_RegionWiseDealExpiry);
+
+                                    google.visualization.events.addListener(chart_RegionWiseDealExpiry, 'select', function () {
+                                        drawSecondLevelChart("RDE", chart_RegionWiseDealExpiry, result.RegionWiseDealExpiry_RowArray,
+                                            result.RegionWiseDealExpiry_ColArray);
+                                    });
+                                }
+                                else {
+                                    $('#chart_RegionWiseDealExpiry').html('<h1>NO DATA</h1>')
+                                }
+
+                                //// The select handler. Call the chart's getSelection() method
+                                //function selectHandler() {
+                                //    var selectedItem = chart_RegionWiseDealExpiry.getSelection()[0];
+                                //    if (selectedItem) {
+                                //        if (selectedItem.row != null) {
+                                //            var month = data_RegionWiseDealExpiry.getValue(selectedItem.row, 0);
+                                //            var territory = data_RegionWiseDealExpiry.getColumnLabel(selectedItem.column);
+                                //            alert('Month: ' + month + ', Territory: ' + territory);
+                                //        }
+                                //    }
+                                //}
+
+                                //// Listen for the 'select' event, and call my function selectHandler() when
+                                //// the user selects something on the chart.
+                                //google.visualization.events.addListener(chart_RegionWiseDealExpiry, 'select', selectHandler);
+
+                                // ------- Platform wise Sales Distribution ---------
+                                if (result.PlatformWiseSalesDistribution.length > 0) {
+                                    var data_PlatformWiseSalesDistribution = google.visualization.arrayToDataTable(result.PlatformWiseSalesDistribution);
+                                    var options_PlatformWiseSalesDistribution = {
+                                        chartArea: { left: 25, top: 25, 'width': '100%', 'height': '80%' },
+                                        legend: { position: 'top', 'alignment': 'center', maxLines: 6 },
+                                        bar: { groupWidth: '60%' },
+                                        isStacked: true,
+                                    };
+
+                                    var chart_PlatformWiseSalesDistribution = new google.visualization.ColumnChart(document.getElementById('chart_PlatformWiseSalesDistribution'));
+                                    chart_PlatformWiseSalesDistribution.draw(data_PlatformWiseSalesDistribution, options_PlatformWiseSalesDistribution);
+
+                                    google.visualization.events.addListener(chart_PlatformWiseSalesDistribution, 'select', function () {
+                                        drawSecondLevelChart("PSD", chart_PlatformWiseSalesDistribution, result.PlatformWiseSalesDistribution_RowArray,
+                                            result.PlatformWiseSalesDistribution_ColArray);
+                                    });
+
+                                } else {
+                                    $('#chart_PlatformWiseSalesDistribution').html('<h1>NO DATA</h1>')
+                                }
+
+                                // ------- Region Wise Sales Distribution ---------
+                                if (result.RegionWiseSalesDistribution.length > 0) {
+                                    var data_RegionWiseSalesDistribution = google.visualization.arrayToDataTable(result.RegionWiseSalesDistribution);
+                                    var option_RegionWiseSalesDistribution = {
+                                        title: '', is3D: true,
+                                        chartArea: { left: 5, top: 25, 'width': '100%', 'height': '80%' },
+                                    };
+
+                                    var chart_RegionWiseSalesDistribution = new google.visualization.PieChart(document.getElementById('chart_RegionWiseSalesDistribution'));
+                                    chart_RegionWiseSalesDistribution.draw(data_RegionWiseSalesDistribution, option_RegionWiseSalesDistribution);
+
+                                    google.visualization.events.addListener(chart_RegionWiseSalesDistribution, 'select', function () {
+                                        drawSecondLevelChart("RSD", chart_RegionWiseSalesDistribution, result.RegionWiseSalesDistribution_RowArray,
+                                            result.RegionWiseSalesDistribution_ColArray);
+                                    });
+
+                                } else {
+                                    $('#chart_RegionWiseSalesDistribution').html('<h1>NO DATA</h1>')
+                                }
+                                // ------- Acquisition Vs Syndication ---------
+                                if (result.AcquisitionVsSyndication != null) {
+                                    data_AcquisitionVsSyndication = new google.visualization.DataTable();
+                                    data_AcquisitionVsSyndication.addColumn('number', 'Consumption');
+                                    data_AcquisitionVsSyndication.addRows(1);
+                                    data_AcquisitionVsSyndication.setCell(0, 0, result.AcquisitionVsSyndication.Consumed);
+
+                                    var option_AcquisitionVsSyndication = {
+                                        titlePosition: 'right', is3D: true,
+                                        //chartArea: { left: 25, top: 25, 'width': '80%', 'height': '80%' },
+
+                                        min: 0, max: result.AcquisitionVsSyndication.Total,
+                                        redFrom: result.AcquisitionVsSyndication.RedFrom, redTo: result.AcquisitionVsSyndication.RedTo,
+                                        yellowFrom: result.AcquisitionVsSyndication.YellowFrom, yellowTo: result.AcquisitionVsSyndication.YellowTo,
+                                        greenFrom: result.AcquisitionVsSyndication.GreenFrom, greenTo: result.AcquisitionVsSyndication.GreenTo,
+                                        minorTicks: 5
+                                    };
+
+                                    var chart_AcquisitionVsSyndication = new google.visualization.Gauge(document.getElementById('chart_AcquisitionVsSyndication'));
+                                    chart_AcquisitionVsSyndication.draw(data_AcquisitionVsSyndication, option_AcquisitionVsSyndication);
+
+                                    $('#chart_AcquisitionVsSyndication').show();
+                                    $('#chart_AcquisitionVsSyndication_NoData').hide();
+
+                                } else {
+                                    $('#chart_AcquisitionVsSyndication').hide()
+                                    $('#chart_AcquisitionVsSyndication_NoData').show()
+                                    $('#chart_AcquisitionVsSyndication_NoData').html('<h1>NO DATA</h1>')
+                                }
+                                // ------- Language Wise Syndication Subtitle ---------
+                                if (result.LanguageWiseSyndicationSubtitle.length > 0) {
+                                    var data_LanguageWiseSyndicationSubtitle = google.visualization.arrayToDataTable(result.LanguageWiseSyndicationSubtitle);
+                                    var option_LanguageWiseSyndicationSubtitle = {
+                                        title: 'Subtitle', is3D: true,
+                                        chartArea: { left: 5, top: 15, 'width': '96%', 'height': '80%' },
+                                        legend: { position: 'bottom', maxLines: 5 },
+                                    };
+
+                                    var chart_LanguageWiseSyndicationSubtitle = new google.visualization.PieChart(document.getElementById('chart_LanguageWiseSyndicationSubtitle'));
+                                    chart_LanguageWiseSyndicationSubtitle.draw(data_LanguageWiseSyndicationSubtitle, option_LanguageWiseSyndicationSubtitle);
+
+                                    google.visualization.events.addListener(chart_LanguageWiseSyndicationSubtitle, 'select', function () {
+                                        drawSecondLevelChart("LSS", chart_LanguageWiseSyndicationSubtitle, result.LanguageWiseSyndicationSubtitle_RowArray,
+                                            result.LanguageWiseSyndicationSubtitle_ColArray);
+                                    });
+                                } else {
+                                    $('#chart_LanguageWiseSyndicationSubtitle').html('<h1 title="Subtitle">NO DATA</h1>')
+                                }
+
+                                // ------- Language Wise Syndication Dubbing ---------
+                                if (result.LanguageWiseSyndicationDubbing.length > 0) {
+                                    var data_LanguageWiseSyndicationDubbing = google.visualization.arrayToDataTable(result.LanguageWiseSyndicationDubbing);
+                                    var option_LanguageWiseSyndicationDubbing = {
+                                        title: 'Dubbing', is3D: true,
+                                        chartArea: { left: 5, top: 15, 'width': '96%', 'height': '100%' },
+                                        legend: { position: 'bottom', maxLines: 5 },
+                                    };
+
+                                    var chart_LanguageWiseSyndicationDubbing = new google.visualization.PieChart(document.getElementById('chart_LanguageWiseSyndicationDubbing'));
+                                    chart_LanguageWiseSyndicationDubbing.draw(data_LanguageWiseSyndicationDubbing, option_LanguageWiseSyndicationDubbing);
+
+                                    google.visualization.events.addListener(chart_LanguageWiseSyndicationDubbing, 'select', function () {
+                                        drawSecondLevelChart("LSD", chart_LanguageWiseSyndicationDubbing, result.LanguageWiseSyndicationDubbing_RowArray,
+                                            result.LanguageWiseSyndicationDubbing_ColArray);
+                                    });
+
+                                } else {
+                                    $('#chart_LanguageWiseSyndicationDubbing').html('<h1 title="Dubbing">NO DATA</h1>')
+                                }
+
+                                // ------- Title Region ---------
+                                if (result.TitleRegion.length > 0) {
+                                    var data_TitleRegion = google.visualization.arrayToDataTable(result.TitleRegion);
+                                    var option_TitleRegion = {
+                                        title: '',
+                                        is3D: true,
+                                        chartArea: { left: 25, top: 25, bottom: 35, 'width': '100%', 'height': '100%' },
+                                        legend: { position: 'top', 'alignment': 'center', maxLines: 5 },
+                                        bar: { groupWidth: '70%' },
+                                        isStacked: true
+                                        //,
+                                        //seriesType: 'bars',
+                                        //series: { 5: { type: 'line', lineWidth: 0 } },
+                                        //hAxis: { textStyle: { fontSize: 10 } }
+                                    };
+
+                                    var chart_TitleRegion = new google.visualization.ColumnChart(document.getElementById('chart_TitleRegion'));
+                                    chart_TitleRegion.draw(data_TitleRegion, option_TitleRegion);
+
+                                    google.visualization.events.addListener(chart_TitleRegion, 'select', function () {
+                                        drawSecondLevelChart("TR", chart_TitleRegion, result.TitleRegion_RowArray,
+                                            result.TitleRegion_ColArray);
+                                    });
+                                }
+                                else {
+                                    $('#chart_TitleRegion').html('<h1>NO DATA</h1>')
+                                }
+                            }
+                        },
+                        error: function (result) {
+                            alert('Error: ' + result.responseText);
+                        }
+                    });
+                }
+            };
+            statisticsOverview.init()
+        }
+
+        function drawSecondLevelChart(callFor, chart, arrRow, arrCol) {
+            /*
+            var message = '';
+            var selection = chart.getSelection();
+            var rowVal = 'NULL', colVal = 'NULL';
+            for (var i = 0; i < selection.length; i++) {
+                var item = selection[i];
+                if (item.row != null && item.column != null) {
+                    if (item.row < arrRow.length)
+                        rowVal = arrRow[item.row];
+
+                    if ((item.column - 1) < arrRow.length)
+                        colVal = arrCol[item.column - 1];
+                }
+                else if (item.row != null) {
+                    if (item.row < arrRow.length)
+                        rowVal = arrRow[item.row];
+                }
+                else if (item.column != null) {
+                    if ((item.column - 1) < arrRow.length)
+                        colVal = arrCol[item.column - 1];
+                }
+            }
+            if (callFor == 'RDE') {
+                message = 'Month : ' + rowVal + ', Region Code : ' + colVal;
+            }
+            else if (callFor == 'PSD') {
+                message = 'Platform Group Code : ' + rowVal + ', Region Code : ' + colVal;
+            }
+            else if (callFor == 'RSD') {
+                message = 'Region Code : ' + rowVal;
+            }
+            else if (callFor == 'LSS') {
+                message = 'Language Code : ' + rowVal;
+            }
+            else if (callFor == 'LSD') {
+                message = 'Language Code : ' + rowVal;
+            }
+            else if (callFor == 'TR') {
+                message = 'Type : ' + ((colVal == "T") ? "Total" : "Sold") + ', Region Code : ' + rowVal;
+            }
+            alert(message);
+            */
+        }
+
+        //google.charts.setOnLoadCallback(drawAllChart)
+
+    </script>
+    <script>
+        $(document).ready(function () {
+            //$("#ancFileName").attr('href', '../Help/index.html?IntCode=DashboardGraphical');
+           // $("#ancFileName").attr('href', '../Help/Masters/Layout.html?DashboardGraphical');
+        });
+    </script>
+
+</head>
+<body>
+    <div class="main_section">
+        <div class="container main_col">
+            <div id="divBusinessUnit">
+                @if (ViewBag.Business_Unit_List != null)
+                {
+                    <div id="div1"><span id="spnBusinessUnit">Business Unit</span></div>
+                    <div id="div2">
+                        @Html.DropDownList("Business_Unit", (List<SelectListItem>)ViewBag.Business_Unit_List, new { @id = "ddlBusinessUnit", @class = "form_input chosen-select", @onchange = "drawAllChart();" })
+                        @Html.Hidden("hdnAllBusinessCode", (string)ViewBag.Business_Unit_Code_All, new { @id = "hdnAllBusinessCode" })
+                    </div>
+                }
+            </div>
+
+
+
+            <div class="modal fade" id="modal-IMDb_video">
+                <div class="modal-dialog" style="width: 60%;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title">Bigg Boss   - <small>s11,ep1</small></h4>
+                        </div>
+                        <form role="form">
+                            <div class="modal-body">
+                                <video width="100%" autoplay="" loop="" muted="" controls="" poster="../img/Bigg-Boss11.png">
+                                    <source src="~/Images/BiggBossSeason11-GrandFinale.mp4" type="video/mp4" media="all and (max-width:480px)">
+                                    <!--source src="https://archive.org/download/ElephantsDream/ed_hd.ogv" type="video/ogg">
+                                     <source src="https://archive.org/download/ElephantsDream/ed_hd.avi"type="video/avi" -->
+                                    Your browser doesn't support HTML5 video tag.
+                                </video>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /.modal-content  ProgramMaster.html-->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+          <span>  <a href="#" data-toggle="modal" data-target="#modal-IMDb_video">view Video</a></span>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <section class="rightsU_container clearfix">
+                <div class="dashboard syn" style="text-align: center;border-color:#949494;width:98%">
+                    @*<span style="background-color: #949494;"></span>*@
+                    <div id="chart_TitleRegion" class="chart">
+                        @*<img src="~/Images/DB6.jpg" />*@
+                        <img src="~/Images/Pie1.PNG" style="height:100%; padding-right:5%" />
+                        <img src="~/Images/Pie2.PNG" style="height:100%; padding-right:5%" />
+                        <img src="~/Images/Pie3.PNG" style="height:100%; padding-right:5%" />
+                    </div>
+                </div>
+                <div class="dashboard acq" style="text-align: center;border-color:#949494;">
+                    <span style="background-color: #949494;">Deal Workflow</span>
+                    <div id="chart_RegionWiseDealExpiry" class="chart">
+                        @* <img src="~/Images/DB1.jpg" />*@
+                        <img src="~/Images/Capture1.PNG" style="height: 100%;" />
+                    </div>
+                </div>
+                @*<div class="dashboard acq" style="text-align: center;border-color:#949494;">
+                <span style="background-color: #949494;">Deal Workflow</span>
+                <div id="chart_RegionWiseDealExpiry" class="chart">
+                    <img src="~/Images/DB1.jpg" />
+                </div>
+            </div>*@
+
+                <div class="dashboard syn" style="text-align: center;border-color:#949494;">
+                    <span style="background-color: #949494;">Genre wise Titles</span>
+                    <div id="chart_PlatformWiseSalesDistribution" class="chart">
+                        @*<img src="~/Images/DB2.jpg" style="height: 100%;" />*@
+                        <img src="~/Images/Capture2.PNG" style="height: 100%;" />
+                    </div>
+                </div>
+                <div class="dashboard syn" style="text-align: center;border-color:#949494;">
+                    <span style="background-color: #949494;">Acquisition Vs Consumption</span>
+                    <div id="chart_RegionWiseSalesDistribution" class="chart">
+                        @*<img src="~/Images/DB3.jpg" />*@
+                        <img src="~/Images/Capture4.PNG" />
+                    </div>
+                </div>
+                <div class="dashboard acq" style="text-align: center;border-color:#949494;">
+                    <span style="background-color: #949494;">Top 10 Content By Consumption</span>
+                    <div id="chart_RegionWiseSalesDistribution" class="chart">
+                        @*<img src="~/Images/DB4.jpg" style="height: 100%;" />*@
+                        <img src="~/Images/Content.PNG" style="height: 100%;" />
+                    </div>
+                </div>
+                <div class="dashboard acq" style="text-align: center;border-color:#949494;width:98%">
+                    <span style="background-color: #949494;">Platform wise Acquisition</span>
+                    <div id="chart_RegionWiseSalesDistribution" class="chart">
+                        @*<img src="~/Images/DB5.jpg" style="height: 100%;" />*@
+                        <img src="~/Images/Capture3.PNG" style="height: 100%;" />
+                    </div>
+                </div>
+                @*<div class="dashboard acq" style="text-align: center;border-color:#949494;">
+               <span style="background-color: #949494;">Top 10 Content By Consumption</span>
+               <div id="chart_AcquisitionVsSyndication" class="chart_Gauge">
+              <img src="~/Images/DB4.jpg" />
+             </div>
+             <div id="chart_AcquisitionVsSyndication_NoData" class="chart divNoData"></div>
+              </div>
+                  <div class="dashboard acq" style="text-align: center;border-color:#949494;">
+              <span style="background-color: #949494;">Platform wise Acquisition</span>
+              <div id="chart_LanguageWiseSyndicationSubtitle" class="chart_Sub">
+              <img src="~/Images/DB5.jpg" />
+             </div>
+             <div id="chart_LanguageWiseSyndicationDubbing" class="chart_Dub"></div>
+            </div>*@
+
+            </section>
+        </div>
+    </div>
+</body>
+</html>

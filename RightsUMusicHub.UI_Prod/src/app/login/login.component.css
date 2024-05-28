@@ -1,0 +1,104 @@
+.login{
+    margin-top: 10%;
+    /* align-content: center; */
+    /* align-items: center; */
+    text-align: center;
+}
+.login >form>div{
+  margin-left: 15%;
+    margin-right: -9%;
+}
+.logintextbox{
+  border: 0px none;
+  border-bottom: 1px solid;
+  width: 70%;
+  color: black;
+  /* font-weight: 700px; */
+  font-size: 18px;
+  
+  
+}
+.login-footer {
+  background: #fff;
+  padding: 5px;
+  color: #444;
+  border-top: 1px solid #d2d6de;
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  z-index: 5;
+}
+
+.logintextbox:focus{
+  border-bottom: 3px solid;
+}
+.loginLabel{
+  color: black;
+  font-weight: bold;
+}
+.text-muted{
+  background-color: black;
+  color: white;
+  font-weight: bold;
+}
+.forgetLink{
+  margin-top: 2%;
+  margin-left: -6%;
+
+}
+.viacomlogo{
+  padding-left: 89%;
+  padding-top: 1%;
+}
+ .button {
+    border-radius: 4px;
+    font-size: 20px;
+    width: 150px;
+  } 
+  
+  .button span {
+    /* cursor: pointer; */
+    display: inline-block;
+    position: relative;
+    transition: 0.5s;
+  }
+  
+  .button span:after {
+    content: '\00bb';
+    position: absolute;
+    opacity: 0;
+    top: 0;
+    right: -20px;
+    transition: 0.5s;
+  }
+  
+  .button:hover span {
+    padding-right: 25px;
+  }
+  
+  .button:hover span:after {
+    opacity: 1;
+    right: 0;
+  }
+  input.forgotTextBox {
+    width:50% !important;
+    margin-right:2px !important;
+    border: 1px solid #bbb !important;
+    padding:2px 2px !important;
+    border-top-left-radius: 4px !important;
+    border-bottom-left-radius: 4px !important;
+    border-top-right-radius: 4px !important;
+    border-bottom-right-radius: 4px !important;
+    height: 30px;
+  }
+
+  
+
+  #sidebar {
+    position: fixed !important;
+    width: 20% !important;
+    height: 100% !important;
+    /* float: left !important; */
+    left:0px;
+    background: #414141 !important;
+}

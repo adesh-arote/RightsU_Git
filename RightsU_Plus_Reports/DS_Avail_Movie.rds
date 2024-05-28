@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RptDataSource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="DS_Avail_Movie">
+  <ConnectionProperties>
+    <Extension>SQL</Extension>
+    <ConnectString>Data Source=192.168.0.115;Initial Catalog=RightsU_Reports_Movie</ConnectString>
+  </ConnectionProperties>
+  <DataSourceID>79c50e65-b3d4-49d0-9c3d-5abf13402da1</DataSourceID>
+</RptDataSource>

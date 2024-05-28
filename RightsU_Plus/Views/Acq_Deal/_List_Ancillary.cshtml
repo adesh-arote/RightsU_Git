@@ -1,0 +1,337 @@
+﻿@model IEnumerable<RightsU_Entities.USP_List_Acq_Ancillary_Result>
+@using RightsU_BLL;
+@using RightsU_Entities;
+@{
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+    List<Platform> lst_Platform = new List<Platform>();
+    lst_Platform = new Platform_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
+}
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script type="text/javascript">
+    var IsCall = 'Y';
+    var URL_BindPlatformTreePopup = '@Url.Action("BindPlatformTreePopup", "Acq_Ancillary")';
+    var pos = null;
+
+    function SetPaging(txtPageSize) {
+        IsCall = 'N';
+        var PageNo, recordCnt = 3;
+        var Display_Record_Count = '@ViewBag.RecordCount_Display';
+        PageNo = '@ViewBag.PageCount';
+        recordCnt = '@ViewBag.RecordCount';
+        $("#lblTotal").text('@objMessageKey.TotalRecords: ' + Display_Record_Count);
+        PageNo = PageNo - 1;
+        PageNo = PageNo < 0 ? 0 : PageNo;
+        var opt = { callback: pageselectCallback };
+        opt["items_per_page"] = $("#txtPageSize").val(); //$("#txtPageSize").val();
+        opt["num_display_entries"] = 5;
+        opt["num"] = 1;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = PageNo;
+        $("#Pagination").pagination(Display_Record_Count, opt);
+    }
+    function pageselectCallback(page_index, jq) {
+        if (ValidatePageSize()) {
+            $('#hdnpage_index').val(page_index);
+
+            if (IsCall == 'Y')
+                Bind_Grid(page_index, 'Y');
+            else
+                IsCall = 'Y';
+        }
+    }
+    function addNumeric() {
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
+    $(document).ready(function () {
+        initializeExpander();
+        addNumeric();
+        $('.clsPlatformPopup').on('click', function (e) {
+            debugger;
+            var btdId = e.target.id;
+            var hdnAncillaryCodeID = btdId.replace("_aViewPlatform", "_hdnAncillaryCode");
+            var ancillaryCode = $('#' + hdnAncillaryCodeID).val();
+            pos = $('#' + btdId).offset();
+            $.ajax({
+                type: "POST",
+                url: URL_BindPlatformTreePopup,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    acqDealAncillaryCode: ancillaryCode
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    $('#divPlatformTree').html(result);
+                    $('#popupFade').offset({ top: pos.top, left: pos.left }).fadeIn();
+                    $('#popupFade').offset({ top: pos.top, left: pos.left }).fadeIn();
+                },
+                error: function (result) { }
+            });
+            return false;
+        });
+        $("#popupFade").click(function (event) {
+            event.stopPropagation();
+        });
+         $('.expand_Ancillary_Type').expander({
+            slicePoint: 25,
+            expandPrefix: '',
+            expandText: '...@objMessageKey.readmore',
+            collapseTimer: 0,
+            userCollapseText: '<span>[^]</span>'
+        });
+    });
+
+    function helpClose() {
+        document.getElementById("collapse1").style.display = 'none';
+    }
+
+    function FadeOutPopup() {
+        $('#divPlatformTree').empty();
+        $('#popupFade').offset({ top: pos.top, left: pos.left }).fadeOut();
+        return false;
+    }
+</script>
+<style>
+    #tdRemarks {
+        width: 100px;
+        word-break: break-all;
+    }
+
+    #divPlatformTree {
+        overflow-x: hidden;
+        /*overflow-y:auto;*/
+    }
+
+    .PlatformExpand {
+        position: absolute;
+        display: none;
+        z-index: 1000;
+        background-color: black;
+        color: white;
+        border: 1px solid black;
+        padding: 5px;
+    }
+
+    #popupFade {
+        position: absolute;
+        display: none;
+        width: 300px;
+        overflow: hidden;
+        border: #bbb 1px solid;
+        z-index: 100;
+    }
+
+        #popupFade .modal-dialog ul.fancytree-container {
+            height: 100%;
+            border: 0;
+            overflow-y: auto;
+        }
+
+        #popupFade form .modal_block {
+            padding: 3px 10px;
+        }
+
+        #popupFade #Rights_List_Platform {
+            max-height: 300px;
+        }
+
+    .clsPlatformPopup {
+        color: #2b64a5;
+        font-size: 11px;
+        font-style: italic;
+    }
+
+    #Tree_Filter_Rights_List_Platform {
+        margin-left: -10px;
+        width: 300px;
+        margin-top: -3px;
+    }
+</style>
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th style="width:20%">@objMessageKey.Title</th>
+            <th style="width:10%">@objMessageKey.Type</th>
+            @if (ViewBag.IsAdvAncillary == "Y")
+            {
+                <th style="width:20%">@objMessageKey.Platform</th>}
+            else
+            {
+                <th style="width:20%">@objMessageKey.AncillaryRights</th>}
+            @if (ViewBag.IsCatchUpRights == "N")
+            {
+                <th style="width:10%">@objMessageKey.Medium</th>
+            }
+            <th style="width:10%;text-align:center">@objMessageKey.Durationsec</th>
+            <th style="width:10%;text-align:center">@objMessageKey.PeriodDay</th>
+            <th style="width:20%">@objMessageKey.Remarks</th>
+            @if (ViewBag.Deal_Mode != UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_VIEW && ViewBag.Deal_Mode != UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL && ViewBag.Deal_Mode != UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_APPROVE)
+            {
+                <th style="width:10%">@objMessageKey.Action</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int a = 0;
+            int counter = 0;
+            int SetRowSpan = 0;
+            int Temp_Acq_Ancillary_Code = 0;
+            bool IsChangeCode = false;
+            @Html.Hidden("hdnCommandName", "SAVE")
+
+            foreach (var item in Model)
+            {
+                a += 1;
+                @Html.Hidden("hdnAncillaryCode", item.Acq_Deal_Ancillary_Code, new { id = a + "_hdnAncillaryCode" })
+                if (Temp_Acq_Ancillary_Code != @item.Acq_Deal_Ancillary_Code)
+                {
+                    counter += 1;
+                    SetRowSpan = Model.Where(i => i.Acq_Deal_Ancillary_Code == item.Acq_Deal_Ancillary_Code).Select(i => i.Acq_Deal_Ancillary_Code).Count();
+                    IsChangeCode = true;
+                }
+                else
+                {
+                    IsChangeCode = false;
+                }
+                <tr>
+                    @if (IsChangeCode == true)
+                    {
+                        <td rowspan="@SetRowSpan">
+                            @Html.Hidden("hdnAcq_Deal_Ancillary_Code", item.Acq_Deal_Ancillary_Code, new { id = counter + "_hdnAcq_Deal_Ancillary_Code" })
+                            @Html.Hidden("hdnpage_index")
+                            @Html.Hidden("hdnCurrentID")
+                            <div class="expandable">
+                                @Html.DisplayFor(i => item.TitleName)&#x200E;
+                            </div>
+                        </td>
+                    }
+                    @if (IsChangeCode == true)
+                    {
+                       
+                        <td rowspan="@SetRowSpan">
+                            <div class="expand_Ancillary_Type">
+                                @Html.DisplayFor(i => item.Ancillary_Type_Name)
+                            </div>
+                        </td>
+                        
+                    }
+                    @if (ViewBag.IsAdvAncillary == "N")
+                    {
+                        <td>
+                            <div class="expandable">
+                                @Html.DisplayFor(i => item.Platform_Name)
+                            </div>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            @if (item.Platform_Name != null && item.Platform_Name != "")
+                            {
+                                int? Acq_Deal_Ancillary_Code = @item.Acq_Deal_Ancillary_Code;
+                                Acq_Deal_Ancillary objADR = new Acq_Deal_Ancillary_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(Acq_Deal_Ancillary_Code));
+                                int PlatFormCount = objADR.Acq_Deal_Ancillary_Platform.Select(s => s.Platform_Code).Count();
+                                int PlatformCode = objADR.Acq_Deal_Ancillary_Platform.Select(x => Convert.ToInt32(x.Platform_Code)).FirstOrDefault();
+                                int ParentPlatformCode = lst_Platform.Where(x => x.Platform_Code == PlatformCode).Select(x => Convert.ToInt32(x.Base_Platform_Code)).FirstOrDefault();
+                                string PlatformName = lst_Platform.Where(x => x.Platform_Code == ParentPlatformCode).Select(x => x.Platform_Name).FirstOrDefault();
+                                <span>@PlatformName</span>        
+                                <a id="@(a)_aViewPlatform" href="#" title="@objMessageKey.ViewPlatforms" class="clsPlatformPopup"> ...  @PlatFormCount Platforms</a>
+                            }
+                        </td>
+                    }
+                    @if (ViewBag.IsCatchUpRights == "N")
+                    {
+                        <td>
+                            <div class="expandable">
+                                @if (item.Ancillary_Medium_Name != null)
+                                {
+                                    @Html.DisplayFor(i => item.Ancillary_Medium_Name)
+                                }
+                            </div>
+                        </td>
+                    }
+                    @if (IsChangeCode == true)
+                    {
+                        <td rowspan="@SetRowSpan" style="text-align:center">
+                            @if (@item.Duration != null)
+                            {
+                                @item.Duration.Value
+                            }
+                        </td>
+                    }
+                    @if (IsChangeCode == true)
+                    {
+                        <td rowspan="@SetRowSpan" style="text-align:center">
+                            @if (@item.Day != null)
+                            {
+                                @item.Day.Value
+                            }
+                        </td>
+                    }
+                    @if (IsChangeCode == true)
+                    {
+                        <td rowspan="@SetRowSpan" id="tdRemarks">
+                            <div class="expandable">
+                                @*@Html.DisplayFor(i => item.Remarks)*@
+                                @item.Remarks
+                            </div>
+                        </td>
+                    }
+                    @if (IsChangeCode == true && ViewBag.Deal_Mode != UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_VIEW && ViewBag.Deal_Mode != UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL && ViewBag.Deal_Mode != UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_APPROVE)
+                    {
+                        <td rowspan="@SetRowSpan">
+                            <a alt title="@objMessageKey.Edit" href="#" class="glyphicon glyphicon-pencil" onclick="Edit_Ancillary('@counter','EDIT');"></a>
+                            <a alt title="@objMessageKey.Clone" href="#" class="glyphicon glyphicon-duplicate" onclick="Edit_Ancillary('@counter','CLONE');"></a>
+                            <a title="@objMessageKey.Delete" href="#" class="glyphicon glyphicon-trash " id="" onclick="return ValidateDelete('@counter');"></a>
+                        </td>
+                    }
+                    @{
+                        Temp_Acq_Ancillary_Code = item.Acq_Deal_Ancillary_Code;
+                    }
+                </tr>
+                        }
+        }
+    </tbody>
+</table>
+<div id="popupFade">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form">
+                <div class="form_fields">
+                    <div class="modal_block modal_header">
+                        <a class="close" onclick="FadeOutPopup()">
+                            <span>×</span>
+                            <span class="sr-only">Close</span>
+                        </a>
+                        <h5>@objMessageKey.PlatformMatrix</h5>
+                    </div>
+                    <div class="modal_block treeClass" id="divPlatformTree">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

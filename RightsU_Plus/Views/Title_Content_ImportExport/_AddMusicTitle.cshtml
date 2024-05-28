@@ -1,0 +1,248 @@
+﻿@model RightsU_Entities.Music_Title
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        if (LayoutDirection_G == 'RTL') {
+            $('#movie_popup .close').css('padding-left', '0px');
+        }
+        $('#ddlLanguage1').SumoSelect();
+        $("#AddMovie_Album_popup").hide();
+
+        $('#txtmusicAlbum').click(function () {
+            $('#txtmusicAlbum').removeClass('required');
+        })
+        setChosenWidth("#MovieAlbum", "12%");
+        initializeTooltip();
+
+        $("#txtMusicTitleName").val('@ViewBag.MusicTitleName');
+        $("#txtmusicAlbum").val('@ViewBag.MovieAlbumName');
+        $("#hdnMovieAlbumCode").val('@ViewBag.MovieAlbumCode');
+    });
+    function LanguageOnChange(obj) {
+        debugger;
+        if (obj.selectedIndex > 0) {
+            $(".ddlLanguage1").removeClass('required');
+            $("#ddlLanguage1")[0].sumo.reload();
+        }
+    }
+    function ValidateSave(Type) {
+        debugger;
+        $(".ddlLanguage1").removeClass('required');
+        var hdnddlLanguage = "";
+        var hdnMusicLabel = "";
+        var hdnTxtTitleName = "";
+        var Error = "";
+        var selectedValue = "";
+        var Music_Version = '@ViewBag.Music_Version';
+
+        var selectedLanguageObj = $("#ddlLanguage1 option").filter(":selected");
+        if (selectedLanguageObj.length > 0) {
+            $.each(selectedLanguageObj, function () {
+                selectedValue += $(this).val() + ",";
+            });
+
+        }
+        hdnddlLanguage = selectedValue;
+
+        if (selectedValue == '') {
+            $(".ddlLanguage1").addClass("required");
+            Error = "E";
+        }
+
+        if ($("#ddlMusicLabel option").filter(":selected").val() != "") {
+            hdnMusicLabel = $("#ddlMusicLabel option").filter(":selected").val();
+            if (hdnMusicLabel == "0") {
+                $('#ddlMusicLabel').val('').attr('required', true)
+                Error = "E";
+            }
+        }
+        else {
+            $('#ddlMusicLabel').val('').attr('required', true)
+            Error = "E";
+        }
+
+        if ($('#txtMusicTitleName').val() != "")
+            hdnTxtTitleName = $('#txtMusicTitleName').val();
+        else {
+            Error = "E";
+            $('#txtMusicTitleName').attr('required', true)
+            return false;
+        }
+
+        if ($('#txtmusicAlbum').val() != "")
+            hdnTxtmusicalbumName = $('#txtmusicAlbum').val();
+        else {
+            Error = "E";
+            $('#txtmusicAlbum').attr('required', true)
+            return false;
+        }
+        var ISDuplicate = ""
+        var MusicAlbumCode = $("#hdnMovieAlbumCode").val();
+        var MusicAlbumName = $('#txtmusicAlbum').val();
+        if (MusicAlbumCode == "")
+            MusicAlbumCode = 0;
+        var NewTitleName = $("#txtMusicTitleName").val();
+
+        debugger
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("ValidateIsDuplicate", "Title_Content_ImportExport")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            async: false,
+            data: JSON.stringify({
+                MusicTitleName: NewTitleName,
+                MusicAlbumCode: MusicAlbumCode,
+                MusicAlbumName: MusicAlbumName,
+                mode: "Add"
+
+            }),
+            contentType: "application/json; charset=utf-8",
+            success: function (result) {
+                if (result.Message != "") {
+                    ISDuplicate = result.Message;
+                    showAlert("E", ISDuplicate);
+                }
+                if (result.ErrorMessage != "") {
+                    $('#txtmusicAlbum').addClass('required');
+                    $('#txtmusicAlbum').val('');
+                    ISDuplicate = result.ErrorMessage;
+                    Error = "E";
+                }
+                else if (result.MusicAlbumCode != "") {
+                    MusicAlbumCode = result.MusicAlbumCode;
+                }
+            },
+            error: function (result) {
+            }
+        });
+        if (Error == "E" && ISDuplicate != "") {
+            debugger;
+            $('#popAddTitle').modal('');
+
+        }
+
+        if (Error == "" && ISDuplicate == "") {
+            debugger;
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("SaveTitle", "Title_Content_ImportExport")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                async: false,
+                data: JSON.stringify({
+                    MusicTitleName: NewTitleName,
+                    MovieAlbumName: MusicAlbumCode,
+                    hdnddlLanguage: hdnddlLanguage,
+                    hdnMusicLabel: hdnMusicLabel,
+
+                }),
+                contentType: "application/json; charset=utf-8",
+                success: function (result) {
+                    debugger;
+                    var MusicTitleCode = parseInt(result.MusicTitleCode);
+                    //BindTitle();
+                    $('#popAddTitle').modal('hide');
+                    showAlert("S", result.Message, "");
+                },
+                error: function (result) {
+                }
+            });
+        }
+    }
+
+</script>
+<style>
+    .sumo_ddlLanguage1 {
+        width: 325px !important;
+    }
+</style>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<div class="modal-dialog">
+    <div class="modal-content clearfix">
+        <form class="form" id="movie_popup">
+            <div class="form_wrapper">
+                <div class="form_fields">
+                    <div class="modal_block modal_header">
+                        <a class="close" data-dismiss="modal" href="#">
+                            <span>×</span>
+                            <span class="sr-only">Close</span>
+                        </a>
+                        <h2>Add Music Track</h2>
+                        @*<h2>@objMessageKey.AddMusicTrack</h2>*@
+                    </div>
+                    <div class="modal_block">
+                        <ul class="add_title_popup">
+                            <li>
+                                <label>@objMessageKey.MusicTrack</label>
+                                <div class="input_fields_wrap">
+                                    <div>
+                                        @Html.TextBoxFor(m => Model.Music_Title_Name, new { @id = "txtMusicTitleName", @class = "form_input", autocomplete = "off", maxlength = "200", style = "width:80%;" })
+
+                                    </div>
+                                </div>
+                                <input type="text" id="lblDealTitleCode" style="display: none;" />
+                            </li>
+                            <li>
+                                @Html.Hidden("hdnddlLanguage")
+                                <label>@objMessageKey.Movie / @objMessageKey.Album </label>
+                                <br />
+                                @*@Html.DropDownList("Music_Album_Name", (List<SelectListItem>)ViewBag.MovieAlbum, new { @id = "Music_Album_Name", @class = "form_input chosen-select", onchange = "jsFunction(this.value);" })*@
+                                <input type="text" placeholder="@objMessageKey.Movie / @objMessageKey.Album" name="Music_Album_Name" id="txtmusicAlbum" value="@ViewBag.MovieAlbum" autocomplete="on" style="width:250px" onkeyup="AutoCompleteMovieAlbum(this)" />
+                                <input type="hidden" id="hdnMovieAlbumCode" />
+                            </li>
+                            <li>
+                                <label>Music Language</label>
+                                <div class="ddlLanguage1" style="width: 327px;">
+                                    @Html.ListBox("ddlLanguage1", ViewBag.Language as MultiSelectList, new { @multiple = "multiple" })
+                                </div>
+
+                                @Html.Hidden("hdnLanguage")
+
+                                @*@Html.ListBox("ddlLanguage", ViewBag.Language as MultiSelectList, new { @class = "form_input chosen-select", style = "display:none;" })
+                                    <input type="text" name="txtLanguage" id="txtLanguage" style="display:none;" class="search" onkeypress="return isAlphaNumeric(event);" />*@
+                            </li>
+
+                            <li>
+                                <label>@objMessageKey.MusicLabel</label>
+                                @Html.DropDownList("ddlMusicLabel", (List<SelectListItem>)ViewBag.MusicLabelList,
+                                       new { @id = "ddlMusicLabel", @class = "form_input chosen-select" })<selectlistitem>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="modal_block_full">
+                        <div class="form_links">
+                            <ul class="modal_block clearfix">
+                                <li>
+                                    <a class="btn btn-primary" onclick="ValidateSave('S');">@objMessageKey.Save</a>
+                                </li>
+                                <li>
+                                    @*<input type="button" class="btn btn-primary" id="btnAddAdditionalmetadata" value="Add Additional metadata" onclick="ValidateSave('SS');">*@
+                                    @*<span class="Wrapper1">
+                                            <a class="btn btn-primary" id="btnAddAdditionalmetadata" onclick="ValidateSave('SS');">@objMessageKey.AddAdditionalmetadata</a>
+                                        </span>*@
+                                </li>
+                                <li>
+                                    <a data-dismiss="modal" class="btn btn-primary" href="#">@objMessageKey.Cancel</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+

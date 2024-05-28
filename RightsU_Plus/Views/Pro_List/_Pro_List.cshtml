@@ -1,0 +1,168 @@
+﻿@model IEnumerable<RightsU_Entities.USP_List_Provisional_Deal_Result>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+@using UTOFrameWork.FrameworkClasses;
+<script>
+    $(document).ready(function () {
+        $('#hdnRecordCount').val('@ViewBag.RecordCount');
+        $('#lblRecordCount').text('@ViewBag.RecordCount');
+        $('#hdnPageNo').val('@ViewBag.PageNo');
+        initializeExpander();
+        SetPaging();
+    });
+
+
+</script>
+<style>
+    li.deal_period {
+        width: 17%;
+    }
+
+    li.deal_no {
+        width: 29%;
+    }
+
+    li.deal_desc {
+        width: 19%;
+    }
+</style>
+<div class="grid_area deal clearfix">
+    @{
+        int tempCount = 0;
+        int counter = 0;
+        foreach (var item in Model)
+        {
+            tempCount = tempCount + 1;
+            counter += 1;
+            <div class="grid_item">
+                <ul>
+
+                    <li class="deal_no">
+                        <h4><span class="pull-left" title="@objMessageKey.AgreementNo"><a href="#" onclick="BindPartialView('ADD_DEAL', @item.Provisional_Deal_Code,'V')">@Html.Label("id", item.Agreement_No, new { style = "cursor:pointer;" })</a></span></h4>
+                        <span class="deal_version" title="@objMessageKey.VersionNo">V-@item.Version</span>
+                    </li>
+                    <li><span class="seperator">| </span></li>
+                    <li class="deal_desc" title='@objMessageKey.Description'>
+                        <div class="expandable">
+                            @item.Deal_Desc
+                        </div>
+                    </li>
+                    <li class="channels" title=@objMessageKey.Channel style="width: 228px;">
+                        @if (string.IsNullOrEmpty(item.Channel_Names))
+                        {
+                            <span class="not-available">NA</span>
+                        }
+                        else
+                        {
+                            <div class="expandable">
+                                <span>@item.Channel_Names</span>
+                            </div>
+                        }
+                    </li>
+                    <li><span class="seperator">| </span></li>
+                    <li class="agreement_date" title="@objMessageKey.AgreementDate">
+                        <span>
+                            @string.Format("{0:" + GlobalParams.DateFormat_Display + "}", item.Agreement_Date)
+                        </span>
+                    </li>
+                    <li class="deal_status">
+                        @if (item.Deal_Workflow_Status == "AM" && item.Version != "0001")
+                        {
+                            <span class="deal_workflow_status" title=WorkflowStatus>Details Added</span>
+                        }
+                        else if (item.Deal_Workflow_Status == "N")
+                        {
+                            <span class="deal_workflow_status" title=WorkflowStatus>Details Added</span>
+                        }
+                        else
+                        {
+                            <span class="deal_workflow_status" title=WorkflowStatus>Approved</span>
+                        }
+                    </li>
+                </ul>
+                <ul>
+                    <li class="deal_title" title="@objMessageKey.Title">
+                        <div class="expandable">
+                            @if (string.IsNullOrEmpty(item.Title_Name))
+                            {
+                                <span class="not-available">NA</span>
+                            }
+                            else
+                            {
+                                @item.Title_Name
+                            }
+                        </div>
+                    </li>
+                    <li class="deal_licensor expandable" title="@objMessageKey.Licensor">
+                        @if (string.IsNullOrEmpty(item.Vendor_Name))
+                        {
+                            <span class="not-available">NA</span>
+                        }
+                        else
+                        {
+                            @item.Vendor_Name
+                        }
+                    </li>
+                    <li class="deal_period" title="@objMessageKey.Period">
+                        @(string.Format("{0:" + GlobalParams.DateFormat_Display + "}", item.Right_Start_Date)) To
+                        @(string.Format("{0:" + GlobalParams.DateFormat_Display + "}", item.Right_End_Date))
+                    </li>
+                    <li class="deal_action" id="divAction_@tempCount">
+                        @if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForView + "~"))
+                        {
+                            <a title="View" id="View" href="#" class="glyphicon glyphicon-eye-open" onclick="BindPartialView('ADD_DEAL', @item.Provisional_Deal_Code,'V')"></a>
+                        }
+
+                        @if (item.Deal_Workflow_Status == "N" && item.Version != "0001")
+                        {
+                            if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForEdit + "~"))
+                            {
+                                <a title="Edit" id="Edit" href="#" class="glyphicon glyphicon-pencil" onclick="Ask_Confirmation('ADD_DEAL', @item.Provisional_Deal_Code,'E')"></a>
+
+                            }
+                        }
+                        else if (item.Deal_Workflow_Status == "A" || item.Deal_Workflow_Status == "AM") // 0001
+                        {
+                            if (item.Deal_Workflow_Status == "AM" && item.Version != "0001")
+                            {
+                                if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForEdit + "~"))
+                                {
+                                    <a title="Edit" id="Edit" href="#" class="glyphicon glyphicon-pencil" onclick="Ask_Confirmation('ADD_DEAL', @item.Provisional_Deal_Code,'E')"></a>
+                                }
+                            }
+                            else
+                            {
+                                if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForAmendment + "~"))
+                                {
+                                    <a title="Amendment" id="Amendment" href="#" class="glyphicon glyphicon-edit" onclick="Ask_Confirmation('ADD_DEAL', @item.Provisional_Deal_Code,'A')"></a>
+
+                                }
+                                if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForRightGranted + "~"))
+                                {
+                                    <a title="Clone" id="Clone" href="#" class="glyphicon glyphicon-duplicate" onclick="BindPartialView('ADD_DEAL', @item.Provisional_Deal_Code,'C')"></a>
+                                }
+                            }
+                        }
+                        else if (item.Deal_Workflow_Status == "N")
+                        {
+                            if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForEdit + "~"))
+                            {
+                                <a title="Edit" id="Edit" href="#" class="glyphicon glyphicon-pencil" onclick="Ask_Confirmation('ADD_DEAL', @item.Provisional_Deal_Code,'E')"></a>
+                            }
+                            if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForDelete + "~"))
+                            {
+                                <a title="Delete" id="Delete" href="#" class="glyphicon glyphicon-trash" onclick="DeleteProvisionalDeal('LIST', @item.Provisional_Deal_Code,'D',false)"></a>
+                            }
+                        }
+                    </li>
+                </ul>
+            </div>
+        }
+    }
+</div>

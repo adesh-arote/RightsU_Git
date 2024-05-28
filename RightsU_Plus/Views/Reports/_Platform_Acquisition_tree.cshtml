@@ -1,0 +1,83 @@
+﻿@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script>
+    $(document).ready(function () {
+        debugger;
+        if ($('#hdnTabName').val() == "P")
+            BindPlatform();
+        else if ($('#hdnTabName').val() == "PG") {
+            var pgCode = $('#hdnPGCode').val();
+            $('#liPlatform').removeClass('active')
+            $('#liPlatformGroup').addClass('active')
+            $('#divDdlPG').show();
+            if (pgCode != "") {
+                $('#ddlPFGroup').val(pgCode);
+                $('#divDdlPG').show();
+                BindPlatformGroup();
+            }
+        }
+        initializeChosen();
+
+    });
+</script>
+
+<style>
+    #Rights_Platform {
+        height: 404px;
+    }
+
+    .form_input {
+        width: 100%;
+    }
+</style>
+<div class="modal_block modal_header">
+    <a class="close" onclick="ClosePopup()">
+        <span>X</span>
+        <span class="sr-only">Close</span>
+    </a>
+    <label class="bold" for="platform">
+        <h2 dir='@objMessageKey.LayoutDirection'>@objMessageKey.Platform_Rights</h2>
+    </label>
+
+</div>
+<div style="margin:5px">
+    <div class="grid_area">
+        <div class="navigation_tabs">
+            <div class="tabbable">
+                <ul class="nav nav-tabs nav-tab pull-left">
+                    <li id="liPlatform" class="active">
+                        <a data-toggle="tab" href="#" role="tab" onclick="TabChange('P');">@objMessageKey.Platform</a>
+                    </li>
+                    <li id="liPlatformGroup" class="">
+                        <a data-toggle="tab" href="#" role="tab" onclick="TabChange('PG');">@objMessageKey.PlatformGroup</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div id="divPlatformTree" class="tab-content clearfix table-wrapper scale_table_container">
+        <div id="divDdlPG" style="display:none" dir='@objMessageKey.LayoutDirection'>
+            @Html.DropDownList("PlatformGroupList", ViewBag.PlatformGroupList as SelectList, "Please Select", new { @id = "ddlPFGroup", @class = "form_input chosen-select", @onchange = "ddlPFGroup_Change()" })
+        </div>
+        <div id="divTree" class="treeClass" dir='@objMessageKey.LayoutDirection'>
+
+        </div>
+    </div>
+    <span id="lblTheatrical" style="display: none;">Theatrical</span>
+    <input type="hidden" id="hdnTVCodes" name="hdnTVCodes" />
+</div>
+<div class="modal_block_full" style="margin-top: 10px;">
+    <div class="form_links">
+        <ul class="modal_block clearfix" style="padding-left:10px; padding-top: 10px;">
+            <li>
+                <input type="submit" class="btn btn-primary" value="@objMessageKey.Save" onclick="return ClosePopup()" />
+                <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="ClosePopup()" />
+            </li>
+        </ul>
+    </div>
+</div>

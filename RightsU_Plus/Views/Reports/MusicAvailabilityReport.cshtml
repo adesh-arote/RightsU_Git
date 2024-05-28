@@ -1,0 +1,391 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+
+<script>
+    var TitleType = "M";
+    var URL_BindTitle = '@Url.Action("BindTitleForMusicAvailReport", "Reports")';
+    var URL_BindMusicTitle = '@Url.Action("BindMusicTitleForMusicAvailReport", "Reports")';
+    var URL_BindMusicAvailExcelReport = '@Url.Action("BindMusicAvailExcelReport", "Reports")';
+
+    $(document).ready(function () {
+        $('.TitleTypeCls').on("change", function () {
+            debugger;
+            if ($(".TitleTypeCls:checked").val() == "M") {
+                $('#changeLabel').html("Movie Title :");
+                TitleType = "M";
+                $('#txtTitle').val('');
+                $('#txtTitle').attr('placeholder', 'Movie Title');
+                Clear();
+            }
+            else if ($(".TitleTypeCls:checked").val() == "S") {
+                $('#changeLabel').html("Show Title :");
+                TitleType = "S";
+                $('#txtTitle').val('');
+                $('#txtTitle').attr('placeholder', 'Show Title');
+                Clear();
+            }
+            //else if ($(".TitleTypeCls:checked").val() == "A") {
+            //    $('#changeLabel').html("Album Title :");
+            //    TitleType = "A";
+            //    $('#txtTitle').val('');
+            //    $('#txtTitle').attr('placeholder', 'Album Title');
+            //}
+        });
+        $('#ddlMusicLabel').on("change", function () {
+            debugger;
+            $('#txtTitle').val('');
+            $('#hdnTitleCode').val(0);
+            $('#txtTitle').removeClass('loader');
+            if (TitleType == "M") {
+                $('#txtTitle').attr('placeholder', 'Movie Title');
+            }
+            else {
+                $('#txtTitle').attr('placeholder', 'Show Title');
+            }
+        });
+    });
+
+    function PopulateTitle(keyword) {
+        debugger;
+        if ($('#txtTitle').val().length == "0") {
+            $('#hdnTitleCode').val(0);
+        }
+        var selectedtxt = $('#txtTitle').val();
+        var txt = selectedtxt.split('﹐');
+
+        var selectedMusicLabelCode = $('#ddlMusicLabel').val();
+
+        var iscomplete = true;
+        if (txt[txt.length - 1].trim() == "")
+            iscomplete = false;
+
+        if (iscomplete) {
+            $("#txtTitle").autocomplete({
+                focus: function () {
+                    return false;
+                },
+                search: function (e, u) {
+                    $(this).addClass('loader');
+                },
+                source: function (request, response) {
+                    var param = {
+                        keyword: $('#txtTitle').val(),
+                        selectedMusicLabelCode: selectedMusicLabelCode,
+                        TitleType: TitleType
+                    };
+                    $.ajax({
+                        url: URL_BindTitle,
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+                            debugger;
+                            if (data.length == 0) {
+                                data[0] = '@objMessageKey.ResultNotFound';
+                                response($.map(data, function (v, i) {
+                                    $('#txtTitle').removeClass('loader');
+                                    return {
+                                        label: '@objMessageKey.ResultNotFound',
+                                        val: '0'
+                                    }
+                                }))
+                            }
+                            else {
+                                response($.map(data, function (v, i) {
+                                    debugger;
+                                    $('#txtTitle').removeClass('loader');
+                                    return {
+                                        label: v.Text,
+                                        val: v.Value
+                                    }
+                                }))
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                            alert("Error" + textStatus);
+                        }
+                    });
+                },
+                select: function (event, i) {
+                    debugger;
+                    if (i.item.value != "@objMessageKey.ResultNotFound") {
+                        var text = this.value.split(/﹐\s*/);
+                        text.pop();
+                        text.push(i.item.value);
+                        text.push("");
+                        this.value = text;
+                        this.value = text.join("﹐");
+                        var value = $("#hdnTitleCode").val().split(/,\s*/);
+                        value.pop();
+                        value.push(i.item.val);
+                        value.push("");
+                        $("#hdnTitleCode")[0].value = value.join(", ");
+                        return false;
+                    }
+                    else{
+                        $('#txtTitle').val("");
+                        return false;
+                    }
+                },
+                minLength: 3,
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("position", "absolute");
+                    $(".ui-autocomplete").css("max-height", "200px");
+                    $(".ui-autocomplete").css("max-width", "400px");
+                    $(".ui-autocomplete").css("overflow-y", "auto");
+                    $(".ui-autocomplete").css("overflow-x", "hidden");
+                    $(".ui-autocomplete").css("z-index", "2147483647");
+                    $(".ui-autocomplete").css("direction", "@objMessageKey.LayoutDirection")
+                },
+
+            });
+        }
+        else
+            return false;
+    }
+
+    function PopulateMusicTitle(keyword) {
+        debugger;
+        if ($('#txtMusicTitle').val().length == "0") {
+            $('#hdnMusicTitleCode').val(0);
+        }
+        var selectedMusicLabelCode = $('#ddlMusicLabel').val();
+
+        var selectedTitleCodes = $('#hdnTitleCode').val();
+        if (selectedTitleCodes == "0")
+            selectedTitleCodes = "";
+
+        var selectedtxt = $('#txtMusicTitle').val();
+        var txt = selectedtxt.split('﹐');
+
+        var iscomplete = true;
+        if (txt[txt.length - 1].trim() == "")
+            iscomplete = false;
+        if (iscomplete) {
+            $("#txtMusicTitle").autocomplete({
+                focus: function () {
+                    return false;
+                },
+                search: function (e, u) {
+                    $(this).addClass('loader');
+                },
+                source: function (request, response) {
+                    var param = {
+                        selectedMusicLabelCode: selectedMusicLabelCode,
+                        selectedTitleCodes: selectedTitleCodes,
+                        keyword: $('#txtMusicTitle').val()
+                    };
+
+                    $.ajax({
+                        url: URL_BindMusicTitle,
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+                            debugger;
+                            if (data.length == 0) {
+                                data[0] = '@objMessageKey.ResultNotFound';
+                                response($.map(data, function (v, i) {
+                                    $('#txtMusicTitle').removeClass('loader');
+                                    return {
+                                        label: '@objMessageKey.ResultNotFound',
+                                        val: '0'
+                                    }
+                                }))
+                            }
+                            else {
+                                response($.map(data, function (v, i) {
+                                    debugger;
+                                    $('#txtMusicTitle').removeClass('loader');
+                                    return {
+                                        label: v.Text,
+                                        val: v.Value
+                                    }
+                                }))
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            debugger;
+                            alert("Error" + textStatus);
+                        }
+                    });
+                },
+                select: function (event, i) {
+                    debugger;
+                    if (i.item.value != "@objMessageKey.ResultNotFound") {
+                        var text = this.value.split(/﹐\s*/);
+                        text.pop();
+                        text.push(i.item.value);
+                        text.push("");
+                        this.value = text;
+                        this.value = text.join("﹐");
+                        var value = $("#hdnMusicTitleCode").val().split(/,\s*/);
+                        value.pop();
+                        value.push(i.item.val);
+                        value.push("");
+                        $("#hdnMusicTitleCode")[0].value = value.join(", ");
+                        return false;
+                    }
+                    else{
+                        $('#txtMusicTitle').val("");
+                        return false;
+                    }
+                },
+                minLength: 3,
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("position", "absolute");
+                    $(".ui-autocomplete").css("max-height", "200px");
+                    $(".ui-autocomplete").css("max-width", "400px");
+                    $(".ui-autocomplete").css("overflow-y", "auto");
+                    $(".ui-autocomplete").css("overflow-x", "hidden");
+                    $(".ui-autocomplete").css("z-index", "2147483647");
+                    $(".ui-autocomplete").css("direction", "@objMessageKey.LayoutDirection")
+                },
+
+            });
+        }
+        else
+            return false;
+    }
+</script>
+
+<script>
+    function btnShow_OnClick() {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var MusicLabelCode = $('#ddlMusicLabel').val();
+        var selectedTitleCodes = $('#hdnTitleCode').val();
+        var selectedMusicTitleCodes = $('#hdnMusicTitleCode').val();
+
+        if (MusicLabelCode == "" && selectedTitleCodes == "0" && selectedMusicTitleCodes == "0") {
+            showAlert('E', "Please Select atleast one input.");
+            return false;
+        }
+
+        if (selectedTitleCodes == "0")
+            selectedTitleCodes = "";
+
+        if (selectedMusicTitleCodes == "0")
+            selectedMusicTitleCodes = "";
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindMusicAvailExcelReport,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                MusicLabelCode: MusicLabelCode,
+                selectedTitleCodes: selectedTitleCodes,
+                selectedMusicTitleCodes: selectedMusicTitleCodes,
+                TitleType: TitleType
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divResult').empty();
+                    $('#divResult').html(result);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function Clear() {
+        debugger;
+        $('#ddlMusicLabel').val('').trigger('chosen:updated');
+        $('#txtTitle').val('');
+        $('#hdnTitleCode').val(0)
+        $('#txtMusicTitle').val('');
+        $('#hdnMusicTitleCode').val(0)
+    }
+</script>
+
+<style>
+    #divFilter {
+        background: #eee;
+        padding: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    #divResult {
+        margin-top: 10px;
+    }
+</style>
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <h2>Music Availability Report</h2>
+            <div id="divFilter">
+                <table>
+                    <tr>
+                        <td style="width:10%;vertical-align: middle;text-align:left;">
+                            <b>@objMessageKey.MusicLabel :</b>
+                        </td>
+                        <td style="width:15%;vertical-align: middle;">
+                            @Html.DropDownList("MusicLabel", (IEnumerable<SelectListItem>)ViewBag.MusicLabelList, "Please Select", htmlAttributes: new { @id = "ddlMusicLabel", @class = "form_input chosen-select" })
+                        </td>
+
+                        <td style="width:15%;vertical-align: middle;text-align:center;">
+                            <input type="radio" value="M" id="TitleType" class="TitleTypeCls" name="TitleTypeName" checked /> <b>@objMessageKey.Movie</b> &nbsp;&nbsp;&nbsp;&nbsp;
+                            <input type="radio" value="S" id="TitleType" class="TitleTypeCls" name="TitleTypeName" /> <b>@objMessageKey.Show</b> &nbsp;&nbsp;&nbsp;&nbsp;
+                            @*<input type="radio" value="A" id="TitleType" class="TitleTypeCls" name="TitleTypeName" /> <b>@objMessageKey.Album</b>*@
+                        </td>
+
+                        <td style="width:10%;vertical-align: middle;text-align:left;">
+                            <b id="changeLabel">Movie Title :</b>
+                        </td>
+
+                        <td style="width:20%;vertical-align: middle;">
+                            <input type="text" id="txtTitle" class="search" maxlength="100" style="width:95%;height: 28px;" placeholder="Movie Title" onkeyup="PopulateTitle(event)" autocomplete="on" />
+                            <input type="hidden" id="hdnTitleCode" value="0" />
+                        </td>
+                    </tr>
+                    <tr style="height: 40px;">
+                        <td style="width:10%;vertical-align: middle;text-align:left;">
+                            <b>Music Track :</b>
+                        </td>
+                        <td style="width:20%;vertical-align: middle;">
+                            <input type="text" id="txtMusicTitle" class="search" maxlength="100" style="width:95%;height: 28px;" placeholder="Music Track" onkeyup="PopulateMusicTitle(event)" autocomplete="on" />
+                            <input type="hidden" id="hdnMusicTitleCode" value="0" />
+                        </td>
+
+                        <td style="width: 15%; vertical-align: middle; text-align:center;">
+                            <input type="button" id="btnShow" class="btn btn-primary" value="@objMessageKey.Show" onclick="return btnShow_OnClick()">
+                            <input type="button" id="btnClear" class="btn btn-primary" value="@objMessageKey.ClearAll" onclick="Clear()" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div id="divResult">
+
+            </div>
+        </div>
+    </section>
+</div>

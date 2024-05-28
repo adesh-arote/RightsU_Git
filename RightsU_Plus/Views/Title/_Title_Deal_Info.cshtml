@@ -1,0 +1,647 @@
+﻿@model IEnumerable<RightsU_Entities.USP_Title_Deal_Info_Result>
+@using RightsU_BLL;
+@using RightsU_Entities;
+
+@using UTOFrameWork.FrameworkClasses
+@{
+    List<RightsU_Entities.USP_Title_Deal_Info_Result> lst_USP_Title_Deal_Info_Result = null;
+    string[] arr_Deal_No = @Model.Select(i => i.Agreement_No).Distinct().ToArray();
+
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+}
+<script>
+    var URL_BindPlatformTreePopup = '@Url.Action("BindPlatformTreePopup", "Acq_Rights_List")';
+    $(document).ready(function () {
+        if ('RTL' == '@objMessageKey.LayoutDirection') {
+            debugger;
+            //$('.glyphicon').addClass('glyphicon-Head')
+            $('.container').addClass('container-Head')
+        }
+        $('#txtPageSize').numeric();
+
+        $('.nav-toggle').click(function () {
+            debugger;
+            var collapse_content_selector = $(this).attr('onclick');
+            var toggle_switch = $(this);
+            if ($(this).hasClass('glyphicon-triangle-top')) {
+                toggle_switch.removeClass("glyphicon-triangle-top");
+                toggle_switch.addClass("glyphicon-triangle-bottom");
+                $(collapse_content_selector).hide();
+            }
+            else {
+                toggle_switch.removeClass("glyphicon-triangle-bottom");
+                toggle_switch.addClass("glyphicon-triangle-top");
+                $(collapse_content_selector).show();
+            }
+            //$(collapse_content_selector).toggle(function () {
+            //});
+        });
+
+        if ($('.pagination'))
+            SetPaging();
+
+        $("td").bind("mousemove", function (event) {
+            $(this).find("span.PlatformExpand").css({
+                top: event.pageY + 5 + "px",
+                left: event.pageX + 5 + "px"
+            }).show();
+        }).bind("mouseout", function () {
+            $("span.PlatformExpand").hide();
+        });
+
+        $('.clsPlatformPopup').on('click', function (e) {
+            debugger;
+            if ('RTL' == '@objMessageKey.LayoutDirection')
+                $('.close').css("float", "left");
+            else
+                $('.close').css("float", "Right");
+
+            var btdId = e.target.id;
+            var hdnRightCodeID = btdId.replace("_aViewPlatform", "_hdnRightCode");
+            var hdnDealTypeID = btdId.replace("_aViewPlatform", "_hdnDealType");
+            var rightCode = $('#' + hdnRightCodeID).val();
+            var DealType = $('#' + hdnDealTypeID).val();
+            if (DealType == 'S')
+                URL_BindPlatformTreePopup = '@Url.Action("BindPlatformTreePopup", "Syn_Rights_List")';
+            else 
+                URL_BindPlatformTreePopup = '@Url.Action("BindPlatformTreePopup", "Acq_Rights_List")';
+     
+            pos = $('#' + btdId).offset();
+            $.ajax({
+                type: "POST",
+                url: URL_BindPlatformTreePopup,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    rightCode: rightCode
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    $('#divPlatformTree').html(result);
+                    $('#popupFade').offset({ top: pos.top, left: pos.left }).fadeIn();
+                    $('#popupFade').offset({ top: pos.top, left: pos.left }).fadeIn();
+                },
+                error: function (result) { }
+            });
+            return false;
+        });
+        $("#popupFade").click(function (event) {
+            event.stopPropagation();
+        });
+
+    });
+    function SetPaging() {
+        debugger;
+        var PageNo, recordCnt, RecordCount_paging;
+        IsCall = 'N';
+        if ('@ViewBag.PageNo' != null)
+            PageNo = '@ViewBag.PageNo';
+        if ('@ViewBag.RecordCount' != null)
+            recordCnt = '@ViewBag.RecordCount';
+        if ('@ViewBag.RecordCount_paging' != null)
+            RecordCount_paging = '@ViewBag.RecordCount_paging';
+        PageNo = PageNo - 1;
+        $('#lblTotal_Records_Count').text('Total Records : ' + RecordCount_paging);
+        var opt = { callback: pageselectCallback };
+        opt["items_per_page"] = $('#txtPageSize').val();
+        opt["num_display_entries"] = 5;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = PageNo;
+        $(".pagination").pagination(RecordCount_paging, opt);
+    }
+    function pageselectCallback(page_index, jq) {
+        if (IsCall == 'Y')
+            Bind_Deal_List(page_index, 'Y');
+        else
+            IsCall = 'Y';
+    }
+    function ValidatePageSize() {
+        var recordPerPage = $('#txtPageSize').val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize').addClass("required");
+        return false
+    }
+    function txtPageSize_OnChange() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        if (!ValidatePageSize())
+            return false;
+        Bind_Deal_List(0, 'N');
+    }
+    $('.expandable').expander({
+        slicePoint: 25,
+        expandPrefix: '',
+        expandText: 'read more',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+
+
+    function FadeOutPopup() {
+        $('#divPlatformTree').empty();
+        $('#popupFade').offset({ top: pos.top, left: pos.left }).fadeOut();
+        return false;
+    }
+</script>
+<style>
+    .grid_item.acq {
+        border-left: 4px solid #2b64a5 !important;
+    }
+
+    .grid_item.syn {
+        border-left: 4px solid #d0021b !important;
+    }
+
+    .grid_item ul {
+        float: left;
+        width: 100%;
+        padding: 0 0 0 0px !important;
+        margin: 1px 0;
+    }
+
+    .deal .seperator {
+        font-size: 18px !important;
+    }
+
+    .expandable {
+        /*float: left;*/
+        margin: 5px 0;
+        font-family: inherit;
+        font-weight: 500;
+        line-height: 1.1;
+        color: inherit;
+    }
+
+    .container-Head {
+        /* width: 900px; */
+        width: 95%;
+        margin: 0 auto;
+        /* min-height: 710px; */
+        padding: 0px 80px 55px 0px !important;
+    }
+
+    .container {
+        /* width: 900px; */
+        width: 95%;
+        margin: 0 auto;
+        /* min-height: 710px; */
+        padding: 0px 0px 55px 80px;
+    }
+
+    .help {
+        text-align: center;
+        border-left: 1px solid #000;
+        border-right: 1px solid #000;
+        border-bottom: 1px solid #000;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+        padding: 0px 2px 2px 2px;
+        width: 80px;
+        float: right;
+    }
+
+        .help:hover {
+            background: #e0e0e0;
+        }
+
+    .collapse {
+        position: absolute;
+        right: 3px;
+        top: 72px;
+        width: 180px;
+        height: 280px;
+        z-index: 99;
+        background-color: #f3f3f3;
+        border: 1px solid #000000;
+    }
+
+        .collapse div {
+            padding: 15px;
+            border-bottom: 1px solid #dddddd;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+            .collapse div:hover {
+                background-color: #0080c0;
+                color: #ffffff;
+            }
+
+    .rowBorder.acq {
+        border-left: 4px solid #2b64a5 !important;
+    }
+
+    .rowBorder.syn {
+        border-left: 4px solid #d0021b !important;
+    }
+
+
+    .rowBg.acq {
+        border-left: 4px solid #2b64a5 !important;
+        background-color: #eaeaea;
+    }
+
+    .rowBg.syn {
+        border-left: 4px solid #d0021b !important;
+        background-color: #eaeaea;
+    }
+
+    .rowBorder td {
+        border-bottom: 1px dotted #dddddd !important;
+        background-color: #ffffff !important;
+    }
+
+    .rowBg.syn td {
+        border-bottom: 1px dotted #dddddd !important;
+    }
+
+    .rowBg.acq td {
+        border-bottom: 1px dotted #dddddd !important;
+    }
+
+    .rowBg td {
+        border-bottom: 1px dotted #dddddd !important;
+    }
+
+    .rowBg {
+        background-color: #eaeaea;
+    }
+
+
+
+    .PlatformExpand {
+        position: absolute;
+        display: none;
+        z-index: 1000;
+        background-color: black;
+        color: white;
+        border: 1px solid black;
+        padding: 5px;
+    }
+
+    .chosen-choices li.search-choice.primary {
+        /* background: #ddd; */
+        color: #2b64a5;
+        font-weight: 700;
+        border: 1px solid #2b64a5;
+    }
+
+    .expandable li {
+        float: none;
+        line-height: initial;
+        list-style: none;
+        margin: 0;
+    }
+
+        .expandable li:before {
+            content: "\0BB \020";
+        }
+
+    #popupFade {
+        position: absolute;
+        display: none;
+        max-width: 300px;
+        overflow: hidden;
+        border: #bbb 1px solid;
+        z-index: 1000;
+    }
+
+        #popupFade .modal-dialog ul.fancytree-container {
+            height: 100%;
+            border: 0;
+        }
+
+        #popupFade form .modal_block {
+            padding: 3px 10px;
+        }
+
+        #popupFade #Rights_Platform {
+            max-height: 300px;
+        }
+
+    /*td a.glyphicon-Head {
+        -webkit-transform: rotateY(180deg);
+        -moz-transform: rotateY(180deg);
+        -o-transform: rotateY(180deg);
+        -ms-transform: rotateY(180deg);
+    }*/
+</style>
+@*<div class="grid_area">*@
+@*<div class="navigation_tabs">
+    <div class="tabbable">*@
+@*<ul class="nav nav-tabs nav-tab pull-left">
+        <li class="active">
+            <a data-toggle="tab" href="#tabDeals" role="tab">Deals</a>
+        </li>
+    </ul>*@
+
+@*<div class="tab-content clearfix table-wrapper scale_table_container">*@
+<div class="deal clearfix">
+    @{
+        int counter = 0;
+        int inner_counter = 0;
+        int outer_counter = 0;
+        string Deal_No = "0";
+        string deal_Type_Css = "acq";
+        string ClassName = "rowBg";
+        <input type="hidden" id="hdnCurrentID" />
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th style="border-left: 4px solid #dddddd !important;"></th>
+                    <th style="width:20%;">@objMessageKey.Licensor</th>
+                    <th style="width:20%;">@objMessageKey.Exclusive</th>
+                    <th style="width:20%;">@objMessageKey.Platform</th>
+                    <th style="width:20%;">@objMessageKey.Region</th>
+                    <th style="width:15%;">@objMessageKey.AgreementNo</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var Distinct_dealNo in arr_Deal_No)
+                {
+                    string DealType = "";
+                    inner_counter = 0;
+
+                    lst_USP_Title_Deal_Info_Result = Model.Where(i => i.Agreement_No == Distinct_dealNo).Select(i => i).ToList();
+                    deal_Type_Css = lst_USP_Title_Deal_Info_Result.Select(i => i.Deal_Type).Distinct().FirstOrDefault() == "S" ? "syn" : "acq";
+                    DealType = lst_USP_Title_Deal_Info_Result.Select(i => i.Deal_Type).Distinct().FirstOrDefault();
+                    @*<div class="grid_item @deal_Type_Css" id="tabDeals">
+                        <table class="tab-pane active">*@
+                foreach (var item in lst_USP_Title_Deal_Info_Result)
+                {
+                    counter += 1;
+                    outer_counter += 1;
+                    inner_counter += 1;
+                    if (outer_counter % 2 == 0)
+                    {
+                        ClassName = "rowBorder";
+                    }
+                    else
+                    {
+                        ClassName = "rowBg";
+                    }
+                    @Html.Hidden("hdnRightCode", item.Rights_Code, new { id = counter + "_hdnRightCode" })
+                    @Html.Hidden("hdnDealType", item.Deal_Type, new { id = counter + "_hdnDealType" })
+                    <tr class="@(ClassName + ' ' + deal_Type_Css)" @*class=@ClassName*@>
+                        <td>
+                            <ul>
+                                <li class="glyphicon glyphicon-triangle-bottom nav-toggle" onclick="@("#coll" + outer_counter)"></li>
+                            </ul>
+                        </td>
+                        <td>
+                            @*@if (Deal_No != item.Agreement_No)
+                                {*@
+                            <h5 title="Licensor">@item.Vendor_Name</h5>
+                            @*}*@
+                        </td>
+                        <td>
+                            @if (item.Is_Exclusive == "Exclusive")
+                            {
+                                <span>Yes</span>
+                            }
+                            @if (item.Is_Exclusive == "Non Exclusive")
+                            {
+                                <span>No</span>
+                            }
+                            @*<h5>@Html.Label("Is_Exclusive", item.Is_Exclusive, new { @title = "Exclusive" })</h5>*@
+                        </td>
+                        <td>
+                            <div>
+                                @*<ul>
+                                    <li>*@
+                                @*@Html.Raw(item.Platform_Name.Replace("~", "<br>"))*@
+                                @* @Html.Raw(item.Platform_Name.Replace("~", "</li><li>"))*@
+                                @if (item.Platform_Name != null && item.Platform_Name != "")
+                                {
+                                    @Html.Raw(item.Platform_Name.Split('~').First())
+                                    <a id="@(counter)_aViewPlatform" title="View Platforms" class="glyphicon glyphicon-triangle-right clsPlatformPopup"></a>
+                                }
+                                @*</li>
+                                    </ul>*@
+                            </div>
+                        </td>
+                        <td>
+                            <div class="expandable">
+                                @if (item.Country_Name != null && item.Country_Name != "")
+                                {
+                                    @Html.Raw(item.Country_Name)
+                                }
+                                else
+                                {
+                                    @Html.Raw(item.Territory_Name)
+                                }
+                            </div>
+
+                        </td>
+                        <td>
+
+                            @if (Deal_No != item.Agreement_No)
+                            {
+                                <span class="deal_no">
+                                    @if (DealType == "S")
+                                    {
+                                        <a href="@Url.Action("ButtonEvents", "Syn_List", new
+                                                            {
+                                                                CommandName = "View",
+                                                                Syn_Deal_Code = @item.Deal_Code,
+                                                                id = @ViewBag.Title_Code,
+                                                                TitlePage_No = ViewBag.TitlePage_No,
+                                                                DealTypeCode = ViewBag.DealTypeCode,
+                                                                SearchedTitle = ViewBag.SearchedTitle,
+                                                                key = "fromTitle",
+                                                                TitlePageSize = ViewBag.PageSize,
+                                                                DealListPageNo = @ViewBag.DealListPageNo,
+                                                                DealListPageSize = @ViewBag.DealListPageSize
+                                                            })">@item.Agreement_No</a>
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action("ButtonEvents", "Acq_List", new
+                                                            {
+                                                                CommandName = "View",
+                                                                Acq_Deal_Code = @item.Deal_Code,
+                                                                id = @ViewBag.Title_Code,
+                                                                TitlePage_No = ViewBag.TitlePage_No,
+                                                                DealTypeCode = ViewBag.DealTypeCode,
+                                                                SearchedTitle = ViewBag.SearchedTitle,
+                                                                key = "fromTitle",
+                                                                TitlePageSize = ViewBag.PageSize,
+                                                                DealListPageNo = @ViewBag.DealListPageNo,
+                                                                DealListPageSize = @ViewBag.DealListPageSize
+                                                            })">@item.Agreement_No</a>
+                                    }
+                                </span>
+                                    <span class=""></span>
+                                if (item.Is_Gift_box_Show == "Y")
+                                {
+                                    <span class="glyphicon glyphicon-gift"></span>
+                                }
+                            }
+                            <span class="expiry">@item.Expiring_In_Days</span>
+                            
+                            @{
+                                Acq_Deal objAcqDeal = new Acq_Deal();
+                                Syn_Deal objSynDeal = new Syn_Deal();
+                                string workflowstatus = new Acq_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Acq_Deal_Code == item.Deal_Code).Select(w => w.Deal_Workflow_Status).FirstOrDefault();
+                                string workflowstatusSyn = new Syn_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(y => y.Syn_Deal_Code == item.Deal_Code).Select(w => w.Deal_Workflow_Status).FirstOrDefault();
+
+                                if (workflowstatus == "AR" || workflowstatusSyn == "AR")
+                                {
+                                    <span style="color:red"><b>(Archive)</b></span>
+                                }
+                            }
+                        </td>
+                    </tr>
+                        <tr class="@(ClassName+' '+deal_Type_Css)" @*class=@ClassName*@ id="@("coll" + outer_counter)" style="display: none;">
+                            @* <td>@if (inner_counter == 1)
+                                    {
+                                    @counter
+                                    }
+                                </td>*@
+                            <td></td>
+                            <td>
+                                @*@if (Deal_No != item.Agreement_No)
+                                    {
+                                        <h5 title="Licensor">@item.Vendor_Name</h5>
+                                    }*@
+                                @*<ul>
+                                    <li class="period">*@
+                                <strong>@objMessageKey.Period -</strong>
+                                @if (@item.Right_Type == "Y" && @item.Term != null && @item.Term.Trim() != "")
+                                {
+                                    var arr = item.Term.Split('.');
+                                    var str = arr[0] + " years";
+
+                                    if (arr[1] != "0")
+                                    {
+                                        str += " " + arr[1] + " months";
+                                    }
+
+                                    @Html.Label("TermY", str, new { @title = "Term" })
+                                }
+                                else
+                                {
+                                    @Html.Label("TermY", item.Right_Term, new { @title = "Term" })
+                                }
+
+                                @if (item.R_Start_Date != null && item.R_END_Date != null && item.Right_Term != "Perpetuity" &&
+            (Convert.ToDateTime(item.R_END_Date).ToString(GlobalParams.DateFormat_Display).Trim() != "31-Dec-9999"
+            && Convert.ToDateTime(item.R_Start_Date).ToString(GlobalParams.DateFormat_Display).Trim() != "31-Dec-9999"))
+                                {
+                                    <text> (</text>
+                                    if (item.R_Start_Date != null)
+                                    {
+                                        @Convert.ToDateTime(item.R_Start_Date).ToString(GlobalParams.DateFormat_Display).Trim()
+                                    }
+
+                                    if (item.R_END_Date != null)
+                                    {
+                                        <text> To </text>
+                                        @Convert.ToDateTime(item.R_END_Date).ToString(GlobalParams.DateFormat_Display).Trim()
+                                    }
+                                    <text>)</text>
+                                    if (item.R_END_Date < DateTime.Now.Date && item.R_END_Date != null)
+                                    {
+                                        <span style='color: red'>(Expired)</span>
+                                    }
+                                }
+                                else
+                                {
+
+                                    if (item.R_Start_Date != null && Convert.ToDateTime(item.R_Start_Date).ToString(GlobalParams.DateFormat_Display).Trim() != "31-Dec-9999")
+                                    {
+                                        <text> From </text>
+                                        @Convert.ToDateTime(item.R_Start_Date).ToString(GlobalParams.DateFormat_Display).Trim()
+                                    }
+                                }
+
+                                @*</li>
+                                    </ul>*@
+                            </td>
+                            <td>
+                                <div class="expandable">
+                                    <strong>@objMessageKey.Subtitling -</strong>
+                                    @if (item.Sub_Lang_Name != "")
+                                    {
+                                        @Html.Raw(@item.Sub_Lang_Name)
+                                    }
+                                    else
+                                    {
+                                        <span>NA</span>
+                                    }
+                                </div>
+                            </td>
+                            <td>
+                                <div class="expandable">
+                                    <strong>@objMessageKey.Dubbing -</strong>
+                                    @if (item.Dub_Lang_Name != "")
+                                    {
+                                        @Html.Raw(@item.Dub_Lang_Name)
+                                    }
+                                    else
+                                    {
+                                        <span>NA</span>
+                                    }
+                                </div>
+                            </td>
+                            <td>
+                                <strong>@objMessageKey.TitleLanguage -</strong>
+                                <h5 style="display: inline-block;">@Html.Label("Title_Language_Right", item.Is_Title_Lang)</h5>
+
+                            </td>
+                            <td>
+
+                                @{
+                                    Deal_No = item.Agreement_No;
+                                }
+                            </td>
+                        </tr>
+
+
+                                        }
+
+                                    }
+            </tbody>
+        </table>
+
+    }
+</div>
+<div id="popupFade">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form">
+                <div class="form_fields">
+                    <div class="modal_block modal_header">
+                        <a class="close" onclick="FadeOutPopup()">
+                            <span>×</span>
+                            <span class="sr-only">Close</span>
+                        </a>
+                        <h5>Platform Matrix</h5>
+                    </div>
+                    <div class="modal_block treeClass" id="divPlatformTree" style="overflow-x: hidden;overflow-y: scroll;">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@*</div>*@
+@*</div>
+    </div>*@

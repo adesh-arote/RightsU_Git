@@ -1,0 +1,51 @@
+﻿@model List<RightsU_Entities.USP_Get_Content_Cost_Result>
+@using UTOFrameWork.FrameworkClasses;
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }   
+}
+<script>
+    $(document).ready(function () {
+        $('#hdnPageNo').val('@ViewBag.PageNo');
+        $('#txtPageSize').val('@ViewBag.PageSize');
+        $('#hdnRecordCount').val('@ViewBag.RecordCount');
+        $('#lblRecordCount').text('@ViewBag.RecordCount');
+
+        if ('@ViewBag.TabChanged' == 'Y') {
+            var costCodes = ('@ViewBag.costtypeCode').split(',');
+            $('#ddlCostType').val(costCodes)[0].sumo.reload();
+        }
+
+        SetPaging();
+        initializeTooltip();
+        initializeExpander();
+    });
+</script>
+<div class="scale_table_block">
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th style="width:25%">@objMessageKey.AgreementNo</th>
+                <th style="width:30%">@objMessageKey.CostType</th>
+                <th style="width:45%">@objMessageKey.CostperEpisode</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Count > 0)
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td align="center">@item.Agreement_No</td>
+                        <td align="center">@item.Cost_Type</td>
+                        <td align="center">@GlobalParams.CurrencyFormat(Convert.ToDouble(@item.Cost_per_Episode))</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+<div class="pull-right"><b>@objMessageKey.TotalAmount : </b>@GlobalParams.CurrencyFormat(Convert.ToDouble(ViewBag.Sum))</div>

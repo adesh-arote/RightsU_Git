@@ -1,0 +1,1255 @@
+﻿@model RightsU_Entities.USP_Get_Title_Availability_LanguageWise_Filter_Result
+@using UTOFrameWork.FrameworkClasses
+<div id="divSelectedCriteria" onclick="hideRegionDiv(); hideMustHaveRegionDiv(); hideSubtitleDiv(); hideMustHaveSubtitleDiv(); hideDubbingDiv(); hideMustHaveDubbingDiv(); hideSubLicenseDiv(); hideTitleLanguageDiv(); hideTitleDiv();">
+    <div class="modal_block modal_header">
+        <a class="close" onclick="ClosePopup()">
+            <span>X</span>
+            <span class="sr-only">Close</span>
+        </a>
+        <h2>Selected Criteria</h2>
+    </div>
+    <div class="scale_table_block">
+        <table class="four_column table">
+            <tr>
+                <td class="td_label">Title </td>
+                <td>
+                    @{
+                        string[] lstTitle = Model.TitleNames.Split(',');
+                    }
+                    @if (Model.TitleNames == "")
+                    {
+                        <span>NA</span>
+                    }
+                    else
+                    {
+                        if (lstTitle.Length > 2)
+                        {
+                            <span>@string.Join(", ", lstTitle.Take(2))</span>
+                            <div style="float:right;padding-right:25px;">
+                                <a title="More Title" id="show_hide_Title" href="#" class="glyphicon glyphicon-option-vertical show_hide_Title"></a>
+                                <div id="extent" class="MoreTitleDiv" style="display:none;">
+                                    <ul>
+                                        @foreach (var item in lstTitle)
+                                        {
+                                            <li class="liTitle" id="lblTitle_Names" style="border-bottom:1px solid #dddddd;width:135px">
+                                                @item
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+
+                        }
+                        else
+                        {
+                            <span>@string.Join(", ", lstTitle.Take(2))</span>
+                        }
+                    }
+                </td>
+                @if (Convert.ToInt32(ViewBag.Code) == GlobalParams.ModuleCodeForProgramAvailabilityReport || Convert.ToInt32(ViewBag.Code) == GlobalParams.ModuleCodeForIndiacastProgramAvailabilityReport)
+                {
+                    <td>Episode Range</td>
+                    <td>
+                        <span>From:   </span><span>@ViewBag.EpisodeFrom</span>
+                        <span> To: </span><span>@ViewBag.EpisodeTo</span>
+                    </td>
+                }
+                else
+                {
+                    <td> Business Unit </td>
+                    <td>@Model.BussinessUnitNames</td>
+                }
+            </tr>
+            <tr>
+                <td>Period (@ViewBag.DateType) </td>
+                <td>
+                    @if (ViewBag.Start_Date != "")
+                    {
+                        <span>Start Date: </span><span>@ViewBag.Start_Date</span>
+                    }
+                    @if (ViewBag.End_Date != "")
+                    {
+                        <span>End Date: </span><span>@ViewBag.End_Date</span>
+                    }
+                </td>
+                @{
+                    string ExNames = Model.ExclusivityNames.TrimStart(' ');
+                }
+                @if (Convert.ToInt32(ViewBag.Code) == GlobalParams.ModuleCodeForProgramAvailabilityReport || Convert.ToInt32(ViewBag.Code) == GlobalParams.ModuleCodeForIndiacastProgramAvailabilityReport)
+                {
+                    <td> Business Unit </td>
+                    <td>@Model.BussinessUnitNames</td>
+                }
+                else if (Convert.ToInt32(ViewBag.Code) != GlobalParams.ModuleCodeForSelfUtilizationMovieAvailabilityReport && Convert.ToInt32(ViewBag.Code) != GlobalParams.ModuleCodeForSelfUtilizationProgramAvailabilityReport)
+                {
+
+                    <td>Exclusivity </td>
+
+                    <td><span>@ExNames.TrimStart(',')</span></td>
+                }
+            </tr>
+            <tr>
+                <td>Title Language </td>
+                <td>
+                    @{
+                        string[] lstTitleLanguage = Model.TitleLanguage_Names.Split(',');
+                    }
+                    @if (ViewBag.ISOriginalLang == "Y")
+                    {
+                        if (Model.TitleLanguage_Names == "")
+                        {
+                            <span>Yes</span>
+                        }
+                        else
+                        {
+                            if (lstTitleLanguage.Length > 3)
+                            {
+                                <span>@string.Join(", ", lstTitleLanguage.Take(3))</span>
+                                <div style="float:right;padding-right:25px;">
+                                    <a title="More Title Language" id="show_hide_TitleLanguage" href="#" class="glyphicon glyphicon-option-vertical show_hide_TitleLanguage"></a>
+                                    <div id="extent" class="MoreTitleLanguageDiv" style="display:none;">
+                                        <ul>
+                                            @foreach (var item in lstTitleLanguage)
+                                            {
+                                                <li class="liTitleLanguage" id="lblTitleLanguage_Names" style="border-bottom:1px solid #dddddd;width:135px">
+                                                    @item
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+
+                            }
+                            else
+                            {
+                                <span>@string.Join(", ", lstTitleLanguage.Take(3))</span>
+                            }
+                        }
+                    }
+                    else
+                    {
+                        <span>No</span>
+                    }
+                </td>
+
+                <td>Sub License </td>
+                <td>
+                    @{
+                        string[] lstSubLicense = Model.SubLicenseNames.Split(',');
+                    }
+                    @if (Model.SubLicenseNames == "")
+                    {
+                        <span>NA</span>
+                    }
+                    else
+                    {
+                        if (lstSubLicense.Length > 1)
+                        {
+                            <span>@string.Join(", ", lstSubLicense.Take(1))</span>
+                            <div style="float:right;padding-right:80px;">
+                                <a title="More SubLicense" id="show_hide_SubLicense" href="#" class="glyphicon glyphicon-option-vertical show_hide_SubLicense"></a>
+                                <div id="extent" class="MoreSubLicenseDiv" style="display:none;">
+                                    <ul>
+                                        @foreach (var item in lstSubLicense)
+                                        {
+                                            <li class="liSubLicense" id="lblSubLicense_Names" style="border-bottom:1px solid #dddddd;width:135px">
+                                                @item
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+
+                        }
+                        else
+                        {
+                            <span>@string.Join(", ", lstSubLicense.Take(1))</span>
+                        }
+                    }
+                </td>
+
+            </tr>
+            <tr>
+                <td>Restriction Remarks </td>
+                <td><span>@Model.Restriction_Remarks</span></td>
+                <td>Other Remarks </td>
+                <td><span>@Model.Other_Remarks</span></td>
+
+            </tr>
+
+            <tr>
+                <td>Include Metadata </td>
+                <td>@Model.IncludeMetadata</td>
+
+                @if (Convert.ToInt32(ViewBag.Code) == GlobalParams.ModuleCodeForProgramAvailabilityReport || Convert.ToInt32(ViewBag.Code) == GlobalParams.ModuleCodeForIndiacastProgramAvailabilityReport)
+                {
+                    <td>Exclusivity </td>
+                    <td><span>@Model.ExclusivityNames</span></td>
+                }
+                else
+                {
+                    if (Convert.ToInt32(ViewBag.Code) == GlobalParams.ModuleCodeForMovieAvailabilityNewReport || Convert.ToInt32(ViewBag.Code) == GlobalParams.ModuleCodeForProgramAvailabilityReport
+                        || Convert.ToInt32(ViewBag.Code) == GlobalParams.ModuleCodeForSelfUtilizationMovieAvailabilityReport || Convert.ToInt32(ViewBag.Code) == GlobalParams.ModuleCodeForSelfUtilizationProgramAvailabilityReport)
+                    {
+                        <td>Include Ancillary</td>
+                        <td>
+                            @ViewBag.IncludeAncillary
+                        </td>
+                    }
+                }
+            </tr>
+
+        </table>
+    </div>
+    <div class="scale_table_block">
+        <div class="tab-content clearfix table-wrapper scale_table_container" style="margin-left:10px;margin-right:25px;">
+            <table class="table table-bordered table-hover" id="tblGroupData">
+                <thead>
+                    <tr>
+                        <th style="width:12%;"></th>
+                        <th style="width:20%;">Group</th>
+                        <th style="width:28%;">Individual</th>
+                        <th style="width:27%;">Must Have</th>
+                        <th style="width:13%;">Exact Match</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Convert.ToInt32(ViewBag.Code) != GlobalParams.ModuleCodeForTheatricalAvailabilityReport)
+                    {
+                        <tr>
+                            <td align="left" style="width:12%;font-weight: bold;">Platform</td>
+                            <td style="width:20%;">
+                                <div class="expandable">
+                                    @if (Model.PlatformNames == "" || Model.Platform_Group_Name == "")
+                                    {
+                                        <span>NA</span>
+                                    }
+                                    else
+                                    {
+                                        @Model.Platform_Group_Name
+                                    }
+                                </div>
+                            </td>
+                            <td style="width:28%;">
+                                <div>
+                                    @{
+                                        string[] lstPlatform = Model.PlatformNames.Split('-');
+                                    }
+                                    @if (Model.PlatformNames == "")
+                                    {
+                                        <span>NA</span>
+                                    }
+                                    else
+                                    { <span>@string.Join("-- ", lstPlatform.Take(1))</span>
+                                    <a id="aViewPlatform" href="#" title="View Platforms" class="clsPlatformPopup"> ...  @ViewBag.PlatformCount  Platforms</a>
+                                    <input type="hidden" id="hdnCallfrom" value="I" />
+                                    }
+                                </div>
+                            </td>
+                            <td style="width:27%;">
+                                <div class="expandable">
+                                    @{
+                                        string[] lstMustHavePlatform = Model.MustHavePlatformsNames.Split('-');
+                                    }
+                                    @if (Model.MustHavePlatformsNames == "")
+                                    {
+                                        <span>NA</span>
+                                    }
+                                    else
+                                    {
+                                        <span>@string.Join("-- ", lstMustHavePlatform.Take(1))</span>
+                                        <a id="aMustHaveViewPlatform" href="#" title="View Platforms" class="clsMustHavePlatformPopup"> ...  @ViewBag.MustHavePlatformCount  Platforms</a>
+                                        <input type="hidden" id="hdnCallfrom" value="M" />
+                                    }
+                                </div>
+                            </td>
+                            <td align="center" style="width:13%;"><Span>@ViewBag.PlatformExact_Match</Span></td>
+                        </tr>
+                                        }
+                    <tr>
+                        @if (ViewBag.IsIftaCluster == "Y")
+                        {
+                            <td align="left" style="width:12%;font-weight: bold;">Region <span>(IFTA)</span> </td>
+                        }
+                        else
+                        {
+                            <td align="left" style="width:12%;font-weight: bold;">Region</td>
+                        }
+                        <td style="width:20%;">
+                            <div class="expandable">
+                                @if (Model.CountryNames == "" || Model.TerritoryNames == "")
+                                {
+                                    <span>NA</span>
+                                }
+                                else
+                                {
+                                    @Model.TerritoryNames
+                                }
+                            </div>
+
+                        </td>
+                        <td style="width:28%;">
+                            @{
+                                string[] lstRegion = Model.CountryNames.Split(',');
+                            }
+                            @if (Model.CountryNames == "")
+                            {
+                                <span>NA</span>
+                            }
+                            else
+                            {
+                                if (lstRegion.Length > 3)
+                                {
+                                    <span>@string.Join(", ", lstRegion.Take(3))</span>
+                                    <div style="float:right;">
+                                        <a title="More Regions" id="show_hide_Region" href="#" class="glyphicon glyphicon-option-vertical show_hide_Region"></a>
+                                        <div id="extent" class="MoreRegionDiv" style="display:none;">
+                                            <ul>
+                                                @foreach (var item in lstRegion)
+                                                {
+                                                    <li class="liRegion" id="lblRegion_Names" style="border-bottom:1px solid #dddddd;width:135px">
+                                                        @item
+                                                    </li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span>@string.Join(", ", lstRegion.Take(3))</span>
+                                }
+                            }
+
+                        </td>
+                        <td style="width:27%;">
+                            @{
+                                string[] lstMustHaveRegion = Model.MustHaveCountryNames.Split(',');
+                            }
+                            @if (Model.MustHaveCountryNames == "")
+                            {
+                                <span>NA</span>
+                            }
+                            else
+                            {
+                                if (lstMustHaveRegion.Length > 3)
+                                {
+                                    <span>@string.Join(", ", lstMustHaveRegion.Take(3))</span>
+                                    <div style="float:right;">
+                                        <a title="More Must Have Regions" id="show_hide_MustHaveRegion" href="#" class="glyphicon glyphicon-option-vertical show_hide_MustHaveRegion"></a>
+                                        <div id="extent" class="MoreMustHaveRegionDiv" style="display:none;">
+                                            <ul>
+                                                @foreach (var item in lstMustHaveRegion)
+                                                {
+                                                    <li class="liMustHaveRegion" id="lblMustHaveRegion_Names" style="border-bottom:1px solid #dddddd;width:135px">
+                                                        @item
+                                                    </li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span>@string.Join(", ", lstMustHaveRegion.Take(3))</span>
+                                }
+                            }
+                        </td>
+                        <td align="center" style="width:13%;"><span>@ViewBag.RegionExact_Match</span></td>
+                    </tr>
+                    @if (Convert.ToInt32(ViewBag.Code) != GlobalParams.ModuleCodeForTheatricalAvailabilityReport)
+                    {
+                        <tr>
+                            <td align="left" style="width:12%;font-weight: bold;">Subtitle</td>
+                            <td style="width:20%;">
+                                <div class="expandable">
+                                    @if (Model.Subtit_LanguageNames == "" || Model.Subtitling_Group_Name == "")
+                                    {
+                                        <span>NA</span>
+                                    }
+                                    else
+                                    {
+                                        @Model.Subtitling_Group_Name
+                                    }
+                                </div>
+                            </td>
+                            <td style="width:28%;">
+                                @{
+                                    string[] lstSubtitle = Model.Subtit_LanguageNames.Split(',');
+                                }
+                                @if (Model.Subtit_LanguageNames == "")
+                                {
+                                    <span>NA</span>
+                                }
+                                else
+                                {
+                                    if (lstSubtitle.Length > 3)
+                                    {
+                                        <span>@string.Join(", ", lstSubtitle.Take(3))</span>
+                                        <div style="float:right;">
+                                            <a title="More Subtitle" id="show_hide_Subtitle" href="#" class="glyphicon glyphicon-option-vertical show_hide_Subtitle"></a>
+                                            <div id="extent" class="MoreSubtitleDiv" style="display:none;">
+                                                <ul>
+                                                    @foreach (var item in lstSubtitle)
+                                                    {
+                                                        <li class="liSubtitle" id="lblSubtitle_Names" style="border-bottom:1px solid #dddddd;width:135px">
+                                                            @item
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span>@string.Join(", ", lstSubtitle.Take(3))</span>
+                                    }
+                                }
+                            </td>
+                            <td style="width:27%;">
+                                @{
+                                    string[] lstMustHaveSubtitle = Model.Subtitling_Must_Have_Names.Split(',');
+                                }
+                                @if (Model.Subtitling_Must_Have_Names == "")
+                                {
+                                    <span>NA</span>
+                                }
+                                else
+                                {
+                                    if (lstMustHaveSubtitle.Length > 3)
+                                    {
+                                        <span>@string.Join(", ", lstMustHaveSubtitle.Take(3))</span>
+                                        <div style="float:right;">
+                                            <a title="More Must Have Subtitle" id="show_hide_MustHaveSubtitle" href="#" class="glyphicon glyphicon-option-vertical show_hide_MustHaveSubtitle"></a>
+                                            <div id="extent" class="MoreMustHaveSubtitleDiv" style="display:none;">
+                                                <ul>
+                                                    @foreach (var item in lstMustHaveSubtitle)
+                                                    {
+                                                        <li class="liMustHaveSubtitle" id="lblMustHaveSubtitle_Names" style="border-bottom:1px solid #dddddd;width:135px">
+                                                            @item
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span>@string.Join(", ", lstMustHaveSubtitle.Take(3))</span>
+                                    }
+                                }
+                            </td>
+                            <td align="center" style="width:13%;"><span>@ViewBag.SubtitleExact_Match</span></td>
+                        </tr>
+                                    }
+                    @if (Convert.ToInt32(ViewBag.Code) != GlobalParams.ModuleCodeForTheatricalAvailabilityReport)
+                    {
+                        <tr>
+                            <td align="left" style="width:12%;font-weight: bold;">Dubbing</td>
+                            <td style="width:20%;">
+                                <div class="expandable">
+                                    @if (Model.Dubbing_LanguageNames == "" || Model.Dubbing_Group_Name == "")
+                                    {
+                                        <span>NA</span>
+                                    }
+                                    else
+                                    {
+                                        @Model.Dubbing_Group_Name
+                                    }
+                                </div>
+                            </td>
+                            <td style="width:28%;">
+                                @{
+                                    string[] lstDubbing = Model.Dubbing_LanguageNames.Split(',');
+                                }
+                                @if (Model.Dubbing_LanguageNames == "")
+                                {
+                                    <span>NA</span>
+                                }
+                                else
+                                {
+                                    if (lstDubbing.Length > 3)
+                                    {
+                                        <span>@string.Join(", ", lstDubbing.Take(3))</span>
+                                        <div style="float:right;">
+                                            <a title="More Dubbing" id="show_hide_Dubbing" href="#" class="glyphicon glyphicon-option-vertical show_hide_Dubbing"></a>
+                                            <div id="extent" class="MoreDubbingDiv" style="display:none;">
+                                                <ul>
+                                                    @foreach (var item in lstDubbing)
+                                                    {
+                                                        <li class="liDubbing" id="lblDubbing_Names" style="border-bottom:1px solid #dddddd;width:135px">
+                                                            @item
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span>@string.Join(", ", lstDubbing.Take(3))</span>
+                                    }
+                                }
+                            </td>
+                            <td style="width:27%;">
+                                @{
+                                    string[] lstMustHaveDubbing = Model.Dubbing_Must_Have_Names.Split(',');
+                                }
+                                @if (Model.Dubbing_Must_Have_Names == "")
+                                {
+                                    <span>NA</span>
+                                }
+                                else
+                                {
+                                    if (lstMustHaveDubbing.Length > 3)
+                                    {
+                                        <span>@string.Join(", ", lstMustHaveDubbing.Take(3))</span>
+                                        <div style="float:right;">
+                                            <a title="More Must Have Dubbing" id="show_hide_MustHaveDubbing" href="#" class="glyphicon glyphicon-option-vertical show_hide_MustHaveDubbing"></a>
+                                            <div id="extent" class="MoreMustHaveDubbingDiv" style="display:none;">
+                                                <ul>
+                                                    @foreach (var item in lstMustHaveDubbing)
+                                                    {
+                                                        <li class="liMustHaveDubbing" id="lblMustHaveDubbing_Names" style="border-bottom:1px solid #dddddd;width:135px">
+                                                            @item
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span>@string.Join(", ", lstMustHaveDubbing.Take(3))</span>
+                                    }
+                                }
+                            </td>
+                            <td align="center" style="width:13%;"><span>@ViewBag.DubbingExact_Match</span></td>
+                        </tr>
+                                    if (Convert.ToInt32(ViewBag.Code) == GlobalParams.ModuleCodeForSelfUtilizationMovieAvailabilityReport || Convert.ToInt32(ViewBag.Code) == GlobalParams.ModuleCodeForSelfUtilizationProgramAvailabilityReport)
+                                    {
+                                        <tr>
+                                            <td align="left" style="width:12%;font-weight: bold;">Self Utilization</td>
+                                            <td style="width:20%;">
+                                                <div class="expandable">
+                                                    <span>NA</span>
+                                                </div>
+                                            </td>
+                                            <td style="width:28%;">
+                                                <div>
+                                                    @{
+                                                        string[] lstPromoter = Model.PromoterNames.Split('-');
+                                                    }
+                                                    @if (Model.PromoterNames == "")
+                                                    {
+                                                        <span>NA</span>
+                                                    }
+                                                    else
+                                                    { <span>@string.Join("--> ", lstPromoter.Take(1))</span>
+                                                    <a id="aViewPromoter" href="#" title="View Self Utilization" class="clsPromoterPopup"> ...  @ViewBag.PromoterCount  Self Utilization</a>
+                                                    <input type="hidden" id="hdnPromoterCallfrom" value="I" />
+                                                    }
+                                                </div>
+                                            </td>
+                                            <td style="width:27%;">
+                                                <div>
+                                                    @{
+                                                        string[] lstMustHavePromoter = Model.MustHavePromoterName.Split('-');
+                                                    }
+                                                    @if (Model.MustHavePromoterName == "")
+                                                    {
+                                                        <span>NA</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>@string.Join("-- ", lstMustHavePromoter.Take(1))</span>
+                                                        <a id="aMustHaveViewPromoter" href="#" title="View Self Utilization" class="clsMustHavePromoterPopup"> ...  @ViewBag.MustHavePromoterCount  Self Utilization</a>
+                                                        <input type="hidden" id="hdnPromoterCallfrom" value="M" />
+                                                    }
+                                                </div>
+                                            </td>
+                                            <td align="center" style="width:13%;"><Span>@ViewBag.PromoterExact_Match</Span></td>
+                                        </tr>
+                                                            }
+                                                        }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="modal_block_full">
+        <div class="form_links">
+            <ul class="modal_block clearfix">
+                <li style="margin-left:15px;margin-top:10px;">
+                    <a class="btn btn-primary" href="#" id="btnPrev" onclick="BindAvailReport()">Execute</a>
+                </li>
+                <li style="margin-top:10px;">
+                    <a class="btn btn-primary" href="#" id="btnNext" onclick="ClosePopup()">Cancel</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div id="popupFade">
+        <div class="modal-dialog" style="width:300px !important;">
+            <div class="modal-content clearfix">
+                <form class="form">
+                    <div class="form_fields">
+                        <div class="modal_block modal_header" style="background:#b5b3b3;">
+                            <a class="close" onclick="FadeOutPopup()">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h5>Platform Matrix</h5>
+                        </div>
+                        <div class="modal_block treeClass" id="divPlatformTree">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="popupFadePromoter">
+        <div class="modal-dialog" style="width:300px !important;">
+            <div class="modal-content clearfix">
+                <form class="form">
+                    <div class="form_fields">
+                        <div class="modal_block modal_header" style="background:#b5b3b3;">
+                            <a class="close" onclick="FadeOutPopupPromoter()">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h5>Self Utilization Matrix</h5>
+                        </div>
+                        <div class="modal_block treeClass" id="divPromoterTree">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script src="~/JS_Core/common.concat.js"></script>
+
+<script>
+    var URL_BindPlatformTreePopup = '@Url.Action("BindPlatformTreePopup", "Availability_Movie")';
+    var URL_BindPromoterTreePopup = '@Url.Action("BindPromoterTreePopup", "Availability_Movie")';
+    var pos = null;
+    function ClosePopup() {
+        $('#popup').modal('hide');
+        $('#pupupHtml').empty();
+    }
+    $(document).ready(function () {
+        debugger
+        initializeTooltip();
+        $('.show_hide_Region').click(function () {
+            hideMustHaveRegionDiv();
+            hideSubtitleDiv();
+            hideMustHaveSubtitleDiv();
+            hideDubbingDiv();
+            hideMustHaveDubbingDiv();
+            hideSubLicenseDiv();
+            hideTitleLanguageDiv();
+            hideTitleDiv();
+            $('.MoreRegionDiv').slideUp();
+            $(this).parent().find('.MoreRegionDiv').slideToggle('fast');
+            return false;
+        });
+
+        $('.show_hide_MustHaveRegion').click(function () {
+            hideRegionDiv();
+            hideSubtitleDiv();
+            hideMustHaveSubtitleDiv();
+            hideDubbingDiv();
+            hideMustHaveDubbingDiv();
+            hideSubLicenseDiv();
+            hideTitleLanguageDiv();
+            hideTitleDiv();
+            $('.MoreMustHaveRegionDiv').slideUp();
+            $(this).parent().find('.MoreMustHaveRegionDiv').slideToggle('fast');
+            return false;
+        });
+
+        $('.show_hide_Subtitle').click(function () {
+            hideRegionDiv();
+            hideMustHaveRegionDiv();
+            hideMustHaveSubtitleDiv();
+            hideDubbingDiv();
+            hideMustHaveDubbingDiv();
+            hideSubLicenseDiv();
+            hideTitleLanguageDiv();
+            hideTitleDiv();
+            $('.MoreSubtitleDiv').slideUp();
+            $(this).parent().find('.MoreSubtitleDiv').slideToggle('fast');
+            return false;
+        });
+
+        $('.show_hide_MustHaveSubtitle').click(function () {
+            hideRegionDiv();
+            hideMustHaveRegionDiv();
+            hideSubtitleDiv();
+            hideDubbingDiv();
+            hideMustHaveDubbingDiv();
+            hideSubLicenseDiv();
+            hideTitleLanguageDiv();
+            hideTitleDiv();
+            $('.MoreMustHaveSubtitleDiv').slideUp();
+            $(this).parent().find('.MoreMustHaveSubtitleDiv').slideToggle('fast');
+            return false;
+        });
+
+        $('.show_hide_Dubbing').click(function () {
+            hideRegionDiv();
+            hideMustHaveRegionDiv();
+            hideSubtitleDiv();
+            hideMustHaveSubtitleDiv();
+            hideMustHaveDubbingDiv();
+            hideSubLicenseDiv();
+            hideTitleLanguageDiv();
+            hideTitleDiv();
+            $('.MoreDubbingDiv').slideUp();
+            $(this).parent().find('.MoreDubbingDiv').slideToggle('fast');
+            return false;
+        });
+
+        $('.show_hide_MustHaveDubbing').click(function () {
+            hideRegionDiv();
+            hideMustHaveRegionDiv();
+            hideSubtitleDiv();
+            hideMustHaveSubtitleDiv();
+            hideDubbingDiv();
+            hideSubLicenseDiv();
+            hideTitleLanguageDiv();
+            hideTitleDiv();
+            $('.MoreMustHaveDubbingDiv').slideUp();
+            $(this).parent().find('.MoreMustHaveDubbingDiv').slideToggle('fast');
+            return false;
+        });
+        $('.show_hide_SubLicense').click(function () {
+            hideRegionDiv();
+            hideMustHaveRegionDiv();
+            hideSubtitleDiv();
+            hideMustHaveSubtitleDiv();
+            hideDubbingDiv();
+            hideMustHaveDubbingDiv();
+            hideTitleLanguageDiv();
+            hideTitleDiv();
+            $('.MoreSubLicenseDiv').slideUp();
+            $(this).parent().find('.MoreSubLicenseDiv').slideToggle('fast');
+            return false;
+        });
+        $('.show_hide_TitleLanguage').click(function () {
+            hideRegionDiv();
+            hideMustHaveRegionDiv();
+            hideSubtitleDiv();
+            hideMustHaveSubtitleDiv();
+            hideDubbingDiv();
+            hideSubLicenseDiv();
+            hideMustHaveDubbingDiv();
+            hideTitleDiv();
+            $('.MoreTitleLanguageDiv').slideUp();
+            $(this).parent().find('.MoreTitleLanguageDiv').slideToggle('fast');
+            return false;
+        });
+        $('.show_hide_Title').click(function () {
+            hideRegionDiv();
+            hideMustHaveRegionDiv();
+            hideSubtitleDiv();
+            hideMustHaveSubtitleDiv();
+            hideDubbingDiv();
+            hideSubLicenseDiv();
+            hideMustHaveDubbingDiv();
+            hideTitleLanguageDiv();
+            $('.MoreTitleDiv').slideUp();
+            $(this).parent().find('.MoreTitleDiv').slideToggle('fast');
+            return false;
+        });
+        $('.clsPlatformPopup').on('click', function (e) {
+            debugger
+            $('#divPromoterTree').empty();
+            $('#popupFadePromoter').hide();
+            var btdId = e.target.id;
+            var callfrom = "I";
+            var BU_Code = $("#ddlBusinessUnit").val();
+
+            pos = $('#' + btdId).offset();
+            $.ajax({
+                type: "POST",
+                url: URL_BindPlatformTreePopup,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    callfrom: callfrom,
+                    BU_Code: BU_Code
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    $('#divPlatformTree').html(result);
+                    initializeChosen();
+                    initializeExpander();
+                    initializeTooltip();
+                    $('#popupFade').offset({ top: pos.top, left: pos.left }).fadeIn();
+                    $('#popupFade').offset({ top: pos.top, left: pos.left }).fadeIn();
+                },
+                error: function (result) { }
+            });
+            return false;
+        });
+        $('.clsPromoterPopup').on('click', function (e) {
+            debugger
+            $('#divPlatformTree').empty();
+            $('#popupFade').hide();
+            var btdId = e.target.id;
+            var callfrom = "I";
+
+            pos = $('#' + btdId).offset();
+            $.ajax({
+                type: "POST",
+                url: URL_BindPromoterTreePopup,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    callfrom: callfrom
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    $('#divPromoterTree').html(result);
+                    initializeChosen();
+                    initializeExpander();
+                    initializeTooltip();
+                    $('#popupFadePromoter').offset({ top: pos.top, left: pos.left }).fadeIn();
+                    $('#popupFadePromoter').offset({ top: pos.top, left: pos.left }).fadeIn();
+                },
+                error: function (result) { }
+            });
+            return false;
+        });
+        $('.clsMustHavePlatformPopup').on('click', function (e) {
+            debugger
+            $('#divPromoterTree').empty();
+            $('#popupFadePromoter').hide();
+            var btdId = e.target.id;
+            var callfrom = "M";
+
+            pos = $('#' + btdId).offset();
+            $.ajax({
+                type: "POST",
+                url: URL_BindPlatformTreePopup,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    callfrom: callfrom
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    $('#divPlatformTree').html(result);
+                    initializeChosen();
+                    initializeExpander();
+                    initializeTooltip();
+                    $('#popupFade').offset({ top: pos.top, left: pos.left }).fadeIn();
+                    $('#popupFade').offset({ top: pos.top, left: pos.left }).fadeIn();
+                },
+                error: function (result) { }
+            });
+            return false;
+        });
+        $('.clsMustHavePromoterPopup').on('click', function (e) {
+            debugger
+            $('#divPlatformTree').empty();
+            $('#popupFade').hide();
+            var btdId = e.target.id;
+            var callfrom = "M";
+
+            pos = $('#' + btdId).offset();
+            $.ajax({
+                type: "POST",
+                url: URL_BindPromoterTreePopup,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    callfrom: callfrom
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    $('#divPromoterTree').html(result);
+                    initializeChosen();
+                    initializeExpander();
+                    initializeTooltip();
+                    $('#popupFadePromoter').offset({ top: pos.top, left: pos.left }).fadeIn();
+                    $('#popupFadePromoter').offset({ top: pos.top, left: pos.left }).fadeIn();
+                },
+                error: function (result) { }
+            });
+            return false;
+        });
+
+        $("#popupFade").click(function (event) {
+            event.stopPropagation();
+        });
+        $("#popupFadePromoter").click(function (event) {
+            event.stopPropagation();
+        });
+    });
+
+    function FadeOutPopup() {
+        $('#divPlatformTree').empty();
+        $('#popupFade').offset({ top: pos.top, left: pos.left }).fadeOut();
+        return false;
+    }
+
+    function FadeOutPopupPromoter() {
+        $('#divPromoterTree').empty();
+        $('#popupFadePromoter').offset({ top: pos.top, left: pos.left }).fadeOut();
+        return false;
+    }
+    function hideRegionDiv() {
+        $('.MoreRegionDiv').hide('slow');
+    }
+    function hideMustHaveRegionDiv() {
+        $('.MoreMustHaveRegionDiv').hide('slow');
+    }
+    function hideSubtitleDiv() {
+        $('.MoreSubtitleDiv').hide('slow');
+    }
+    function hideMustHaveSubtitleDiv() {
+        $('.MoreMustHaveSubtitleDiv').hide('slow');
+    }
+    function hideDubbingDiv() {
+        $('.MoreDubbingDiv').hide('slow');
+    }
+    function hideMustHaveDubbingDiv() {
+        $('.MoreMustHaveDubbingDiv').hide('slow');
+    }
+    function hideSubLicenseDiv() {
+        $('.MoreSubLicenseDiv').hide('slow');
+    }
+    function hideTitleLanguageDiv() {
+        $('.MoreTitleLanguageDiv').hide('slow');
+    }
+    function hideTitleDiv() {
+        $('.MoreTitleDiv').hide('slow');
+    }
+</script>
+
+<style>
+    .glyphicon-option-vertical {
+        transform: rotate(270deg);
+        padding-right: 7px !important;
+    }
+
+    .MoreRegionDiv {
+        padding: 2px;
+        background: #ffffff; /*#2B5F8E;*/
+        width: 150px;
+        max-height: 165px;
+        box-shadow: 0 0 5px #aaa;
+        font-size: 12px;
+        color: #000;
+        text-align: left;
+        position: absolute;
+        z-index: 99;
+        left: auto;
+        overflow-y: auto;
+        display: none;
+        line-height: 30px !important;
+        overflow-x: hidden;
+    }
+
+    .MoreMustHaveRegionDiv {
+        padding: 2px;
+        background: #ffffff; /*#2B5F8E;*/
+        width: 150px;
+        max-height: 165px;
+        box-shadow: 0 0 5px #aaa;
+        font-size: 12px;
+        color: #000;
+        text-align: left;
+        position: absolute;
+        z-index: 99;
+        left: auto;
+        overflow-y: auto;
+        display: none;
+        line-height: 30px !important;
+        overflow-x: hidden;
+    }
+
+    .MoreSubtitleDiv {
+        padding: 2px;
+        background: #ffffff; /*#2B5F8E;*/
+        width: 150px;
+        max-height: 165px;
+        box-shadow: 0 0 5px #aaa;
+        font-size: 12px;
+        color: #000;
+        text-align: left;
+        position: absolute;
+        z-index: 99;
+        left: auto;
+        overflow-y: auto;
+        display: none;
+        line-height: 30px !important;
+        overflow-x: hidden;
+    }
+
+    .MoreMustHaveSubtitleDiv {
+        padding: 2px;
+        background: #ffffff; /*#2B5F8E;*/
+        width: 150px;
+        max-height: 165px;
+        box-shadow: 0 0 5px #aaa;
+        font-size: 12px;
+        color: #000;
+        text-align: left;
+        position: absolute;
+        z-index: 99;
+        left: auto;
+        overflow-y: auto;
+        display: none;
+        line-height: 30px !important;
+        overflow-x: hidden;
+    }
+
+    .MoreDubbingDiv {
+        padding: 2px;
+        background: #ffffff;
+        width: 150px;
+        max-height: 160px;
+        box-shadow: 0 0 5px #aaa;
+        font-size: 12px;
+        color: #000;
+        text-align: left;
+        position: absolute;
+        z-index: 99;
+        left: auto;
+        overflow-y: auto;
+        display: none;
+        line-height: 30px !important;
+        overflow-x: hidden;
+    }
+
+    .MoreMustHaveDubbingDiv {
+        padding: 2px;
+        background: #ffffff; /*#2B5F8E;*/
+        width: 150px;
+        max-height: 160px;
+        box-shadow: 0 0 5px #aaa;
+        font-size: 12px;
+        color: #000;
+        text-align: left;
+        position: absolute;
+        z-index: 99;
+        left: auto;
+        overflow-y: auto;
+        display: none;
+        line-height: 30px !important;
+        overflow-x: hidden;
+    }
+
+    .MoreSubLicenseDiv {
+        padding: 2px;
+        background: #ffffff; /*#2B5F8E;*/
+        width: 150px;
+        max-height: 165px;
+        box-shadow: 0 0 5px #aaa;
+        font-size: 12px;
+        color: #000;
+        text-align: left;
+        position: absolute;
+        z-index: 99;
+        left: auto;
+        overflow-y: auto;
+        display: none;
+        line-height: 30px !important;
+        overflow-x: hidden;
+    }
+
+    .MoreTitleLanguageDiv {
+        padding: 2px;
+        background: #ffffff; /*#2B5F8E;*/
+        width: 150px;
+        max-height: 165px;
+        box-shadow: 0 0 5px #aaa;
+        font-size: 12px;
+        color: #000;
+        text-align: left;
+        position: absolute;
+        z-index: 99;
+        left: auto;
+        overflow-y: auto;
+        display: none;
+        line-height: 30px !important;
+        overflow-x: hidden;
+    }
+
+    .MoreTitleDiv {
+        padding: 2px;
+        background: #ffffff; /*#2B5F8E;*/
+        width: 150px;
+        max-height: 165px;
+        box-shadow: 0 0 5px #aaa;
+        font-size: 12px;
+        color: #000;
+        text-align: left;
+        position: absolute;
+        z-index: 99;
+        left: auto;
+        overflow-y: auto;
+        display: none;
+        line-height: 30px !important;
+        overflow-x: hidden;
+    }
+
+    .acq .glyphicon {
+        color: #2d2c2c;
+    }
+
+    #divPlatformTree {
+        overflow-x: hidden;
+        /*overflow-y:auto;*/
+    }
+
+    #divPromoterTree {
+        overflow-x: hidden;
+        /*overflow-y:auto;*/
+    }
+
+    #Tree_Filter_Rights_List_Platform {
+        margin-left: -10px;
+        width: 300px;
+        margin-top: -3px;
+    }
+
+    #Tree_Filter_Rights_List_Promoter {
+        margin-left: -10px;
+        width: 300px;
+        margin-top: -3px;
+    }
+
+    .td_label {
+        vertical-align: top;
+        margin-right: 20px;
+        font-weight: 700;
+    }
+
+    .clsPlatformPopup {
+        color: #1b1a1a;
+        font-size: 11px;
+        font-style: italic;
+    }
+
+    .clsMustHavePlatformPopup {
+        color: #1b1a1a;
+        font-size: 11px;
+        font-style: italic;
+    }
+
+    .clsPromoterPopup {
+        color: #1b1a1a;
+        font-size: 11px;
+        font-style: italic;
+    }
+
+    .clsMustHavePromoterPopup {
+        color: #1b1a1a;
+        font-size: 11px;
+        font-style: italic;
+    }
+
+    .four_column td:nth-child(2n+1) {
+        width: 16%;
+    }
+
+    .four_column td:nth-child(2n) {
+        width: 34%;
+    }
+
+    #tblGroupData th {
+        text-align: center;
+    }
+
+    .four_column {
+        margin-left: 10px;
+    }
+
+    .acq .btn-primary {
+        background-color: #949191;
+    }
+
+    #popupFade {
+        position: absolute;
+        display: none;
+        width: 300px;
+        overflow: hidden;
+        border: #bbb 1px solid;
+        z-index: 100;
+    }
+
+    #popupFadePromoter {
+        position: absolute;
+        display: none;
+        width: 300px;
+        overflow: hidden;
+        border: #bbb 1px solid;
+        z-index: 100;
+    }
+
+    #popupFade .modal-dialog ul.fancytree-container {
+        height: 100%;
+        border: 0;
+        overflow-y: auto;
+    }
+
+    #popupFadePromoter .modal-dialog ul.fancytree-container {
+        height: 100%;
+        border: 0;
+        overflow-y: auto;
+    }
+
+    #pupupHtml {
+        /*overflow-y: auto;*/
+        /*overflow-x:auto;*/
+        max-height: 600px;
+    }
+
+    #popupFade form .modal_block {
+        padding: 3px 10px;
+    }
+
+    #popupFade #Rights_List_Platform {
+        max-height: 400px;
+    }
+
+    #popupFadePromoter form .modal_block {
+        padding: 3px 10px;
+    }
+
+    #popupFadePromoter #Rights_List_Promoter {
+        max-height: 400px;
+    }
+
+    .big_popup {
+        max-width: 950px !important;
+    }
+
+    .modal-dialog {
+        width: 880px;
+    }
+</style>

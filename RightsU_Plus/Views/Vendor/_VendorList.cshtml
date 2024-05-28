@@ -1,0 +1,190 @@
+﻿@model List<RightsU_Entities.Vendor>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    List<int?> lstVendorCodes = new RightsU_BLL.MHUser_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Select(s => s.Vendor_Code).ToList();
+}
+<script>
+    $('.expand_Vendor_Name').expander({
+        slicePoint: 23,
+        expandPrefix: '',
+        expandText: '...@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+
+    $('.expand_Address').expander({
+        slicePoint: 24,
+        expandPrefix: '',
+        expandText: '...@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+
+    $('.expand_strRoles').expander({
+        slicePoint: 32,
+        expandPrefix: '',
+        expandText: '...@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+</script>
+
+
+<table class="table table-bordered table-hover" id="tblMusicLink">
+    <thead>
+        <tr>
+            <th style="width:20%;">@objMessageKey.PartyName</th>
+            <th style="width:22%;">@objMessageKey.Address</th>
+            <th style="width:10%;">@objMessageKey.PhoneNo.</th>
+            <th style="width:24%;">@objMessageKey.PartyType</th>
+            <th style="width:8%;">@objMessageKey.CSTNo</th>
+            <th style="width:8%;">@objMessageKey.Status</th>
+            <th style="width:8%;">@objMessageKey.Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                string strRoles = "";
+                if (item.Vendor_Role.Count > 0)
+                {
+                    strRoles = string.Join(", ", item.Vendor_Role.Select(s => s.Role.Role_Name).ToArray());
+                }
+                string strActive = objMessageKey.Active;
+                if (item.Is_Active == "N")
+                {
+                    strActive = objMessageKey.Deactive;
+                }
+                <tr>
+                    <td class="expand_Vendor_Name">
+                        <span>@item.Vendor_Name</span>
+                    </td>
+                    <td class="expand_Address">
+                        <span>@item.Address</span>
+                    </td>
+                    <td>
+                        <span>@item.Phone_No</span>
+                    </td>
+                    <td class="expand_strRoles">
+                        <span>@strRoles</span>
+                    </td>
+                    <td>
+                        <span>@item.CST_No</span>
+                    </td>
+                    <td align="center">
+                        <span>@strActive</span>
+                    </td>
+                    <td align="center">
+                        @{  bool canDeactive = true;
+                            string toolTipMsg = "";
+                            string Is_Valid = new RightsU_BLL.System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "Is_Vendor_Validation_For_Deal").Select(s => s.Parameter_Value).FirstOrDefault();
+                            if (Is_Valid == "N")
+                            {
+                                if (lstVendorCodes.Where(x => x.Value == item.Vendor_Code).Count() > 0)
+                                {
+                                    canDeactive = false;
+                                    toolTipMsg = objMessageKey.CannotdeactivatethisvendorasitisusedinUser;
+                                }
+                                if (item.Acq_Deal.Count > 0)
+                                {
+                                    canDeactive = false;
+                                    toolTipMsg = objMessageKey.CannotdeactivatethisVendorasitisusedinAcquisitionDeal;
+                                }
+                                else if (item.Acq_Deal_Cost_Commission.Count > 0)
+                                {
+                                    canDeactive = false;
+                                    toolTipMsg = objMessageKey.CannotdeactivatethisVendorasitisusedinAcquisitionDealCostCommission;
+                                }
+                                else if (item.Acq_Deal_Cost_Variable_Cost.Count > 0)
+                                {
+                                    canDeactive = false;
+                                    toolTipMsg = objMessageKey.CannotdeactivatethisVendorasitisusedinAcquisitionDealCostVariable;
+                                }
+                                else if (item.Acq_Deal_Licensor.Count > 0)
+                                {
+                                    canDeactive = false;
+                                    toolTipMsg = objMessageKey.CannotdeactivatethisVendorasitisusedinAcquisitionDealLicensor;
+                                }
+
+                                else if (item.Syn_Deal.Count > 0)
+                                {
+                                    canDeactive = false;
+                                    toolTipMsg = objMessageKey.CannotdeactivatethisVendorasitisusedinSyndicationDeal;
+                                }
+                                else if (item.Syn_Deal_Revenue_Commission.Count > 0)
+                                {
+                                    canDeactive = false;
+                                    toolTipMsg = objMessageKey.CannotdeactivatethisVendorasitisusedinSyndicationDealRevenueCommission;
+                                }
+                                else if (item.Syn_Deal_Revenue_Variable_Cost.Count > 0)
+                                {
+                                    canDeactive = false;
+                                    toolTipMsg = objMessageKey.CannotdeactivatethisVendorasitisusedinSyndicationDealRevenueVariableCost;
+                                }
+                                else if (item.Music_Deal_Vendor.Count > 0)
+                                {
+                                    canDeactive = false;
+                                    toolTipMsg = objMessageKey.CannotdeactivatethisVendorasitisusedinMusicDeal;
+                                }
+                            }
+                        }
+                        @if (item.Is_Active == "Y")
+                        {
+                            if(lstVendorCodes.Where(x => x.Value == item.Vendor_Code).Count() > 0)
+                            {
+                                canDeactive = false;
+                                toolTipMsg = objMessageKey.CannotdeactivatethisvendorasitisusedinUser;
+                            }
+                            if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForEdit + "~"))
+                            {
+                                // <a title="Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer;" onclick="location.href = '@Url.Action("AddEditVendorList", "Vendor", new{ VendorCode = item.Vendor_Code})'"></a>
+                                <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer;" onclick="BindPartialView('EDIT',@item.Vendor_Code)"></a>
+
+                            }
+                            if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForDeactivate + "~"))
+                            {
+                                if (canDeactive)
+                                {
+                                    <a title="@objMessageKey.Deactivate" class="glyphicon glyphicon-thumbs-down" style="cursor: pointer;" onclick="ActiveDeactiveVendor(@item.Vendor_Code, 'N')"></a>
+                                }
+                                else
+                                {
+                                    <a title="@toolTipMsg" class="glyphicon glyphicon-thumbs-down disabled" onclick="return false;"></a>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForActivate + "~"))
+                            {
+                                <a title="@objMessageKey.CannoteditthisPartyasitisdeactivated" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
+                                <a title="@objMessageKey.Activate" class="glyphicon glyphicon-thumbs-up" style="cursor: pointer;" onclick="ActiveDeactiveVendor(@item.Vendor_Code, 'Y')"></a>
+                            }
+                        }
+                        @if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForView + "~"))
+                        {
+                            <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindPartialView('VIEW',@item.Vendor_Code)"></a>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="5">@objMessageKey.Norecordfound</td>
+            </tr>
+        }
+    </tbody>
+</table>

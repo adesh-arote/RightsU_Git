@@ -1,0 +1,238 @@
+﻿@model List<RightsU_Entities.DM_Content_Music>
+
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings[" Version_No"]" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<link type="text/css" rel="stylesheet" href="~/CSS/jquery.timeentry.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/jquery.plugin.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script type="text/javascript" src="~/JS_Core/jquery.timeentry.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
+<script>
+    $(document).ready(function () {
+        debugger
+        $("#lblRecordCount").text(@ViewBag.RecordCount);
+        $("#hdnPageNo").val(@((ViewBag.PageNo ?? 1)));
+        $("#hdnRecordCount").val(@ViewBag.RecordCount);
+        $("#txtPageSize").val(@ViewBag.PageSize);
+        SetPaging();
+        $(".numeric_Frame").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 23,
+            min: 0
+        });
+        $(".numeric_Frame").on('click focusin', function () {
+            debugger
+            if(this.value > 23)
+            {
+                this.value = "00";
+            }
+        });
+        $('input[id*="txtFrom_"]').each(function (index) {
+            debugger
+            var txtFrom = $(this)[0].id;
+            $('#' + txtFrom).timeEntry({ show24Hours: true, showSeconds: true });
+        });
+        $('input[id*="txtTo_"]').each(function (index) {
+            debugger
+            var txtTo = $(this)[0].id;
+            $('#' + txtTo).timeEntry({ show24Hours: true, showSeconds: true });
+        });
+        $('input[id*="txtDuration_"]').each(function (index) {
+            debugger
+            var txtDuration_ = $(this)[0].id;
+            $('#' + txtDuration_).timeEntry({ show24Hours: true, showSeconds: true });
+        });
+
+        $('.timeEntry-control').hide();
+    });
+    function Clear(rowNo) {
+        $("#txtFrom_" + rowNo).val("00:00:00");
+        $("#txtFrameFrom_" + rowNo).val("00");
+        $("#txtTo_" + rowNo).val("00:00:00");
+        $("#txtFrameTo_" + rowNo).val("00");
+        $("#txtDurationFrame_" + rowNo).val("00");
+    }
+    function ErrorTagclick(thistext) {
+        //debugger;
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("ShowError", "Title_Content_ImportExport")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            async: false,
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                ErrorCode: thistext.text.trim()
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    hideLoading();
+                    //alert(result.Error_Description);
+                    $("#lblError").html(result.Error_Description);
+                    //$("#popException").html(result);
+                    $("#popErrorTag").modal();
+                    $("#popErrorTag").show();
+                    initializeChosen();
+                }
+            },
+            error: function (result) { }
+        });
+
+
+    }
+</script>
+<style>
+    .numeric_Frame {
+    width: 40px !important;
+}
+    .timeTextBox {
+    width: 100px !important;
+    line-height: initial !important;
+}
+</style>
+<div class="scale_table_block">
+    <table class="table table-bordered table-hover" id="tblOtherLogData">
+        <thead>
+            <tr>
+                <th style="width:10%;"> <input type="checkbox" id="chkAllOther" /> Exclude</th>
+                <th style="width:10%;">TC IN</th>
+                <th style="width:10%;">TC OUT</th>
+                <th style="width:10%;">Duration</th>
+                <th style="width:30%;">Error Tag</th>
+           </tr>
+        </thead>
+        <tbody>
+            @if (Model.Count > 0)
+            {
+                foreach (var item in Model)
+                {
+                    string strFrom = "00:00:00", strTo = "00:00:00", strDuration = "00:00:00", strFromFrame = "00", strToFrame = "00", strDurationFrame = "00", titleContentVersionName = "";
+                    //if (item.From != null && item.To != null && item.Duration != null)
+                    //{
+                    //    strFrom = item.From.ToString();
+                    //    strTo = item.To.ToString();
+                    //    strDuration = item.Duration.ToString();
+                    //}
+                    if (item.From != null && item.From != "")
+                    {
+                        strFrom = item.From.ToString();
+                    }
+                    if(item.To != null && item.To != "")
+                    {
+                        strTo = item.To.ToString();
+                    }
+                    if(item.Duration != null && item.Duration != "")
+                    {
+                        strDuration = item.Duration.ToString();
+                    }
+                    strFromFrame = item.From_Frame.ToString() != "" ? item.From_Frame.ToString() : "00" ;
+                    strToFrame = item.To_Frame.ToString() != "" ? item.To_Frame.ToString() : "00";
+                    strDurationFrame = item.Duration_Frame.ToString() != "" ? item.Duration_Frame.ToString() : "00";
+
+                    //if (item.From_Frame != "" && item.To_Frame != "" && item.Duration_Frame != "")
+                    //{
+                    //    strFromFrame = item.From_Frame.ToString();
+                    //    strToFrame = item.To_Frame.ToString();
+                    //    strDurationFrame = item.Duration_Frame.ToString();
+                    //}
+                    <tr>
+                        <td>
+                            @if (item.Is_Ignore == "Y")
+                            {
+                                <input type="checkbox" id="chkCreateNewOther_@item.IntCode" checked="checked" />
+                            }
+                            else
+                            {
+                                <input type="checkbox" id="chkCreateNewOther_@item.IntCode" />
+                            }
+                    
+                        </td>
+                        <td>
+                            <input type="text" id="txtFrom_@item.IntCode" value="@strFrom" onfocusout="calculateDuration(@item.IntCode, false, false)" style="width:70px">
+                            <input type="text" id="txtFrameFrom_@item.IntCode" class="numeric_Frame smalltext" value="@strFromFrame" onfocusout="calculateDuration(@item.IntCode, false, false)"/>
+                        </td>
+                        <td><input type="text" id="txtTo_@item.IntCode" value="@strTo" onfocusout="calculateDuration(@item.IntCode, false, false)" style="width:70px">
+                            <input type="text" id="txtFrameTo_@item.IntCode" class="numeric_Frame smalltext" value="@strToFrame" onfocusout="calculateDuration(@item.IntCode, false, false)" /></td>
+                        <td><input type="text" id="txtDuration_@item.IntCode" value="@strDuration" onkeypress="Clear(@item.IntCode)" onclick="Clear(@item.IntCode)" style="width:70px">
+                            <input type="text" id="txtDurationFrame_@item.IntCode" class="numeric_Frame smalltext" value="@strDurationFrame" onkeypress="Clear(@item.IntCode)" onclick="Clear(@item.IntCode)" /></td>
+                        <td>
+                            <a style="cursor:pointer;" href="#" data-toggle="modal" onclick="return ErrorTagclick(this);">
+                                @if (item.Error_Tags != null && item.Error_Tags != "")
+                                {
+                                    @Html.Raw(item.Error_Tags.TrimEnd('~').Trim().Replace("~", "</a>,&nbsp<a style='cursor:pointer;' href='#'  data-toggle='modal' onclick=' return ErrorTagclick(this);'>").TrimEnd(','))
+                                }
+                            </a>
+                            <input type="hidden" id="hdnDMContentMusicCode_@item.IntCode" value="@item.IntCode" />
+                        </td>
+                         @*<td>@item.Error_Tags
+                            <input type="hidden" id="hdnDMContentMusicCode_@item.IntCode" value="@item.IntCode" /></td>*@
+                      
+                   </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade" id="popErrorTag" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form" id="new_syndication_bundle_form">
+                <div class="form_wrapper">
+                    <div class="form_fields acq">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>Error Description</h2>
+                        </div>
+                        <div class="modal_block" style="overflow-y: auto !important; max-height: 400px !important">
+                            <label id="lblError"></label>
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li>
+                                        <a data-dismiss="modal" class="btn-primary" href="#">Ok</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    //$(document).ready(function () {
+    //    debugger
+       
+        
+    //    $(".numeric_Frame").on('click focusin', function () {
+    //        if (/^\d+$/.test($(this).val())) {
+    //            $(".numeric_Frame").numeric({
+    //                allowMinus: false,
+    //                allowThouSep: false,
+    //                allowDecSep: false,
+    //                max: 23,
+    //                min: 0
+    //            });
+    //        }
+    //        else {
+    //            this.value = '';
+    //        }
+            
+    //    });
+    //});
+    //​$(".numeric_Frame").on('keydown', function(e) {
+    //    if( !/[a-z]|[A-Z]/.test( String.fromCharCode( e.which ) ) )        
+    //        return false;
+    //});​​​​​​​​
+</script>

@@ -1,0 +1,26 @@
+﻿CREATE TABLE [dbo].[Rights_Bulk_Update] (
+    [Rights_Bulk_Update_Code] INT           IDENTITY (1, 1) NOT NULL,
+    [Deal_Code]               INT           NULL,
+    [Right_Codes]             VARCHAR (MAX) NULL,
+    [Change_For]              CHAR (2)      NULL,
+    [Action_For]              CHAR (1)      NULL,
+    [Start_Date]              DATE          NULL,
+    [End_Date]                DATE          NULL,
+    [Term]                    VARCHAR (12)  NULL,
+    [Milestone_Type_Code]     VARCHAR (10)  NULL,
+    [Milestone_No_Of_Unit]    VARCHAR (10)  NULL,
+    [Milestone_Unit_Type]     VARCHAR (10)  NULL,
+    [Rights_Type]             CHAR (1)      NULL,
+    [Codes]                   VARCHAR (MAX) NULL,
+    [Is_Exclusive]            VARCHAR (5)   NULL,
+    [Is_Title_Language]       VARCHAR (5)   NULL,
+    [Is_Tentative]            CHAR (1)      NULL,
+    [SelectedTitleCodes]      VARCHAR (MAX) NULL,
+    [SelectedTitleNames]      VARCHAR (MAX) NULL,
+    [Is_Syn_Acq_Mapp]         VARCHAR (MAX) NULL,
+    [Page_View]               CHAR (1)      NULL,
+    [Inserted_On]             DATETIME      NULL,
+    [Is_Processed]            CHAR (1)      DEFAULT ('N') NULL,
+    PRIMARY KEY CLUSTERED ([Rights_Bulk_Update_Code] ASC)
+);
+

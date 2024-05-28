@@ -1,0 +1,691 @@
+﻿@using UTOFrameWork.FrameworkClasses
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+
+
+
+<script>
+    var IsCall = 'Y', Command_Name = "", sort_Type_G = "T", Module_Code_G ='@ViewBag.code', SysLanguageCode_G = '@ViewBag.LangCode';
+     var pageNo = '@ViewBag.PageNo';
+      var recordLockingCode = @ViewBag.RecordLockingCode;
+    var URL_BindTitleMilestoneList = '@Url.Action("BindTitleMilestoneList", "Title")';
+    var URL_ActiveDeactiveUser = '@Url.Action("ActiveDeactiveUser", "User")';
+    var URL_AddEditTitle_Milestone = '@Url.Action("AddEditTitle_Milestone", "Title")';
+    var URL_DeleteTM = '@Url.Action("Delete", "Title")';
+    var URL_UnlockUser = '@Url.Action("UnlockUser","User")';
+
+    var URL_CheckRecordLock = '@Url.Action("CheckRecordLock", "User")';
+    var URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")';
+    var URL_Release_Lock = '@Url.Action("Release_Lock", "Global")';
+    var URL_Reload_Current_Page = '@Url.Action("Index", "User")';
+    var URL_ResetPassword = '@Url.Action("ResetPassword", "User")';
+    var URL_TitleList_Cancel = '@Url.Action("Cancel", "Title_List", new { Page_No = "Code", Record_Locking_Code ="RL_Code"})';
+    //var pageNo = parseInt($('#hdnPageNo').val());
+    $(document).ready(function () {
+        debugger;
+        if (recordLockingCode > 0)
+            Call_RefreshRecordReleaseTime(recordLockingCode, URL_Refresh_Lock);
+        BindTitleMilestoneList();
+        if(LayoutDirection_G == "RTL")
+        {
+            $('#btnUser').css("float","right");
+            $('#txtSort').css("text-align", "left");
+            $('#ddlSortType_chosen').css("text-align", "right");
+        }
+        else
+        {
+            $('#btnUser').css("float","left");
+            $('#txtSort').css("text-align","right");
+            $('#ddlSortType_chosen').css("text-align", "left");
+        }
+        $('#hdnRecordLockingCode').val(recordLockingCode)
+       
+        addNumeric();
+        var searchIsLDAPUser = $('input[name=IsLDAPUser]:checked').val();
+        SearchUser("", searchIsLDAPUser,0);
+        $('#searchCommon').keypress(function (e) {
+            if (e.keyCode == 13) {
+                btnSearch_OnClick()
+                return false;
+            }
+        });
+
+        $("#ddlSortType").change(function () {
+            debugger;
+            var searchIsLDAPUser = $('input[name=IsLDAPUser]:checked').val();
+            var vendorCode = "";
+            if ($('#ddlVendor').val() == "") {
+                vendorCode = 0;
+            }
+            else {
+                vendorCode = $('#ddlVendor').val();
+            }
+            $('#hdnPageNo').val(1);
+            sort_Type_G = $('#ddlSortType').val();
+
+            SearchUser($('#searchCommon').val(),searchIsLDAPUser,vendorCode);
+        });
+       // $("#ancFileName").attr('href', '../Help/Masters/Layout.html?User');
+
+        if ('@ViewBag.AllowUSer' == "Y") {
+            $('#radioLDAP').removeAttr('hidden');
+        }
+
+       
+    });
+
+    function addNumeric() {
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
+    function SetPaging1() {
+        debugger
+        IsCall = 'N';
+        var pageNo = parseInt($('#hdnPageNo').val());
+        var recordCount = parseInt($('#hdnRecordCount').val());
+        var pagePerBatch = parseInt($('#hdnPagePerBatch').val());
+        var recordPerPage = parseInt($('#txtPageSize').val());
+
+        var cnt = pageNo * recordPerPage;
+        if (cnt >= recordCount) {
+            var v1 = parseInt(recordCount / recordPerPage);
+            if ((v1 * recordPerPage) == recordCount)
+                pageNo = v1;
+            else
+                pageNo = v1 + 1;
+        }
+
+        if (pageNo == 0)
+            pageNo = 1;
+
+        var index = pageNo - 1;
+        $('#hdnPageNo').val(pageNo);
+
+        var opt = null;
+        opt = { callback: pageselectCallback1 };
+        opt["items_per_page"] = recordPerPage;
+        opt["num_display_entries"] = pagePerBatch;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = index;
+        $("#paginationTM").pagination(recordCount, opt);
+    }
+    function pageselectCallback1(page_index, jq) {
+        debugger
+        $('.required').removeClass('required');
+
+        if (!ValidatePageSize())
+            return false;
+
+        var pageNo = page_index + 1
+        $('#hdnPageNo').val(pageNo);
+        if (IsCall == 'Y')
+            BindTitleMilestoneList();
+        else
+            IsCall = 'Y';
+    }
+    function ValidateEmail(email) {
+        var expr = /^([\w-\.]+)@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+        return expr.test(email);
+    };
+    function txtPageSize_OnChange() {
+        debugger
+
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        if (!ValidatePageSize())
+            return false;
+        $('#hdnPageNo').val(1);
+        BindTitleMilestoneList()
+        SetPaging1();
+    }
+    function ValidatePageSize() {
+        var recordPerPage = $('#txtPageSize').val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize').attr('required', true)
+        return false
+    }
+    function pageBinding() {
+        BindTitleMilestoneList()
+        SetPaging1();
+    }
+    function btnSearch_OnClick() {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        if (!ValidatePageSize())
+            return false;
+
+        var searchText = $.trim($('#searchCommon').val());
+        var searchIsLDAPUser = $('input[name=IsLDAPUser]:checked').val();
+        var vendorCode = $('#ddlVendor').val();
+
+        if (searchText == '' && searchIsLDAPUser == '' && vendorCode == '' ) {
+            $('#ddlCars2').attr('required', "required")
+            $('#searchCommon').attr('required', true)
+            return false;
+        }
+        else{
+                if(vendorCode == ''){
+                    vendorCode = 0;
+                }
+                else{
+                    vendorCode = $('#ddlVendor option:selected').val();
+                }
+        }
+        SearchUser(searchText,searchIsLDAPUser,vendorCode);
+    }
+    function btnShowAll_OnClick() {
+        debugger;
+        if (!ValidatePageSize())
+            return false;
+
+        $('#hdnPageNo').val(1);
+        $('#searchCommon').attr('required', false)
+        $('#searchCommon').val('');
+        var searchIsLDAPUser = $('input[name=IsLDAPUser]:checked').val();
+        $('#ddlVendor').val('').trigger("chosen:updated")
+
+        sort_Type_G = "T";
+        $("#ddlSortType").find("option").attr("selected", false);
+        $("#ddlSortType").val('T').trigger("chosen:updated");
+
+        SearchUser("",searchIsLDAPUser,0);
+    }
+    function BindTitleMilestoneList() {
+        debugger;
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+        $.ajax({
+            type: "POST",
+            url: URL_BindTitleMilestoneList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+            }),
+            success: function (result) {
+                debugger
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divTitleMilestoneList').empty();
+                    $('#divTitleMilestoneList').html(result);
+                    $('#hdnRecordCount').val('@ViewBag.RecordCount');
+                    initializeTooltip();
+                    initializeExpander();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function ActiveDeactiveUser(userCode, doActive) {
+        $.ajax({
+            type: "POST",
+            url: URL_ActiveDeactiveUser,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                userCode: userCode,
+                doActive: doActive
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Status == "S") {
+                        showAlert("S", result.Message);
+
+                        var searchIsLDAPUser =  $('input[name=IsLDAPUser]:checked').val();
+                        var vendorCode = $('#ddlVendor').val();
+                        if (vendorCode == '') {
+                            vendorCode = 0;
+                        }
+                        else {
+                            vendorCode = $('#ddlVendor option:selected').val();
+                        }
+                        if ($("#searchCommon").val() != "" || searchIsLDAPUser != null || vendorCode != "") {
+                            SearchUser($("#searchCommon").val(),searchIsLDAPUser,vendorCode)
+                        }
+                        else {
+                            BindTitleMilestoneList();
+                        }
+                    }
+                    else {
+                        showAlert("E", result.Message);
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+    function UnlockUser(userCode) {
+        $.ajax({
+            type: "POST",
+            url: URL_UnlockUser,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                userCode: userCode,
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Status == "S") {
+                        showAlert("S", result.Message);
+                        var searchIsLDAPUser =  $('input[name=IsLDAPUser]:checked').val();
+                        var vendorCode = $('#ddlVendor').val();
+                        if (vendorCode == '') {
+                            vendorCode = 0;
+                        }
+                        else {
+                            vendorCode = $('#ddlVendor option:selected').val();
+                        }
+                        if ($("#searchCommon").val() != "" || searchIsLDAPUser != null || vendorCode != "") {
+                            SearchUser($("#searchCommon").val(),searchIsLDAPUser,vendorCode)
+                        }
+                        else {
+                            debugger;
+                            SearchUser('','',0);
+                        }
+                        // BindTitleMilestoneList();
+                    }
+                    else {
+                        showAlert("E", result.Message);
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+    function Validate_SaveTM() {
+
+        debugger
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var Remarks = $.trim($('#txtRemark').val());
+        var ExpiryDate = $.trim($('#txtStart').val());
+
+        var returnVal = true;
+
+        if ($('#divddlTalent').val() == "") {
+            $('#divddlTalent').addClass('required');
+            returnVal = false;
+        }
+        if ($('#divddlMilestoneNature').val() == "") {
+            $('#divddlMilestoneNature').addClass('required');
+            returnVal = false;
+        }
+        if (ExpiryDate == "") {
+            $('#txtStart').val('');
+            $('#txtStart').attr('required', true)
+            returnVal = false;
+        }
+
+        if (Remarks == '') {
+            $('#txtRemark').val('');
+            $('#txtRemark').attr('required', true)
+            returnVal = false;
+        }
+
+        @*if (firstName == '') {
+            $('#txtFirstName').val('');
+            $('#txtFirstName').attr('required', true)
+            returnVal = false;
+        }
+        if (lastName == '') {
+            $('#txtLastName').val('');
+            $('#txtLastName').attr('required', true)
+            returnVal = false;
+        }
+        if (emailId == '') {
+            $('#txtEmailId').val('');
+            $('#txtEmailId').attr('required', true)
+            returnVal = false;
+        }
+        if (emailId != '') {
+            if (!ValidateEmail(emailId)) {
+                showAlert("E","@objMessageKey.InvalidEmailId");
+                returnVal = false;
+            }
+        }
+        if ($('#ddlSecurityGroup').val() == "") {
+            $('#ddlSecurityGroup').addClass('required');
+            returnVal = false;
+        }
+        if ($('#ddlBusinessUnit').val() == null)
+        {
+            $('#divddlBusinessUnit').addClass('required');
+            returnVal = false;
+        }
+        if($('#ddlLanguage').val() == ""){
+            $('#ddlLanguage').addClass('required');
+            returnVal = false;
+        }
+
+        if (document.getElementById("ProductionHouseUser").checked)
+        {
+            if ($('#ddlVendors').val() == "") {
+                $('#ddlVendors').addClass('required');
+                returnVal = false;
+            }
+        }*@
+        return returnVal;
+    }
+
+    function SaveSuccess(result) {
+        debugger;
+        if (result.Status == "S") {
+            $('#lblRecordCount').text(result.RecordCount);
+            $('#hdnRecodLockingCode_temp').val(0);
+            $('#hdnRecodLockingCode').val(0);
+            showAlert("S", result.Message);
+             BindTitleMilestoneList();
+            $('#popup').modal('hide');
+            $('#pupupHtml').empty();
+        }
+        else {
+            showAlert("E", result.Message);
+        }
+
+    }
+
+
+    function AddEditTitle_Milestone(TitleMilestoneCode,Type) {
+        debugger;
+
+        $('#popup').modal();
+        $.ajax({
+            type: "POST",
+            url: URL_AddEditTitle_Milestone,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                Title_Milestone_Code: TitleMilestoneCode,
+                Type: Type,
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#pupupHtml').empty();
+                    $('#pupupHtml').html(result);
+                    initializeChosen();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function OnDeleteClick(Title_Milestone_Code)
+    {debugger
+       
+            TitleMilestoneIntCode = Title_Milestone_Code;
+            $('#hdn_Command_Name').val('DELETE');
+            showAlert("I","Are you sure, you want to delete this Title Milestone?","OKCANCEL");
+        
+    }
+    function CancelSaveDeal() {
+        $('#hdn_Command_Name').val('CANCEL_SAVE_DEAL');
+        showAlert("I", '@objMessageKey.AllUnsavedDataWillBeLostStillWantToGoAhead?', "OKCANCEL");
+    }
+    function handleOk() {
+        debugger  
+            DeletePaymentTerm();
+    }
+    function handleCancel() {
+        return false;
+    }
+    function DeletePaymentTerm() {
+        debugger;
+        showLoading();
+
+        $.ajax({
+            type: "POST",
+            url: URL_DeleteTM,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                Title_Milestone_Code: TitleMilestoneIntCode
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger
+                    hideLoading();
+                    initializeTooltip();
+                    BindTitleMilestoneList();
+                    showAlert('S', "Title Milestone deleted successfully");
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+
+    }
+
+    function ClosePopup() {
+
+        var recordLockingCode = parseInt($('#hdnRecodLockingCode').val())
+        if (recordLockingCode > 0)
+            ReleaseRecordLock(recordLockingCode, URL_Release_Lock);
+
+        $('#popup').modal('hide');
+        $('#pupupHtml').empty();
+    }
+    function ResetPassword(UserCode) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_ResetPassword,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                UserCode : UserCode
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                    showAlert("S", result.Message);
+                }
+                else{
+                    showAlert("E", result.Message);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    //--------------------Record Locking---------------------------------------------------
+
+    function CheckRecordLock(userCode) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_CheckRecordLock,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+
+                UserCode: userCode
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Is_Locked == "Y") {
+                        AddEditTitle_Milestone(TitleMilestoneCode);
+                        $('#hdnRecodLockingCode_temp').val(result.Record_Locking_Code); // This syntax must be after AddEditCountry() this
+                        Call_RefreshRecordReleaseTime(result.Record_Locking_Code, URL_Refresh_Lock);
+                    }
+                    else
+                        showAlert("E", result.Message);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+    function btnCancelTM() {
+        debugger
+        //var pageNo = $('#hdnPageNo').val();
+        var URL = URL_TitleList_Cancel;
+        URL = URL.replace("Code", pageNo);
+        URL = URL.replace("RL_Code", $("#_hdnRecordLockingCode").val());
+        URL = URL.replace(/amp;/g, "");
+        window.location.href = URL;
+    }
+
+
+</script>
+<style>
+    td {
+        padding: 5px 0px;
+    }
+
+    .form-control {
+        display: inline-block !important;
+    }
+
+
+    #ddlSortType_chosen {
+        max-width: 60%;
+        text-align: left;
+    }
+
+    .SumoSelect, #divddlBusinessUnit {
+        width: 95% !important;
+    }
+
+        #divddlBusinessUnit > div {
+            width: 100% !important;
+        }
+
+    #ddlVendor_chosen {
+        width: 15% !important;
+        position: fixed !important;
+    }
+</style>
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="">
+                <div class="title_block dotted_border clearfix">
+                    <h2 class="pull-left">
+                        Title Milestone List
+                    </h2>
+                    <div class="right_nav pull-right">
+                        <ul>
+                            <li id="btnUser">
+                                @if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForAdd + "~"))
+                                {
+                                    <input type="button" class="btn btn-primary" value="@objMessageKey.Add" onclick="AddEditTitle_Milestone(0,'A')" />
+                                }
+                                @Html.Hidden("hdnRecordLockingCode", ViewBag.RecordLockingCode as string, new { @id = "hdnRecordLockingCode" })
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="grid_area">
+                    <div style="border-bottom: 1px dotted #777; display:none;"></div>
+                    <div class="paging_area clearfix">
+                        <span class="pull-left" >@objMessageKey.TotalRecords: @ViewBag.RecordCount</span>
+                        <span class="pull-left" id="lblRecordCount"></span>
+                        <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                        <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                        <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+
+                        <div class="pagination" id="paginationTM">
+                        </div>
+                        <span class="pull-right">
+                            @objMessageKey.PageSize
+                            <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10"
+                                   onchange="txtPageSize_OnChange()" onblur="setDefaultPaging('txtPageSize')">
+                        </span>
+                    </div>
+                    <div class="tab-content clearfix table-wrapper scale_table_container">
+                        <div class="scale_table_block">
+                            <input type="hidden" id="hdnCurrencyCode" value="0" />
+                            <input type="hidden" id="hdnRecodLockingCode_temp" name="hdnRecodLockingCode" value="0" />
+                            <div id="divTitleMilestoneList" class="deal clearfix">
+                            </div>
+                        </div>
+                        <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="return btnCancelTM()" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <div class="form_fields acq" id="pupupHtml">
+            </div>
+        </div>
+    </div>
+</div>

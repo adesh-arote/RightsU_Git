@@ -1,0 +1,1123 @@
+﻿@model RightsU_Entities.Syn_Deal_Rights
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+
+}
+<script>
+    var ShowMessage = {
+        "MsgPlaceSearch": '@objMessageKey.Search',
+        "Pleaseselectatleastonecriteriatoview": '@objMessageKey.Pleaseselectatleastonecriteriatoview',
+        "Areyousureyouwanttodeletethisright": '@objMessageKey.Areyousureyouwanttodeletethisright'
+    }
+    $('#txtYear').change(function () {
+        OnFocusLostTerm();
+    });
+    $('#txtMonth').change(function () {
+        OnFocusLostTerm();
+    });
+    $('#txtDay').change(function () {
+        debugger;
+        OnFocusLostTerm();
+    });
+    $("#tree").click(function () {
+        TreeViewSelectedChange('Rights_Platform');
+    });
+    function SetMaxDt() {
+        setMinMaxDates('txtRight_Start_Date', '', $('#txtRight_End_Date').val());
+    }
+
+    function SetMinDt() {
+        setMinMaxDates('txtRight_End_Date', $('#txtRight_Start_Date').val(), '');
+    }
+
+    $('#txtRight_Start_Date').change(function () {
+        var txtStartDate = $('#txtRight_Start_Date');
+        var txtEndDate = $('#txtRight_End_Date');
+        var rightSD = new Date(MakeDateFormate(txtStartDate.val()));
+        var rightED = new Date(MakeDateFormate(txtEndDate.val()));
+        if (!isNaN(rightSD) && !isNaN(rightED)) {
+            rightED.setDate(rightED.getDate() + 1);
+            var term = CalculateTerm(rightSD, rightED);
+            var arr = term.split('.');
+            $('#txtYear').val(arr[0]);
+            $('#txtMonth').val(arr[1]);
+            $('#txtDay').val(arr[2]);
+        }
+        SetMinDt();
+    });
+
+    $('#txtRight_End_Date').change(function () {
+        debugger;
+        var txtStartDate = $('#txtRight_Start_Date');
+        var txtEndDate = $('#txtRight_End_Date');
+        var rightSD = new Date(MakeDateFormate(txtStartDate.val()));
+        var rightED = new Date(MakeDateFormate(txtEndDate.val()));
+        if (!isNaN(rightSD) && !isNaN(rightED)) {
+            rightED.setDate(rightED.getDate() + 1);
+            var term = CalculateTerm(rightSD, rightED);
+            var arr = term.split('.');
+            $('#txtYear').val(arr[0]);
+            $('#txtMonth').val(arr[1]);
+            $('#txtDay').val(arr[2]);
+        }
+        SetMaxDt();
+    });
+
+    $("#txtMonth").numeric({
+        allowMinus: false,
+        allowThouSep: false,
+        allowDecSep: false,
+        maxDigits: 2
+    });
+    $("#txtYear").numeric({
+        allowMinus: false,
+        allowThouSep: false,
+        allowDecSep: false,
+        maxDigits: 2
+    });
+    $("#txtDay").numeric({
+        allowMinus: false,
+        allowThouSep: false,
+        allowDecSep: false,
+        maxDigits: 2
+    });
+    $("#txtMilestone_No_Of_Unit").numeric({
+        allowMinus: false,
+        allowThouSep: false,
+        allowDecSep: false,
+        maxDigits: 3
+    });
+
+    function MakeDateFormate(dateInString) {
+        if (dateInString != null || dateInString != "") {
+            dateInString = dateInString.replace('-', '/');
+            dateInString = dateInString.replace('-', '/');
+            var array = dateInString.split('/');
+            var month = parseFloat(array[1]);
+            switch (month) {
+                case 1:
+                    array[1] = "@objMessageKey.Jan";
+                    break;
+
+                case 2:
+                    array[1] = "@objMessageKey.Feb";
+                    break;
+
+                case 3:
+                    array[1] = "@objMessageKey.Mar";
+                    break;
+
+                case 4:
+                    array[1] = "@objMessageKey.Apr";
+                    break;
+
+                case 5:
+                    array[1] = "@objMessageKey.May";
+                    break;
+
+                case 6:
+                    array[1] = "@objMessageKey.Jun";
+                    break;
+
+                case 7:
+                    array[1] = "@objMessageKey.Jul";
+                    break;
+
+                case 8:
+                    array[1] = "@objMessageKey.Aug";
+                    break;
+
+                case 9:
+                    array[1] = "@objMessageKey.Sep";
+                    break;
+
+                case 10:
+                    array[1] = "@objMessageKey.Oct";
+                    break;
+
+                case 11:
+                    array[1] = "@objMessageKey.Nov";
+                    break;
+
+                case 12:
+                    array[1] = "@objMessageKey.Dec";
+                    break;
+            }
+            var format = array[0] + " " + array[1] + " " + array[2];
+            return format;
+        }
+        return "";
+    }
+
+    function CalculateTerm(startDate, endDate) {
+        debugger;
+        var val = CalculateMonthBetweenTwoDate(startDate, endDate);
+        var days = CalculateDaysBetweenTwoDate(startDate, endDate, val);
+        var year = val / 12;
+        var month = val % 12;
+        var term = parseInt(year) + '.' + month;
+        term = term + '.' + parseInt(days);
+        $('#txtYear').val(parseInt(year));
+        $('#txtMonth').val(month);
+        $('#txtDay').val(parseInt(days));
+        return term;
+    }
+    function CalculateMonthBetweenTwoDate(startDate, endDate) {
+        var months = (endDate.getFullYear() - startDate.getFullYear()) * 12;
+        months += endDate.getMonth() - startDate.getMonth();
+        if (endDate.getDate() < startDate.getDate())
+            months--;
+        return months;
+    }
+
+    function CalculateDaysBetweenTwoDate(startDate, endDate, val) {
+        debugger;
+        var newDate = startDate;
+        newDate.setMonth(startDate.getMonth() + val);
+        var Difference_In_Time = endDate.getTime() - newDate.getTime();
+        var Difference_In_Days = parseInt(Difference_In_Time / (1000 * 3600 * 24));
+        return Difference_In_Days;
+    }
+
+    function OnFocusLostTerm() {
+    debugger;
+        var canAssign = true;
+        if ($('#chk_Is_Tentative').prop('checked'))
+            canAssign = false
+
+        var txtStartDate = $('#txtRight_Start_Date');
+        var txtEndDate = $('#txtRight_End_Date');
+        var txtTermYear = $('#txtYear');
+        var txtTermMonth = $('#txtMonth');
+        var txtTermDay = $('#txtDay');
+        var rightStartDate = new Date(MakeDateFormate(txtStartDate.val()));
+        var rightEndDate = new Date(MakeDateFormate(txtEndDate.val()));
+
+        if (txtTermYear.val() == '' || isNaN(txtTermYear.val()))
+            txtTermYear.val('0');
+        if (txtTermMonth.val() == '' || isNaN(txtTermMonth.val()))
+            txtTermMonth.val('0');
+        if (txtTermDay.val() == '' || isNaN(txtTermDay.val()))
+            txtTermDay.val('0');
+
+        if (txtStartDate.val() != "") {
+            var rightSD = new Date(MakeDateFormate(txtStartDate.val()));
+            if (!isNaN(rightSD)) {
+                var year = 0;
+                var month = 0;
+                var day = 0;
+
+                if (txtTermYear.val() != '')
+                    year = parseInt(txtTermYear.val());
+                if (txtTermMonth.val() != '')
+                    month = parseInt(txtTermMonth.val());
+                if (txtTermDay.val() != '')
+                    day = parseInt(txtTermDay.val());
+
+                if (year > 0 || month > 0 || day > 0) {
+                    var newDate = CalculateEndDate(rightSD, year, month, day);
+                    if (canAssign) {
+                        txtEndDate.val(newDate);
+                        SetMaxDt();
+                        txtStartDate = $('#txtRight_Start_Date');
+                        txtEndDate = $('#txtRight_End_Date');
+                        rightStartDate = new Date(MakeDateFormate(txtStartDate.val()));
+                        rightEndDate = new Date(MakeDateFormate(txtEndDate.val()));
+                        rightEndDate.setDate(rightEndDate.getDate() + 1);
+                        var term = CalculateTerm(rightStartDate, rightEndDate);
+                    }
+                    else {
+                        txtEndDate.val('');
+                    }
+                }
+                else {
+                    txtEndDate.val('');
+                }
+            }
+        }
+        else if (txtEndDate.val() != "") {
+            var rightED = new Date(MakeDateFormate(txtEndDate.val()));
+            if (!isNaN(rightED)) {
+
+                var year = 0;
+                var month = 0;
+                var day = 0;
+
+                if (txtTermYear.val() != '')
+                    year = parseInt(txtTermYear.val());
+                if (txtTermMonth.val() != '')
+                    month = parseInt(txtTermMonth.val());
+                if (txtTermMonth.val() != '')
+                    day = parseInt(txtTermDay.val());
+
+                if (year > 0 || month > 0 || day > 0) {
+                    var newDate = CalculateStartDate(rightED, year, month, day);
+                    txtStartDate.val(newDate);
+                    SetMinDt();
+                    txtStartDate = $('#txtRight_Start_Date');
+                    txtEndDate = $('#txtRight_End_Date');
+                    rightStartDate = new Date(MakeDateFormate(txtStartDate.val()));
+                    rightEndDate = new Date(MakeDateFormate(txtEndDate.val()));
+                    rightEndDate.setDate(rightEndDate.getDate() + 1);
+                    var term = CalculateTerm(rightStartDate, rightEndDate);
+                }
+                else {
+                    txtStartDate.val('');
+                }
+            }
+        }
+        else {
+            txtTermYear.val('0');
+            txtTermMonth.val('0');
+            txtTermDay.val('0');
+        }
+    }
+    function Validate_Save_Pushback() {
+        var IsValid = true;
+        $('#hdnCommandName').val('SAVE');
+        $('#hdnRight_Start_Date').val($('#txtRight_Start_Date').val());
+        $('#hdnRight_End_Date').val($('#txtRight_End_Date').val());
+        $('.lbTitle_Popup,.lbTerritory_Popup').removeClass("required");
+
+        if ($("#lbTitle_Popup").val() == null) {
+            $("#lbTitle_Popup").attr('required', true);
+            $('.lbTitle_Popup').addClass("required");
+
+            //showAlert('E', 'Please select atleast one title');
+            IsValid = false;
+        }
+        var Selected_Right_Type_Tab = $('#ulRightType > li.active a').attr('id');
+        if (Selected_Right_Type_Tab == 'liTabYear') {
+            var txtRightStartDate = $("#txtRight_Start_Date").val();
+            var txtRightEndDate = $("#txtRight_End_Date").val();
+            var txtYear = $('#txtYear').val();
+            var txtMonth = $('#txtMonth').val();
+            var txtDay = $('#txtDay').val();
+            if ((txtRightStartDate == null || txtRightStartDate == '' || txtRightStartDate == undefined)) {
+                $("#txtRight_Start_Date").attr('required', true);
+                //showAlert('E', 'Please select Start date');
+                IsValid = false;
+            }
+            if ((txtRightEndDate == null || txtRightEndDate == '' || txtRightEndDate == undefined) && !($('#chk_Is_Tentative').prop('checked'))) {
+                $("#txtRight_End_Date").attr('required', true);
+                //showAlert('E', 'Please select End date');
+                IsValid = false;
+            }
+            if (($('#chk_Is_Tentative').prop('checked')) && (txtYear == null || txtYear == '0' || txtYear == undefined || txtYear == '') && (txtMonth == null || txtMonth == '0' || txtMonth == undefined || txtMonth == '') && (txtDay == null || txtDay == '0' || txtDay == undefined || txtDay == '')) {
+                $("#txtYear").addClass('required');
+                $("#txtMonth").addClass('required');
+                $("#txtDay").addClass('required');
+                //showAlert('E', 'Please enter valid Term');
+                IsValid = false;
+            }
+            else {
+                $("#txtYear").removeClass('required');
+                $("#txtMonth").removeClass('required');
+                $("#txtDay").removeClass('required');
+            }
+        }
+        if (Selected_Right_Type_Tab == 'liTabMilestone') {
+            var selectedVal = $("#ddlMilestoneUnitType option:selected").text();
+            if ($('#txtMilestone_No_Of_Unit').val() == '') {
+                $("#txtMilestone_No_Of_Unit").attr('required', true);
+                //showAlert('E', "Please enter no of " + selectedVal.toLowerCase());
+                IsValid = false;
+            }
+        }
+        if (Selected_Right_Type_Tab == 'liTabPerpetuity') {
+            var txtPerpetuity_StartDate = $("#txtPerpetuity_StartDate").val();
+            if ((txtPerpetuity_StartDate == null || txtPerpetuity_StartDate == '' || txtPerpetuity_StartDate == undefined)) {
+                $("#txtPerpetuity_StartDate").attr('required', true);
+                //showAlert('E', 'Please select Start date');
+                IsValid = false;
+            }
+            else {
+                @*$('#hdnRight_Start_Date').val(txtPerpetuity_StartDate);
+                var rightSD = new Date(MakeDateFormate(txtPerpetuity_StartDate));
+                var year = rightSD.getFullYear();
+                var month = rightSD.getMonth();
+                var day = rightSD.getDate();
+                var rightED = new Date(year + @ViewBag.perpetuity_years, month, day);
+                
+
+                var term = CalculateTerm(rightSD, rightED);
+                var arr = term.split('.');
+                $('#Term_YY').val(arr[0]);
+                $('#Term_MM').val(arr[1]);
+                $('#Term_DD').val(arr[2]);*@
+            }
+        }
+
+
+        if ($("#hdnTVCodes").val() == null || $("#hdnTVCodes").val() == '') {
+            $('#Rights_Platform').addClass('required');
+            //showAlert('E', 'Please select atleast one platform');
+            IsValid = false;
+        }
+        else
+            $('#Rights_Platform').removeClass('required');
+
+        if ($("#lbTerritory_Popup").val() == null) {
+            $("#lbTerritory_Popup").attr('required', true);
+            $('.lbTerritory_Popup').addClass("required");
+            //showAlert('E', 'Please select atleast one region');
+            IsValid = false;
+        }
+        @*if (IsValid) {
+
+            var noOfUnit = parseInt($('#txtMilestone_No_Of_Unit').val());
+            if (noOfUnit <= 0) {
+                showAlert('E', "No of " + selectedVal.toLowerCase() + " should be greater than 0");
+                return false;
+            }
+
+
+
+            showLoading();
+            if (Selected_Right_Type_Tab == 'liTabYear')
+                $('#Right_Type').val('Y');
+            else
+                $('#Right_Type').val('M');
+            $('#Is_Tentative').val('N');
+            $('#Is_Title_Language_Right').val('N');
+            if ($('#chk_Is_Tentative').prop('checked')) $('#Is_Tentative').val('Y');
+            if ($('#chk_Is_Title_Language_Right').prop('checked')) $('#Is_Title_Language_Right').val('Y');
+            $('#hdnTerritory_Type').val($('input[name=rdoTerritoryType]:radio:checked').val());
+            $('#hdn_Dubbing_Type').val($('input[name=rdoDubbingLanguage]:radio:checked').val());
+            $('#hdn_SubTitling_Type').val($('input[name=rdoSubtitlingLanguage]:radio:checked').val());
+            $('#hdnTitleList').val($("select#lbTitle_Popup.form_input.chosen-select").val().join(","));
+            $('#hdnTerritoryList').val($("select#lbTerritory_Popup.form_input.chosen-select").val().join(","));
+            var arr = $("select#lb_Dubb_Language_Popup.form_input.chosen-select").val();
+            $('#hdn_Dubb_LanguageList').val
+                (
+                    $("select#lb_Dubb_Language_Popup.form_input.chosen-select").val() == null ? ''
+                        : $("select#lb_Dubb_Language_Popup.form_input.chosen-select").val().join(",")
+                );
+            $('#hdn_Sub_LanguageList').val
+                ($("select#lb_Sub_Language_Popup.form_input.chosen-select").val() == null ? ''
+                    : $("select#lb_Sub_Language_Popup.form_input.chosen-select").val().join(",")
+                );
+
+            var formData = $("#frm_Save_Pushback").serializeArray();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("Save_Pushback", "Syn_Pushback")',
+                data: formData,
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    hideLoading();
+                    if (result.Status == "U" || result.Status == "A") {
+                        $('#popEditRevHB').modal('hide');
+                        var msg = result.Status == "A" ? "Reverse Holdback saved successfully" : "Reverse Holdback updated successfully";
+                        showAlert("S", msg);
+                        var Pushback_PageNo = 0;
+                        if ($('#hdnCurrentPageNo').val() != undefined && $('#hdnCurrentPageNo').val() != '')
+                            Pushback_PageNo = $('#hdnCurrentPageNo').val();
+                        var page_Index = parseInt(Pushback_PageNo) - 1;
+                        var rd_value = $('input[name=optLicnsorHB]:checked').val();
+                        Bind_Grid(rd_value, page_Index, 'N');
+                        // showAlert("I", msg, "OK");
+                    }
+                },
+                error: function (result) {
+                    alert('Error Validate_Save_Pushback: ' + result.responseText);
+                }
+            });
+        }
+        else*@
+        if (IsValid) {
+
+            if ($("#lb_Sub_Language_Popup").val() == null && $("#lb_Dubb_Language_Popup").val() == null && !($('#chk_Is_Title_Language_Right').prop('checked'))) {
+                showAlert('E', '@objMessageKey.Pleaseselectatleasttitlelanguageoronesubtitlingoronedubbing');
+                return false;
+            }
+
+            $('#hdnTerritory_Type').val($('input[name=rdoTerritoryType]:radio:checked').val());
+            $('#hdn_Dubbing_Type').val($('input[name=rdoDubbingLanguage]:radio:checked').val());
+            $('#hdn_SubTitling_Type').val($('input[name=rdoSubtitlingLanguage]:radio:checked').val());
+            $('#Is_Tentative').val('N');
+            $('#Is_Title_Language_Right').val('N');
+            if ($('#chk_Is_Tentative').prop('checked')) $('#Is_Tentative').val('Y');
+            if ($('#chk_Is_Title_Language_Right').prop('checked')) $('#Is_Title_Language_Right').val('Y');
+            var Selected_Right_Type_Tab = $('#ulRightType > li.active a').attr('id');
+            if (Selected_Right_Type_Tab == 'liTabYear')
+                $('#Right_Type').val('Y');
+            else if (Selected_Right_Type_Tab == 'liTabMilestone')
+                $('#Right_Type').val('M');
+            else if (Selected_Right_Type_Tab == 'liTabPerpetuity')
+                $('#Right_Type').val('U');
+
+            @*var formData = $("#frm_Save_Pushback").serializeArray();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("Save_Pushback", "Syn_Pushback")',
+                data: formData,
+                async: false,
+                success: function (result) {
+
+                   // hideLoading();
+                    $('#popEditRevHB').modal('hide');
+                    BindGridNew(null,'N');
+
+                    //if (result == "true") {
+                    //    redirectToLogin();
+                    //}
+                    //else if (result == "ERROR") {
+                    //    Show_Validation_Popup("", 5, 0);
+                    //}
+                    //else if (result != "") {
+                    //    $('#popEditRevHB').modal('hide');
+                    //    //$('#popEditRevHB').empty();
+                    //    showAlert('S', result);
+                    //    var Pushback_PageNo = 0;
+                    //    if ($('#hdnCurrentPageNo').val() != undefined && $('#hdnCurrentPageNo').val() != '')
+                    //        Pushback_PageNo = $('#hdnCurrentPageNo').val();
+                    //    var page_Index = parseInt(Pushback_PageNo) - 1;
+                    //    var rd_value = $('input[name=optLicnsorHB]:checked').val();
+                    //    BindGrid(null);
+                    //}
+                },
+                error: function (result) {
+                    alert('Error Validate_Save_Pushback: ' + result.responseText);
+                }
+            });*@
+            //$('#popEditRevHB').modal('hide');
+            return true;
+        }
+        else
+            return IsValid;
+    }
+    $("#chk_Is_Tentative").change(function () {
+        $("#txtRight_End_Date").val('');
+        if ($('#chk_Is_Tentative').is(':checked')) {
+            $("#txtRight_End_Date").prop('disabled', true);
+            $('#Is_Tentative').val('Y');
+        }
+        else {
+            OnFocusLostTerm();
+            $("#txtRight_End_Date").attr("disabled", false);
+            $('#Is_Tentative').val('N');
+        }
+    });
+
+    function CalculateEndDate(startDate, year, month, day) {
+        var yearToMonth = 12 * year;
+        month = month + yearToMonth;
+        startDate.setMonth(startDate.getMonth() + month);
+        startDate.setDate(startDate.getDate() + day - 1);
+        var newDateStr = ConvertDateToCurrentFormat(startDate);
+        return newDateStr;
+    }
+
+    function CalculateStartDate(startDate, year, month, day) {
+        var yearToMonth = 12 * year;
+        month = month + yearToMonth;
+        startDate.setMonth(startDate.getMonth() - month);
+        startDate.setDate(startDate.getDate() + 1 + day);
+        var newDateStr = ConvertDateToCurrentFormat(startDate);
+        return newDateStr;
+    }
+
+    function ConvertDateToCurrentFormat(objDate) {
+        var dd = objDate.getDate();
+        var mm = objDate.getMonth() + 1; //January is 0!
+        var yyyy = objDate.getFullYear();
+
+        if (dd < 10)
+            dd = '0' + dd
+
+        if (mm < 10)
+            mm = '0' + mm
+
+        var newDate = dd + '/' + mm + '/' + yyyy;
+        return newDate;
+    }
+
+    function ChangeRightType(obj) {
+        if (obj == 'Year') {
+            $('#txtMilestone_No_Of_Unit').removeAttr('required');
+            $('#txtMilestone_No_Of_Unit').val('');
+            $("select#Milestone_Type_Code.form_input.chosen-select").val('1').trigger('chosen:updated');
+            $("select#ddlMilestoneUnitType.form_input.chosen-select").val('1').trigger('chosen:updated');
+            $('#Right_Type').val('Y');
+        }
+        else
+            if (obj == 'Milestone') {
+                $("#txtRight_Start_Date").removeAttr('required');
+                $("#txtRight_End_Date").removeAttr('required');
+                $("#txtYear").removeClass('required');
+                $("#txtMonth").removeClass('required');
+                $("#txtDay").removeClass('required');
+                $("#txtRight_End_Date").removeAttr('disabled');
+                $("#txtRight_Start_Date").val('');
+                $("#txtRight_End_Date").val('');
+                $("#txtYear").val('0');
+                $("#txtMonth").val('0');
+                $("#txtDay").val('0');
+                $('#chk_Is_Tentative').prop("checked", false);
+                $('#Is_Tentative').val('N')
+                $('#Right_Type').val('M');
+            }
+    }
+
+    $(document).ready(function () {
+        $('#ddlTitleCode').SumoSelect();
+        $('#lbTitle_Popup').SumoSelect();
+        $('#lbTerritory_Popup').SumoSelect();
+        $('#lb_Sub_Language_Popup').SumoSelect();
+        $('#lb_Dubb_Language_Popup').SumoSelect();
+
+        initializeChosen();
+        initializeDatepicker();
+        //$("#txtRight_Start_Date").datepicker();
+        //$("#txtRight_End_Date").datepicker();
+        initializeDateRange('txtRight_Start_Date', 'txtRight_End_Date');
+        //$('.isDatepicker').on('click', function () {
+        //    $(this).datepicker('destroy').datepicker().focus();
+        //});
+        if ('@ViewBag.Mode' == "EDIT" || '@ViewBag.Mode' == "CLONE") {
+            if ('@Model.Syn_Deal_Rights_Code' > 0) {
+                var Territory_Type = '@Model.Syn_Deal_Rights_Territory.Select(i => i.Territory_Type).FirstOrDefault()';
+                var Platform_Code = '0';
+                if ($('input[name=optViewType]:checked').val() != 'D') {
+                    Platform_Code = '@string.Join(",", @Model.Syn_Deal_Rights_Platform.Select(i => i.Platform_Code).Distinct().ToArray())';
+                }
+                else {
+                    Platform_Code = $('#PCODE').val();
+                }
+                $('#hdnTVCodes').val(Platform_Code);
+
+                //alert(Platform_Code);
+                var txtRemark = document.getElementById('Restriction_Remarks');
+                countChar(txtRemark);
+                if (Territory_Type == 'G') {
+                    $("#rdoCountryHB").prop("checked", false);
+                    $("#rdoTerritoryHB").prop("checked", true);
+                }
+                var SL_Type = '@Model.Syn_Deal_Rights_Subtitling.Select(i => i.Language_Type).FirstOrDefault()';
+                if (SL_Type == 'G') {
+                    $("#rdoSubSingleHB").prop("checked", false);
+                    $("#rdoSubGroupHB").prop("checked", true);
+                }
+
+                var DL_Type = '@Model.Syn_Deal_Rights_Dubbing.Select(i => i.Language_Type).FirstOrDefault()';
+                if (DL_Type == 'G') {
+                    $("#rdoDubSingleHB").prop("checked", false);
+                    $("#rdoDubGroupHB").prop("checked", true);
+                }
+                if ($('#Right_Type').val() == 'M') {
+                    $($('.tabbable').find('a#liTabYear')).parent().removeClass('active');
+                    $('#tabYear.tab-pane').removeClass('active');
+                    $($('.tabbable').find('a#liTabMilestone')).parent().addClass('active');
+                    $('#tabMilestone.tab-pane').addClass('active');
+                }
+                if ($('#Right_Type').val() == 'Y') {
+                    SetMinDt();
+                    SetMaxDt();
+                }
+            }
+
+        }
+        else {
+            //$('#lb_Sub_Language_Popup').empty();
+            //$('#lb_Dubb_Language_Popup').empty();
+            $('#lb_Sub_Language_Popup')[0].sumo.reload();
+            $('#lb_Dubb_Language_Popup')[0].sumo.reload();
+        }
+        BindPlatform();
+        fillTotal('LS');
+        fillTotal('LD');
+    });
+
+    $('#lbTitle_Popup').change(function () {
+        BindPlatform();
+        TreeViewSelectedChange(null);
+    });
+
+    $('#lbTitle_Popup').click(function () {
+        BindPlatform();
+        TreeViewSelectedChange(null);
+    });
+
+    function BindPlatform() {
+        var selectedTitles = '';
+        if ($("#lbTitle_Popup").val() != null)
+            selectedTitles = $("#lbTitle_Popup").val().join(',');
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindPlatformTreeView", "Syn_Pushback")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                strPlatform: $("#hdnTVCodes").val(),
+                strTitles: selectedTitles
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                $('#tree').html(result);
+
+
+            },
+            error: function (result) { }
+        });
+    }
+
+    function BindDropdown(radioType, CallFrom) {
+        debugger;
+        var selectedTitles = '';
+        if ($("#lbTitle_Popup").val() != null)
+            selectedTitles = $("#lbTitle_Popup").val().join(',');
+        var platformCodes = $('#hdnTVCodes').val();
+        if (platformCodes == undefined)
+            platformCodes = "";
+        var region_type = $("#rdoCountryHB").prop('checked') ? 'I' : 'T';
+        var SL_Type = $("#rdoSubL").prop('checked') ? 'SL' : 'SG';
+        var DL_Type = $("#rdoDubbingL").prop('checked') ? 'DL' : 'DG';
+        var selectedId = '';
+        var Is_Thetrical = $('#Is_Theatrical_Right').prop('checked');
+
+        if (Is_Thetrical)
+            Is_Thetrical = 'Y'
+        else
+            Is_Thetrical = 'N'
+
+        if (radioType == "I" || radioType == "T") {
+            selectedId = 'lbTerritory_Popup';
+        }
+        else if (radioType == "DL" || radioType == "DG") {
+            selectedId = 'lb_Dubb_Language_Popup';
+        }
+        else if (radioType == "SL" || radioType == "SG") {
+            selectedId = 'lb_Sub_Language_Popup';
+        }
+        var selectedCodes = '';
+        if (CallFrom == 'PF')
+            selectedCodes = $('#' + selectedId).val();
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("Bind_JSON_ListBox", "Syn_Pushback")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                str_Type: radioType,
+                Is_Thetrical: Is_Thetrical,
+                titleCodes: selectedTitles,
+                platformCodes: platformCodes,
+                Region_Type: region_type,
+                rdbSubtitlingLanguage: SL_Type,
+                rdbDubbingLanguage: DL_Type
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                if (result == 'Holdback is already added.') {
+                    if (radioType == "I") {
+                        $("#rdoTerritoryHB").prop('checked', true);
+                    }
+                    else if (radioType == "T") {
+                        $("#rdoCountryHB").prop('checked', true);
+                    }
+                    else if (radioType == "DL") {
+                        $("#rdoDubbingLG").prop('checked', true);
+                    }
+                    else if (radioType == "DG") {
+                        $("#rdoDubbingL").prop('checked', true);
+                    }
+                    else if (radioType == "SL") {
+                        $("#rdoSubLG").prop('checked', true);
+                    }
+                    else if (radioType == "SG") {
+                        $("#rdoSubL").prop('checked', true);
+                    }
+                    showAlert('E', result);
+                }
+                else {
+                    debugger;
+                    $("#" + selectedId).empty();
+                    $("#" + selectedId)[0].sumo.reload();
+                    $.each(result, function () {
+                        $("#" + selectedId).append($("<option />").val(this.Value).text(this.Text));
+                    });
+                    $("#" + selectedId).val(selectedCodes)[0].sumo.reload();
+                    //if (selectedId == 'lbTerritory_Popup')
+                    //    fillTotal();
+
+                    //else if (selectedId == 'lb_Sub_Language_Popup')
+                    //    fillTotal('LS');
+
+                    //else if (selectedId == 'lb_Dubb_Language_Popup')
+                    //    fillTotal('LD');
+                }
+            },
+            error: function (result) {
+                showAlert('E', 'Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function TreeViewSelectedChange(obj) {
+        var region_type = $("#rdoCountryHB").prop('checked') ? 'I' : 'T';
+        var SL_Type = $("#rdoSubL").prop('checked') ? 'SL' : 'SG';
+        var DL_Type = $("#rdoDubbingL").prop('checked') ? 'DL' : 'DG';
+
+        BindDropdown(region_type, 'PF');
+        BindDropdown(SL_Type, 'PF');
+        BindDropdown(DL_Type, 'PF');
+    }
+</script>
+<style>
+    #Tree_Filter_Rights_Platform {
+        width: 413px;
+        position: relative !important;
+        margin-left: 0px !important;
+        margin-top: 0px !important;
+    }
+
+    #Rights_Platform {
+        margin: 0px 0px 0px 0px !important;
+    }
+
+    ul.col-md-6 {
+        padding-left: 0;
+    }
+
+    .form_li_sub {
+        margin-right: 5px;
+    }
+
+    #popEditRevHB .fancytree-container {
+        height: 550px;
+    }
+
+    .modal_block ul.col-md-6 > li {
+        margin-bottom: 10px;
+    }
+
+    .SumoSelect {
+        width: 372px;
+    }
+
+    .sumo_lbTitle_Popup {
+        width: 698px !important;
+    }
+</style>
+@if (ViewBag.Mode != null && (ViewBag.Mode == "ADD" || ViewBag.Mode == "EDIT" || ViewBag.Mode == "CLONE"))
+{
+    if (String.IsNullOrEmpty(Model.Right_Type))
+    {
+        Model.Right_Type = "Y";
+    }
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+
+            @*@using (Html.BeginForm("Save_Pushback", "Syn_Pushback", FormMethod.Post, new { objAD_MVC = Model, @ID = "frm_Save_Pushback" }))
+            *@
+            @using (Ajax.BeginForm("Save_Pushback", "Syn_Pushback", new AjaxOptions { OnSuccess = "OnSuccess" }))
+            {
+                @Html.Hidden("type", (string)(ViewBag.Mode ?? 0))
+                <div>
+                    <div class="form_fields syn">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>×</span>
+                                <span class="sr-only">@objMessageKey.Close</span>
+                            </a>
+                            @if (ViewBag.Mode == "EDIT")
+                            {
+                                <h2>@objMessageKey.EditReverseHoldback</h2>
+                            }
+                            else if (ViewBag.Mode == "ADD")
+                            {
+                                <h2>@objMessageKey.AddReverseHoldback</h2>
+                            }
+                            else if (ViewBag.Mode == "CLONE")
+                            {
+                                <h2>@objMessageKey.CloneReverseHoldback</h2>
+                            }
+                        </div>
+                        <div class="modal_block">
+                            <ul class="form_fields_wrapper">
+                                <li class="clearfix">
+                                    <div id="tdTitleCodes"></div>
+                                    <table>
+                                        <tr>
+                                            <td><label class="bold">@objMessageKey.Title</label></td>
+                                            <td>
+                                                <div class="lbTitle_Popup" style="width: 700px;">
+                                                    @Html.ListBox("lbTitle_Popup", ViewBag.Title_List_Popup as MultiSelectList, new { @id = "lbTitle_Popup", @multiple = "multiple" })
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    @Html.HiddenFor(m => Model.Syn_Deal_Code, new { @id = "hdnSyn_Deal_Code", @name = "Syn_Deal_Code" })
+                                    @Html.HiddenFor(m => Model.Syn_Deal_Rights_Code, new { @id = "hdnSyn_Deal_Pushback_Code", @name = "Syn_Deal_Rights_Code" })
+                                    @Html.Hidden("hdnTitleList")
+                                    @Html.Hidden("Right_Type")
+                                    @Html.Hidden("TCODE", (int)(ViewBag.TCODE ?? 0))
+                                    @Html.Hidden("Episode_From", (int)(ViewBag.Episode_From ?? 0))
+                                    @Html.Hidden("Episode_To", (int)(ViewBag.Episode_To ?? 0))
+                                    @Html.Hidden("PCODE", (int)(ViewBag.PCODE ?? 0))
+                                    @Html.Hidden("Title_Code_Search", (string)(ViewBag.Title_Code_Search ?? "0"))
+                                    @Html.Hidden("View_Type_Search", (string)(ViewBag.View_Type_Search ?? "G"))
+                                </li>
+                                <li class="clearfix">
+                                    <ul class="col-md-6">
+                                        <li>
+                                            <label class="bold small_title">@objMessageKey.Region</label>
+                                            <div>
+                                                <label class="radio-inline">
+                                                    @if (Model.Region_Type == "I")
+                                                    {
+                                                        <input type="radio" name="rdoTerritoryType" id="rdoCountryHB" value="I" onchange="BindDropdown('I','');" checked="checked" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="radio" name="rdoTerritoryType" id="rdoCountryHB" value="I" onchange="BindDropdown('I','');" />
+                                                    }
+                                                    @objMessageKey.Country
+                                                </label>
+                                                <label class="radio-inline" style="width:17%;">
+                                                    @if (Model.Region_Type == "G")
+                                                    {
+                                                        <input type="radio" name="rdoTerritoryType" id="rdoTerritoryHB" value="G" onchange="BindDropdown('T','');" checked="checked" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="radio" name="rdoTerritoryType" id="rdoTerritoryHB" value="G" onchange="BindDropdown('T','');" />
+                                                    }
+                                                    @Html.Hidden("hdnTerritory_Type")
+                                                    @objMessageKey.Territory @*:&nbsp; <label id="RCount">@ViewBag.TCount</label>*@
+                                                </label>
+                                            </div>
+                                            <div id="divCountryHB">
+                                                <div class="lbTerritory_Popup" style="width: 374px;">
+                                                    @Html.ListBox("lbTerritory_Popup", ViewBag.Territory_List_Popup as MultiSelectList, new { @multiple = "multiple" })<!-- @@onchange = "return fillTotal();" -->
+                                                </div>
+                                                @Html.Hidden("hdnTerritoryList")
+                                            </div>
+                                            <div id="divTerritoryHB" style="display: none">
+                                            </div>
+                                        </li>
+                                        <li style="width: 95%">
+                                            <label class="bold small_title">@objMessageKey.Validity</label>
+                                            <div class="tabbable">
+                                                <ul id="ulRightType" class="nav nav-tabs nav-tab pull-left">
+                                                    <li class="@(Model.Right_Type == "Y" ? "active" : "")">
+                                                        <a data-toggle="tab" id="liTabYear" href="#tabYear" onclick="ChangeRightType('Year')" role="tab">@objMessageKey.Yearbased</a>
+                                                    </li>
+                                                    <li class="@(Model.Right_Type == "M" ? "active" : "")">
+                                                        <a data-toggle="tab" id="liTabMilestone" href="#tabMilestone" onclick="ChangeRightType('Milestone')" role="tab">@objMessageKey.Milestone</a>
+                                                    </li>
+                                                    <li class="@(Model.Right_Type == "U" ? "active" : "")">
+                                                        <a data-toggle="tab" id="liTabPerpetuity" href="#tabPerpetuity" onclick="ChangeRightType('Perpetuity')" role="tab">@objMessageKey.Perpetuity</a>
+                                                    </li>
+                                                </ul>
+                                                <div class="tab-content clearfix table-wrapper scale_table_container">
+                                                    <div class="@(Model.Right_Type == "Y" ? "tab-pane active scale_table_block" : "tab-pane scale_table_block")"  id="tabYear">
+                                                        <ul class="clearfix" style="margin-bottom: 5px;">
+                                                            <li>
+                                                                <div class="divBlock">
+                                                                    <label class="checkbox-inline">
+                                                                        @Html.CheckBox("chk_Is_Tentative", (Model.Is_Tentative != null && Model.Is_Tentative == "Y") ? true : false)
+                                                                        @Html.Hidden("Is_Tentative")
+                                                                        @objMessageKey.Tentative
+                                                                    </label>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                        <ul class="from_to clearfix">
+                                                            <li class="form_li_sub">
+                                                                <label>@objMessageKey.StartDate</label>
+                                                                @*@Html.TextBoxFor(m =>string.Format("{0:dd/MM/yyyy}", Model.Right_Start_Date), new { @class = "isDatepicker" })*@
+                                                                @Html.TextBox("Right_Start_Date", string.Format("{0:dd/MM/yyyy}", Model.Right_Start_Date), new { @class = "isDatepicker", @id = "txtRight_Start_Date", @placeholder = "DD/MM/YYYY" })
+                                                            </li>
+                                                            <li class="form_li_sub">
+                                                                <label>YY</label>
+                                                                @Html.TextBox("Year", Model.Term != null ? Model.Term.Split('.').GetValue(0) : 0, new { @id = "txtYear", @class = "smallTextBox", @maxlength = 4 })
+                                                            </li>
+                                                            <li class="form_li_sub">
+                                                                <label>MM</label>
+                                                                @Html.TextBox("Month", Model.Term != null ? Model.Term.Split('.').GetValue(1) : 0, new { @id = "txtMonth", @class = "smallTextBox", @maxlength = 4 })
+                                                            </li>
+                                                            <li class="form_li_sub">
+                                                                <label>DD</label>
+                                                                @Html.TextBox("Day", Model.Term != null ? Model.Term.Split('.').GetValue(2) : 0, new { @id = "txtDay", @class = "smallTextBox", @maxlength = 4 })
+                                                            </li>
+                                                            <li class="form_li_sub">
+                                                                <label>@objMessageKey.EndDate</label>
+                                                                @{
+                                                                    @(Model.Is_Tentative == "Y" ? @Html.TextBoxFor(model => model.Right_End_Date,
+new
+{
+@name = "Right_End_Date",
+@class = "isDatepicker",
+@placeholder = "DD/MM/YYYY",
+id = "txtRight_End_Date",
+@disabled = "disabled",
+Value = ""
+}) :
+@Html.TextBoxFor(model => model.Right_End_Date, new
+{
+@name = "Right_End_Date",
+@class = "isDatepicker",
+@placeholder = "DD/MM/YYYY",
+id = "txtRight_End_Date",
+Value = String.Format("{0:dd/MM/yyyy}", Model.Right_End_Date)
+}))
+                                                                }
+                                                                @Html.Hidden("hdnRight_Start_Date")
+                                                                @Html.Hidden("hdnRight_End_Date")
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="@(Model.Right_Type == "M" ? "tab-pane active scale_table_block" : "tab-pane scale_table_block")" id="tabMilestone">
+                                                        <ul class="from_to clearfix">
+                                                            <li class="form_li_sub" style="width: 160px;">
+                                                                <label>@objMessageKey.From</label>
+                                                                @Html.DropDownList("Milestone_Type_Code", (SelectList)ViewBag.Milestone_Type_Popup, new { @class = "form_input chosen-select" })
+                                                            </li>
+                                                            <li class="form_li_sub">
+                                                                <label>@objMessageKey.To</label>
+                                                                <input type="text" name="Milestone_No_Of_Unit" id="txtMilestone_No_Of_Unit" class="smallTextBox" value="@Model.Milestone_No_Of_Unit" />
+                                                            </li>
+                                                            <li class="form_li_sub" style="width: 100px;">
+                                                                <label></label>
+                                                                <br />
+                                                                @Html.DropDownList("Milestone_Unit_Type", (SelectList)ViewBag.Milestone_Unit_Popup, new { @id = "ddlMilestoneUnitType", @class = "form_input chosen-select" })
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="@(Model.Right_Type == "U" ? "tab-pane active scale_table_block" : "tab-pane scale_table_block")" id="tabPerpetuity">
+                                                        <ul style="height: 30px;">
+                                                            <li style="text-decoration: none;display: inline;width: 35%">
+                                                                <input type="hidden" value="@ViewBag.Allow_Perpetual_Date_Logic" id="hdnAllow_Perpetual_Date_Logic" />
+                                                                <label>@objMessageKey.StartDate</label>
+                                                                @*@Html.TextBox("Right_Start_Date", Model.Right_Start_Date, new { autocomplete = "off", @id = "txtPerpetuity_StartDate", @class = "isDatepicker", @placeholder = "DD/MM/YYYY" })*@
+                                                                @Html.TextBox("Perpetuity_Date", string.Format("{0:dd/MM/yyyy}", Model.Right_Start_Date), new { @class = "isDatepicker", @id = "txtPerpetuity_StartDate", @placeholder = "DD/MM/YYYY" })
+                                                            </li>
+
+                                                        </ul>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <label class="bold small_title">Language</label>
+                                            <div class="platform_checkbox">
+                                                <label class="checkbox-inline">
+                                                    @Html.CheckBox("chk_Is_Title_Language_Right", (Model.Is_Title_Language_Right != null && Model.Is_Title_Language_Right == "Y") ? true : false)
+                                                    @Html.Hidden("Is_Title_Language_Right")
+                                                    @objMessageKey.TitleLanguageRight
+                                                </label>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <label class="radio-inline">
+                                                @if (Model.Sub_Type == "L")
+                                                {
+                                                    <input type="radio" name="rdoSubtitlingLanguage" id="rdoSubL" value="L" onchange="BindDropdown('SL','');" checked="checked" />
+                                                }
+                                                else
+                                                {
+                                                    <input type="radio" name="rdoSubtitlingLanguage" id="rdoSubL" value="L" onchange="BindDropdown('SL','');" />
+                                                }
+                                                @objMessageKey.Subtitle
+                                            </label>
+                                            <label class="radio-inline ">
+                                                @if (Model.Sub_Type == "G")
+                                                {
+                                                    <input type="radio" name="rdoSubtitlingLanguage" id="rdoSubLG" value="G" onchange="BindDropdown('SG','');" checked="checked" />
+                                                }
+                                                else
+                                                {
+                                                    <input type="radio" name="rdoSubtitlingLanguage" id="rdoSubLG" value="G" onchange="BindDropdown('SG','');" />
+                                                }
+                                                @objMessageKey.SubtitleGroup @*: <label id="lblLanguageCount"></label>*@
+                                            </label>
+                                            <div id="divSubSingleHB">
+                                                @Html.ListBox("lb_Sub_Language_Popup", ViewBag.SL_List_Popup as MultiSelectList, new { @multiple = "multiple" })<!-- @@onchange = "fillTotal('LS');"  -->
+                                                @Html.Hidden("hdn_Sub_LanguageList")
+                                                @Html.Hidden("hdn_SubTitling_Type")
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <label class="radio-inline">
+                                                @if (Model.Dub_Type == "L")
+                                                {
+                                                    <input type="radio" name="rdoDubbingLanguage" id="rdoDubbingL" value="L" onchange="BindDropdown('DL','');" checked="checked" />
+                                                }
+                                                else
+                                                {
+                                                    <input type="radio" name="rdoDubbingLanguage" id="rdoDubbingL" value="L" onchange="BindDropdown('DL','');" />
+                                                }
+                                                @objMessageKey.Dubbing
+                                            </label>
+                                            <label class="radio-inline">
+                                                @if (Model.Dub_Type == "G")
+                                                {
+                                                    <input type="radio" name="rdoDubbingLanguage" id="rdoDubbingLG" value="G" onchange="BindDropdown('DG','');" checked="checked" />
+                                                }
+                                                else
+                                                {
+                                                    <input type="radio" name="rdoDubbingLanguage" id="rdoDubbingLG" value="G" onchange="BindDropdown('DG','');" />
+                                                }
+                                                @objMessageKey.DubbingGroup @*: <label id="lblDubbingCount"></label>*@
+                                                @Html.Hidden("hdn_Dubbing_Type")
+                                            </label>
+                                            <div id="divDubSingleHB">
+                                                @Html.ListBox("lb_Dubb_Language_Popup", ViewBag.DL_List_Popup as MultiSelectList, new { @multiple = "multiple" })<!-- @@onchange = "fillTotal('LD');"  -->
+                                                @Html.Hidden("hdn_Dubb_LanguageList")
+                                            </div>
+                                        </li>
+                                    </ul>
+                                    <div class="platform_wrapper col-md-6">
+                                        <label for="platform" class="bold">@objMessageKey.Platform</label>
+
+                                        <div id="tree" class="treeClass">
+
+                                        </div>
+                                        <input type="hidden" id="hdnTVCodes" name="hdnTVCodes" value="@Model.Platform_Codes" />
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="divBlock">
+                                        <div class="bold small_title" style="padding-right: 320px;">@objMessageKey.Remarks</div>
+                                        <div style="">&nbsp;&nbsp;</div>
+                                        <div id="CharNum" class="charNum" style="float: right;">0/4000</div>
+                                    </div>
+                                    @Html.TextAreaFor(m => Model.Restriction_Remarks, new { @class = "textarea", @onkeypress = "countChar(this)", @onkeyup = "countChar(this)", @maxlength = 4000 })
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li>
+                                        <input type="submit" id="btnSave" class="btn btn-primary" value="@objMessageKey.Save" onclick="return Validate_Save_Pushback();" />
+                                    </li>
+                                    <li>
+                                        <a data-dismiss="modal" class="btn-primary" href="#">@objMessageKey.Cancel</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}

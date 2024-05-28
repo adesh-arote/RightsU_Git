@@ -1,0 +1,269 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Name>RightsOPedia_DB</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>4.1</ProjectVersion>
+    <ProjectGuid>{070d9705-5934-4433-9b73-5400840a365e}</ProjectGuid>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql130DatabaseSchemaProvider</DSP>
+    <OutputType>Database</OutputType>
+    <RootPath>
+    </RootPath>
+    <RootNamespace>RightsOPedia_DB</RootNamespace>
+    <AssemblyName>RightsOPedia_DB</AssemblyName>
+    <ModelCollation>1033,CI</ModelCollation>
+    <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
+    <DeployToDatabase>True</DeployToDatabase>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetLanguage>CS</TargetLanguage>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <SqlServerVerification>False</SqlServerVerification>
+    <IncludeCompositeObjects>True</IncludeCompositeObjects>
+    <TargetDatabaseSet>True</TargetDatabaseSet>
+    <DefaultCollation>SQL_Latin1_General_CP1_CI_AS</DefaultCollation>
+    <DefaultFilegroup>PRIMARY</DefaultFilegroup>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+    <!-- Default to the v11.0 targets path if the targets file for the current VS version is not found -->
+    <SSDTExists Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">True</SSDTExists>
+    <VisualStudioVersion Condition="'$(SSDTExists)' == ''">11.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Condition="'$(SQLDBExtensionsRefPath)' != ''" Project="$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <ItemGroup>
+    <Folder Include="Properties" />
+    <Folder Include="dbo\" />
+    <Folder Include="dbo\Tables\" />
+    <Folder Include="dbo\Views\" />
+    <Folder Include="dbo\Functions\" />
+    <Folder Include="dbo\Stored Procedures\" />
+    <Folder Include="dbo\User Defined Types\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="dbo\Tables\Dim_Days.sql" />
+    <Build Include="dbo\Tables\Dim_Months.sql" />
+    <Build Include="dbo\Tables\Dim_Time.sql" />
+    <Build Include="dbo\Tables\DashboardReportParams.sql" />
+    <Build Include="dbo\Tables\DurationDefinition.sql" />
+    <Build Include="dbo\Tables\ErrorLog.sql" />
+    <Build Include="dbo\Tables\TraceExtended.sql" />
+    <Build Include="dbo\Tables\Log.sql" />
+    <Build Include="dbo\Tables\PointSystem.sql" />
+    <Build Include="dbo\Tables\PointSystemUrl.sql" />
+    <Build Include="dbo\Tables\Fact_UserActivity.sql" />
+    <Build Include="dbo\Tables\QuarterDefinition.sql" />
+    <Build Include="dbo\Tables\ReportFeedback.sql" />
+    <Build Include="dbo\Tables\ServiceLog.sql" />
+    <Build Include="dbo\Tables\ssis_monitor_configure.sql" />
+    <Build Include="dbo\Tables\Trace.sql" />
+    <Build Include="dbo\Tables\System_Versions.sql" />
+    <Build Include="dbo\Tables\DashboardSummary.sql" />
+    <Build Include="dbo\Tables\DashboardUserInfo.sql" />
+    <Build Include="dbo\Tables\LeaderBoardData.sql" />
+    <Build Include="dbo\Tables\DashboardUserSummary.sql" />
+    <Build Include="dbo\Views\EmailConfig.sql" />
+    <Build Include="dbo\Views\EmailTemplate.sql" />
+    <Build Include="dbo\Views\Title_Objection_Rights_Period.sql" />
+    <Build Include="dbo\Views\Notifications.sql" />
+    <Build Include="dbo\Views\SportTour.sql" />
+    <Build Include="dbo\Views\SportType.sql" />
+    <Build Include="dbo\Views\Map_Extended_Columns.sql" />
+    <Build Include="dbo\Views\Program.sql" />
+    <Build Include="dbo\Views\SportBrand.sql" />
+    <Build Include="dbo\Views\TitleRights_AutoComplete.sql" />
+    <Build Include="dbo\Views\TitleLinearDealType.sql" />
+    <Build Include="dbo\Views\HRDepartment.sql" />
+    <Build Include="dbo\Views\Acq_Deal_Supplementary.sql" />
+    <Build Include="dbo\Views\Acq_Deal_Supplementary_detail.sql" />
+    <Build Include="dbo\Views\Supplementary_Config.sql" />
+    <Build Include="dbo\Views\Supplementary_Data.sql" />
+    <Build Include="dbo\Views\Acq_Deal.sql" />
+    <Build Include="dbo\Views\Supplementary.sql" />
+    <Build Include="dbo\Views\Syn_Deal_Supplementary.sql" />
+    <Build Include="dbo\Views\Syn_Deal_Supplementary_Detail.sql" />
+    <Build Include="dbo\Views\Syn_Deal.sql" />
+    <Build Include="dbo\Views\Deal_Type.sql" />
+    <Build Include="dbo\Views\Business_Unit.sql" />
+    <Build Include="dbo\Views\SynTitleRights.sql" />
+    <Build Include="dbo\Views\Supplementary_Tab.sql" />
+    <Build Include="dbo\Views\Digital.sql" />
+    <Build Include="dbo\Views\Digital_Tab.sql" />
+    <Build Include="dbo\Views\Digital_Config.sql" />
+    <Build Include="dbo\Views\Acq_Deal_Digital.sql" />
+    <Build Include="dbo\Views\Acq_Deal_Digital_detail.sql" />
+    <Build Include="dbo\Views\Digital_Data.sql" />
+    <Build Include="dbo\Views\Syn_Acq_Mapping.sql" />
+    <Build Include="dbo\Views\DealType.sql" />
+    <Build Include="dbo\Views\AcqRightsDubbing.sql" />
+    <Build Include="dbo\Views\Acq_Deal_Ancillary.sql" />
+    <Build Include="dbo\Views\AcqRightsSubtitling.sql" />
+    <Build Include="dbo\Views\Acq_Deal_Ancillary_Title.sql" />
+    <Build Include="dbo\Views\AcqRightsTerritory.sql" />
+    <Build Include="dbo\Views\Platform.sql" />
+    <Build Include="dbo\Views\AttribDealType.sql" />
+    <Build Include="dbo\Views\Platform_Attrib_Group.sql" />
+    <Build Include="dbo\Views\AncillaryType.sql" />
+    <Build Include="dbo\Views\AttribGroupBU.sql" />
+    <Build Include="dbo\Views\MediaPlatforms.sql" />
+    <Build Include="dbo\Views\BusinessUnit.sql" />
+    <Build Include="dbo\Views\ModeOfExploitation.sql" />
+    <Build Include="dbo\Views\Country.sql" />
+    <Build Include="dbo\Views\Genres.sql" />
+    <Build Include="dbo\Views\Language.sql" />
+    <Build Include="dbo\Views\System_Language_Message.sql" />
+    <Build Include="dbo\Views\Talent.sql" />
+    <Build Include="dbo\Views\System_Module_Message.sql" />
+    <Build Include="dbo\Views\Title.sql" />
+    <Build Include="dbo\Views\System_Message.sql" />
+    <Build Include="dbo\Views\TitleGenres.sql" />
+    <Build Include="dbo\Views\System_Module.sql" />
+    <Build Include="dbo\Views\TitleTalent.sql" />
+    <Build Include="dbo\Views\TitleMetaData.sql" />
+    <Build Include="dbo\Views\Acq_deal_Rights.sql" />
+    <Build Include="dbo\Views\Title_Objection_Platform.sql" />
+    <Build Include="dbo\Views\Title_Objection.sql" />
+    <Build Include="dbo\Views\Title_Objection_Status.sql" />
+    <Build Include="dbo\Views\Title_Objection_Type.sql" />
+    <Build Include="dbo\Views\Acq_Deal_Cost.sql" />
+    <Build Include="dbo\Views\Acq_Deal_Cost_Title.sql" />
+    <Build Include="dbo\Views\Acq_Deal_Rights_Platform.sql" />
+    <Build Include="dbo\Views\Acq_Deal_Rights_Title.sql" />
+    <Build Include="dbo\Views\Language_Group.sql" />
+    <Build Include="dbo\Views\LanguageGroup.sql" />
+    <Build Include="dbo\Views\LoggedInUsers.sql" />
+    <Build Include="dbo\Views\Acq_Deal_Cost_Costtype.sql" />
+    <Build Include="dbo\Views\LoginDetails.sql" />
+    <Build Include="dbo\Views\Cost_Type.sql" />
+    <Build Include="dbo\Views\Report_Setup.sql" />
+    <Build Include="dbo\Views\SecurityGroup.sql" />
+    <Build Include="dbo\Views\SystemParameterNew.sql" />
+    <Build Include="dbo\Views\Acq_Deal_Cost_Additional_Exp.sql" />
+    <Build Include="dbo\Views\Territory.sql" />
+    <Build Include="dbo\Views\Acq_Deal_Cost_Commission.sql" />
+    <Build Include="dbo\Views\TitleCountry.sql" />
+    <Build Include="dbo\Views\Entity.sql" />
+    <Build Include="dbo\Views\TitleDubbing.sql" />
+    <Build Include="dbo\Views\Acq_Deal_Payment_Terms.sql" />
+    <Build Include="dbo\Views\TitleNonSaleableAncillary.sql" />
+    <Build Include="dbo\Views\Payment_Terms.sql" />
+    <Build Include="dbo\Views\TitlePlatform.sql" />
+    <Build Include="dbo\Views\TitleRights.sql" />
+    <Build Include="dbo\Views\Extended_Columns_Value.sql" />
+    <Build Include="dbo\Views\Attrib_Group.sql" />
+    <Build Include="dbo\Views\TitleRuns.sql" />
+    <Build Include="dbo\Views\Attrib_report_Column.sql" />
+    <Build Include="dbo\Views\TitleSaleableAncillary.sql" />
+    <Build Include="dbo\Views\TitleSchedule.sql" />
+    <Build Include="dbo\Views\Report_Column_Setup_IT.sql" />
+    <Build Include="dbo\Views\TitleSubtitling.sql" />
+    <Build Include="dbo\Views\TitleSynPlatform.sql" />
+    <Build Include="dbo\Views\TitleSynRights.sql" />
+    <Build Include="dbo\Views\TitleSynTerritory.sql" />
+    <Build Include="dbo\Views\TitleTerritory.sql" />
+    <Build Include="dbo\Views\VWTrace.sql" />
+    <Build Include="dbo\Views\Users.sql" />
+    <Build Include="dbo\Views\UsersBU.sql" />
+    <Build Include="dbo\Views\UsersBusinessUnit.sql" />
+    <Build Include="dbo\Views\UsersDetail.sql" />
+    <Build Include="dbo\Views\SynRightsTerritory.sql" />
+    <Build Include="dbo\Views\UsersPasswordDetail.sql" />
+    <Build Include="dbo\Views\Vendor.sql" />
+    <Build Include="dbo\Views\Syn_Deal_Rights_Platform.sql" />
+    <Build Include="dbo\Views\VWTraceExtended.sql" />
+    <Build Include="dbo\Views\AncillaryPlatform.sql" />
+    <Build Include="dbo\Views\Ancillary_Type.sql" />
+    <Build Include="dbo\Views\AcqDealRightsPromoterGroup.sql" />
+    <Build Include="dbo\Functions\fn_Split_withdelemiter.sql" />
+    <Build Include="dbo\Functions\UFNSplit.sql" />
+    <Build Include="dbo\Functions\parseJSON.sql" />
+    <Build Include="dbo\Functions\UFN_Get_Platform_Group.sql" />
+    <Build Include="dbo\Stored Procedures\USPAcqAncillaryTabData.sql" />
+    <Build Include="dbo\Stored Procedures\USP_SendMailBusinessUser.sql" />
+    <Build Include="dbo\Stored Procedures\USP_Insert_Email_Notification_Log.sql" />
+    <Build Include="dbo\Stored Procedures\USP_SendMailLegalUser.sql" />
+    <Build Include="dbo\Stored Procedures\USPGetAcqTabsList.sql" />
+    <Build Include="dbo\Stored Procedures\USPSendFeedBackMail_ToUser.sql" />
+    <Build Include="dbo\Stored Procedures\USPGetPlatformTreeHierarchy.sql" />
+    <Build Include="dbo\Stored Procedures\USPSendFeedBackMail_ToLegalHead.sql" />
+    <Build Include="dbo\Stored Procedures\USPSendSuggessionMail_ToUser.sql" />
+    <Build Include="dbo\Stored Procedures\USPSendSuggessionMail_ToLegalHead.sql" />
+    <Build Include="dbo\Stored Procedures\USPSendSuggestionMail.sql" />
+    <Build Include="dbo\Stored Procedures\USPSendFeedBackMail.sql" />
+    <Build Include="dbo\Stored Procedures\USPGetDealType.sql" />
+    <Build Include="dbo\Stored Procedures\USPDashboardI.sql" />
+    <Build Include="dbo\Stored Procedures\USPGenerateDates.sql" />
+    <Build Include="dbo\Stored Procedures\USPGetLeaderboard.sql" />
+    <Build Include="dbo\Stored Procedures\USPGetMediaPlatforms.sql" />
+    <Build Include="dbo\Stored Procedures\USPGetModeOfExploitation.sql" />
+    <Build Include="dbo\Stored Procedures\USPGetQuarterDefinition.sql" />
+    <Build Include="dbo\Stored Procedures\USPGetSearchCriteria.sql" />
+    <Build Include="dbo\Stored Procedures\USPITGetMenu.sql" />
+    <Build Include="dbo\Stored Procedures\USPReportOutput.sql" />
+    <Build Include="dbo\Stored Procedures\USPUserTrackActivity_Org.sql" />
+    <Build Include="dbo\Stored Procedures\USPComputeUserActivity.sql" />
+    <Build Include="dbo\Stored Procedures\USPUserTrackActivity_Old1.sql" />
+    <Build Include="dbo\Stored Procedures\USPGetDepartmentWiseUserActivity.sql" />
+    <Build Include="dbo\Stored Procedures\USPGetUserActivityLastRefreshedTime.sql" />
+    <Build Include="dbo\Stored Procedures\USPComputeUserActivity_PreProcessing.sql" />
+    <Build Include="dbo\Stored Procedures\USPGetLeaderboard_Old1.sql" />
+    <Build Include="dbo\Stored Procedures\USPUserTrackActivity_Old2.sql" />
+    <Build Include="dbo\Stored Procedures\USPUserTrackActivity_Old3.sql" />
+    <Build Include="dbo\Stored Procedures\USPSynSupplementaryTabData.sql" />
+    <Build Include="dbo\Stored Procedures\USPSynTitleMetaData.sql" />
+    <Build Include="dbo\Stored Procedures\USPDashboardSummary_PreProcessing.sql" />
+    <Build Include="dbo\Stored Procedures\USPAcqSupplementaryTabData.sql" />
+    <Build Include="dbo\Stored Procedures\USPSynSupplementaryExportData.sql" />
+    <Build Include="dbo\Stored Procedures\USPAcqSupplementaryExportData.sql" />
+    <Build Include="dbo\Stored Procedures\USPAcquisitionDigitalTabData.sql" />
+    <Build Include="dbo\Stored Procedures\USPAcquisitionDigitalExportData.sql" />
+    <Build Include="dbo\Stored Procedures\USPAcquisitionAncillaryTabData.sql" />
+    <Build Include="dbo\Stored Procedures\USPAcquisitionOutputMail.sql" />
+    <Build Include="dbo\Stored Procedures\USPAcquisitionAncillaryExportData.sql" />
+    <Build Include="dbo\Stored Procedures\USPGetAutoCompleteResultVirtualSroll.sql" />
+    <Build Include="dbo\Stored Procedures\USPGetPlatformwiseTitle.sql" />
+    <Build Include="dbo\Stored Procedures\USPComputeDashboardSummary.sql" />
+    <Build Include="dbo\Stored Procedures\USPComputeDashboardUserSummaryBiweekly.sql" />
+    <Build Include="dbo\Stored Procedures\USPComputeDashboardUserSummaryBiweekly_CurrentBiweek.sql" />
+    <Build Include="dbo\Stored Procedures\USPComputeDashboardUserSummaryDay.sql" />
+    <Build Include="dbo\Stored Procedures\USPFetchDashboardUserSummary.sql" />
+    <Build Include="dbo\Stored Procedures\USPFetchDashboardUserSummaryBiweekly.sql" />
+    <Build Include="dbo\Stored Procedures\USPGetLeaderboard_NXT.sql" />
+    <Build Include="dbo\Stored Procedures\USPUserTrackActivity.sql" />
+    <Build Include="dbo\Stored Procedures\USPSynRightsTabData.sql" />
+    <Build Include="dbo\Stored Procedures\USPGetDrillDownData.sql" />
+    <Build Include="dbo\Stored Procedures\USPGetDrilDownExpiring.sql" />
+    <Build Include="dbo\Stored Procedures\USPUserTrackActivity_Old.sql" />
+    <Build Include="dbo\Stored Procedures\USPAcqTitleMetaData.sql" />
+    <Build Include="dbo\Stored Procedures\USPAcqRightsTabData.sql" />
+    <Build Include="dbo\Stored Procedures\usp_GetUserEMail_Body.sql" />
+    <Build Include="dbo\User Defined Types\Email_Config_Users_UDT.sql" />
+    <Build Include="dbo\Stored Procedures\USPGetDrillDownData_Details.sql" />
+  </ItemGroup>
+</Project>

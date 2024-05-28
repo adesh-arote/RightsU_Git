@@ -1,0 +1,323 @@
+﻿body
+{
+}
+/************ MaskedEdit Related Styles ***********************/
+
+.MaskedEditFocus
+{
+    background-color: #ffffcc;
+    color: #000000;
+}
+.MaskedEditMessage
+{
+    color: #ff0000;
+    font-weight: bold;
+}
+.MaskedEditError
+{
+    background-color: #ffcccc;
+}
+.MaskedEditFocusNegative
+{
+    background-color: #ffffcc;
+    color: #ff0000;
+}
+.MaskedEditBlurNegative
+{
+    color: #ff0000;
+}
+
+.MyCalendar .ajax__calendar_container
+{
+    border: 1px solid #646464;
+    background-color: lemonchiffon;
+    color: red;
+}
+.MyCalendar .ajax__calendar_other .ajax__calendar_day, .MyCalendar .ajax__calendar_other .ajax__calendar_year
+{
+    color: black;
+}
+.MyCalendar .ajax__calendar_hover .ajax__calendar_day, .MyCalendar .ajax__calendar_hover .ajax__calendar_month, .MyCalendar .ajax__calendar_hover .ajax__calendar_year
+{
+    color: black;
+}
+.MyCalendar .ajax__calendar_active .ajax__calendar_day, .MyCalendar .ajax__calendar_active .ajax__calendar_month, .MyCalendar .ajax__calendar_active .ajax__calendar_year
+{
+    color: black;
+    font-weight: bold;
+}
+
+/*Modal Popup*/
+.modalBackground
+{
+    background-color: Gray;
+    filter: alpha(opacity=0);
+    opacity: 0.0;
+    z-index: 1002;
+}
+.modalBackground1
+{
+    background-color: Gray;
+    filter: alpha(opacity=0);
+    opacity: 0.0;
+}
+.modalBackground2
+{
+    background-color: Gray;
+    filter: alpha(opacity=50);
+    opacity: 0.0;
+}
+.modalPopup
+{
+    background-color: White;
+    border-width: 3px;
+    border-style: solid;
+    border-color: #056691;
+    padding: 3px;
+    width: 250px;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: black;
+    font-weight: bold;
+}
+.ContextMenuPanel
+{
+    border: 1px solid #868686;
+    z-index: 1000;
+    background: url(images/menu-bg.gif) repeat-y 0 0 #FAFAFA;
+    cursor: default;
+    padding: 1px 1px 0px 1px;
+    font-size: 11px;
+}
+a.ContextMenuItem
+{
+    margin: 1px 0 1px 0;
+    display: block;
+    color: #003399;
+    text-decoration: none;
+    cursor: pointer;
+    padding: 4px 19px 4px 33px;
+    white-space: nowrap;
+}
+
+a.ContextMenuItem-Selected
+{
+    font-weight: bold;
+}
+
+a.ContextMenuItem:hover
+{
+    background-color: #FFE6A0;
+    color: #003399;
+    border: 1px solid #D2B47A;
+    padding: 3px 18px 3px 32px;
+}
+
+/*
+For Loading Image
+*/
+
+.normalAjax
+{
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: #000000;
+}
+table.mainAjax
+{
+    border-collapse: collapse;
+    background-color: #FFFFFF;
+    border: 0px solid #838383;
+}
+td.lodding
+{
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 11px;
+    color: #000000;
+    border: 0px solid #838383;
+    background-image: url('textarea_bg03.gif'); /*filter:progid:DXImageTransform.Microsoft.Gradient( 	GradientType=1,StartColorStr='#D7D7D7',EndColorStr='#F7F7F7');}  	position: relative;*/
+}
+.borderAjax
+{
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: #000000;
+    border: 1px solid #838383;
+}
+
+/*List Search*/
+.ListSearchExtenderPrompt
+{
+    background-position: bottom;
+    color: Red;
+    font-size: small;
+    font-style: italic;
+    background-color: Snow;
+    border: solid 1px Red;
+    height: 20px;
+    text-align: left;
+}
+/*validator Callout*/
+.validatorCalloutHighlight
+{
+    background-color: White;
+}
+
+DIV.TransferPopup
+{
+    background-color: White;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #056691;
+    padding: 3px;
+    width: 80%;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: red;
+    font-weight: bold;
+}
+
+
+/************ Start AjaxClenter Related Styles ***********************/
+/************ Added By Dada on 11Jan2013 to Change Ajax Calendar Style Sheet ***********************/
+/*Calendar Control CSS*/.Ajaxcalendar_Theme .ajax__calendar_container
+{
+    background-color: #A0CFEC;  /*#DEF1F4*;/  /*#2B91AF;*/
+    /*border: solid 1px #77D5F7;*/
+    border: solid 1px #2B91AF;
+}
+.Ajaxcalendar_Theme .ajax__calendar_header
+{
+    background-color: #ffffff;
+    margin-bottom: 4px;
+    border: solid 1px #2B91AF;
+}
+.Ajaxcalendar_Theme .ajax__calendar_title, .Ajaxcalendar_Theme .ajax__calendar_next, .Ajaxcalendar_Theme .ajax__calendar_prev
+{
+    color: #000000; /*#004080;*/
+    padding-top: 3px;
+}
+.Ajaxcalendar_Theme .ajax__calendar_body
+{
+    background-color: #ffffff;
+    /*border: solid 1px #77D5F7;*/
+    border: solid 1px #2B91AF;
+}
+.Ajaxcalendar_Theme .ajax__calendar_dayname
+{
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 4px;
+    margin-top: 2px;
+    color: #000000; /*#004080;*/
+}
+.Ajaxcalendar_Theme .ajax__calendar_day
+{
+    color: #000000; /*#004080;*/
+    text-align: center;
+    /*border: solid 0.5px #2B91AF;*/
+}
+.Ajaxcalendar_Theme .ajax__calendar_month
+{
+    text-align: center;
+    font-weight: bold;
+    /*margin-bottom: 4px;
+    margin-top: 2px;*/
+    color: #000000; /*#004080;*/
+    border: solid 0.5px #2B91AF;
+}
+.Ajaxcalendar_Theme .ajax__calendar_year
+{
+    text-align: center;
+    font-weight: bold;
+    /*margin-bottom: 4px;
+    margin-top: 2px;*/
+    color: #000000; /*#004080;*/
+    border: solid 0.5px #2B91AF;
+}
+.Ajaxcalendar_Theme .ajax__calendar_hover .ajax__calendar_day, .Ajaxcalendar_Theme .ajax__calendar_hover .ajax__calendar_month, .Ajaxcalendar_Theme .ajax__calendar_hover .ajax__calendar_year, .Ajaxcalendar_Theme .ajax__calendar_active
+{
+    color: #000000; /*#004080;*/
+    font-weight: bold;
+    background-color: #A0CFEC;  /*#DEF1F4;*/
+}
+.Ajaxcalendar_Theme .ajax__calendar_today
+{
+    font-weight: bold;
+    color: #000000; 
+}
+.Ajaxcalendar_Theme .ajax__calendar_other, .Ajaxcalendar_Theme .ajax__calendar_hover .ajax__calendar_today, .Ajaxcalendar_Theme .ajax__calendar_hover .ajax__calendar_title
+{
+    color: #000000; /*#bbbbbb;*/
+}
+/************ End AjaxClenter Related Styles ***********************/
+
+/************ Added By Dada For new alert message of TransferMessage 24Jan2013 ************/
+.modalPopupSuccess
+{
+    background-color: White;
+    border-width: 3px;
+    border-style: solid;
+    border-color: #056691;
+    padding: 3px;
+    width: 280px;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: black;
+    font-weight: bold;
+    font-style:italic;
+}
+
+.modalPopupSuccessHead
+{
+	background-color: #616cae;
+	border-color: White;
+	border-width: 1px;
+	color: White;
+	font-weight: bold;
+	width: 100%;
+	height: 16px;
+}
+
+/*
+.modalPopupSuccess
+{
+    background-color: White;
+    border-width: 4px;
+    border-style: solid;
+    border-color: #336699;
+    padding: 0px;
+    width: 300px;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: Red;
+    font-weight: bold;
+    font-style:italic;
+}
+
+.modalPopupSuccTable
+{
+    background-color: White;
+    border-width: 3px;
+    border-style: solid;
+    border-color: #336699;
+    width: 300px;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: Red;
+    font-weight: bold;
+    font-style:italic;
+}
+
+
+.modalPopupSuccessHead
+{
+	background-color: #5588BB;
+	border-color: black;
+	color: White;
+	font-weight: bold;
+	width: 100%;
+	height: 16px;
+}
+*/
+/************End Added By Dada For new alert message of TransferMessage 24Jan2013 ************/

@@ -1,0 +1,245 @@
+﻿@model List<RightsU_Entities.ProjectMilestoneTitle>
+@using UTOFrameWork.FrameworkClasses;
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script>
+     var dummyGuid_G = "";
+    var URL_SavePMTitleList = '@Url.Action("SavePMTitles", "Project_Milestone")';
+    var URL_DeletePMTitlesList = '@Url.Action("DeletePMTitlesList", "Project_Milestone")';
+    function SavePMTitlesList(dummyGuid, rowNumber) {
+        var exchangeRate = $.trim($('#txtExchangeRate_' + rowNumber).val());
+        $.ajax({
+            type: "POST",
+            url: URL_SavePMTitleList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                dummyGuid: dummyGuid,
+                exchangeRate: exchangeRate
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Status == "S") {
+                        $('#hdnAction').val("");
+                        BindPMTitleList("", "");
+                    }
+                    else
+                        showAlert("E", result.Message);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    //function handleOk() {
+
+    //    if (Command_Name == "DELETE_EXCHANGE_RATE") {
+    //        $('#popup').css('z-index', '1050');
+    //        DeletePMTitlesList(dummyGuid_G, true);
+    //    }
+    //}
+    //function handleCancel() {
+    //    $('#popup').css('z-index', '1050');
+    //    Command_Name = "";
+    //    dummyGuid_G = "";
+    //}
+    function DeletePMTitlesList(dummyGuid, confirmed) {
+
+        if (confirmed) {
+            Command_Name = "";
+            dummyGuid_G = "";
+
+            $.ajax({
+                type: "POST",
+                url: URL_DeletePMTitlesList,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    dummyGuid: dummyGuid
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        BindPMTitleList("", "");
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            })
+        }
+        else {
+            Command_Name = "DELETE_EXCHANGE_RATE";
+            dummyGuid_G = dummyGuid;
+
+            $('#popup').css('z-index', '1040');
+            DeletePMTitlesList(dummyGuid_G, true);
+            showAlert("S", "Record Deleted Successfully");
+
+        }
+    }
+</script>
+
+<table class="table table-bordered table-hover" id="tblMusicLink">
+    <thead>
+        <tr>
+            <th style="width:6%;">Sr no</th>
+            <th style="width:22%;">Title Name</th>
+            <th style="width:19%;">Year</th>
+            <th style="width:25%;">Language</th>
+            <th style="width:20%;">Description</th>
+            <th style="width:15%;">Action</th>
+        </tr>
+    </thead>
+    @*<tbody>
+            @{int rowNumber = 1; }
+            @if (ViewBag.CommandName == "ADD")
+            {
+                <tr>
+                    <td style="text-align:center;">
+                        <span>New</span>
+                    </td>
+                    <td style="">
+                        <input type="text" id="txtExchangeRate_0" value="" class="exchangeRate form-control input-sm" maxlength="100" style="width:341px;margin-left:162px" />
+                    </td>
+                    <td align="center">
+                        <a title="Save" class="glyphicon glyphicon-ok-circle" onclick="SavePMTitlesList('', 0)"></a>
+                        <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="PMTitle_Cancel()"></a>
+                    </td>
+                </tr>
+            }
+            @if (Model.Count > 0)
+            {
+
+                foreach (var item in Model)
+                {
+
+                    <tr id="trExchangeRate_@rowNumber">
+                        <td style="text-align:center;">
+                            <span>@rowNumber</span>
+
+                        </td>
+
+                        @if (ViewBag.CommandName == "EDIT" && ViewBag.DummmyGuid == item.Dummy_Guid)
+                        {
+                            <td style="">
+                                <input type="text" id="txtExchangeRate_@rowNumber" value="@item.ProspectTitleName" maxlength="100" class="exchangeRate form-control input-sm" style="width:341px;text-align:right;" />
+                            </td>
+                            <td align="center">
+                                <a title="Save" class="glyphicon glyphicon-ok-circle" onclick="SavePMTitlesList('@item.Dummy_Guid', @rowNumber)"></a>
+                                <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="PMTitle_Cancel()"></a>
+                            </td>
+                        }
+                        else
+                        {
+                            <td style="">
+                                <span>@item.ProspectTitleName</span>
+                            </td>
+
+
+                            <td align="center">
+                                        <a title="Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer;" onclick="BindPMTitleList('EDIT', '@item.Dummy_Guid')"></a>
+                                        <a title="Delete" class="glyphicon glyphicon-trash" style="cursor: pointer;" onclick="DeletePMTitlesList('@item.Dummy_Guid', false)"></a>
+                            </td>
+
+                        }
+                    </tr>
+                    rowNumber++;
+                }
+            }
+            else if (ViewBag.CommandName != "ADD")
+            {
+
+                <tr>
+                    @if (ViewBag.CommandName != "VIEW")
+                    {
+                        <td colspan="4">No record found</td>
+                    }
+                    else
+                    {
+                        <td colspan="3">No record found</td>
+                    }
+                </tr>
+            }
+        </tbody>*@
+    <tbody>
+     
+        @if (ViewBag.CommandName == "ADD")
+        {
+        <tr>
+            <td style="text-align:center;">
+                <span>New</span>
+            </td>
+            <td style="">
+                <input type="text" id="txtExchangeRate_0" value="" class="exchangeRate form-control input-sm" maxlength="100" style="" />
+            </td>
+            <td style="text-align:center">
+                <input type="text" id="txtEffectiveDate_0" value="" class="isDatepicker shortDate form-control input-sm" placeholder="DD/MM/YYYY" style="text-align:center;" />
+            </td>
+            <td style="">
+                <select name="" id="Select32" class="form_input">
+                    <option value="1">Please Select</option>
+                    <option value="2">English</option>
+                    <option value="2">Hindi</option>
+                    <option value="2">Marathi</option>
+                </select>
+            </td>
+            <td>
+                <input type="text" id="txtExchangeRate_0" value="" class="exchangeRate form-control input-sm" maxlength="500" style="width:125px" />
+            </td>
+            <td align="center">
+                <a title="Save" class="glyphicon glyphicon-ok-circle" onclick="SavePMTitlesList('', 0)"></a>
+                <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="PMTitle_Cancel()"></a>
+            </td>
+        </tr>
+        }
+      
+
+        <tr id="trExchangeRate_">
+            <td style="text-align:center;">
+                <span>1</span>
+
+            </td>
+
+          
+            <td style="">
+                Harry Potter and the Deathly Hallows – Part 1
+            </td>
+                <td style="text-align:center">
+                    19-Nov-2010
+                </td>
+                <td style="">
+                    English
+                </td>
+                <td style="">
+                    Harry Potter Chapter VII
+                </td>
+                <td align="center">
+                    <a title="Save" class="glyphicon glyphicon-ok-circle" onclick=""></a>
+                    <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick=""></a>
+                </td>
+           
+        </tr>
+               
+        
+    </tbody>
+</table>
+<script>
+    $(document).ready(function () {
+        $("#hdnLastMaxDate").val($("#hdnLastMax").val());
+    });
+</script>

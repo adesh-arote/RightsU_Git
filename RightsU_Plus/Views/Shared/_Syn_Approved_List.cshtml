@@ -1,0 +1,141 @@
+﻿@*@model RightsU_Entities.Syn_Deal*@
+@using UTOFrameWork.FrameworkClasses
+@{
+    RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
+    if (Session[RightsU_Entities.RightsU_Session.Syn_DEAL_SCHEMA] != null)
+    {
+        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.Syn_DEAL_SCHEMA];
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        countChar(document.getElementById('approvalremarks'));
+    });
+    var DoConfirmation = ''
+    var ApprovalValue = ''
+    function setUserAction(value) {
+        var approvalremarks = $.trim($('#approvalremarks').val());
+        ApprovalValue = value;
+        if (approvalremarks == '') {
+            showAlert('I', '@objMessageKey.Pleaseenterremarks');
+        }
+        else {
+            $(".btn_Apr_Rej_Ropn_BOL").attr('disabled', true);
+            if (value == 'A') {
+                showAlert('I', '@objMessageKey.Areyousureyouwanttoapprovethisdeal', 'OKCANCEL');
+                DoConfirmation = 'Y';
+            }
+            else if (value == 'RO') {
+                showAlert('I', '@objMessageKey.Areyousureyouwanttoreopenthisdeal', 'OKCANCEL');
+                DoConfirmation = 'Y';
+            }
+            else {
+                showAlert('I', '@objMessageKey.Areyousureyouwanttorejectthisdeal', 'OKCANCEL');
+                DoConfirmation = 'Y';
+            }
+        }
+        return false;
+    }
+
+    function handleCancel() {
+        $(".btn_Apr_Rej_Ropn_BOL").attr('disabled', false);
+    }
+
+    function handleOk() {
+        if (DoConfirmation == 'Y') {
+            var wrkFlwSts = $('#lblWorkflowStatus').text();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("Syn_Approve_Reject_Deal", "Global")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                async: false,
+                data: JSON.stringify({
+                    user_Action: ApprovalValue,
+                    approvalremarks: $('#approvalremarks').val(),
+                    WorkFlowStatus: wrkFlwSts
+                }),
+                success: function (result) {
+                    debugger;
+                    var message
+                    if (ApprovalValue == 'A')
+                    {
+                        if (wrkFlwSts == "Waiting (Archive)") {
+                            if (result == 'E') {
+                                showAlert('E', 'Some Error While Archiving Deal Please Contact Support Team.', 'OK');
+                            }
+                            message = 'Deal Archived successfully';
+                        }
+                        else if (result == "Already_Approved") {
+                            message = "Deal has been already Approved";
+                        }
+                        else
+                            message = 'Deal Approved successfully';
+                    }
+                    else if (ApprovalValue == 'RO') {
+                        location.href = '@Html.Raw(Url.Action("ButtonEvents", "Syn_List", new { CommandName = "Reopen", Syn_Deal_Code = objSchema.Deal_Code }))';
+                        return false;
+                    }
+                    else
+                        message = '@objMessageKey.DealRejectedsuccessfully';
+                    if (result == 'Y')
+                        message = message + ', but unable to send mail. Please check the error log..';
+
+                    showAlert('S', message, 'OK');
+                    $(".btn_Apr_Rej_Ropn_BOL").attr('disabled', true);
+                    DoConfirmation = 'N';
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+        else {
+            location.href = '@Url.Action("Index","Syn_List")'
+        }
+    }
+</script>
+@*@using (Html.BeginForm("Approve_Reject_Deal", "Global", FormMethod.Get))
+    {
+*@<div class="scale_table_block">
+    <div class="divBlock">
+        <div class="bold" style="padding-right: 750px;">@objMessageKey.Approval / Rejection / Reopen Remarks</div>
+        <div class="charNum">0/4000</div>
+    </div>
+    <textarea id="approvalremarks" name="approvalremarks" class="textarea" rows="2" cols="20" onkeyup="countChar(this)"></textarea>
+    @Html.Hidden("user_Action")
+</div>
+<div class="bottom_action">
+    <ul class="form_link_nav clearfix">
+        @{
+            if (objSchema.Module_Rights_List.Contains(GlobalParams.RightCodeForApprove))
+            {
+                <li>
+                    <input class="btn-primary btn_Apr_Rej_Ropn_BOL" type="submit" onclick='return setUserAction("A")' value="@objMessageKey.Approve" />
+                </li>
+            }
+            if (objSchema.Module_Rights_List.Contains(GlobalParams.RightCodeForDealReject))
+            {
+                <li>
+                    <input class="btn-primary btn_Apr_Rej_Ropn_BOL" type="submit" onclick='return setUserAction("R")' value="@objMessageKey.Reject" />
+                </li>
+            }
+            if (objSchema.Module_Rights_List.Contains(GlobalParams.RightCodeForDealReopen)) 
+            {
+                <li>
+                    <input class="btn-primary btn_Apr_Rej_Ropn_BOL" type="submit" onclick='return setUserAction("RO")' value="ReOpen" />
+                </li>
+            }
+            <li>
+                <input class="btn-primary btn_Apr_Rej_Ropn_BOL" type="button" onclick="location.href='@Url.Action("Index", "Syn_List")'" value="@objMessageKey.BackToList" />
+            </li>
+        }
+    </ul>
+</div>@*
+    }*@

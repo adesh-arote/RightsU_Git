@@ -1,0 +1,321 @@
+﻿@model List<RightsU_Entities.Acq_Deal_Material>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script>
+
+    var IsCall = 'Y';
+    //var pageSize = 0;
+    //var PageNo = 0;
+    $(document).ready(function () {
+        $('#spanRecordCount').html('@objMessageKey.TotalRecords: @ViewBag.RecordCount');
+        $('#spanRecordCount').css("float", "right");
+        $('#ddlTitle_Code').SumoSelect();
+        $('#ddlTitle_Code')[0].sumo.reload();
+    });
+     function SetPaging(txtPageSize) {
+        debugger
+        IsCall = 'N';
+         var txtPageSize = $('#txtPageSize').val();
+        IsCall = 'N';
+        var PageNo, recordCnt;
+        if ('@ViewBag.PageNo' != null)
+            PageNo = '@ViewBag.PageNo';
+
+        if ('@ViewBag.RecordCount' != null)
+            recordCnt = '@ViewBag.RecordCount';
+
+         PageNo = PageNo - 1;
+
+        var opt = { callback: pageselectCallback };
+        opt["items_per_page"] = parseInt(txtPageSize);
+        opt["num_display_entries"] = 5;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = PageNo;
+        $("#Pagination").pagination(recordCnt, opt);
+    }
+    function pageselectCallback(page_index, jq) {
+        debugger
+        if (CheckEditMode()) {
+            if (ValidatePageSize()) {
+                $('#hdnpage_index').val(page_index);
+
+                if (IsCall == 'Y')
+                    LoadAcqDealMaterial(page_index, 'Y');
+                else
+                    IsCall = 'Y';
+            }
+        }
+    }
+</script>
+
+<style>
+    .SumoSelect, #divddlTitle_Code {
+        width: 100% !important;
+    }
+
+        #divddlTitle_Code > div {
+            width: 100% !important;
+        }
+</style>
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            @if (ViewBag.PageMode != "V" && ViewBag.PageMode != "APRV" && ViewBag.PageMode != "EWOA")
+            {
+                <th style="width: 5%; vertical-align: middle;">@objMessageKey.Srno</th>
+                <th style="width: 25%; vertical-align: middle;">@objMessageKey.Title</th>
+                <th style="width: 20%; vertical-align: middle;">@objMessageKey.MaterialType</th>
+                <th style="width: 20%; vertical-align: middle;">@objMessageKey.MaterialMedium</th>
+                <th style="width: 15%; vertical-align: middle;">@objMessageKey.Quantity</th>
+                <th style="width: 15%; vertical-align: middle;">@objMessageKey.Action</th>
+            }
+            else
+            {
+                <th style="width: 5%; vertical-align: middle;">@objMessageKey.Srno</th>
+                <th style="width: 30%; vertical-align: middle;">@objMessageKey.Title</th>
+                <th style="width: 25%; vertical-align: middle;">@objMessageKey.MaterialType</th>
+                <th style="width: 25%; vertical-align: middle;">@objMessageKey.MaterialMedium</th>
+                <th style="width: 15%; vertical-align: middle;">@objMessageKey.Quantity</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @if (ViewBag.CommandName != "Edit")
+        {
+            if (Model != null)
+            {
+                int count = 0;
+                string title = "";
+                count = (ViewBag.PageSize * (ViewBag.PageNo - 1)) + 1;
+                foreach (var item in Model)
+                {
+
+                    <tr>
+                        @*@if (item.Episode_From == null && item.Episode_To == null)
+                            {
+                                title = item.Title.Title_Name;
+                            }
+                            else
+                            {
+                                if (ViewBag.Deal_Type_Condition == UTOFrameWork.FrameworkClasses.GlobalParams.Deal_Program || ViewBag.Deal_Type_Condition == UTOFrameWork.FrameworkClasses.GlobalParams.Deal_Music)
+                                {
+                                    title = item.Title.Title_Name + " ( " + item.Episode_From + " - " + item.Episode_To + " )";
+                                }
+                                else
+                                {
+                                    title = item.Title.Title_Name;
+                                }
+
+                            }*@
+                        @if (ViewBag.Deal_Type_Condition == UTOFrameWork.FrameworkClasses.GlobalParams.Deal_Program || ViewBag.Deal_Type_Condition == UTOFrameWork.FrameworkClasses.GlobalParams.Deal_Music)
+                        {
+                            if (ViewBag.Deal_Type_Condition == UTOFrameWork.FrameworkClasses.GlobalParams.Deal_Music)
+                            {
+                                if (Convert.ToString(item.Episode_From) == "0")
+                                {
+                                    title = item.Title.Title_Name + " ( Unlimited )";
+                                }
+                                else
+                                {
+                                    title = item.Title.Title_Name + " ( " + item.Episode_From + " )";
+                                }
+
+                            }
+                            else
+                            {
+                                title = item.Title.Title_Name + " ( " + item.Episode_From + " - " + item.Episode_To + " )";
+                            }
+                            //title = item.Title.Title_Name + " ( " + item.Episode_From + " - " + item.Episode_To + " )";
+                        }
+                        else
+                        {
+                            title = item.Title.Title_Name;
+                        }
+                        <td align="center">@count</td>
+                        <td>
+                            @Html.Label(title)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modalitem => item.Material_Type.Material_Type_Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modalitem => item.Material_Medium.Material_Medium_Name)
+
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modalitem => item.Quantity)
+                        </td>
+                        @if (ViewBag.PageMode != "V" && ViewBag.PageMode != "EWOA" && ViewBag.PageMode != "APRV")
+                        {
+                            <td align="center">
+                                @Html.HiddenFor(modalitem => item.Acq_Deal_Material_Code)
+                                <a title="@objMessageKey.Edit" href="#" data-original-title="Edit" class="glyphicon glyphicon-pencil" onclick="EditMaterial(@item.Acq_Deal_Material_Code)"></a>
+                                <a title="@objMessageKey.Delete" href="#" data-original-title="Delete" class="glyphicon glyphicon-trash" onclick='return OnDeleteClick(@item.Acq_Deal_Material_Code);'></a>
+                            </td>
+                        }
+                    </tr>
+                    count++;
+                }
+            }
+        }
+        @if (ViewBag.CommandName == "Add")
+        {
+            using (Html.BeginForm("Save", "Acq_Material", "", FormMethod.Post))
+            {
+                <tr>
+                    <td align="center">
+                        <input type="hidden" id="hdnIsAcqSynMaterialMultiTitle" value="@ViewBag.Is_Acq_Syn_Material_MultiTitle" />
+                        New
+                    </td>
+                    <td>
+                        @if (ViewBag.Is_Acq_Syn_Material_MultiTitle == "Y")
+                        {
+                            <div id="divddlTitle_Code">
+                                @Html.DropDownList("Title_Code", TempData["Title_Code"] as IEnumerable<SelectListItem>, new { style = "width:250px; ", @id = "ddlTitle_Code", multiple = "multiple" })
+                            </div>
+                        }
+                        else
+                        {
+                            @Html.DropDownList("Title_Code", (List<SelectListItem>)ViewBag.lstTitle, new { style = "width:250px;", @class = "form_input chosen-select" })
+                        }
+                        @Html.Hidden("hdnTitleName")
+                    </td>
+                    <td>
+                        @Html.DropDownList("Material_Type_Code", (List<SelectListItem>)ViewBag.lstMaterial_Type, new { style = "width:200px;", @class = "form_input chosen-select" })
+                    </td>
+                    <td>
+                        @Html.DropDownList("Material_Medium_Code", (List<SelectListItem>)ViewBag.lstMaterial_Medium, new { style = "width:200px;", @class = "form_input chosen-select" })
+                    </td>
+                    <td>
+                        @Html.TextBox("Quantity", (string)ViewBag.MaterialQtyDefaultValue, new { style = "width:100px;", maxlength = 5 })
+                    </td>
+                    <td align="center">
+                        @*<input type="image" class="glyphicon glyphicon-ok-circle" title="Save" onclick="return checkForsave(0);" />*@
+                        <a title="@objMessageKey.Save" href="#" data-original-title="Save" class="glyphicon glyphicon-ok-circle" onclick="return checkForsave(0);"></a>
+                        <a title="@objMessageKey.Cancel" href="#" data-original-title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="AddCancelMaterial(0)"></a>
+                    </td>
+                </tr>
+            }
+        }
+        @if (Model != null && ViewBag.CommandName == "Edit")
+        {
+            int count = 0;
+            string title = "";
+            count = (ViewBag.PageSize * (ViewBag.PageNo - 1)) + 1;
+            foreach (var item in Model)
+            {
+
+                if (ViewBag.Acq_Deal_Material_Code == item.Acq_Deal_Material_Code)
+                {
+                    if (ViewBag.CommandName == "Edit")
+                    {
+                        using (Html.BeginForm("Update", "Acq_Material", "", FormMethod.Post))
+                        {
+                            <tr>
+                                <td align="center">@count</td>
+                                <td>
+                                    @Html.Hidden("Acq_Deal_Material_Code", item.Acq_Deal_Material_Code)
+                                    @Html.Hidden("Acq_Deal_Code", item.Acq_Deal_Code)
+                                    @Html.Hidden("hdnTitleName")
+                                    @Html.DropDownList("Title_Code", (List<SelectListItem>)ViewBag.lstTitle, new { style = "width:250px;", @class = "form_input chosen-select" })
+                                </td>
+                                <td>
+                                    @Html.DropDownList("Material_Type_Code", (List<SelectListItem>)ViewBag.lstMaterial_Type, new { style = "width:200px;", @class = "form_input chosen-select" })
+                                </td>
+                                <td>
+                                    @Html.DropDownList("Material_Medium_Code", (List<SelectListItem>)ViewBag.lstMaterial_Medium, new { style = "width:200px;", @class = "form_input chosen-select" })
+                                </td>
+                                <td>
+                                    @Html.TextBox("Quantity", item.Quantity, new { style = "width:100px;", maxlength = 5 })
+                                </td>
+                                <td align="center">
+                                    @*<input type="image" class="glyphicon glyphicon-ok-circle" title="Update" onclick="return checkForsave(1);" />*@
+                                    <a title="@objMessageKey.Update" href="#" data-original-title="Update" class="glyphicon glyphicon-ok-circle" onclick="return checkForsave(1);"></a>
+                                    <a title="@objMessageKey.Cancel" href="#" data-original-title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="AddCancelMaterial(0)"></a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                }
+                else
+                {
+                    <tr>
+                        @* @if (item.Episode_From == null && item.Episode_To == null)
+                            {
+                                title = item.Title.Title_Name;
+                            }
+                            else
+                            {
+                                if (ViewBag.Deal_Type_Condition == UTOFrameWork.FrameworkClasses.GlobalParams.Deal_Program || ViewBag.Deal_Type_Condition == UTOFrameWork.FrameworkClasses.GlobalParams.Deal_Music)
+                                {
+                                    title = item.Title.Title_Name + " ( " + item.Episode_From + " - " + item.Episode_To + " )";
+                                }
+                                else
+                                {
+                                    title = item.Title.Title_Name;
+                                }
+                            }*@
+                        @* @if (ViewBag.Deal_Type_Condition == UTOFrameWork.FrameworkClasses.GlobalParams.Deal_Program || ViewBag.Deal_Type_Condition == UTOFrameWork.FrameworkClasses.GlobalParams.Deal_Music)
+                            {
+                                title = item.Title.Title_Name + " ( " + item.Episode_From + " - " + item.Episode_To + " )";
+                            }
+                            else
+                            {
+                                title = item.Title.Title_Name;
+                            }*@
+                        @if (ViewBag.Deal_Type_Condition == UTOFrameWork.FrameworkClasses.GlobalParams.Deal_Program || ViewBag.Deal_Type_Condition == UTOFrameWork.FrameworkClasses.GlobalParams.Deal_Music)
+                        {
+                            if (ViewBag.Deal_Type_Condition == UTOFrameWork.FrameworkClasses.GlobalParams.Deal_Music)
+                            {
+                                if (Convert.ToString(item.Episode_From) == "0")
+                                {
+                                    title = item.Title.Title_Name + " ( Unlimited )";
+                                }
+                                else
+                                {
+                                    title = item.Title.Title_Name + " ( " + item.Episode_From + " )";
+                                }
+
+                            }
+                            else
+                            {
+                                title = item.Title.Title_Name + " ( " + item.Episode_From + " - " + item.Episode_To + " )";
+                            }
+                        }
+                        else
+                        {
+                            title = item.Title.Title_Name;
+                        }
+                        <td align="center">@count</td>
+                        <td>
+                            @Html.Label(title)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modalitem => item.Material_Type.Material_Type_Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modalitem => item.Material_Medium.Material_Medium_Name)
+
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modalitem => item.Quantity)
+                        </td>
+
+                        <td align="center">
+                            <a title="@objMessageKey.Edit" href="#" class="glyphicon glyphicon-pencil" onclick=' if(checkeditmode()) window.location.href="@Url.Action("Edit", "Acq_Material", new { Acq_Deal_Material_Code = item.Acq_Deal_Material_Code }) " '></a>
+                            <a title="@objMessageKey.Delete" href="#" class="glyphicon glyphicon-trash" onclick='return OnDeleteClick(@item.Acq_Deal_Material_Code);'></a>
+                        </td>
+                    </tr>
+                }
+                count++;
+            }
+        }
+    </tbody>
+</table>

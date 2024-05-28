@@ -1,0 +1,290 @@
+﻿@model List<RightsU_Entities.Acq_Deal_Attachment>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script>
+
+    var IsCall = 'Y';
+    //var pageSize = 0;
+    //var PageNo = 0;
+    $(document).ready(function () {
+        $('#spanRecordCount').html('@objMessageKey.TotalRecords: @ViewBag.RecordCount');
+        $('#spanRecordCount').css("float", "right");
+    });
+     function SetPaging(txtPageSize) {
+        debugger
+        IsCall = 'N';
+         var txtPageSize = $('#txtPageSize').val();
+        IsCall = 'N';
+        var PageNo, recordCnt;
+        if ('@ViewBag.PageNo' != null)
+            PageNo = '@ViewBag.PageNo';
+
+        if ('@ViewBag.RecordCount' != null)
+            recordCnt = '@ViewBag.RecordCount';
+
+         PageNo = PageNo - 1;
+
+        var opt = { callback: pageselectCallback };
+        opt["items_per_page"] = parseInt(txtPageSize);
+        opt["num_display_entries"] = 5;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = PageNo;
+        $("#Pagination").pagination(recordCnt, opt);
+    }
+    function pageselectCallback(page_index, jq) {
+        debugger
+        if (CheckEditMode()) {
+            if (ValidatePageSize()) {
+                $('#hdnpage_index').val(page_index);
+
+                if (IsCall == 'Y')
+                    LoadAcqDealAttachment(page_index, 'Y');
+                else
+                    IsCall = 'Y';
+            }
+        }
+    }
+</script>
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            @if (ViewBag.PageMode != "V" && ViewBag.PageMode != "EWOA" && ViewBag.PageMode != "APRV")
+            {
+                <th style="width: 5%; vertical-align: middle;">@objMessageKey.Srno</th>
+                <th style="width: 20%; vertical-align: middle;">@objMessageKey.Title</th>
+                <th style="width: 12%; vertical-align: middle;">@objMessageKey.Description</th>
+                <th style="width: 25%; vertical-align: middle;">@objMessageKey.DocumentType</th>
+                <th style="width: 15%; vertical-align: middle;">@objMessageKey.Attachment</th>
+                <th style="width: 13%; vertical-align: middle;">@objMessageKey.Action</th>
+            }
+            else
+            {
+                <th style="width: 5%; vertical-align: middle;">@objMessageKey.Srno</th>
+                <th style="width: 25%; vertical-align: middle;">@objMessageKey.Title</th>
+                <th style="width: 25%; vertical-align: middle;">@objMessageKey.Description</th>
+                <th style="width: 25%; vertical-align: middle;">@objMessageKey.DocumentType</th>
+                <th style="width: 20%; vertical-align: middle;">@objMessageKey.Attachment</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @if (ViewBag.CommandName != "Edit")
+        {
+            if (Model != null)
+            {
+                int count = 0;
+                string title = "";
+                count = (ViewBag.PageSize * (ViewBag.PageNo - 1)) + 1;
+                //count = pageSize * (PageNumber - 1) + count;
+                foreach (var item in Model)
+                {
+                    //count = pageSize * (PageNumber - 1) + count;
+
+                    <tr>
+
+                        @* @if (item.Episode_From == null && item.Episode_To == null)
+                            {
+                                title = item.Title.Title_Name;
+                            }
+                            else
+                            {
+                                title = item.Title.Title_Name + " ( " + item.Episode_From + " - " + item.Episode_To + " )";
+                            }*@
+                        @if (item.Title_Code != null)
+                        {
+                            if (ViewBag.Deal_Type_Condition == UTOFrameWork.FrameworkClasses.GlobalParams.Deal_Program || ViewBag.Deal_Type_Condition == UTOFrameWork.FrameworkClasses.GlobalParams.Deal_Music)
+                            {
+                                if (ViewBag.Deal_Type_Condition == UTOFrameWork.FrameworkClasses.GlobalParams.Deal_Music)
+                                {
+                                    title = item.Title.Title_Name + " ( " + (Convert.ToString(item.Episode_From) == "0" ? "Unlimited" : item.Episode_From.ToString()) + " )";
+                                }
+                                else
+                                {
+                                    title = item.Title.Title_Name + " ( " + item.Episode_From + " - " + item.Episode_To + " )";
+                                }
+                            }
+                            else
+                            {
+                                title = item.Title.Title_Name;
+                            }
+                        }
+                        else
+                        {
+                            title = "All Titles";
+                        }
+                        <td align="center">@count</td>
+                        <td>
+                            @Html.Label(title, new { style = "width:150px;" })
+
+                        </td>
+                        <td>
+                            <div class="expandable">
+                                @Convert.ToString(item.Attachment_Title).Trim()
+                                <a href="#"><span></span></a>
+                            </div>
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modalitem => item.Document_Type.Document_Type_Name)
+
+                        </td>
+                        <td>
+                            <a style="cursor:pointer; text-decoration:underline;" onclick='DownloadFileImage("@item.System_File_Name","@item.Attachment_File_Name","@item.Acq_Deal_Attachment_Code");'>
+                                @*<a style="cursor:pointer; text-decoration:underline; " onclick='if(CheckEditMode()) window.location.href="@Url.Action("DownloadFile", "Acq_Attachment", new { System_File_Name = item.System_File_Name, Attachment_File_Name = item.Attachment_File_Name }) "'>*@
+                                @Html.DisplayFor(modalitem => item.Attachment_File_Name)
+                            </a>
+                        </td>
+                        @if (ViewBag.PageMode != "V" && ViewBag.PageMode != "EWOA" && ViewBag.PageMode != "APRV")
+                        {
+                            <td align="center">
+                                @Html.HiddenFor(modalitem => item.Acq_Deal_Attachment_Code)
+                                <a title="" href="#" class="glyphicon glyphicon-pencil" data-original-title="@objMessageKey.Edit" onclick='EditAttachment(@item.Acq_Deal_Attachment_Code);'></a>
+                                <a title="" href="#" class="glyphicon glyphicon-trash" data-original-title="@objMessageKey.Delete" onclick='return OnDeleteClick(@item.Acq_Deal_Attachment_Code);'></a>
+                            </td>
+                        }
+                    </tr>
+
+                    count++;
+                }
+            }
+        }
+        @if (ViewBag.CommandName == "Add")
+        {
+            //using (Html.BeginForm("Save", "Acq_Attachment", "", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            //{
+            <tr>
+                <td align="center">New</td>
+                <td>
+                    @Html.DropDownList("Title_Code", (List<SelectListItem>)ViewBag.lstTitle, new { style = "width:200px;", @class = "form_input chosen-select" })
+                    <input type="hidden" id="Title_Name" name="Title_Name" />
+                </td>
+                <td>
+                    @Html.TextBox("Attachment_Title", "", new { maxlength = 100, style = "width:160px;" })
+                </td>
+                <td>
+                    @Html.DropDownList("Document_Type_Code", (List<SelectListItem>)ViewBag.lstDocumentType, new { style = "width:230px;", @class = "form_input chosen-select" })
+                </td>
+                <td>
+                    <input type="file" id="Attachment_File_Name" style="width: 200px;" name="Attachment_File_Name" />
+                    <span style="font-family: Arial,Helvetica,sans-serif; font-size: 12px; color: #FF0000; font-weight: normal">Please upload file only upto 20 MB.</span>
+                </td>
+                <td align="center">
+                    @*<input type="image" class="glyphicon glyphicon-ok-circle" title="Save" data-original-title="Save" onclick="return checkForsave(0);" />*@
+                    <a title="Save" href="#" data-original-title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" onclick="return checkForsave(0);"></a>
+                    <a title="" href="#" class="glyphicon glyphicon-remove-circle" data-original-title="@objMessageKey.Cancel" onclick="AddCancelAttachment(0)"></a>
+                </td>
+            </tr>
+            // }
+        }
+
+        @if (Model != null && ViewBag.CommandName == "Edit")
+        {
+            int count = 0;
+            string title = "";
+            count = (ViewBag.PageSize * (ViewBag.PageNo - 1)) + 1;
+            foreach (var item in Model)
+            {
+
+                if (ViewBag.Acq_Deal_Attachment_Code == item.Acq_Deal_Attachment_Code)
+                {
+                    if (ViewBag.CommandName == "Edit")
+                    {
+                        using (Html.BeginForm("Update", "Acq_Attachment", "", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+                            <tr>
+                                <td align="center">@count</td>
+                                <td>
+                                    @Html.Hidden("Acq_Deal_Attachment_Code", item.Acq_Deal_Attachment_Code)
+                                    @Html.DropDownList("Title_Code", (List<SelectListItem>)ViewBag.lstTitle, new { style = "width:200px;", @class = "form_input chosen-select" })
+                                    <input type="hidden" id="Title_Name" name="Title_Name" />
+                                </td>
+                                <td>
+                                    @Html.TextBox("Attachment_Title", item.Attachment_Title, new { maxlength = 100, style = "width:160px;" })
+                                </td>
+                                <td>
+                                    @Html.DropDownList("Document_Type_Code", (List<SelectListItem>)ViewBag.lstDocumentType, new { style = "width:230px;", @class = "form_input chosen-select" })
+                                </td>
+                                <td>
+                                    <input type="file" title="@ViewBag.Attachment_File_Name" style="width:200px;" value="@ViewBag.Attachment_File_Name" id="Attachment_File_Name" name="Attachment_File_Name" />
+                                    <span>@TempData["Attachment_File_Name"]</span><br />
+                                    <span style="font-family: Arial,Helvetica,sans-serif; font-size: 12px; color: #FF0000; font-weight: normal">Please upload file only upto 20 MB.</span>
+                                </td>
+                                <td align="center">
+                                    @*<input type="image" class="glyphicon glyphicon-ok-circle" title="Update" onclick="return checkForsave(1);" />*@
+                                    <a title="@objMessageKey.Update" href="#" class="glyphicon glyphicon-ok-circle" data-original-title="Update" onclick="return checkForsave(1);"></a>
+                                    <a title="@objMessageKey.Cancel" href="#" class="glyphicon glyphicon-remove-circle" data-original-title="Cancel" onclick="AddCancelAttachment(0)"></a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                }
+                else
+                {
+                    <tr>
+
+                        @*@if (ViewBag.Deal_Type_Condition == UTOFrameWork.FrameworkClasses.GlobalParams.Deal_Program || ViewBag.Deal_Type_Condition == UTOFrameWork.FrameworkClasses.GlobalParams.Deal_Music)
+                            {
+                                title = item.Title.Title_Name + " ( " + item.Episode_From + " - " + item.Episode_To + " )";
+                            }
+                            else
+                            {
+                                title = item.Title.Title_Name;
+                            }*@
+                        @if (item.Title_Code != null)
+                        {
+                            if (ViewBag.Deal_Type_Condition == UTOFrameWork.FrameworkClasses.GlobalParams.Deal_Program || ViewBag.Deal_Type_Condition == UTOFrameWork.FrameworkClasses.GlobalParams.Deal_Music)
+                            {
+                                if (ViewBag.Deal_Type_Condition == UTOFrameWork.FrameworkClasses.GlobalParams.Deal_Music)
+                                {
+                                    title = item.Title.Title_Name + " ( " + (Convert.ToString(item.Episode_From) == "0" ? "Unlimited" : item.Episode_From.ToString()) + " )";
+                                }
+                                else
+                                {
+                                    title = item.Title.Title_Name + " ( " + item.Episode_From + " - " + item.Episode_To + " )";
+                                }
+                            }
+                            else
+                            {
+                                title = item.Title.Title_Name;
+                            }
+                        }
+                        else
+                        {
+                            title = "All Titles";
+                        }
+
+                        <td align="center">@count</td>
+                        <td>
+                            @Html.Label(title, new { style = "width:150px;" })
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modalitem => item.Attachment_Title)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modalitem => item.Document_Type.Document_Type_Name)
+
+                        </td>
+                        <td>
+                            @*<a style="cursor:pointer; text-decoration:underline; " onclick='if(CheckEditMode()) window.location.href="@Url.Action("DownloadFile", "Acq_Attachment", new { System_File_Name = item.System_File_Name, Attachment_File_Name = item.Attachment_File_Name }) "'>*@
+                            <a style="cursor:pointer; text-decoration:underline; " onclick='DownloadFileImage(item.System_File_Name, item.Attachment_File_Name, item.Acq_Deal_Attachment_Code);'>
+                                @Html.DisplayFor(modalitem => item.Attachment_File_Name)
+                            </a>
+                        </td>
+                        <td align="center">
+                            @Html.HiddenFor(modalitem => item.Acq_Deal_Attachment_Code)
+                            <a title="" href="#" class="glyphicon glyphicon-pencil" data-original-title="@objMessageKey.Edit" onclick='EditAttachment(@item.Acq_Deal_Attachment_Code);'></a>
+                            <a title="" href="#" class="glyphicon glyphicon-trash" data-original-title="@objMessageKey.Delete" onclick='return OnDeleteClick(@item.Acq_Deal_Attachment_Code);'></a>
+                        </td>
+                    </tr>
+                }
+                count++;
+            }
+        }
+    </tbody>
+</table>

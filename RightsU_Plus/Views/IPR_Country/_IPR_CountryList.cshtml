@@ -1,0 +1,128 @@
+﻿@model List<RightsU_Entities.IPR_Country>
+
+<table class="table table-bordered table-hover" id="tblIPR_Country">
+    <thead>
+        <tr>
+            <th style="width:70%;">Country Name</th>
+            <th style="width:15%;">Status</th>
+            <th style="width:15%;">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (TempData["Action"] == "AddIPR_Country")
+        {
+            <tr>
+                <td>
+                    @Html.TextBox("IPR_CountryName", "", new { style = "width:90% ", maxlength = "25" })
+                </td>
+                <td align="center">
+                    <span>Active</span>
+                </td>
+                <td align="center">
+                    <a title="Save" class="glyphicon glyphicon-ok-circle" style="cursor: pointer;" onclick="SaveUpdateIPR_Country(0)"></a>
+                    <a title="Cancel" class="glyphicon glyphicon-remove-circle" style="cursor: pointer;" onclick="CancelIPR_Country()"></a>
+                </td>
+            </tr>
+        }
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                string strActive = "Active";
+                if (item.Is_Active == "N")
+                {
+                    strActive = "Deactive";
+                }
+                if (TempData["Action"] == "EditIPR_Country" && item.IPR_Country_Code == Convert.ToInt32(TempData["idIPR_Country"]))
+                {
+                    <tr>
+                        <td>
+                            @Html.TextBoxFor(model => item.IPR_Country_Name, new { style = "width:90% ", maxlength = 25, id = "IPR_Country_NameEdit" })
+                            @Html.HiddenFor(model => item.IPR_Country_Code, new { id = "IPR_Country_CodeEdit", style = "width:90%;" })
+                        </td>
+                        <td align="center">
+                            <span>@strActive</span>
+                        </td>
+                        <td align="center">
+                            <a title="Save" class="glyphicon glyphicon-ok-circle" style="cursor: pointer;" onclick="SaveUpdateIPR_Country(@item.IPR_Country_Code)"></a>
+                            <a title="Cancel" class="glyphicon glyphicon-remove-circle" style="cursor: pointer;" onclick="CancelIPR_Country()"></a>
+                        </td>
+                    </tr>
+
+                }
+                else
+                {
+                    <tr>
+                        <td>
+                            <span>@item.IPR_Country_Name</span>
+                        </td>
+                        <td align="center">
+                            <span>@strActive</span>
+                        </td>
+                        <td align="center">
+                            @{  bool canDeactive = true;
+                              string toolTipMsg = "";
+                              if (item.IPR_REP.Count > 0)
+                              {
+                                  canDeactive = false;
+                                  toolTipMsg = "Can not deactivate this Material Type as it is used in IPR_REP";
+                              }
+                              //else if (item.Syn_Deal_Material.Count > 0)
+                              //{
+                              //    canDeactive = false;
+                              //    toolTipMsg = "Can not deactivate this Material Type as it is used in Syndication Deal";
+                              //}
+                            }
+
+                            @if (item.Is_Active == "Y")
+                            {
+                                if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForEdit + "~"))
+                                {
+                                    <a title="Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer;" onclick="CheckRecordLock(@item.IPR_Country_Code, 'EDIT')"></a>
+                                }
+                                if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForDeactivate + "~"))
+                                {
+                                    if (canDeactive)
+                                    {
+                                        <a title="Deactivate" class="glyphicon glyphicon-thumbs-down" style="cursor: pointer;" onclick="ActiveDeactiveIPR_Country(@item.IPR_Country_Code, 'N')"></a>
+                                    }
+                                    else
+                                    {
+                                        <a title="@toolTipMsg" class="glyphicon glyphicon-thumbs-down disabled" onclick="return false;"></a>
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForActivate + "~"))
+                                {
+                                    <a title="Can not edit this Material Type as it is deactivated" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
+                                    <a title="Activate" class="glyphicon glyphicon-thumbs-up" style="cursor: pointer;" onclick="ActiveDeactiveIPR_Country(@item.IPR_Country_Code, 'Y')"></a>
+
+                                }
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+        }
+        else
+        {
+            if (TempData["Action"] != "AddIPR_Country")
+            {
+                <tr>
+                    <td colspan="5">No record found</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+
+<script>
+    $("#IPR_CountryName,#searchCommon,#IPR_Country_NameEdit").keypress(function (event) {
+        var regex = new RegExp("^[a-zA-Z0-9 ]+$");
+        var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+        if (!regex.test(key)) { event.preventDefault(); return false; }
+    });
+</script>

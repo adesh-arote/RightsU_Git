@@ -1,0 +1,52 @@
+﻿@model List<RightsU_Entities.USP_Content_Music_Link_Bulk_Insert_UDT>
+@{
+      MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }  
+}
+<script>
+    $(document).ready(function () {
+        $('#hdnRecordCount').val('@ViewBag.RecordCount');
+        $('#lblRecordCount').text('@ViewBag.RecordCount');
+        SetPaging();
+    });
+</script>
+<table class="table table-bordered table-hover" id="tblExcelError">
+    <thead>
+        <tr>
+            <th style="width: 5%;">@objMessageKey.Row #</th>
+            <th style="width: 11%;">@objMessageKey.Content</th>
+            <th style="width: 5%;">@objMessageKey.episode</th>
+            <th style="width: 8%;">@objMessageKey.Version</th>
+            <th style="width: 11%;">@objMessageKey.MusicTrack</th>
+            <th style="width: 10%;">@objMessageKey.TCIn</th>
+            <th style="width: 10%;">@objMessageKey.TCOut</th>
+            <th style="width: 5%;">@objMessageKey.FromFrame</th>
+            <th style="width: 5%;">@objMessageKey.ToFrame</th>
+            <th style="width: 10%;">@objMessageKey.Duration</th>
+            <th style="width: 5%;">@objMessageKey.DurationFrame</th>
+            <th style="width: 15%;">@objMessageKey.Error</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Row_No</td>
+                <td>@item.Content_Name</td>
+                <td>@item.Episode_No</td>
+                <td>@item.Version_Name</td>
+                <td>@item.Music_Track</td>
+                <td>@item.TC_IN</td>
+                <td>@item.TC_OUT</td>
+                <td>@item.From_Frame</td>
+                <td>@item.To_Frame</td>
+                <td>@item.Duration</td>
+                <td>@item.Duration_Frame</td>
+                <td>@Html.Raw(item.Error_Message)</td>
+            </tr>
+        }
+    </tbody>
+</table>

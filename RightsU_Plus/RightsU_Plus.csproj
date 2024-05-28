@@ -1,0 +1,2134 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\EntityFramework.6.4.4\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E1B80BDF-DF31-49F5-A36A-BD3DA993EC16}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RightsU_Plus</RootNamespace>
+    <AssemblyName>RightsU_Plus</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort>44380</IISExpressSSLPort>
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+    <UseGlobalApplicationHostFile />
+    <Use64BitIISExpress />
+    <TypeScriptToolsVersion>3.2</TypeScriptToolsVersion>
+    <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <FilesToIncludeForPublish>OnlyFilesToRunTheApp</FilesToIncludeForPublish>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AjaxControlToolkit, Version=1.0.20229.21394, Culture=neutral, PublicKeyToken=28f01b0e84b6d53e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\AjaxControlToolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="Anthem.AutoSuggest, Version=1.0.0.5, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Anthem.AutoSuggest.dll</HintPath>
+    </Reference>
+    <Reference Include="Antlr3.Runtime, Version=3.5.0.2, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
+      <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="AvailEntity">
+      <HintPath>..\..\Supp\AvailEntity.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFrameworkExtras.EF6, Version=3.0.5.0, Culture=neutral, PublicKeyToken=afc61983f100d280, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFrameworkExtras.EF6.3.0.5\lib\net45\EntityFrameworkExtras.EF6.dll</HintPath>
+    </Reference>
+    <Reference Include="EPPlus, Version=3.1.3.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Bin\EPPlus.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.ReportViewer.Common, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ReportingServices.ReportViewerControl.WebForms.140.340.80\lib\net40\Microsoft.ReportViewer.Common.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.DataVisualization, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ReportingServices.ReportViewerControl.WebForms.140.340.80\lib\net40\Microsoft.ReportViewer.DataVisualization.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.Design, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ReportingServices.ReportViewerControl.WebForms.140.340.80\lib\net40\Microsoft.ReportViewer.Design.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.ProcessingObjectModel, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ReportingServices.ReportViewerControl.WebForms.140.340.80\lib\net40\Microsoft.ReportViewer.ProcessingObjectModel.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.WebDesign, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ReportingServices.ReportViewerControl.WebForms.140.340.80\lib\net40\Microsoft.ReportViewer.WebDesign.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.WebForms, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ReportingServices.ReportViewerControl.WebForms.140.340.80\lib\net40\Microsoft.ReportViewer.WebForms.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.WinForms, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ReportingServices.ReportViewerControl.WebForms.140.340.80\lib\net40\Microsoft.ReportViewer.WinForms.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.Types, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.SqlServer.Types.14.0.1016.290\lib\net40\Microsoft.SqlServer.Types.dll</HintPath>
+    </Reference>
+    <Reference Include="MongoDB.Bson, Version=2.7.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\MongoDB.Bson.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="ReportViewerForMvc, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ReportViewerForMvc.1.0.1\lib\net45\ReportViewerForMvc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="RightsUAvailsProvider">
+      <HintPath>..\..\Supp\RightsUAvailsProvider.dll</HintPath>
+    </Reference>
+    <Reference Include="RightsUAvailsProviderContract">
+      <HintPath>..\..\Supp\RightsUAvailsProviderContract.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http.Extensions, Version=2.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\net45\System.Net.Http.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.7\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Primitives, Version=4.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\net45\System.Net.Http.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web.Cors, Version=5.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\System.Web.Cors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.7\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.7\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.7\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Optimization">
+      <HintPath>C:\Users\Navin.UTO05\Desktop\System.Web.Optimization.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.7\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="UTO.Framework.Shared">
+      <HintPath>..\..\Supp\UTO.Framework.Shared.dll</HintPath>
+    </Reference>
+    <Reference Include="UTO.Framework.SharedInfrastructure">
+      <HintPath>..\..\Supp\UTO.Framework.SharedInfrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="WebGrease, Version=1.6.5135.21930, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
+    </Reference>
+    <Reference Include="ZeroFormatter.Interfaces">
+      <HintPath>..\..\Supp\ZeroFormatter.Interfaces.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="Controllers\Acq_DigitalController.cs" />
+    <Compile Include="Controllers\DigitalConfigController.cs" />
+    <Compile Include="Controllers\AL_LabController.cs" />
+    <Compile Include="Controllers\AL_OemController.cs" />
+    <Compile Include="Controllers\BookingSheetController.cs" />
+    <Compile Include="Controllers\DeliveryTrackingController.cs" />
+    <Compile Include="Controllers\Dispatcher_SearchController.cs" />
+    <Compile Include="Controllers\Event_Config_TemplateController.cs" />
+    <Compile Include="Controllers\Event_PlatformController.cs" />
+    <Compile Include="Controllers\Extended_GroupController.cs" />
+    <Compile Include="Controllers\BannerController.cs" />
+    <Compile Include="Controllers\ExtendedColumn_MetadataController.cs" />
+    <Compile Include="Controllers\ForgetPasswordLinkController.cs" />
+    <Compile Include="Controllers\Attrib_GroupController.cs" />
+    <Compile Include="Controllers\Attrib_ReportsController.cs" />
+    <Compile Include="Controllers\ReportColumnSetupController.cs" />
+    <Compile Include="Controllers\ReportColumnSetupITController.cs" />
+    <Compile Include="Controllers\SupplimentaryConfigController.cs" />
+    <Compile Include="Controllers\PurchaseOrderController.cs" />
+    <Compile Include="Controllers\LoadSheetController.cs" />
+    <Compile Include="Controllers\Syn_DigitalController.cs" />
+    <Compile Include="Controllers\Syn_SupplementaryController.cs" />
+    <Compile Include="Controllers\Acq_SupplementaryController.cs" />
+    <Compile Include="Controllers\NotificationController.cs" />
+    <Compile Include="Controllers\Syn_AncillaryController.cs" />
+    <Compile Include="Controllers\Title_Objection_ListController.cs" />
+    <Compile Include="Controllers\Acq_Rights_TemplateController.cs" />
+    <Compile Include="Controllers\Availability_Movie_NewController.cs" />
+    <Compile Include="Controllers\Deal_DescriptionController.cs" />
+    <Compile Include="Controllers\Title_Objection_TypeController.cs" />
+    <Compile Include="Controllers\IPR_Dashboard.cs" />
+    <Compile Include="Controllers\DM_Master_ImportController.cs" />
+    <Compile Include="Controllers\DM_Title_Master_ImportController.cs" />
+    <Compile Include="Controllers\PartyCategoryController.cs" />
+    <Compile Include="Controllers\Project_MilestoneController.cs" />
+    <Compile Include="Controllers\TATSLAController.cs" />
+    <Compile Include="Controllers\TATController.cs" />
+    <Compile Include="Controllers\AvailabilityOldController.cs" />
+    <Compile Include="Controllers\DemoSetupController.cs" />
+    <Compile Include="Controllers\MHAuthorisedMusicController.cs" />
+    <Compile Include="Controllers\Milestone_NatureController.cs" />
+    <Compile Include="Controllers\RUBVMappingController.cs" />
+    <Compile Include="Controllers\MHDashboardController.cs" />
+    <Compile Include="Controllers\MHRequisitionnewController.cs" />
+    <Compile Include="Controllers\MHStatusHistoryController.cs" />
+    <Compile Include="Controllers\MHCueSheetController.cs" />
+    <Compile Include="Controllers\MHRequisitionController.cs" />
+    <Compile Include="Controllers\Acq_AmortController.cs" />
+    <Compile Include="Controllers\AmortMonthController.cs" />
+    <Compile Include="Controllers\BMSUtilityController.cs" />
+    <Compile Include="Controllers\MQ_LogController.cs" />
+    <Compile Include="Controllers\AmortController.cs" />
+    <Compile Include="Controllers\Promoter_RemarksController.cs" />
+    <Compile Include="Controllers\Pro_ListController.cs" />
+    <Compile Include="Controllers\Acq_Rights_HoldbackController.cs" />
+    <Compile Include="Controllers\Acq_Rights_PromoterController.cs" />
+    <Compile Include="Controllers\Additional_ExpenseController.cs" />
+    <Compile Include="Controllers\AssignWorkflowController.cs" />
+    <Compile Include="Controllers\Availability_MovieController.cs" />
+    <Compile Include="Controllers\BVExceptionController.cs" />
+    <Compile Include="Controllers\BVTitleMappingController.cs" />
+    <Compile Include="Controllers\BV_LogController.cs" />
+    <Compile Include="Controllers\BV_Title_Mapping_ShowsController.cs" />
+    <Compile Include="Controllers\CategoryController.cs" />
+    <Compile Include="Controllers\ChannelController.cs" />
+    <Compile Include="Controllers\CostTypeController.cs" />
+    <Compile Include="Controllers\CountryController.cs" />
+    <Compile Include="Controllers\CurrencyController.cs" />
+    <Compile Include="Controllers\Digital_RightsController.cs" />
+    <Compile Include="Controllers\Document_TypeController.cs" />
+    <Compile Include="Controllers\Email_ConfigController.cs" />
+    <Compile Include="Controllers\GenresController.cs" />
+    <Compile Include="Controllers\GradeMasterController.cs" />
+    <Compile Include="Controllers\LanguageController.cs" />
+    <Compile Include="Controllers\LanguageGroupController.cs" />
+    <Compile Include="Controllers\LoginDetailsReportController.cs" />
+    <Compile Include="Controllers\MateriaLMediumController.cs" />
+    <Compile Include="Controllers\IPR_CountryController.cs" />
+    <Compile Include="Controllers\ApprovalWorkflowController.cs" />
+    <Compile Include="Controllers\MaterialTypeController.cs" />
+    <Compile Include="Controllers\MusicLanguageController.cs" />
+    <Compile Include="Controllers\MusicThemeController.cs" />
+    <Compile Include="Controllers\Music_AlbumController.cs" />
+    <Compile Include="Controllers\Music_DealController.cs" />
+    <Compile Include="Controllers\Music_Exception_HandlingController.cs" />
+    <Compile Include="Controllers\Music_LabelController.cs" />
+    <Compile Include="Controllers\Music_Title_AssignmentController.cs" />
+    <Compile Include="Controllers\Payment_TermController.cs" />
+    <Compile Include="Controllers\Platform_GroupController.cs" />
+    <Compile Include="Controllers\ProgramController.cs" />
+    <Compile Include="Controllers\ReportsController.cs" />
+    <Compile Include="Controllers\RightRuleController.cs" />
+    <Compile Include="Controllers\Rights_Usage_ReportController.cs" />
+    <Compile Include="Controllers\Royalty_RecoupmentController.cs" />
+    <Compile Include="Controllers\SAP_WBSController.cs" />
+    <Compile Include="Controllers\SAP_WBS_ExportController.cs" />
+    <Compile Include="Controllers\SAP_WBS_ImportController.cs" />
+    <Compile Include="Controllers\Security_GroupController.cs" />
+    <Compile Include="Controllers\Syn_Rights_HoldbackController.cs" />
+    <Compile Include="Controllers\Syn_Rights_PromoterController.cs" />
+    <Compile Include="Controllers\System_LanguageController.cs" />
+    <Compile Include="Controllers\System_ParameterController.cs" />
+    <Compile Include="Controllers\TalentController.cs" />
+    <Compile Include="Controllers\TerritoryController.cs" />
+    <Compile Include="Controllers\Music_Deal_ListController.cs" />
+    <Compile Include="Controllers\Project_MilestoneListController.cs" />
+    <Compile Include="Controllers\TitleMappingController.cs" />
+    <Compile Include="Controllers\Title_Content_ImportExportController.cs" />
+    <Compile Include="Controllers\Title_Content_ViewController.cs" />
+    <Compile Include="Controllers\Acq_Assign_MusicController.cs" />
+    <Compile Include="Controllers\Title_Content.cs" />
+    <Compile Include="Controllers\Acq_DealController.cs" />
+    <Compile Include="Controllers\Amort_RuleController.cs" />
+    <Compile Include="Controllers\GlossaryController.cs" />
+    <Compile Include="Controllers\IPR_Int_DomController.cs" />
+    <Compile Include="Controllers\IPR_ListController.cs" />
+    <Compile Include="Controllers\IPR_OppBy_AgainstController.cs" />
+    <Compile Include="Controllers\Music_TitleController.cs" />
+    <Compile Include="Controllers\Syn_DealController.cs" />
+    <Compile Include="Controllers\Title_ObjectionController.cs" />
+    <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="Controllers\VendorController.cs" />
+    <Compile Include="Controllers\WebAPIController.cs" />
+    <Compile Include="Custom_Scripts\CustomClasses\CustomHtmlHelpers.cs" />
+    <Compile Include="Custom_Scripts\CustomClasses\GroupItem.cs" />
+    <Compile Include="Custom_Scripts\CustomClasses\MessageKey.cs" />
+    <Compile Include="Integration\CommonUtil.cs" />
+    <Compile Include="Integration\SAP_Export_File_Upload.aspx.cs">
+      <DependentUpon>SAP_Export_File_Upload.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Integration\SAP_Export_File_Upload.aspx.designer.cs">
+      <DependentUpon>SAP_Export_File_Upload.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Integration\SAP_Export_File_Upload_Details.aspx.cs">
+      <DependentUpon>SAP_Export_File_Upload_Details.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Integration\SAP_Export_File_Upload_Details.aspx.designer.cs">
+      <DependentUpon>SAP_Export_File_Upload_Details.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Integration\SAP_File_Upload.aspx.cs">
+      <DependentUpon>SAP_File_Upload.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Integration\SAP_File_Upload.aspx.designer.cs">
+      <DependentUpon>SAP_File_Upload.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Integration\SAP_File_Upload_Details.aspx.cs">
+      <DependentUpon>SAP_File_Upload_Details.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Integration\SAP_File_Upload_Details.aspx.designer.cs">
+      <DependentUpon>SAP_File_Upload_Details.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Criteria_Filters.cs" />
+    <Compile Include="Models\Custom_Error.cs" />
+    <Compile Include="Models\DownloadingFileActionResult.cs" />
+    <Compile Include="Reports\Show_Availability_Report.aspx.cs">
+      <DependentUpon>Show_Availability_Report.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\Show_Availability_Report.aspx.designer.cs">
+      <DependentUpon>Show_Availability_Report.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\Title_Avail_Language_2.aspx.cs">
+      <DependentUpon>Title_Avail_Language_2.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\Title_Avail_Language_2.aspx.designer.cs">
+      <DependentUpon>Title_Avail_Language_2.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\Title_Avail_Theatrical.aspx.cs">
+      <DependentUpon>Title_Avail_Theatrical.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\Title_Avail_Theatrical.aspx.designer.cs">
+      <DependentUpon>Title_Avail_Theatrical.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\Title_Avail_Language_3.aspx.cs">
+      <DependentUpon>Title_Avail_Language_3.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\Title_Avail_Language_3.aspx.designer.cs">
+      <DependentUpon>Title_Avail_Language_3.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\Title_Avail_Language_New.aspx.cs">
+      <DependentUpon>Title_Avail_Language_New.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\Title_Avail_Language_New.aspx.designer.cs">
+      <DependentUpon>Title_Avail_Language_New.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\Title_Platform_New.aspx.cs">
+      <DependentUpon>Title_Platform_New.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\Title_Platform_New.aspx.designer.cs">
+      <DependentUpon>Title_Platform_New.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\UserControl\UC_Platform_Tree_Selected.ascx.cs">
+      <DependentUpon>UC_Platform_Tree_Selected.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\UserControl\UC_Platform_Tree_Selected.ascx.designer.cs">
+      <DependentUpon>UC_Platform_Tree_Selected.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Scheduling\BVTitleMapping_Schedule.aspx.cs">
+      <DependentUpon>BVTitleMapping_Schedule.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Scheduling\BVTitleMapping_Schedule.aspx.designer.cs">
+      <DependentUpon>BVTitleMapping_Schedule.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Scheduling\BVTitleMapping_AsRun.aspx.cs">
+      <DependentUpon>BVTitleMapping_AsRun.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Scheduling\BVTitleMapping_AsRun.aspx.designer.cs">
+      <DependentUpon>BVTitleMapping_AsRun.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Controllers\Acq_AncillaryController.cs" />
+    <Compile Include="Controllers\Acq_AttachmentController.cs" />
+    <Compile Include="Controllers\Acq_BudgetController.cs" />
+    <Compile Include="Controllers\Acq_ContentController.cs" />
+    <Compile Include="Controllers\Acq_CostController.cs" />
+    <Compile Include="Controllers\Acq_Cost_ListController.cs" />
+    <Compile Include="Controllers\Acq_Cost_NewController.cs" />
+    <Compile Include="Controllers\Acq_GeneralController.cs" />
+    <Compile Include="Controllers\Acq_ListController.cs" />
+    <Compile Include="Controllers\Acq_MaterialController.cs" />
+    <Compile Include="Controllers\Acq_Payment_TermController.cs" />
+    <Compile Include="Controllers\Acq_PushbackController.cs" />
+    <Compile Include="Controllers\Acq_RightsController.cs" />
+    <Compile Include="Controllers\Acq_Rights_BlackoutController.cs" />
+    <Compile Include="Controllers\Acq_Rights_ListController.cs" />
+    <Compile Include="Controllers\Acq_RunController.cs" />
+    <Compile Include="Controllers\Acq_Run_ListController.cs" />
+    <Compile Include="Controllers\Acq_SportsController.cs" />
+    <Compile Include="Controllers\Acq_Sport_AncillaryController.cs" />
+    <Compile Include="Controllers\Acq_Status_HistoryController.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\GlobalController.cs" />
+    <Compile Include="Controllers\LoginController.cs" />
+    <Compile Include="Controllers\Syn_AttachmentController.cs" />
+    <Compile Include="Controllers\Syn_GeneralController.cs" />
+    <Compile Include="Controllers\Syn_ListController.cs" />
+    <Compile Include="Controllers\Syn_MaterialController.cs" />
+    <Compile Include="Controllers\Syn_Payment_TermController.cs" />
+    <Compile Include="Controllers\Syn_PushbackController.cs" />
+    <Compile Include="Controllers\Syn_RevenueController.cs" />
+    <Compile Include="Controllers\Syn_Revenue_ListController.cs" />
+    <Compile Include="Controllers\Syn_RightsController.cs" />
+    <Compile Include="Controllers\Syn_Rights_BlackoutController.cs" />
+    <Compile Include="Controllers\Syn_Rights_ListController.cs" />
+    <Compile Include="Controllers\Syn_RunController.cs" />
+    <Compile Include="Controllers\Syn_Run_ListController.cs" />
+    <Compile Include="Controllers\Syn_Status_HistoryController.cs" />
+    <Compile Include="Controllers\TestController.cs" />
+    <Compile Include="Controllers\TitleController.cs" />
+    <Compile Include="Controllers\Title_ListController.cs" />
+    <Compile Include="Controllers\Web_ServiceController.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Home.Master.cs">
+      <DependentUpon>Home.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Home.Master.designer.cs">
+      <DependentUpon>Home.Master</DependentUpon>
+    </Compile>
+    <Compile Include="Master\AddEditChannelV1.aspx.cs">
+      <DependentUpon>AddEditChannelV1.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Master\AddEditChannelV1.aspx.designer.cs">
+      <DependentUpon>AddEditChannelV1.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Master\ApprovalWorkflow.aspx.cs">
+      <DependentUpon>ApprovalWorkflow.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Master\ApprovalWorkflow.aspx.designer.cs">
+      <DependentUpon>ApprovalWorkflow.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Master\ApprovalWorkflowAddEdit.aspx.cs">
+      <DependentUpon>ApprovalWorkflowAddEdit.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Master\ApprovalWorkflowAddEdit.aspx.designer.cs">
+      <DependentUpon>ApprovalWorkflowAddEdit.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Master\ApprovalWorkflow_View.aspx.cs">
+      <DependentUpon>ApprovalWorkflow_View.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Master\ApprovalWorkflow_View.aspx.designer.cs">
+      <DependentUpon>ApprovalWorkflow_View.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Master\AssignWorkflow.aspx.cs">
+      <DependentUpon>AssignWorkflow.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Master\AssignWorkflow.aspx.designer.cs">
+      <DependentUpon>AssignWorkflow.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Master\AssignWorkflowAddEdit.aspx.cs">
+      <DependentUpon>AssignWorkflowAddEdit.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Master\AssignWorkflowAddEdit.aspx.designer.cs">
+      <DependentUpon>AssignWorkflowAddEdit.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Master\AssignWorkflow_View.aspx.cs">
+      <DependentUpon>AssignWorkflow_View.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Master\AssignWorkflow_View.aspx.designer.cs">
+      <DependentUpon>AssignWorkflow_View.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ReportingService.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reports\ReportList.aspx.cs">
+      <DependentUpon>ReportList.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportList.aspx.designer.cs">
+      <DependentUpon>ReportList.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\rptDealQuery.aspx.cs">
+      <DependentUpon>rptDealQuery.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\rptDealQuery.aspx.designer.cs">
+      <DependentUpon>rptDealQuery.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\Theatrical_Language_Avail.aspx.cs">
+      <DependentUpon>Theatrical_Language_Avail.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\Theatrical_Language_Avail.aspx.designer.cs">
+      <DependentUpon>Theatrical_Language_Avail.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\Title_Avail_Language.aspx.cs">
+      <DependentUpon>Title_Avail_Language.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\Title_Avail_Language.aspx.designer.cs">
+      <DependentUpon>Title_Avail_Language.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\UserControl\UC_Platform_Tree.ascx.cs">
+      <DependentUpon>UC_Platform_Tree.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\UserControl\UC_Platform_Tree.ascx.designer.cs">
+      <DependentUpon>UC_Platform_Tree.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\MSM_SAP_WS\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="SqlServerTypes\Loader.cs" />
+    <Compile Include="TestWebForm.aspx.cs">
+      <DependentUpon>TestWebForm.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="TestWebForm.aspx.designer.cs">
+      <DependentUpon>TestWebForm.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="WebServices\GeneralWS.asmx.cs">
+      <DependentUpon>GeneralWS.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="WebServices\getExchangeRateWebService.cs">
+      <SubType>Component</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\WebApiConfig.cs" />
+    <Content Include="AiredDS.html" />
+    <Content Include="Content\bootstrap-grid.css" />
+    <Content Include="Content\bootstrap-grid.min.css" />
+    <Content Include="Content\bootstrap-reboot.css" />
+    <Content Include="Content\bootstrap-reboot.min.css" />
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\jquery.fancytree-css\skin-awesome\ui.fancytree.css" />
+    <Content Include="Content\jquery.fancytree-css\skin-awesome\ui.fancytree.min.css" />
+    <Content Include="Content\jquery.fancytree-css\skin-awesome\vline-rtl.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-awesome\vline.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-bootstrap-n\ui.fancytree.css" />
+    <Content Include="Content\jquery.fancytree-css\skin-bootstrap-n\ui.fancytree.min.css" />
+    <Content Include="Content\jquery.fancytree-css\skin-bootstrap-n\vline-rtl.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-bootstrap-n\vline.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-bootstrap\ui.fancytree.css" />
+    <Content Include="Content\jquery.fancytree-css\skin-bootstrap\ui.fancytree.min.css" />
+    <Content Include="Content\jquery.fancytree-css\skin-bootstrap\vline-rtl.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-bootstrap\vline.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-lion\icons-rtl.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-lion\icons.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-lion\loading.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-lion\ui.fancytree.css" />
+    <Content Include="Content\jquery.fancytree-css\skin-lion\ui.fancytree.min.css" />
+    <Content Include="Content\jquery.fancytree-css\skin-lion\vline-rtl.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-lion\vline.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-material\ui.fancytree.css" />
+    <Content Include="Content\jquery.fancytree-css\skin-material\ui.fancytree.min.css" />
+    <Content Include="Content\jquery.fancytree-css\skin-material\vline-rtl.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-material\vline.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-themeroller\icons-rtl.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-themeroller\icons.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-themeroller\loading.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-themeroller\ui.fancytree.css" />
+    <Content Include="Content\jquery.fancytree-css\skin-themeroller\ui.fancytree.min.css" />
+    <Content Include="Content\jquery.fancytree-css\skin-themeroller\vline-rtl.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-themeroller\vline.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-vista\icons-rtl.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-vista\icons.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-vista\loading.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-vista\ui.fancytree.css" />
+    <Content Include="Content\jquery.fancytree-css\skin-vista\ui.fancytree.min.css" />
+    <Content Include="Content\jquery.fancytree-css\skin-vista\vline-rtl.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-vista\vline.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-win7\icons-rtl.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-win7\icons.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-win7\loading.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-win7\ui.fancytree.css" />
+    <Content Include="Content\jquery.fancytree-css\skin-win7\ui.fancytree.min.css" />
+    <Content Include="Content\jquery.fancytree-css\skin-win7\vline-rtl.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-win7\vline.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-win8-n\icons-rtl.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-win8-n\icons.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-win8-n\loading.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-win8-n\ui.fancytree.css" />
+    <Content Include="Content\jquery.fancytree-css\skin-win8-n\ui.fancytree.min.css" />
+    <Content Include="Content\jquery.fancytree-css\skin-win8-n\vline-rtl.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-win8-n\vline.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-win8-xxl\icons-rtl.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-win8-xxl\icons.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-win8-xxl\loading.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-win8-xxl\ui.fancytree.css" />
+    <Content Include="Content\jquery.fancytree-css\skin-win8-xxl\ui.fancytree.min.css" />
+    <Content Include="Content\jquery.fancytree-css\skin-win8-xxl\vline-rtl.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-win8-xxl\vline.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-win8\icons-rtl.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-win8\icons.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-win8\loading.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-win8\ui.fancytree.css" />
+    <Content Include="Content\jquery.fancytree-css\skin-win8\ui.fancytree.min.css" />
+    <Content Include="Content\jquery.fancytree-css\skin-win8\vline-rtl.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-win8\vline.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-xp\icons-rtl.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-xp\icons.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-xp\loading.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-xp\ui.fancytree.css" />
+    <Content Include="Content\jquery.fancytree-css\skin-xp\ui.fancytree.min.css" />
+    <Content Include="Content\jquery.fancytree-css\skin-xp\vline-rtl.gif" />
+    <Content Include="Content\jquery.fancytree-css\skin-xp\vline.gif" />
+    <Content Include="CSS\arrow.svg" />
+    <Content Include="CSS\autocomplete-0.3.0.css" />
+    <Content Include="CSS\autocomplete-0.3.0.min.css" />
+    <Content Include="CSS\AvailabilityRightPanel.css" />
+    <Content Include="CSS\bootstrap-multiselect.css" />
+    <Content Include="CSS\bootstrap.css" />
+    <Content Include="CSS\CommonLTR.css" />
+    <Content Include="CSS\CommonRTL.css" />
+    <Content Include="CSS\ddl.css" />
+    <Content Include="CSS\jquery-ui.min.css" />
+    <Content Include="CSS\jquery.passwordRequirements.css" />
+    <Content Include="CSS\slider-menu.jquery.css" />
+    <Content Include="CSS\slider-menu.theme.jquery.css" />
+    <Content Include="CSS\sumoselect.css" />
+    <Content Include="CSS\TopBand.css" />
+    <Content Include="Custom_Scripts\MHRequisitionApprove.js" />
+    <Content Include="Custom_Scripts\Pro_Deal_List.js" />
+    <Content Include="Custom_Scripts\Acq_Deal_Ancillary.js" />
+    <Content Include="Custom_Scripts\Acq_Deal_Ancillary_List.js" />
+    <Content Include="Custom_Scripts\Acq_Deal_Attachment.js" />
+    <Content Include="Custom_Scripts\Acq_Deal_Gen_View.js" />
+    <Content Include="Custom_Scripts\Acq_Deal_Pushback.js" />
+    <Content Include="Custom_Scripts\Acq_Deal_Pushback.min.js">
+      <DependentUpon>Acq_Deal_Pushback.js</DependentUpon>
+    </Content>
+    <Content Include="Custom_Scripts\Acq_Deal_Rights.js" />
+    <Content Include="Custom_Scripts\Acq_Deal_Rights.min.js">
+      <DependentUpon>Acq_Deal_Rights.js</DependentUpon>
+    </Content>
+    <Content Include="Custom_Scripts\Acq_Deal_Rights_List.js" />
+    <Content Include="Custom_Scripts\Acq_Deal_Rights_List.min.js">
+      <DependentUpon>Acq_Deal_Rights_List.js</DependentUpon>
+    </Content>
+    <Content Include="Custom_Scripts\Acq_Deal_Rights_View.js" />
+    <Content Include="Custom_Scripts\Acq_Deal_Run.js" />
+    <Content Include="Custom_Scripts\Acq_Deal_Run.min.js">
+      <DependentUpon>Acq_Deal_Run.js</DependentUpon>
+    </Content>
+    <Content Include="Custom_Scripts\Acq_Deal_Run_List.js" />
+    <Content Include="Custom_Scripts\Acq_Deal_Run_List.min.js">
+      <DependentUpon>Acq_Deal_Run_List.js</DependentUpon>
+    </Content>
+    <Content Include="Custom_Scripts\Custom_CSS\Acq_Deal_List.css" />
+    <Content Include="Custom_Scripts\Custom_CSS\Acq_Deal_List.min.css">
+      <DependentUpon>Acq_Deal_List.css</DependentUpon>
+    </Content>
+    <Content Include="Custom_Scripts\Custom_CSS\Site_Layout.css" />
+    <Content Include="Custom_Scripts\Custom_CSS\Site_Layout.min.css">
+      <DependentUpon>Site_Layout.css</DependentUpon>
+    </Content>
+    <Content Include="Custom_Scripts\Custom_CSS\Syn_Deal_List.css" />
+    <Content Include="Custom_Scripts\Custom_CSS\Syn_Deal_List.min.css">
+      <DependentUpon>Syn_Deal_List.css</DependentUpon>
+    </Content>
+    <Content Include="Custom_Scripts\Custom_CSS\Syn_Deal_Rights.css" />
+    <Content Include="Custom_Scripts\Custom_CSS\Syn_Deal_Rights.min.css">
+      <DependentUpon>Syn_Deal_Rights.css</DependentUpon>
+    </Content>
+    <Content Include="Custom_Scripts\Email_Config.js" />
+    <Content Include="Custom_Scripts\Syn_Deal_Ancillary.js" />
+    <Content Include="Custom_Scripts\Syn_Deal_Ancillary_List.js" />
+    <Content Include="Custom_Scripts\Syn_Deal_Gen.js" />
+    <Content Include="Custom_Scripts\Acq_Deal_List.js" />
+    <Content Include="Custom_Scripts\Acq_Deal_List.min.js">
+      <DependentUpon>Acq_Deal_List.js</DependentUpon>
+    </Content>
+    <Content Include="Custom_Scripts\Site_Layout.js" />
+    <Content Include="Custom_Scripts\Site_Layout.min.js">
+      <DependentUpon>Site_Layout.js</DependentUpon>
+    </Content>
+    <Content Include="Custom_Scripts\Syn_Deal_Gen.min.js">
+      <DependentUpon>Syn_Deal_Gen.js</DependentUpon>
+    </Content>
+    <Content Include="Custom_Scripts\Syn_Deal_Gen_View.js" />
+    <Content Include="Custom_Scripts\Syn_Deal_List.js" />
+    <Content Include="Custom_Scripts\Syn_Deal_List.min.js">
+      <DependentUpon>Syn_Deal_List.js</DependentUpon>
+    </Content>
+    <Content Include="Custom_Scripts\Syn_Deal_Pushback.js" />
+    <Content Include="Custom_Scripts\Syn_Deal_Pushback.min.js">
+      <DependentUpon>Syn_Deal_Pushback.js</DependentUpon>
+    </Content>
+    <Content Include="Custom_Scripts\Syn_Deal_Rights.js" />
+    <Content Include="Custom_Scripts\Syn_Deal_Rights.min.js">
+      <DependentUpon>Syn_Deal_Rights.js</DependentUpon>
+    </Content>
+    <Content Include="Custom_Scripts\Syn_Deal_Rights_List.js" />
+    <Content Include="Custom_Scripts\Syn_Deal_Rights_List.min.js">
+      <DependentUpon>Syn_Deal_Rights_List.js</DependentUpon>
+    </Content>
+    <Content Include="Custom_Scripts\Syn_Deal_Rights_View.js" />
+    <Content Include="Custom_Scripts\Syn_Deal_Runs.js" />
+    <Content Include="Custom_Scripts\Syn_Deal_Runs.min.js">
+      <DependentUpon>Syn_Deal_Runs.js</DependentUpon>
+    </Content>
+    <Content Include="Custom_Scripts\Syn_Deal_Run_List.js" />
+    <Content Include="Custom_Scripts\Syn_Revenue.js" />
+    <Content Include="Custom_Scripts\Title_AddEdit.js" />
+    <Content Include="Custom_Scripts\Title_AddEdit.min.js">
+      <DependentUpon>Title_AddEdit.js</DependentUpon>
+    </Content>
+    <Content Include="Custom_Scripts\Title_Content_ImportExport.js" />
+    <Content Include="Custom_Scripts\Title_Objection_Adv_List.js" />
+    <Content Include="Custom_Scripts\Title_Objection_Generic.js" />
+    <Content Include="Download\TitleContentList .xml" />
+    <Content Include="EntitiesList.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Error.html" />
+    <Content Include="Images\add.png" />
+    <Content Include="Images\ajax-loader.gif" />
+    <Content Include="Images\Capture1.PNG" />
+    <Content Include="Images\Capture2.PNG" />
+    <Content Include="Images\Capture3.PNG" />
+    <Content Include="Images\Capture4.PNG" />
+    <Content Include="Images\ClientLogo\Logo_MH.jpg" />
+    <Content Include="Images\Content.PNG" />
+    <Content Include="Images\Criteria.jpg" />
+    <Content Include="Images\criteria.png" />
+    <Content Include="Images\dollar.png" />
+    <Content Include="Images\icon-search.png" />
+    <Content Include="Images\NoImageFound.jpg" />
+    <Content Include="Images\PoMenu.png" />
+    <Content Include="Images\Result.png" />
+    <Content Include="Images\Results.jpg" />
+    <Content Include="Images\r_Columns.jpg" />
+    <Content Include="Images\r_criteria.jpg" />
+    <Content Include="Images\r_Criteria.png" />
+    <Content Include="Images\r_Result.png" />
+    <Content Include="Images\r_Results.jpg" />
+    <Content Include="Images\ui-icons_444444_256x240.png" />
+    <Content Include="Images\ui-icons_555555_256x240.png" />
+    <Content Include="Integration\SAP_Export_File_Upload.aspx" />
+    <Content Include="Integration\SAP_Export_File_Upload_Details.aspx" />
+    <Content Include="Integration\SAP_File_Upload.aspx" />
+    <Content Include="Integration\SAP_File_Upload_Details.aspx" />
+    <Content Include="JS_Core\32px.png" />
+    <Content Include="JS_Core\Acq_Deal_Gen.js" />
+    <Content Include="JS_Core\Acq_Deal_Gen.min.js">
+      <DependentUpon>Acq_Deal_Gen.js</DependentUpon>
+    </Content>
+    <Content Include="JS_Core\autocomplete-0.3.0.js" />
+    <Content Include="JS_Core\autocomplete-0.3.0.min.js" />
+    <Content Include="JS_Core\AvailabilityRightPanel.js" />
+    <Content Include="JS_Core\bootstrap-multiselect.js" />
+    <Content Include="JS_Core\bootstrap.js" />
+    <Content Include="JS_Core\charts_loader.js" />
+    <Content Include="JS_Core\common.concat.min.js">
+      <DependentUpon>common.concat.js</DependentUpon>
+    </Content>
+    <Content Include="JS_Core\fileIcon.png" />
+    <Content Include="JS_Core\jquery.ba-hashchange.js" />
+    <Content Include="JS_Core\jquery.fancytree.filter.js" />
+    <Content Include="JS_Core\jquery.mark.min.js" />
+    <Content Include="JS_Core\jquery.passwordRequirements.js" />
+    <Content Include="JS_Core\jquery.passwordRequirements.min.js" />
+    <Content Include="JS_Core\jquery.slimscroll.js" />
+    <Content Include="JS_Core\jquery.sumoselect.js" />
+    <Content Include="JS_Core\jstree.min.js" />
+    <Content Include="JS_Core\slider-menu.jquery.js" />
+    <Content Include="JS_Core\style.min.css" />
+    <Content Include="JS_Core\throbber.gif" />
+    <Content Include="Logo\via18.png" />
+    <Content Include="Master\JS\Login.js" />
+    <Content Include="NotAiredDS.html" />
+    <Content Include="Reports\Show_Availability_Report.aspx" />
+    <Content Include="Reports\Title_Avail_Language_2.aspx" />
+    <Content Include="Reports\Title_Avail_Theatrical.aspx" />
+    <Content Include="Reports\Title_Avail_Language_3.aspx" />
+    <Content Include="Reports\Title_Avail_Language_New.aspx" />
+    <Content Include="Reports\Title_Platform_New.aspx" />
+    <Content Include="Reports\UserControl\UC_Platform_Tree_Selected.ascx" />
+    <Content Include="ReportViewerWebForm.aspx" />
+    <Content Include="Scheduling\BVTitleMapping_Schedule.aspx" />
+    <Content Include="Scheduling\BVTitleMapping_AsRun.aspx" />
+    <Content Include="CSS\chosen-sprite.png" />
+    <Content Include="CSS\chosen.min.css" />
+    <Content Include="CSS\common.css" />
+    <Content Include="CSS\dashboard.css" />
+    <Content Include="CSS\icons.gif" />
+    <Content Include="CSS\jquery-ui.css" />
+    <Content Include="CSS\jquery.datepick.css" />
+    <Content Include="CSS\jquery.timeentry.css" />
+    <Content Include="CSS\login_page.css" />
+    <Content Include="CSS\Master_ASPX.css" />
+    <Content Include="CSS\pagination.css" />
+    <Content Include="CSS\responsive.css" />
+    <Content Include="CSS\Rights_Tab.css" />
+    <Content Include="CSS\ui-start.datepick.css" />
+    <Content Include="CSS\ui.datepick.css" />
+    <Content Include="CSS\ui.fancytree.css" />
+    <Content Include="Fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Global.asax" />
+    <Content Include="Images\1bracket.gif" />
+    <Content Include="Images\2bracket.gif" />
+    <Content Include="Images\3bracket.gif" />
+    <Content Include="Images\4bracket.gif" />
+    <Content Include="Images\5bracket.gif" />
+    <Content Include="Images\activity.gif" />
+    <Content Include="Images\actor-strip.png" />
+    <Content Include="Images\app-switch.png" />
+    <Content Include="Images\bg-datepicker-next.png" />
+    <Content Include="Images\bg-datepicker-prev.png" />
+    <Content Include="Images\bg-menubar.jpg" />
+    <Content Include="Images\bg-movie-strip.png" />
+    <Content Include="Images\bg-ruler.jpg" />
+    <Content Include="Images\bg-search.png" />
+    <Content Include="Images\bg-select.png" />
+    <Content Include="Images\bg-sidemenu.jpg" />
+    <Content Include="Images\bg-song-strip.png" />
+    <Content Include="Images\browse-background.png" />
+    <Content Include="Images\browse-pillnav-icons.png" />
+    <Content Include="Images\browse-pillnav.png" />
+    <Content Include="Images\close2%402x.png" />
+    <Content Include="Images\close3.png" />
+    <Content Include="Images\close4.png" />
+    <Content Include="Images\collapse.jpg" />
+    <Content Include="Images\columnsOff.png" />
+    <Content Include="Images\columnsOn.png" />
+    <Content Include="Images\Confirm.gif" />
+    <Content Include="Images\criteriaOff.png" />
+    <Content Include="Images\criteriaOn.png" />
+    <Content Include="Images\curly_brace_right.png" />
+    <Content Include="Images\deal-box.png" />
+    <Content Include="Images\email%402x.png" />
+    <Content Include="Images\Event.png" />
+    <Content Include="Images\expand.jpg" />
+    <Content Include="Images\fancy_close.png" />
+    <Content Include="Images\female_user.png" />
+    <Content Include="Images\formatShow.png" />
+    <Content Include="Images\grey-screen-divider.png" />
+    <Content Include="Images\img-approve-stamp.png" />
+    <Content Include="Images\img-approve-stamp2.png" />
+    <Content Include="Images\img-approved-stamp.png" />
+    <Content Include="Images\img-deal-strip.png" />
+    <Content Include="Images\img-deal.png" />
+    <Content Include="Images\img-newly-added.png" />
+    <Content Include="Images\img-pending-stamp.png" />
+    <Content Include="Images\img-rejected-stamp.png" />
+    <Content Include="Images\Info.gif" />
+    <Content Include="Images\LoadingCircle.gif" />
+    <Content Include="Images\loading_cog.gif" />
+    <Content Include="Images\logo-rights.png" />
+    <Content Include="Images\movieIcon.png" />
+    <Content Include="Images\MsgErr.png" />
+    <Content Include="Images\MsgInfo.png" />
+    <Content Include="Images\MsgSuccess.png" />
+    <Content Include="Images\MsgWarn.png" />
+    <Content Include="Images\musicIcon.png" />
+    <Content Include="Images\next.gif" />
+    <Content Include="Images\previous.gif" />
+    <Content Include="Images\program.png" />
+    <Content Include="Images\querycriteria.jpg" />
+    <Content Include="Images\red.gif" />
+    <Content Include="Images\remarks.png" />
+    <Content Include="Images\resultOff.png" />
+    <Content Include="Images\resultOn.png" />
+    <Content Include="Images\rightsU_Loading.gif" />
+    <Content Include="Images\r_querycolumns.jpg" />
+    <Content Include="Images\r_querycriteria.jpg" />
+    <Content Include="Images\r_queryresults.jpg" />
+    <Content Include="Images\scroll-down.gif" />
+    <Content Include="Images\scroll-up.gif" />
+    <Content Include="Images\scrollbar-mid.png" />
+    <Content Include="Images\show-calendar.gif" />
+    <Content Include="Images\Source.png" />
+    <Content Include="Images\square_dots_loading.gif" />
+    <Content Include="Images\Teri-Payal-Mere-Geet.jpg" />
+    <Content Include="Images\u-to.ico" />
+    <Content Include="Images\ui-bg_flat_75_ffffff_40x100.png" />
+    <Content Include="Images\ui-icons_222222_256x240.png" />
+    <Content Include="Images\ui-icons_454545_256x240.png" />
+    <Content Include="Images\ui-icons_ffffff_256x240.png" />
+    <Content Include="Images\user.png" />
+    <Content Include="Images\user_female.png" />
+    <Content Include="JS_Core\autoNumeric-1.8.1.js" />
+    <Content Include="JS_Core\chosen.jquery.min.js" />
+    <Content Include="JS_Core\common.concat.js" />
+    <Content Include="JS_Core\jquery-1.11.0.js" />
+    <Content Include="JS_Core\jquery-1.11.1.min.js" />
+    <Content Include="JS_Core\jquery-ui.js" />
+    <Content Include="JS_Core\jquery-ui.min.js" />
+    <Content Include="JS_Core\jquery-ui_%28without_tooltip%29.min.js" />
+    <Content Include="JS_Core\jquery.alphanum.min.js" />
+    <Content Include="JS_Core\jquery.datepick.ext.js" />
+    <Content Include="JS_Core\jquery.datepick.js" />
+    <Content Include="JS_Core\jquery.expander.js" />
+    <Content Include="JS_Core\jquery.fancytree.js" />
+    <Content Include="JS_Core\jquery.pagination.js" />
+    <Content Include="JS_Core\jquery.plugin.js" />
+    <Content Include="JS_Core\jquery.timeentry.js" />
+    <Content Include="JS_Core\jquery.watermarkinput.js" />
+    <Content Include="JS_Core\watermark.js" />
+    <Content Include="Logo\network.png" />
+    <Content Include="Logo\vmpl.png" />
+    <Content Include="Master\AddEditChannelV1.aspx" />
+    <Content Include="Master\ApprovalWorkflow.aspx" />
+    <Content Include="Master\ApprovalWorkflowAddEdit.aspx" />
+    <Content Include="Master\ApprovalWorkflow_View.aspx" />
+    <Content Include="Master\AssignWorkflow.aspx" />
+    <Content Include="Master\AssignWorkflowAddEdit.aspx" />
+    <Content Include="Master\AssignWorkflow_View.aspx" />
+    <Content Include="Master\JS\Ajax.js" />
+    <Content Include="Master\JS\AjaxControlToolkit.js" />
+    <Content Include="Master\JS\AjaxUpdater.js" />
+    <Content Include="Master\JS\common.js" />
+    <Content Include="Master\JS\HTTP.js" />
+    <Content Include="Master\JS\jquery.datepick.ext.js" />
+    <Content Include="Master\JS\jquery.datepick.js" />
+    <Content Include="Master\JS\jquery.multiselect.filter.js" />
+    <Content Include="Master\JS\jquery.multiselect.js" />
+    <Content Include="Master\JS\Master.js" />
+    <Content Include="Master\JS\multiSelection.js" />
+    <Content Include="Master\Stylesheet\mulitiSelection.js" />
+    <Content Include="Master\JS\multiple_listbox.js" />
+    <Content Include="Master\JS\ToolTip.js" />
+    <Content Include="Master\Stylesheet\AjaxControlToolkit.css" />
+    <Content Include="Master\Stylesheet\jquery.datepick.css" />
+    <Content Include="Master\Stylesheet\jquery.multiselect.css" />
+    <Content Include="Master\Stylesheet\jquery.multiselect.filter.css" />
+    <Content Include="Master\Stylesheet\star_rights.css" />
+    <Content Include="Master\Stylesheet\style.css" />
+    <Content Include="Master\Stylesheet\ui-start.datepick.css" />
+    <Content Include="Master\Stylesheet\ui.datepick.css" />
+    <Content Include="Reports\ReportList.aspx" />
+    <Content Include="Reports\rptDealQuery.aspx" />
+    <Content Include="Reports\Theatrical_Language_Avail.aspx" />
+    <Content Include="Reports\Title_Avail_Language.aspx" />
+    <Content Include="Reports\UserControl\UC_Platform_Tree.ascx" />
+    <Content Include="Scripts\bootstrap.bundle.js" />
+    <Content Include="Scripts\bootstrap.bundle.min.js" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Scripts\esm\popper-utils.js" />
+    <Content Include="Scripts\esm\popper-utils.min.js" />
+    <Content Include="Scripts\esm\popper.js" />
+    <Content Include="Scripts\esm\popper.min.js" />
+    <Content Include="Scripts\esm\popper.min.js.map" />
+    <Content Include="Scripts\esm\popper.js.map" />
+    <Content Include="Scripts\esm\popper-utils.min.js.map" />
+    <Content Include="Scripts\esm\popper-utils.js.map" />
+    <Content Include="Fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="Fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="Fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="Fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="Scripts\bootstrap.min.js.map" />
+    <Content Include="Scripts\bootstrap.js.map" />
+    <Content Include="Scripts\bootstrap.bundle.min.js.map" />
+    <Content Include="Scripts\bootstrap.bundle.js.map" />
+    <Content Include="Content\bootstrap.min.css.map" />
+    <Content Include="Content\bootstrap.css.map" />
+    <Content Include="Content\bootstrap-reboot.min.css.map" />
+    <Content Include="Content\bootstrap-reboot.css.map" />
+    <Content Include="Content\bootstrap-grid.min.css.map" />
+    <Content Include="Content\bootstrap-grid.css.map" />
+    <Content Include="Content\skin-common.less" />
+    <Content Include="Content\jquery.fancytree-css\skin-xp\ui.fancytree.less" />
+    <Content Include="Content\jquery.fancytree-css\skin-win8\ui.fancytree.less" />
+    <Content Include="Content\jquery.fancytree-css\skin-win8-xxl\ui.fancytree.less" />
+    <Content Include="Content\jquery.fancytree-css\skin-win8-n\ui.fancytree.less" />
+    <Content Include="Content\jquery.fancytree-css\skin-win7\ui.fancytree.less" />
+    <Content Include="Content\jquery.fancytree-css\skin-vista\ui.fancytree.less" />
+    <Content Include="Content\jquery.fancytree-css\skin-themeroller\ui.fancytree.less" />
+    <Content Include="Content\jquery.fancytree-css\skin-material\ui.fancytree.less" />
+    <Content Include="Content\jquery.fancytree-css\skin-lion\ui.fancytree.less" />
+    <Content Include="Content\jquery.fancytree-css\skin-custom-1\README.md" />
+    <Content Include="Content\jquery.fancytree-css\skin-bootstrap\ui.fancytree.less" />
+    <Content Include="Content\jquery.fancytree-css\skin-bootstrap-n\ui.fancytree.less" />
+    <Content Include="Content\jquery.fancytree-css\skin-awesome\ui.fancytree.less" />
+    <!-- <Content Include="Download\Title_Import_Utility_Sample.xlsx" /> -->
+    <Content Include="passwordRequirements.jquery.json" />
+    <!-- <Content Include="Download\Adv_Ancillary_Report_Sheet_1.xlsx" /> -->
+    <!-- <Content Include="Download\Result_BS_No_14.xlsx" /> -->
+    <!-- <Content Include="Download\Result_BS_No_21.xlsx" /> -->
+    <!-- <Content Include="Download\Result_BS_No_22.xlsx" /> -->
+    <!-- <Content Include="Download\Result_BS_No_23.xlsx" /> -->
+    <!-- <Content Include="Download\Result_BS_No_24.xlsx" /> -->
+    <!-- <Content Include="Download\Result_BS_No_25.xlsx" /> -->
+    <!-- <Content Include="Download\Result_BS_No_26.xlsx" /> -->
+    <!-- <Content Include="Download\Sample.xlsx" /> -->
+    <!-- <Content Include="Download\BookingSheet\Result_BS_No_14.xlsx" /> -->
+    <!-- <Content Include="Download\BookingSheet\Result_BS_No_21.xlsx" /> -->
+    <!-- <Content Include="Download\BookingSheet\Result_BS_No_22.xlsx" /> -->
+    <!-- <Content Include="Download\BookingSheet\Result_BS_No_23.xlsx" /> -->
+    <!-- <Content Include="Download\BookingSheet\Result_BS_No_24.xlsx" /> -->
+    <!-- <Content Include="Download\BookingSheet\Result_BS_No_25.xlsx" /> -->
+    <!-- <Content Include="Download\BookingSheet\Result_BS_No_26.xlsx" /> -->
+    <!-- <Content Include="Download\BookingSheet\Result_BS_No_27.xlsx" /> -->
+    <!-- <Content Include="Download\BookingSheet\Result_BS_No_28.xlsx" /> -->
+    <!-- <Content Include="Download\BookingSheet\Sample.xlsx" /> -->
+    <!-- <Content Include="Download\PurchaseOrder\rpt_AL_Purchase_Order.pdf" /> -->
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\RightsU_Publish.pubxml" />
+    <None Include="Properties\PublishProfiles\RU_Publish.pubxml" />
+    <None Include="Scripts\jquery-3.0.0-vsdoc.js" />
+    <Content Include="Scripts\jquery-3.0.0.js" />
+    <Content Include="Scripts\jquery-3.0.0.min.js" />
+    <Content Include="Scripts\jquery-3.0.0.slim.js" />
+    <Content Include="Scripts\jquery-3.0.0.slim.min.js" />
+    <Content Include="Scripts\jquery.fancytree-all-deps.js" />
+    <Content Include="Scripts\jquery.fancytree-all-deps.min.js" />
+    <Content Include="Scripts\jquery.fancytree-all.js" />
+    <Content Include="Scripts\jquery.fancytree-all.min.js" />
+    <Content Include="Scripts\jquery.fancytree.min.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
+    <Content Include="Download\ContractDraft.docx" />
+    <!-- <Content Include="Download\Title_Import.xlsx" /> -->
+    <Content Include="Download\Rights_Usage_Report_Sample.xlsx" />
+    <Content Include="Download\SPN_Music_Title_Import_Sample.xlsx" />
+    <Content Include="Scripts\loader.js" />
+    <Content Include="Scripts\popper-utils.js" />
+    <Content Include="Scripts\popper-utils.min.js" />
+    <Content Include="Scripts\popper.js" />
+    <Content Include="Scripts\popper.min.js" />
+    <Content Include="Scripts\umd\popper-utils.js" />
+    <Content Include="Scripts\umd\popper-utils.min.js" />
+    <Content Include="Scripts\umd\popper.js" />
+    <Content Include="Scripts\umd\popper.min.js" />
+    <Content Include="Scripts\umd\popper.min.js.map" />
+    <Content Include="Scripts\umd\popper.js.map" />
+    <Content Include="Scripts\umd\popper-utils.min.js.map" />
+    <Content Include="Scripts\umd\popper-utils.js.map" />
+    <Content Include="Scripts\README.md" />
+    <Content Include="Scripts\popper.min.js.map" />
+    <Content Include="Scripts\popper.js.map" />
+    <Content Include="Scripts\popper-utils.min.js.map" />
+    <Content Include="Scripts\popper-utils.js.map" />
+    <Content Include="Scripts\jquery-3.0.0.slim.min.map" />
+    <Content Include="Scripts\jquery-3.0.0.min.map" />
+    <Content Include="Scripts\jquery.fancytree-all-deps.min.js.map" />
+    <None Include="Service References\MSM_SAP_WS\configuration91.svcinfo" />
+    <None Include="Service References\MSM_SAP_WS\configuration.svcinfo" />
+    <None Include="Service References\MSM_SAP_WS\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <Content Include="SqlServerTypes\readme.htm" />
+    <Content Include="SqlServerTypes\x64\msvcr120.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SqlServerTypes\x64\SqlServerSpatial140.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SqlServerTypes\x86\msvcr120.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SqlServerTypes\x86\SqlServerSpatial140.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestWebForm.aspx" />
+    <Content Include="Custom_Scripts\Custom_CSS\background.jpg" />
+    <Content Include="UploadFolder\Digital_Media.jpg" />
+    <Content Include="UploadFolder\duplicate.jpg" />
+    <Content Include="UploadFolder\jhalak.jpg" />
+    <Content Include="UploadFolder\Ki and Ka Hindi Movie.jpg" />
+    <Content Include="UploadFolder\motu_patlu-index.png" />
+    <Content Include="UploadFolder\Rowdy Badshsh.jpg" />
+    <Content Include="UploadFolder\Sasural-Simar-Ka-poster.jpg" />
+    <Content Include="Views\Shared\Demo_Digital\bg_RU_Digital2.png" />
+    <Content Include="Custom_Scripts\Custom_CSS\component2.css" />
+    <Content Include="Custom_Scripts\Custom_CSS\demo.css" />
+    <Content Include="Custom_Scripts\Custom_CSS\normalize.css" />
+    <Content Include="Custom_Scripts\fonts\codropsicons\codropsicons.svg" />
+    <Content Include="Custom_Scripts\fonts\codropsicons\license.txt" />
+    <Content Include="Views\Shared\Demo_Digital\interactivedemo\css\main.css" />
+    <Content Include="Views\Shared\Demo_Digital\interactivedemo\index.html" />
+    <Content Include="Views\Shared\Demo_Digital\interactivedemo\js\main.js" />
+    <Content Include="Views\Shared\Demo_Digital\interactivedemo\js\vendor\jquery-1.10.1.min.js" />
+    <Content Include="Views\Shared\Demo_Digital\interactivedemo\js\vendor\modernizr-2.6.2.min.js" />
+    <Content Include="Custom_Scripts\demo2.js" />
+    <Content Include="Custom_Scripts\modernizr-2.6.2.min.js" />
+    <Content Include="Custom_Scripts\polyfills.js" />
+    <Content Include="Views\Shared\ReportViewer.aspx" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Views\Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="WebServices\GeneralWS.asmx" />
+    <Content Include="WebServices\getExchangeRateWebService.asmx" />
+    <Content Include="Service References\MSM_SAP_WS\RightsU_Plus.MSM_SAP_WS.ZpsWbsDatesForWebServResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\MSM_SAP_WS\RightsU_Plus.MSM_SAP_WS.ZpsWebWbsDates.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Views\Promoter_Remarks\Index.cshtml" />
+    <Content Include="Views\Promoter_Remarks\_Promoter_RemarksList.cshtml" />
+    <Content Include="Views\Title_Content_View\_Run_Defintion_List.cshtml" />
+    <Content Include="Views\Title_Content_View\_Run_Definition.cshtml" />
+    <Content Include="Views\Title_Content_ImportExport\Content_Import_List.cshtml" />
+    <Content Include="Views\Title_Content\_Channel_Wise_List.cshtml" />
+    <Content Include="Views\Acq_Deal\_Promoter_Group_Tree.cshtml" />
+    <Content Include="Views\Shared\_ActionButton.cshtml" />
+    <Content Include="Views\Title_Content_ImportExport\_DM_Content_Error_List.cshtml" />
+    <Content Include="Views\Title_Content_ImportExport\_DM_Content_View_List.cshtml" />
+    <Content Include="Views\Title_Content_ImportExport\_Content_View_List.cshtml" />
+    <Content Include="Views\Title_Content_ImportExport\_DM_Resolve_Conflict_List.cshtml" />
+    <Content Include="Views\Title_Content_ImportExport\_DM_Resolve_Conflict.cshtml" />
+    <Content Include="Views\Title_Content_ImportExport\_DM_Resolve_Conflict_OtherTab.cshtml" />
+    <Content Include="Views\Shared\_List_More_Title.cshtml" />
+    <Content Include="Views\Title_Content_ImportExport\_DM_Resolve_Conflict_SystemMapping.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_Rights_Promoter_List.cshtml" />
+    <Content Include="Views\MQ_Log\Index.cshtml" />
+    <Content Include="Views\MQ_Log\_MQ_LogList.cshtml" />
+    <Content Include="Views\Amort\Index.cshtml" />
+    <Content Include="Views\Amort\_AmortList.cshtml" />
+    <Content Include="Views\Amort\_AmortRule.cshtml" />
+    <Content Include="Views\Amort\_ViewAmortRule.cshtml" />
+    <Content Include="Views\Amort\AmortDetails.cshtml" />
+    <Content Include="Views\Amort\_AmortMonthList.cshtml" />
+    <Content Include="Views\Title_Content_View\Version_Content_Import.cshtml" />
+    <Content Include="Views\Reports\Title_Amort_Report.cshtml" />
+    <Content Include="Views\AmortMonth\Index.cshtml" />
+    <Content Include="Views\AmortMonth\_AmortMonthList.cshtml" />
+    <Content Include="Views\Availability_Movie\_SelectedCriteriaList.cshtml" />
+    <Content Include="Views\BMSUtility\Index.cshtml" />
+    <Content Include="Views\BMSUtility\_LicensorList.cshtml" />
+    <Content Include="Views\BMSUtility\_LicensorAcqList.cshtml" />
+    <Content Include="Views\BMSUtility\_TitleList.cshtml" />
+    <Content Include="Views\BMSUtility\_BMSDealContentList.cshtml" />
+    <Content Include="Views\BMSUtility\_BMSDealContentRightsList.cshtml" />
+    <Content Include="Views\Availability_Movie\_RegionRightsData.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_Ancillary_Adv.cshtml" />
+    <Content Include="Views\Availability_Movie\_SelfUtilizationCriteria.cshtml" />
+    <Content Include="Views\MHRequisition\Index.cshtml" />
+    <Content Include="Views\MHRequisition\_MHRequisitionList.cshtml" />
+    <Content Include="Views\MHRequisition\_MHRequisitionApprove.cshtml" />
+    <Content Include="Views\MHRequisition\_MHRequsistionMetadata.cshtml" />
+    <Content Include="Views\MHCueSheet\Index.cshtml" />
+    <Content Include="Views\MHCueSheet\_MHCueSheetMetaData.cshtml" />
+    <Content Include="Views\MHCueSheet\_MHCueSheetList.cshtml" />
+    <Content Include="Views\MHCueSheet\_MHMusicAssignMetaData.cshtml" />
+    <Content Include="Views\MHCueSheet\_MHMusicAssignValidErrorList.cshtml" />
+    <Content Include="Views\MHStatusHistory\Index.cshtml" />
+    <Content Include="Views\MHStatusHistory\_MHStatusHistoryList.cshtml" />
+    <Content Include="Views\MHRequisition\_MHRequisitionMovieList.cshtml" />
+    <Content Include="Views\MHRequisition\_MHRequisitionTrackList.cshtml" />
+    <Content Include="Views\MHRequisition\_MHRequisitionConsumeList.cshtml" />
+    <Content Include="Views\MHRequisition\_Create.cshtml" />
+    <Content Include="Views\MHDashboard\Index.cshtml" />
+    <Content Include="Views\MHCueSheet\_MHMusicAssignListView.cshtml" />
+    <Content Include="Views\RUBVMapping\Index.cshtml" />
+    <Content Include="Views\MHAuthorisedMusic\Index.cshtml" />
+    <Content Include="Views\MHAuthorisedMusic\_AuthorisedMusicReport.cshtml" />
+    <Content Include="Views\RUBVMapping\_ListBMSAsset.cshtml" />
+    <Content Include="Views\RUBVMapping\_ListBMSDeal.cshtml" />
+    <Content Include="Views\RUBVMapping\_ListBMSDealContent.cshtml" />
+    <Content Include="Views\RUBVMapping\_ListLicensor.cshtml" />
+    <Content Include="Views\RUBVMapping\_ListBMSDealContentRights.cshtml" />
+    <Content Include="Views\MHRequisition\_CreateNewTitle.cshtml" />
+    <Content Include="Views\MHDashboard\_MHConsumptionList.cshtml" />
+    <Content Include="Views\DemoSetup\Index.cshtml" />
+    <Content Include="Views\AvailabilityOld\_Dubbing_LanguageCriteria.cshtml" />
+    <Content Include="Views\AvailabilityOld\_OtherCriteria.cshtml" />
+    <Content Include="Views\AvailabilityOld\_PeriodCriteria.cshtml" />
+    <Content Include="Views\AvailabilityOld\_PlatformCriteria.cshtml" />
+    <Content Include="Views\AvailabilityOld\_QueryList.cshtml" />
+    <Content Include="Views\AvailabilityOld\_RegionCriteria.cshtml" />
+    <Content Include="Views\AvailabilityOld\_RegionRightsData.cshtml" />
+    <Content Include="Views\AvailabilityOld\_SelectedCriteriaList.cshtml" />
+    <Content Include="Views\AvailabilityOld\_Subtitle_LanguageCriteria.cshtml" />
+    <Content Include="Views\AvailabilityOld\_TitlesCriteria.cshtml" />
+    <Content Include="Views\AvailabilityOld\Index.cshtml" />
+    <Content Include="Views\MHDashboard\_MHConsumption.cshtml" />
+    <Content Include="Views\Title\Title_Milestone.cshtml" />
+    <Content Include="Views\Title\_Title_Milestone.cshtml" />
+    <Content Include="Views\Title\_AddEditTitle_Milestone.cshtml" />
+    <Content Include="Views\Milestone_Nature\Index.cshtml" />
+    <Content Include="Views\Milestone_Nature\_MilestoneNatureList.cshtml" />
+    <Content Include="Views\Reports\TitleMilestoneReport.cshtml" />
+    <Content Include="Views\Reports\TitleDetailsReport.cshtml" />
+    <Content Include="Views\TAT\Index.cshtml" />
+    <Content Include="Views\TAT\_ListTAT.cshtml" />
+    <Content Include="Views\TAT\_AssignTAT.cshtml" />
+    <Content Include="Views\TATSLA\Index.cshtml" />
+    <Content Include="Views\TATSLA\_AddEditSLA.cshtml" />
+    <Content Include="Views\TATSLA\_ListTATSLA.cshtml" />
+    <Content Include="Views\TATSLA\_SLAMatrics.cshtml" />
+    <Content Include="Views\Project_MilestoneList\Index.cshtml" />
+    <Content Include="Views\Project_MilestoneList\_Project_Milestone_List.cshtml" />
+    <Content Include="Views\Project_Milestone\Index.cshtml" />
+    <Content Include="Views\Project_Milestone\_PMDetailsList.cshtml" />
+    <Content Include="Views\Reports\ProjectMilestoneReport.cshtml" />
+    <Content Include="Views\Project_Milestone\_PMTitlesList.cshtml" />
+    <Content Include="Views\PartyCategory\Index.cshtml" />
+    <Content Include="Views\PartyCategory\_PartyCategoryList.cshtml" />
+    <Content Include="Views\Project_Milestone\View.cshtml" />
+    <Content Include="Views\Acq_Deal\_Bulk_Update_ForRun.cshtml" />
+    <Content Include="Views\Acq_Deal\_Bulk_Update_ForRun_List.cshtml" />
+    <Content Include="Views\Shared\_Linear_Status.cshtml" />
+    <Content Include="Views\Reports\AuditTrailReport.cshtml" />
+    <Content Include="Views\Shared\_Rights_Filter_Bulk.cshtml" />
+    <Content Include="Views\Acq_Rights_Template\Index.cshtml" />
+    <Content Include="Views\Acq_Rights_Template\_Acq_Rights_TemplateList.cshtml" />
+    <Content Include="Views\Acq_Rights_Template\_Acq_Rights_Template.cshtml" />
+    <Content Include="Views\Acq_Rights_Template\_AddEditAcq_Rights_Template.cshtml" />
+    <Content Include="Views\Shared\_Acq_Error_Popup.cshtml" />
+    <Content Include="Views\User\_UserGeneralInfo.cshtml" />
+    <Content Include="Views\Title_Content_ImportExport\_AddMovieAlbum.cshtml" />
+    <Content Include="Views\Title_Content_ImportExport\_AddMusicTitle.cshtml" />
+    <Content Include="Views\Reports\DealWorkflowStatusPending.cshtml" />
+    <Content Include="Views\PA_Rights_Reports\_PARightsDatalist.cshtml" />
+    <Content Include="Views\PA_Rights_Reports\_CriteriaDetails.cshtml" />
+    <Content Include="Views\DM_Title_Master_Import\_DM_Conflict_Error_List.cshtml" />
+    <Content Include="Views\DM_Title_Master_Import\_DM_Import_List.cshtml" />
+    <Content Include="Views\DM_Title_Master_Import\_DM_Master_Log_List.cshtml" />
+    <Content Include="Views\DM_Title_Master_Import\_DM_Music_Error_List.cshtml" />
+    <Content Include="Views\DM_Title_Master_Import\_DM_Resolve_Conflict_Popup.cshtml" />
+    <Content Include="Views\DM_Title_Master_Import\_DM_Title_Error_List.cshtml" />
+    <Content Include="Views\DM_Title_Master_Import\_DM_Title_View_List.cshtml" />
+    <Content Include="Views\DM_Title_Master_Import\_DM_View_List.cshtml" />
+    <Content Include="Views\DM_Title_Master_Import\_Music_View_List.cshtml" />
+    <Content Include="Views\DM_Title_Master_Import\_Title_Validate.cshtml" />
+    <Content Include="Views\DM_Title_Master_Import\_Title_View_List.cshtml" />
+    <Content Include="Views\DM_Title_Master_Import\DM_Import_Log.cshtml" />
+    <Content Include="Views\DM_Title_Master_Import\DM_Import_SystemMapping_Log.cshtml" />
+    <Content Include="Views\Title\Title_Import_New.cshtml" />
+    <Content Include="Views\DM_Master_Import\DM_Import_Log.cshtml" />
+    <Content Include="Views\DM_Master_Import\DM_Import_SystemMapping_Log.cshtml" />
+    <Content Include="Views\DM_Master_Import\_DM_Conflict_Error_List.cshtml" />
+    <Content Include="Views\DM_Master_Import\_DM_Import_List.cshtml" />
+    <Content Include="Views\DM_Master_Import\_DM_Master_Log_List.cshtml" />
+    <Content Include="Views\DM_Master_Import\_DM_Music_Error_List.cshtml" />
+    <Content Include="Views\DM_Master_Import\_DM_Resolve_Conflict_Popup.cshtml" />
+    <Content Include="Views\DM_Master_Import\_DM_Title_Error_List.cshtml" />
+    <Content Include="Views\DM_Master_Import\_DM_Title_View_List.cshtml" />
+    <Content Include="Views\DM_Master_Import\_DM_View_List.cshtml" />
+    <Content Include="Views\DM_Master_Import\_Music_View_List.cshtml" />
+    <Content Include="Views\DM_Master_Import\_Title_Validate.cshtml" />
+    <Content Include="Views\DM_Master_Import\_Title_View_List.cshtml" />
+    <Content Include="Views\Availability_Movie_New\Index.cshtml" />
+    <Content Include="Views\Availability_Movie_New\_Dubbing_LanguageCriteria.cshtml" />
+    <Content Include="Views\Availability_Movie_New\_OtherCriteria.cshtml" />
+    <Content Include="Views\Availability_Movie_New\_PeriodCriteria.cshtml" />
+    <Content Include="Views\Availability_Movie_New\_PlatformCriteria.cshtml" />
+    <Content Include="Views\Availability_Movie_New\_QueryList.cshtml" />
+    <Content Include="Views\Availability_Movie_New\_RegionCriteria.cshtml" />
+    <Content Include="Views\Availability_Movie_New\_RegionRightsData.cshtml" />
+    <Content Include="Views\Availability_Movie_New\_SelectedCriteriaList.cshtml" />
+    <Content Include="Views\Availability_Movie_New\_SelfUtilizationCriteria.cshtml" />
+    <Content Include="Views\Availability_Movie_New\_Subtitle_LanguageCriteria.cshtml" />
+    <Content Include="Views\Availability_Movie_New\_TitlesCriteria.cshtml" />
+    <Content Include="Views\Reports\DealStatusReport.cshtml" />
+    <Content Include="Views\IPR_Dashboard\DashBoard.cshtml" />
+    <Content Include="Views\IPR_List\_OppositionDetailPopup.cshtml" />
+    <Content Include="Views\Reports\IPR_Report.cshtml" />
+    <Content Include="Views\Title_Objection\Index.cshtml" />
+    <Content Include="Views\Title_Objection\_Title_Objection.cshtml" />
+    <Content Include="Views\Title_Objection\_Title_Objection_List.cshtml" />
+    <Content Include="Views\Title_Objection_List\_List_Title_Objection.cshtml" />
+    <Content Include="Views\Title_Objection_List\Index.cshtml" />
+    <Content Include="Views\Title_Objection\_Edit_Title_Objection.cshtml" />
+    <Content Include="Views\Title_Objection\_Add_Title_Objection.cshtml" />
+    <Content Include="Views\Title_Objection\_View_Title_Objection.cshtml" />
+    <Content Include="Views\Shared\_Acq_Rev_HB_Validation_Popup.cshtml" />
+    <Content Include="Views\Deal_Description\_DealDescsList.cshtml" />
+    <Content Include="Views\Deal_Description\Index.cshtml" />
+    <Content Include="Views\Title_Objection_Type\_Title_Objection_Type_List.cshtml" />
+    <Content Include="Views\Title_Objection_Type\Index.cshtml" />
+    <Content Include="Views\Title\_Title_Main_Release.cshtml" />
+    <Content Include="Views\Title\View_Release.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_Ancillary_List.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_Ancillary_Adv.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_Ancillary.cshtml" />
+    <Content Include="Views\Syn_Deal\_List_Ancillary_Syn.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_Supplementary.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_Supplementary_Add.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_Supplementary.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_Supplementary_Add.cshtml" />
+    <Content Include="Views\Acq_Deal\_AmendmentHistory.cshtml" />
+    <Content Include="Views\Shared\_Module_Amendment_Details.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_Rights_BuyBack.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_Rights_BuyBack_List.cshtml" />
+    <Content Include="Views\ForgetPasswordLink\index.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_Digital.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_Digital_Add.cshtml" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Attrib_Reports\Index.cshtml" />
+    <Content Include="Views\Attrib_Reports\_BindList.cshtml" />
+    <Content Include="Views\Attrib_Reports\Create.cshtml" />
+    <Content Include="Views\Attrib_Reports\Delete.cshtml" />
+    <Content Include="Views\ReportColumnSetupIT\Index.cshtml" />
+    <Content Include="Views\ReportColumnSetupIT\_BindList.cshtml" />
+    <Content Include="Views\ReportColumnSetupIT\Create.cshtml" />
+    <Content Include="Views\ReportColumnSetupIT\Delete.cshtml" />
+    <Content Include="Views\Attrib_Reports\Edit.cshtml" />
+    <Content Include="Views\Attrib_Group\Index.cshtml" />
+    <Content Include="Views\Attrib_Group\_BindAttribGroupList.cshtml" />
+    <Content Include="Views\ReportColumnSetup\Index.cshtml" />
+    <Content Include="Views\ReportColumnSetup\_AddEditReportColumnSetup.cshtml" />
+    <Content Include="Views\ReportColumnSetup\_BindReportColumnSetup.cshtml" />
+    <Content Include="Views\SupplimentaryConfig\Index.cshtml" />
+    <Content Include="Views\SupplimentaryConfig\_SupplimentaryConfigList.cshtml" />
+    <Content Include="Views\SupplimentaryConfig\_SupplimentaryConfig.cshtml" />
+    <Content Include="Views\SupplimentaryConfig\_AddEditSupplimentaryConfig.cshtml" />
+    <Content Include="Views\SupplimentaryConfig\_TabConfigList.cshtml" />
+    <Content Include="Views\SupplimentaryConfig\_SupplementaryMasterList.cshtml" />
+    <Content Include="Views\SupplimentaryConfig\_SupplementaryDataMasterList.cshtml" />
+    <Content Include="Views\SupplimentaryConfig\_SupplementaryTabListViewConfig.cshtml" />
+    <Content Include="Views\DigitalConfig\Index.cshtml" />
+    <Content Include="Views\DigitalConfig\_DigitalConfig.cshtml" />
+    <Content Include="Views\DigitalConfig\_DigitalConfigList.cshtml" />
+    <Content Include="Views\DigitalConfig\_AddEditDigitalConfig.cshtml" />
+    <Content Include="Views\DigitalConfig\_TabConfigList.cshtml" />
+    <Content Include="Views\DigitalConfig\_DigitalMasterList.cshtml" />
+    <Content Include="Views\DigitalConfig\_DigitalDataMasterList.cshtml" />
+    <Content Include="Views\DigitalConfig\_DigitalTabListViewConfig.cshtml" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Extended_Group\Index.cshtml" />
+    <Content Include="Views\Extended_Group\_ExtendedGroupList.cshtml" />
+    <Content Include="Views\Extended_Group\_AddEditViewExtdGrp.cshtml" />
+    <Content Include="Views\Extended_Group\_AddEditViewDetail.cshtml" />
+    <Content Include="Views\ExtendedColumn_Metadata\Create.cshtml" />
+    <Content Include="Views\ExtendedColumn_Metadata\Index.cshtml" />
+    <Content Include="Views\ExtendedColumn_Metadata\_ExtendedColumnList.cshtml" />
+    <Content Include="Views\ExtendedColumn_Metadata\_ExtendedColumnValueList.cshtml" />
+    <Content Include="Views\Title\_Title_Metadata_Header.cshtml" />
+    <Content Include="Views\Title\_Title_Tabwise_Popup.cshtml" />
+    <Content Include="Views\Banner\Index.cshtml" />
+    <Content Include="Views\Banner\_BindBannerGroup.cshtml" />
+    <Content Include="Views\AL_Oem\Index.cshtml" />
+    <Content Include="Views\AL_Oem\_BindALOemList.cshtml" />
+    <Content Include="Views\Title\_Title_Popup_Grid_Result.cshtml" />
+    <Content Include="Views\Vendor\_AdditionalInfo.cshtml" />
+    <Content Include="Views\Vendor\_ContentRule.cshtml" />
+    <Content Include="Views\Vendor\_ContentRuleGrid.cshtml" />
+    <Content Include="Views\Vendor\_ContentRulePopUp.cshtml" />
+    <Content Include="Views\Vendor\_OEM.cshtml" />
+    <Content Include="Views\Vendor\_TnC.cshtml" />
+    <Content Include="Views\AL_Lab\Index.cshtml" />
+    <Content Include="Views\AL_Lab\_BindAL_LabGroup.cshtml" />
+    <Content Include="Views\BookingSheet\Index.cshtml" />
+    <Content Include="Views\BookingSheet\_BookingSheetList.cshtml" />
+    <Content Include="Views\BookingSheet\_PendingRecommendationsList.cshtml" />
+    <Content Include="Views\AL_Oem\_AddEditALOem.cshtml" />
+    <Content Include="Views\AL_Oem\_AddEditFieldValue.cshtml" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\_Aeroplay.cshtml" />
+    <Content Include="Views\BookingSheet\ImportMasterView.cshtml" />
+    <Content Include="Views\BookingSheet\_MasterImportList.cshtml" />
+    <Content Include="Views\BookingSheet\ImportedSheetView.cshtml" />
+    <Content Include="Views\BookingSheet\_MovieSheetData.cshtml" />
+    <Content Include="Views\BookingSheet\_ShowSheetData.cshtml" />
+    <!-- <Content Include="UploadFolder\BookingSheet\638168158002973682~EpisodeTitle_Import.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\638168216183881734~EpisodeTitle_Import %281%29.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\638169264219574161~TitleList.xls" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\638169405795347137~Result_BS_No_27.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\638170103212917632~Result_BS_No_28.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\Result_BS_No_14.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\Result_BS_No_21.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\Result_BS_No_22.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\Result_BS_No_23.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\Result_BS_No_24.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\Result_BS_No_25.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\Result_BS_No_26.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\Sample.xlsx" /> -->
+    <Content Include="Views\PurchaseOrder\Index.cshtml" />
+    <Content Include="Views\PurchaseOrder\_PurchaseOrderList.cshtml" />
+    <Content Include="Views\LoadSheet\Index.cshtml" />
+    <Content Include="Views\LoadSheet\_AddLoadSheet.cshtml" />
+    <Content Include="Views\LoadSheet\_LoadSheetList.cshtml" />
+    <Content Include="Views\LoadSheet\_BookingsheetList.cshtml" />
+    <Content Include="Views\PurchaseOrder\_MovieTabDataView.cshtml" />
+    <Content Include="Views\PurchaseOrder\_PoDetailsView.cshtml" />
+    <Content Include="Views\PurchaseOrder\_ShowTabDataView.cshtml" />
+    <Content Include="Views\DeliveryTracking\Index.cshtml" />
+    <Content Include="Views\DeliveryTracking\_MoviesList.cshtml" />
+    <Content Include="Views\DeliveryTracking\_ShowsList.cshtml" />
+    <Content Include="Views\LoadSheet\_RevisionHistoryList.cshtml" />
+    <Content Include="Views\PurchaseOrder\_StatusHistoryList.cshtml" />
+    <Content Include="Views\PurchaseOrder\_StatusHistoryPopup.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_Digital.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_Digital_Add.cshtml" />
+    <Content Include="Views\Reports\MusicAvailabilityReport.cshtml" />
+    <Content Include="Views\DM_Title_Master_Import\BulkPosterUploadList.cshtml" />
+    <Content Include="Views\DM_Title_Master_Import\_PosterTitleList.cshtml" />
+    <Content Include="Views\Reports\AuditLogReport.cshtml" />
+    <Content Include="Views\Event_Platform\Index.cshtml" />
+    <Content Include="Views\Event_Platform\_EventPlatform_List.cshtml" />
+    <Content Include="Views\Event_Config_Template\Index.cshtml" />
+    <Content Include="Views\Event_Config_Template\_EmailTemplate_List.cshtml" />
+    <Content Include="Views\Event_Platform\_EventTemplateKey_List.cshtml" />
+    <Content Include="Views\Event_Config_Template\_Config_Template_PopUp.cshtml" />
+    <Content Include="Views\Dispatcher_Search\Index.cshtml" />
+    <Content Include="Views\Dispatcher_Search\_Dispatcher_List.cshtml" />
+    <Content Include="Views\Dispatcher_Search\_MessageViewPopUp.cshtml" />
+    <!-- <Content Include="UploadFolder\BookingSheet\638168158002973682~EpisodeTitle_Import.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\638168216183881734~EpisodeTitle_Import %281%29.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\638169264219574161~TitleList.xls" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\638169405795347137~Result_BS_No_27.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\638170103212917632~Result_BS_No_28.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\Result_BS_No_14.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\Result_BS_No_21.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\Result_BS_No_22.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\Result_BS_No_23.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\Result_BS_No_24.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\Result_BS_No_25.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\Result_BS_No_26.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\Sample.xlsx" /> -->
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="Scripts\modules\" />
+    <Folder Include="UploadFolder\Title_Images\" />
+    <Folder Include="Views\Music_Title_List\" />
+    <Folder Include="Views\Shared\Demo_Digital\css\" />
+    <Folder Include="Views\Shared\Demo_Digital\js\" />
+    <Folder Include="Views\Syn_Ancillary\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="packages.config">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\_Layout.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Acq_List\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Login\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Login\ForgetPassword.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RightsU_BLL\RightsU_BLL.csproj">
+      <Project>{35fc46db-c44a-4e6c-8d65-ab90da768194}</Project>
+      <Name>RightsU_BLL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RightsU_Entities\RightsU_Entities.csproj">
+      <Project>{d8a4885d-9a36-4724-b464-6cb122e081f7}</Project>
+      <Name>RightsU_Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RightsU_Framework\RightsU_Framework.csproj">
+      <Project>{b25af540-bfa8-4cce-8219-3494116ae501}</Project>
+      <Name>RightsU_Framework</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="Fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="Fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="Fonts\OpenSans-Bold.ttf" />
+    <Content Include="Fonts\OpenSans-BoldItalic.ttf" />
+    <Content Include="Fonts\OpenSans-ExtraBold.ttf" />
+    <Content Include="Fonts\OpenSans-ExtraBoldItalic.ttf" />
+    <Content Include="Fonts\OpenSans-Italic.ttf" />
+    <Content Include="Fonts\OpenSans-Light.ttf" />
+    <Content Include="Fonts\OpenSans-LightItalic.ttf" />
+    <Content Include="Fonts\OpenSans-Regular.ttf" />
+    <Content Include="Fonts\OpenSans-Semibold.ttf" />
+    <Content Include="Fonts\OpenSans-SemiboldItalic.ttf" />
+    <Content Include="Fonts\Oswald-Bold.ttf" />
+    <Content Include="Fonts\Oswald-BoldItalic.ttf" />
+    <Content Include="Fonts\Oswald-Demi-BoldItalic.ttf" />
+    <Content Include="Fonts\Oswald-DemiBold.ttf" />
+    <Content Include="Fonts\Oswald-Extra-LightItalic.ttf" />
+    <Content Include="Fonts\Oswald-ExtraLight.ttf" />
+    <Content Include="Fonts\Oswald-Heavy.ttf" />
+    <Content Include="Fonts\Oswald-HeavyItalic.ttf" />
+    <Content Include="Fonts\Oswald-Light.ttf" />
+    <Content Include="Fonts\Oswald-LightItalic.ttf" />
+    <Content Include="Fonts\Oswald-Medium.ttf" />
+    <Content Include="Fonts\Oswald-MediumItalic.ttf" />
+    <Content Include="Fonts\Oswald-Regular.ttf" />
+    <Content Include="Fonts\Oswald-RegularItalic.ttf" />
+    <Content Include="Fonts\Oswald-Stencil.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Fonts\glyphicons-halflings-regular.woff2" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Home.Master" />
+    <!-- <Content Include="Download\Title_Import_Sample.xlsx" /> -->
+    <!-- <Content Include="Download\EpisodeTitle_Import.xlsx" /> -->
+    <Content Include="JS_Core\Acq_Deal_Gen.min.js.map">
+      <DependentUpon>Acq_Deal_Gen.js</DependentUpon>
+    </Content>
+    <Content Include="Custom_Scripts\Site_Layout.min.js.map">
+      <DependentUpon>Site_Layout.js</DependentUpon>
+    </Content>
+    <Content Include="Custom_Scripts\Syn_Deal_List.min.js.map">
+      <DependentUpon>Syn_Deal_List.js</DependentUpon>
+    </Content>
+    <Content Include="Custom_Scripts\Title_AddEdit.min.js.map">
+      <DependentUpon>Title_AddEdit.js</DependentUpon>
+    </Content>
+    <Content Include="JS_Core\common.concat.min.js.map">
+      <DependentUpon>common.concat.js</DependentUpon>
+    </Content>
+    <Content Include="Custom_Scripts\Acq_Deal_List.min.js.map">
+      <DependentUpon>Acq_Deal_List.js</DependentUpon>
+    </Content>
+    <Content Include="Custom_Scripts\Syn_Deal_Gen.min.js.map">
+      <DependentUpon>Syn_Deal_Gen.js</DependentUpon>
+    </Content>
+    <Content Include="Custom_Scripts\Syn_Deal_Rights.min.js.map">
+      <DependentUpon>Syn_Deal_Rights.js</DependentUpon>
+    </Content>
+    <Content Include="Custom_Scripts\Acq_Deal_Rights.min.js.map">
+      <DependentUpon>Acq_Deal_Rights.js</DependentUpon>
+    </Content>
+    <Content Include="Custom_Scripts\Acq_Deal_Rights_List.min.js.map">
+      <DependentUpon>Acq_Deal_Rights_List.js</DependentUpon>
+    </Content>
+    <Content Include="Custom_Scripts\Acq_Deal_Pushback.min.js.map">
+      <DependentUpon>Acq_Deal_Pushback.js</DependentUpon>
+    </Content>
+    <Content Include="Custom_Scripts\Syn_Deal_Rights_List.min.js.map">
+      <DependentUpon>Syn_Deal_Rights_List.js</DependentUpon>
+    </Content>
+    <Content Include="Custom_Scripts\Acq_Deal_Run_List.min.js.map">
+      <DependentUpon>Acq_Deal_Run_List.js</DependentUpon>
+    </Content>
+    <Content Include="Custom_Scripts\Syn_Deal_Pushback.min.js.map">
+      <DependentUpon>Syn_Deal_Pushback.js</DependentUpon>
+    </Content>
+    <Content Include="Custom_Scripts\Acq_Deal_Run.min.js.map">
+      <DependentUpon>Acq_Deal_Run.js</DependentUpon>
+    </Content>
+    <Content Include="Custom_Scripts\Syn_Deal_Runs.min.js.map">
+      <DependentUpon>Syn_Deal_Runs.js</DependentUpon>
+    </Content>
+    <!-- <Content Include="Download\Music_Title_Import_Sample.xlsx" /> -->
+    <!-- <Content Include="Download\Music_Content_Sample.xlsx" /> -->
+    <Content Include="Views\Shared\_List_Pushback.cshtml" />
+    <Content Include="Views\Syn_Deal\_List_Rights.cshtml" />
+    <Content Include="Views\Shared\_List_Deal.cshtml" />
+    <Content Include="Views\Shared\_Run_Yearwise.cshtml" />
+    <Content Include="Views\Shared\_Run_Channelwise.cshtml" />
+    <Content Include="Views\Shared\_Top_Acq_Details.cshtml" />
+    <Content Include="Views\Shared\_TV_Platform.cshtml" />
+    <Content Include="Views\Login\ChangePassword.cshtml" />
+    <Content Include="Views\Shared\_Status_History.cshtml" />
+    <Content Include="Views\Shared\_General_Title.cshtml" />
+    <Content Include="Views\Shared\_Deal_Status.cshtml" />
+    <Content Include="Views\Shared\_Deal_MileStone.cshtml" />
+    <Content Include="Views\Title_List\Index.cshtml" />
+    <Content Include="Views\Title\Index.cshtml" />
+    <Content Include="Views\Acq_List\_Validation_Popup.cshtml" />
+    <Content Include="Views\Shared\_Approved_List.cshtml" />
+    <Content Include="Views\Title\_Extended_Columns.cshtml" />
+    <Content Include="Views\Title_List\_create.cshtml" />
+    <Content Include="Views\Shared\_MessageBox.cshtml" />
+    <Content Include="Views\Base\Dashboard.cshtml" />
+    <Content Include="Views\Shared\_Acq_Validation_Popup.cshtml" />
+    <Content Include="Views\Title\View.cshtml" />
+    <Content Include="Views\Shared\_Acq_Rights_Holdback.cshtml" />
+    <Content Include="Views\Shared\_Acq_Rights_Blackout.cshtml" />
+    <Content Include="Views\Shared\_List_Title.cshtml" />
+    <Content Include="Views\Shared\_Acq_Rights_Holdback_Popup.cshtml" />
+    <Content Include="Views\Test\Index.cshtml" />
+    <Content Include="Views\Syn_List\Index.cshtml" />
+    <Content Include="Views\Syn_Deal\_List_Revenue.cshtml" />
+    <Content Include="Views\Shared\_Top_Syn_Details.cshtml" />
+    <Content Include="Views\Shared\_List_Syn_Deal.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_Revenue_Create.cshtml" />
+    <Content Include="Views\Syn_Deal\_Additional_Exp.cshtml" />
+    <Content Include="Views\Syn_Deal\_Cost_Type.cshtml" />
+    <Content Include="Views\Syn_Deal\_Overflow.cshtml" />
+    <Content Include="Views\Syn_Deal\_Standard_Returns.cshtml" />
+    <Content Include="Views\Syn_Deal\_List_General_Title.cshtml" />
+    <Content Include="Views\Test\View1.cshtml" />
+    <Content Include="Views\Shared\_Syn_Deal_MileStone.cshtml" />
+    <Content Include="Views\Shared\_Syn_Deal_Status.cshtml" />
+    <Content Include="Views\Shared\_Syn_Error_Popup.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_Run_Yearwise.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_Rights_Blackout.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_Rights_View.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_RestRemark_Popup.cshtml" />
+    <Content Include="Views\Acq_Content\Index.cshtml" />
+    <Content Include="Views\Acq_Content\_List.cshtml" />
+    <Content Include="Views\Shared\_Syn_Approved_List.cshtml" />
+    <Content Include="Views\IPR_List\Index.cshtml" />
+    <Content Include="Views\IPR_List\List_Domestic.cshtml" />
+    <Content Include="Views\IPR_List\List_International.cshtml" />
+    <Content Include="Views\IPR_List\List_OppBy.cshtml" />
+    <Content Include="Views\IPR_List\List_OppAgainst.cshtml" />
+    <Content Include="Views\IPR_Int_Dom\Index.cshtml" />
+    <Content Include="Views\IPR_OppBy_Against\Index.cshtml" />
+    <Content Include="Views\IPR_Int_Dom\List_Attachment.cshtml" />
+    <Content Include="Views\IPR_OppBy_Against\_List_Application_No.cshtml" />
+    <Content Include="Views\IPR_OppBy_Against\_List_IPR_Opp_Attachment.cshtml" />
+    <Content Include="Views\Shared\_Termination.cshtml" />
+    <Content Include="Views\Title\Title_Import.cshtml" />
+    <Content Include="Views\Title\_TitleImport_List.cshtml" />
+    <Content Include="Views\IPR_Int_Dom\View.cshtml" />
+    <Content Include="Views\IPR_OppBy_Against\View.cshtml" />
+    <Content Include="Views\Music_Title\Index.cshtml" />
+    <Content Include="Views\Music_Title\_Create.cshtml" />
+    <Content Include="Views\Music_Title\_List_Music_Title.cshtml" />
+    <Content Include="Views\Music_Title\List.cshtml" />
+    <Content Include="Views\Music_Title\View.cshtml" />
+    <Content Include="Views\Music_Title\Music_Title_Import.cshtml" />
+    <Content Include="Views\Music_Title\_MusicTitleImport_List.cshtml" />
+    <Content Include="Views\Shared\_Acq_Termination_Validation.cshtml" />
+    <Content Include="Views\Amort_Rule\Index.cshtml" />
+    <Content Include="Views\Amort_Rule\List.cshtml" />
+    <Content Include="Views\Amort_Rule\_List_Amort_Rule.cshtml" />
+    <Content Include="Views\Amort_Rule\Create.cshtml" />
+    <Content Include="Views\Amort_Rule\_Amort_Details.cshtml" />
+    <Content Include="Views\Amort_Rule\View.cshtml" />
+    <Content Include="Views\Title\_Title_Deal_Info.cshtml" />
+    <Content Include="Views\Acq_Assign_Music\Index.cshtml" />
+    <Content Include="Views\Acq_Assign_Music\_Music_Title_List.cshtml" />
+    <Content Include="Views\Acq_Assign_Music\_Popup_Assign_Music.cshtml" />
+    <Content Include="Views\Acq_Assign_Music\_Popup_Music_Error_List.cshtml" />
+    <Content Include="Views\Acq_Assign_Music\_Episode_GridView.cshtml" />
+    <Content Include="Views\Acq_Assign_Music\_Popup_Link_Show.cshtml" />
+    <Content Include="Views\Base\DashBoard_Graph.cshtml" />
+    <Content Include="Views\Acq_Deal\Index.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_General.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_Rights_List.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_General_View.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_Rights.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_Rights_Blackout_List.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_Rights_Holdback_List.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_Rights_View.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_Status_History.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_Material.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_Attachment.cshtml" />
+    <Content Include="Views\Acq_Deal\_List_Attachment.cshtml" />
+    <Content Include="Views\Acq_Deal\_List_Material.cshtml" />
+    <Content Include="Views\Acq_Deal\_List_General_Title.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_Rights_Blackout.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_Rights_Holdback.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_Pushback_List.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_Pushback.cshtml" />
+    <Content Include="Views\Acq_Deal\_List_Pushback.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_Run_List.cshtml" />
+    <Content Include="Views\Acq_Deal\_List_Rights.cshtml" />
+    <Content Include="Views\Acq_Deal\_List_Run.cshtml" />
+    <Content Include="Views\Acq_Deal\_Link_Show_Create.cshtml" />
+    <Content Include="Views\Acq_Deal\_Link_Show_List.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_Run.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_Run_View.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_Ancillary_List.cshtml" />
+    <Content Include="Views\Acq_Deal\_List_Ancillary.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_Ancillary.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_Sport_Ancillary_List.cshtml" />
+    <Content Include="Views\Acq_Deal\_FCT_Commitments.cshtml" />
+    <Content Include="Views\Acq_Deal\_Marketing.cshtml" />
+    <Content Include="Views\Acq_Deal\_Monetization.cshtml" />
+    <Content Include="Views\Acq_Deal\_Popup_FCT.cshtml" />
+    <Content Include="Views\Acq_Deal\_Popup_Monetization.cshtml" />
+    <Content Include="Views\Acq_Deal\_Popup_Programing.cshtml" />
+    <Content Include="Views\Acq_Deal\_Programing.cshtml" />
+    <Content Include="Views\Acq_Deal\_Sales.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_Budget_List.cshtml" />
+    <Content Include="Views\Acq_Deal\_List_Budget.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_Budget.cshtml" />
+    <Content Include="Views\Acq_Deal\_List_SAP_WBS.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_Payment_Term_List.cshtml" />
+    <Content Include="Views\Acq_Deal\_List_Payment_Term.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_Cost_List.cshtml" />
+    <Content Include="Views\Acq_Deal\_List_Cost.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_Cost.cshtml" />
+    <Content Include="Views\Acq_Deal\_Additional_Exp.cshtml" />
+    <Content Include="Views\Acq_Deal\_Cost_Type.cshtml" />
+    <Content Include="Views\Acq_Deal\_Overflow.cshtml" />
+    <Content Include="Views\Acq_Deal\_Standard_Returns.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_Cost_New_List.cshtml" />
+    <Content Include="Views\Acq_Deal\_List_Cost_New.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_Sports_List.cshtml" />
+    <Content Include="Views\Acq_Deal\_List_Sports.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_Sports.cshtml" />
+    <Content Include="Views\Syn_Deal\Index.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_General_View.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_General.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_Rights_List.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_Rights.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_Pushback.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_Pushback_List.cshtml" />
+    <Content Include="Views\Syn_Deal\_List_Pushback.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_Payment_Term_List.cshtml" />
+    <Content Include="Views\Syn_Deal\_List_Payment_Term.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_Material.cshtml" />
+    <Content Include="Views\Syn_Deal\_List_Material.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_Run.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_Run_List.cshtml" />
+    <Content Include="Views\Syn_Deal\_List_Run.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_Run_View.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_Revenue_List.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_Revenue.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_Status_History.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_Attachment.cshtml" />
+    <Content Include="Views\Syn_Deal\_List_Attachment.cshtml" />
+    <Content Include="Views\Glossary\Faq.cshtml" />
+    <Content Include="Views\Glossary\ReportsUsage.cshtml" />
+    <Content Include="Views\Glossary\AskExpert.cshtml" />
+    <Content Include="Views\Glossary\ContactInfo.cshtml" />
+    <Content Include="Views\Glossary\ShowPlatforms.cshtml" />
+    <Content Include="Views\Shared\_List_Platforms.cshtml" />
+    <Content Include="Views\Syn_Deal\_Bulk_Update.cshtml" />
+    <Content Include="Views\Syn_Deal\_Bulk_Update_List.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_Error_Bulk.cshtml" />
+    <Content Include="Views\Title\_List_Title_Release.cshtml" />
+    <Content Include="Views\Acq_Deal\_Bulk_Update.cshtml" />
+    <Content Include="Views\Acq_Deal\_Bulk_Update_List.cshtml" />
+    <Content Include="Views\Acq_Deal\_Syn_Error_Bulk.cshtml" />
+    <Content Include="Views\Shared\_Edit_Without_Approval.cshtml" />
+    <Content Include="Views\Title_Content\Index.cshtml" />
+    <Content Include="Views\Title_Content\_Music_Program_List.cshtml" />
+    <Content Include="Views\Title_Content_View\Index.cshtml" />
+    <Content Include="Views\Title_Content_View\_Rights_Content.cshtml" />
+    <Content Include="Views\Title_Content\_Content_Music_Link_List.cshtml" />
+    <Content Include="Views\Title_Content\_Music_Track_List.cshtml" />
+    <Content Include="Views\Title_Content_View\_Music_Content.cshtml" />
+    <Content Include="Views\Title_Content_View\_Version_Content.cshtml" />
+    <Content Include="Views\Title_Content_View\_Airing_Content.cshtml" />
+    <Content Include="Views\Title_Content_View\_Airing_Content_List.cshtml" />
+    <Content Include="Views\Title_Content_View\_Music_Content_List.cshtml" />
+    <Content Include="Views\Title_Content_View\_Status_History_Content.cshtml" />
+    <Content Include="Views\Music_Title\_MusicLabelHistory.cshtml" />
+    <Content Include="Views\Title_Content\_Content_Restriction_Remark_List.cshtml" />
+    <Content Include="Views\Music_Exception_Handling\Index.cshtml" />
+    <Content Include="Views\Music_Title\_Add_Movie_Album.cshtml" />
+    <Content Include="Views\Title_Content_ImportExport\Index.cshtml" />
+    <Content Include="Views\Music_Exception_Handling\_List_Music_Exception.cshtml" />
+    <Content Include="Views\Title_Content_ImportExport\_Music_Program_List.cshtml" />
+    <Content Include="Views\Music_Exception_Handling\_Authorize.cshtml" />
+    <Content Include="Views\Music_Exception_Handling\_List_Aired_Status_History.cshtml" />
+    <Content Include="Views\Music_Exception_Handling\_ApproveOrReject.cshtml" />
+    <Content Include="Views\Title_Content_ImportExport\Music_Program_Import.cshtml" />
+    <Content Include="Views\Music_Exception_Handling\_Exception_Dashboard.cshtml" />
+    <Content Include="Views\BVTitleMapping\Index.cshtml" />
+    <Content Include="Views\BV_Title_Mapping_Shows\Index.cshtml" />
+    <Content Include="Views\BV_Title_Mapping_Shows\_BV_Title_Mapping_ShowsList.cshtml" />
+    <Content Include="Views\BVTitleMapping\_BVTitleMappingList.cshtml" />
+    <Content Include="Views\Additional_Expense\Index.cshtml" />
+    <Content Include="Views\Additional_Expense\_Additional_ExpenseList.cshtml" />
+    <Content Include="Views\BVException\Index.cshtml" />
+    <Content Include="Views\BVException\_AddEditBVException.cshtml" />
+    <Content Include="Views\BVException\_BVExceptionList.cshtml" />
+    <Content Include="Views\Category\Index.cshtml" />
+    <Content Include="Views\Category\_CategoryList.cshtml" />
+    <Content Include="Views\Channel\Index.cshtml" />
+    <Content Include="Views\Channel\_AddEditChannel.cshtml" />
+    <Content Include="Views\Channel\_ChannelList.cshtml" />
+    <Content Include="Views\CostType\Index.cshtml" />
+    <Content Include="Views\CostType\_CostTypeList.cshtml" />
+    <Content Include="Views\Country\Index.cshtml" />
+    <Content Include="Views\Country\_AddEditCountry.cshtml" />
+    <Content Include="Views\Country\_CountryList.cshtml" />
+    <Content Include="Views\Currency\Index.cshtml" />
+    <Content Include="Views\Currency\_AddEditCurrency.cshtml" />
+    <Content Include="Views\Currency\_CurrencyExchangeRateList.cshtml" />
+    <Content Include="Views\Currency\_CurrencyList.cshtml" />
+    <Content Include="Views\Document_Type\Index.cshtml" />
+    <Content Include="Views\Document_Type\_Document_TypeList.cshtml" />
+    <Content Include="Views\Genres\Index.cshtml" />
+    <Content Include="Views\Genres\_GenresList.cshtml" />
+    <Content Include="Views\GradeMasters\Index.cshtml" />
+    <Content Include="Views\GradeMasters\_GradeMasterList.cshtml" />
+    <Content Include="Views\LanguageGroup\Index.cshtml" />
+    <Content Include="Views\LanguageGroup\_LanguageGroup.cshtml" />
+    <Content Include="Views\Language\Index.cshtml" />
+    <Content Include="Views\Language\_Language.cshtml" />
+    <Content Include="Views\MaterialMedium\Index.cshtml" />
+    <Content Include="Views\MaterialMedium\_MaterialMediumList.cshtml" />
+    <Content Include="Views\MaterialType\Index.cshtml" />
+    <Content Include="Views\MaterialType\_MaterialTypeList.cshtml" />
+    <Content Include="Views\MusicLanguage\Index.cshtml" />
+    <Content Include="Views\MusicLanguage\_MusicLanguageList.cshtml" />
+    <Content Include="Views\MusicTheme\Index.cshtml" />
+    <Content Include="Views\MusicTheme\_MusicTheme.cshtml" />
+    <Content Include="Views\Music_Album\Index.cshtml" />
+    <Content Include="Views\Music_Album\_Music_AlbumList.cshtml" />
+    <Content Include="Views\Music_Label\Index.cshtml" />
+    <Content Include="Views\Music_Label\_Music_LabelList.cshtml" />
+    <Content Include="Views\Payment_Term\Index.cshtml" />
+    <Content Include="Views\Payment_Term\_Payment_TermList.cshtml" />
+    <Content Include="Views\Platform_Group\Index.cshtml" />
+    <Content Include="Views\Platform_Group\_AddEditPlatform_Group.cshtml" />
+    <Content Include="Views\Platform_Group\_Platform_Group.cshtml" />
+    <Content Include="Views\RightRule\Index.cshtml" />
+    <Content Include="Views\RightRule\_RightRule.cshtml" />
+    <Content Include="Views\Royalty_Recoupment\AddEditRoyaltyRecoupment.cshtml" />
+    <Content Include="Views\Royalty_Recoupment\Index.cshtml" />
+    <Content Include="Views\Royalty_Recoupment\_RoyaltyRecoupmentList.cshtml" />
+    <Content Include="Views\SAP_WBS\Index.cshtml" />
+    <Content Include="Views\SAP_WBS\_SAP_WBS_List.cshtml" />
+    <Content Include="Views\Security_Group\Index.cshtml" />
+    <Content Include="Views\Security_Group\AddEditSecurityGroup.cshtml" />
+    <Content Include="Views\Security_Group\_SecurityGroupList.cshtml" />
+    <Content Include="Views\System_Parameter\Index.cshtml" />
+    <Content Include="Views\System_Parameter\_SystemParameterList.cshtml" />
+    <Content Include="Views\Talent\Index.cshtml" />
+    <Content Include="Views\Talent\_TalentList.cshtml" />
+    <Content Include="Views\Territory\Index.cshtml" />
+    <Content Include="Views\Territory\_AddEditTerritory.cshtml" />
+    <Content Include="Views\Territory\_TerritoryList.cshtml" />
+    <Content Include="Views\User\Index.cshtml" />
+    <Content Include="Views\User\ViewProfile.cshtml" />
+    <Content Include="Views\User\_AddEditUser.cshtml" />
+    <Content Include="Views\User\_UserList.cshtml" />
+    <Content Include="Views\Vendor\Index.cshtml" />
+    <Content Include="Views\Vendor\_Add_Edit_Vendor.cshtml" />
+    <Content Include="Views\Vendor\_VendorList.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Vendor\_Vendor.cshtml" />
+    <Content Include="Views\Vendor\_AddEditPartyVendor.cshtml" />
+    <Content Include="Views\Channel\_Channel.cshtml" />
+    <Content Include="Views\Channel\_Add_Edit_Channel.cshtml" />
+    <Content Include="Views\Royalty_Recoupment\_RoyaltyRecoupment.cshtml" />
+    <Content Include="Views\Royalty_Recoupment\_AddEditRoyaltyRecoupment.cshtml" />
+    <Content Include="Views\Security_Group\_SecurityGroup.cshtml" />
+    <Content Include="Views\Security_Group\_AddEditSecurityGroup.cshtml" />
+    <Content Include="Views\RightRule\_RgtRule.cshtml" />
+    <Content Include="Views\RightRule\_AddRightRule.cshtml" />
+    <Content Include="Views\IPR_Country\_IPR_CountryList.cshtml" />
+    <Content Include="Views\IPR_Country\Index.cshtml" />
+    <Content Include="Views\ApprovalWorkflow\_Add_Edit_AWSecurityGroup.cshtml" />
+    <Content Include="Views\ApprovalWorkflow\_AddEditApprovalWorkFlow.cshtml" />
+    <Content Include="Views\ApprovalWorkflow\_ApprovalWorkflow.cshtml" />
+    <Content Include="Views\ApprovalWorkflow\_ApprovalWorkflowList.cshtml" />
+    <Content Include="Views\ApprovalWorkflow\Index.cshtml" />
+    <Content Include="Views\BV_Log\Index.cshtml" />
+    <Content Include="Views\BV_Log\_BVLogList.cshtml" />
+    <Content Include="Views\Acq_List\_ReleaseContentList.cshtml" />
+    <Content Include="Views\AssignWorkflow\_Add_Edit_AWSecurityGroup.cshtml" />
+    <Content Include="Views\AssignWorkflow\_AddEditAssignWorkFlow.cshtml" />
+    <Content Include="Views\AssignWorkflow\_AssignWorkflow.cshtml" />
+    <Content Include="Views\AssignWorkflow\_AssignWorkflowList.cshtml" />
+    <Content Include="Views\AssignWorkflow\Index.cshtml" />
+    <Content Include="Views\Reports\DealVersionHistory.cshtml" />
+    <Content Include="Views\BV_Log\_BV_LogXML.cshtml" />
+    <Content Include="Views\AssignWorkflow\_HistoryWorkflowList.cshtml" />
+    <Content Include="Views\SAP_WBS_Import\Index.cshtml" />
+    <Content Include="Views\SAP_WBS_Import\_SAP_WBS_Import_List.cshtml" />
+    <Content Include="Views\SAP_WBS_Import\_SAP_WBS_Import_ListDetails.cshtml" />
+    <Content Include="Views\SAP_WBS_Export\Index.cshtml" />
+    <Content Include="Views\SAP_WBS_Export\_SAP_WBS_Export_List.cshtml" />
+    <Content Include="Views\SAP_WBS_Export\_SAP_WBS_Export_ListDetails.cshtml" />
+    <Content Include="Views\Title_Content\_Title_Content.cshtml" />
+    <Content Include="Views\Title_Content\_Assign_Music.cshtml" />
+    <Content Include="Views\Reports\AcqDealListReport.cshtml" />
+    <Content Include="Views\Music_Title\Music_Title_Contents.cshtml" />
+    <Content Include="Views\Music_Title_Assignment\Index.cshtml" />
+    <Content Include="Views\Music_Title\_List_Music_Title_Contents.cshtml" />
+    <Content Include="Views\Music_Title_Assignment\_Music_Track_List.cshtml" />
+    <Content Include="Views\Music_Title_Assignment\_Content_Music_Link_List.cshtml" />
+    <Content Include="Views\LoginDetailsReport\Index.cshtml" />
+    <Content Include="Views\LoginDetailsReport\_List_LoginDetails.cshtml" />
+    <Content Include="Views\Title_Content_ImportExport\_Excel_Error_List.cshtml" />
+    <Content Include="Views\Reports\PlatformAcquisition.cshtml" />
+    <Content Include="Views\Reports\_Platform_Acquisition_tree.cshtml" />
+    <Content Include="Views\Reports\PlatformWiseSyndication.cshtml" />
+    <Content Include="Views\Reports\SyndicationSalesReport.cshtml" />
+    <Content Include="Views\Reports\LoggedInUsersReport.cshtml" />
+    <Content Include="Views\Reports\SynDealListReport.cshtml" />
+    <Content Include="Views\Reports\RunsExceptionReport.cshtml" />
+    <Content Include="Views\Reports\MusicExceptionReport.cshtml" />
+    <Content Include="Views\Reports\DealExpiryReport.cshtml" />
+    <Content Include="Views\Reports\ContentMusicUsageReport.cshtml" />
+    <Content Include="Views\Reports\MusicConsumptionReport.cshtml" />
+    <Content Include="Views\Reports\PARightsReport.cshtml" />
+    <Content Include="Views\Reports\TerritoryLanguageAuditReport.cshtml" />
+    <Content Include="Views\Reports\_TerritoryLanguageAuditList.cshtml" />
+    <Content Include="Views\Reports\RunUtilizationReport.cshtml" />
+    <Content Include="Views\Reports\MusicUsageReport.cshtml" />
+    <Content Include="Views\TitleMapping\Index.cshtml" />
+    <Content Include="Views\TitleMapping\_List.cshtml" />
+    <Content Include="Views\Acq_Deal\_Digital_Rights_List.cshtml" />
+    <Content Include="Views\Acq_Deal\_Digital_Rights_AddEdit.cshtml" />
+    <Content Include="Views\Shared\Demo_Digital\DigitalAsset.cshtml" />
+    <Content Include="Custom_Scripts\fonts\codropsicons\codropsicons.eot" />
+    <Content Include="Custom_Scripts\fonts\codropsicons\codropsicons.ttf" />
+    <Content Include="Custom_Scripts\fonts\codropsicons\codropsicons.woff" />
+    <Content Include="Views\Reports\Music_Assignment_Audit_Report.cshtml" />
+    <Content Include="Views\Music_Title_Assignment\_Title_Content_List.cshtml" />
+    <Content Include="Views\Digital_Rights\Integration_Log.cshtml" />
+    <Content Include="Views\Digital_Rights\Digital_Assets.cshtml" />
+    <Content Include="Views\Digital_Rights\Consumption_Report.cshtml" />
+    <Content Include="Views\Digital_Rights\Scheduling_Instruction.cshtml" />
+    <Content Include="Views\Rights_Usage_Report\Index.cshtml" />
+    <Content Include="Views\Rights_Usage_Report\_List.cshtml" />
+    <Content Include="Views\Rights_Usage_Report\_List_ScheduleRun.cshtml" />
+    <Content Include="Views\Reports\MusicAiringReport.cshtml" />
+    <Content Include="Views\Music_Title_Assignment\_Title_Content_View.cshtml" />
+    <Content Include="Views\Reports\MusicTrackActivityReport.cshtml" />
+    <Content Include="Views\Program\Index.cshtml" />
+    <Content Include="Views\Program\_ProgramList.cshtml" />
+    <Content Include="Views\Music_Deal\Index.cshtml" />
+    <Content Include="Views\Music_Deal\_ChannelList.cshtml" />
+    <Content Include="Views\Music_Deal\_LinkShowList.cshtml" />
+    <Content Include="Views\Music_Deal_List\Index.cshtml" />
+    <Content Include="Views\Music_Deal_List\_Music_Deal_List.cshtml" />
+    <Content Include="Views\Music_Deal\View.cshtml" />
+    <Content Include="Views\Reports\CostReport.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_Rights_Holdback_Popup.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_Rights_Holdback.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_Rights_Holdback_Popup.cshtml" />
+    <Content Include="Views\Music_Deal\_Music_Approved_List.cshtml" />
+    <Content Include="Views\Title_Content_View\_Cost_Content_List.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_Amort.cshtml" />
+    <Content Include="Views\Reports\AmortReport.cshtml" />
+    <Content Include="Views\Shared\ClosingDealMovieEpisode.cshtml" />
+    <Content Include="Views\Reports\ChannelWiseMusicUsageReport.cshtml" />
+    <Content Include="Views\Reports\RevenueReport.cshtml" />
+    <Content Include="Views\Reports\Test.cshtml" />
+    <Content Include="Views\Reports\DealAttachmentReport.cshtml" />
+    <Content Include="Views\Availability_Movie\Index.cshtml" />
+    <Content Include="Views\Availability_Movie\_TitlesCriteria.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_Rights_Holdback_Validation_Popup.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_Rights_Holdback_Validation_Popup.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_Rights_Holdback_Release_Popup.cshtml" />
+    <Content Include="Views\Reports\EpisodicCostReport.cshtml" />
+    <Content Include="Views\Title_Content_View\_Cost_Content.cshtml" />
+    <Content Include="Views\Reports\MusicDealListReport.cshtml" />
+    <Content Include="Views\Email_Config\Index.cshtml" />
+    <Content Include="Views\Email_Config\_Email_Config_Detail.cshtml" />
+    <Content Include="Views\Email_Config\_Email_Config_List.cshtml" />
+    <Content Include="Views\Email_Config\_Email_Config_User.cshtml" />
+    <Content Include="Views\Availability_Movie\_PeriodCriteria.cshtml" />
+    <Content Include="Views\Shared\ReportViewer.cshtml" />
+    <Content Include="Views\Availability_Movie\_RegionCriteria.cshtml" />
+    <Content Include="Views\Title\_Title_Alternate.cshtml" />
+    <Content Include="Views\Availability_Movie\_Subtitle_LanguageCriteria.cshtml" />
+    <Content Include="Views\Title\_View_Title_Alternate.cshtml" />
+    <Content Include="Views\Availability_Movie\_Dubbing_LanguageCriteria.cshtml" />
+    <Content Include="Views\Availability_Movie\_OtherCriteria.cshtml" />
+    <Content Include="Views\Availability_Movie\_PlatformCriteria.cshtml" />
+    <Content Include="Views\Title\_Title_Main.cshtml" />
+    <Content Include="Views\Title_Content_View\_Title_Metadata.cshtml" />
+    <Content Include="Views\Title_Content_View\_Title_Alternate.cshtml" />
+    <Content Include="Views\Title_Content_View\_Title_Metadata_List.cshtml" />
+    <Content Include="Views\Title_Content_View\_Title_Alternate_List.cshtml" />
+    <Content Include="Views\Acq_Deal\_AddEdit_Episode_Cost.cshtml" />
+    <Content Include="Views\Acq_Deal\_Episode_Cost.cshtml" />
+    <Content Include="Views\Shared\_Email_Notification_Popup.cshtml" />
+    <Content Include="Views\System_Language\Index.cshtml" />
+    <Content Include="Views\System_Language\_Create.cshtml" />
+    <Content Include="Views\Availability_Movie\_QueryList.cshtml" />
+    <Content Include="Views\System_Language\_SystemLanguageList.cshtml" />
+    <Content Include="Views\System_Language\AddEdit.cshtml" />
+    <Content Include="Views\Shared\_Rights_Filter.cshtml" />
+    <Content Include="Views\Music_Deal\_Music_Schedule_Validation.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_Rights_Promoter_List.cshtml" />
+    <Content Include="Views\Pro_List\Index.cshtml" />
+    <Content Include="Views\Pro_List\_Pro_Layout.cshtml" />
+    <Content Include="Views\Pro_List\_Add_Edit_ProDeal.cshtml" />
+    <Content Include="Views\Pro_List\_Pro_List.cshtml" />
+    <Content Include="Views\Pro_List\_List_Title.cshtml" />
+    <Content Include="Views\Pro_List\_AddEdit_RunDefn.cshtml" />
+    <Content Include="Views\Pro_List\View.cshtml" />
+    <None Include="Service References\MSM_SAP_WS\MSM_SAP_WS.wsdl" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\MSM_SAP_WS\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets')" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>49657</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:4966/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.4\build\EntityFramework.props'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.4\build\EntityFramework.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets'))" />
+  </Target>
+  <Import Project="..\packages\EntityFramework.6.4.4\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" />
+  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+</Project>

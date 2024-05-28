@@ -1,0 +1,41 @@
+﻿@model IEnumerable<RightsU_Entities.IPR_Opp_Attachment>
+<table style="margin:10px; width:98%" class="table table-bordered table-hover">
+    <tr>
+        <td style="width:15%"><b>File</b></td>
+        <td style="width:75%"><b>Description</b></td>
+        @if (ViewData["Mode"] != "V")
+        {
+            <td style="width:10%"><b>Action</b></td>
+        }
+    </tr>
+    @{ int count = 0;}
+    @foreach (RightsU_Entities.IPR_Opp_Attachment item in Model)
+    {
+        <tr>
+            <td>
+                <a style="cursor: pointer; text-decoration: underline;" onclick="clickOnImage('G','@item.System_File_Name')">
+                    @item.File_Name
+                    @Html.HiddenFor(m => item.File_Name)
+                    @Html.HiddenFor(m => item.Flag)
+                    @Html.HiddenFor(m => item.System_File_Name, new { id = "hdnFilepath_" + count })
+                    @*@Html.HiddenFor(m => item.System_File_Name)*@
+                    @Html.HiddenFor(m => item.IPR_Opp_Attachment_Code)
+                    @Html.HiddenFor(m => item.IPR_Opp_Code)
+                </a>
+            </td>
+            <td>
+                @item.Description
+                @Html.HiddenFor(m => item.Description, new { id = "hdnDesc_" + count })
+            </td>
+            @if (ViewData["Mode"] != "V")
+            {
+                <td style="text-align:center;">
+                    <a class="glyphicon glyphicon-pencil" title="Edit" onclick="AddAttachment('G','#hdnDesc_@count','@count','#hdnFilepath_@count')" />
+                    <a class="glyphicon glyphicon-trash" title="Delete" onclick="DeleteAttachment('@count')" />
+                </td>
+            }
+        </tr>
+            count++;
+    }
+
+</table>

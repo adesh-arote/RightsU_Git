@@ -1,0 +1,138 @@
+﻿@model List<RightsU_Entities.Music_Label>
+@{
+    var a = Session["TitleLabelCode"] as string;
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+
+<table class="table table-bordered table-hover" id="tblMusic_Label">
+    <thead>
+        <tr>
+            <th style="width:70%;">@objMessageKey.MusicLabel</th>
+            <th style="width:15%;">@objMessageKey.Status</th>
+            <th style="width:15%;">@objMessageKey.Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (TempData["Action"] == "AddMusic_Label")
+        {
+            <tr>
+                <td>
+                    @Html.TextBox("Music_LabelName", "", new { style = "width:90% ", maxlength = "50" })
+                </td>
+                <td align="center">
+                    <span>@objMessageKey.Active</span>
+                </td>
+                <td align="center">
+                    <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" style="cursor: pointer;" onclick="SaveUpdateMusic_Label(0)"></a>
+                    <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" style="cursor: pointer;" onclick="CancelMusic_Label()"></a>
+                </td>
+            </tr>
+        }
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                string strActive = objMessageKey.Active;
+                if (item.Is_Active == "N")
+                {
+                    strActive = objMessageKey.Deactive;
+                }
+                if (TempData["Action"] == "EditMusic_Label" && item.Music_Label_Code == Convert.ToInt32(TempData["idMusic_Label"]))
+                {
+                    <tr>
+                        <td>
+                            @Html.TextBoxFor(model => item.Music_Label_Name, new { style = "width:90% ", maxlength = 50, id = "Music_Label_NameEdit" })
+                            @Html.HiddenFor(model => item.Music_Label_Code, new { id = "Music_Label_CodeEdit", style = "width:90%;" })
+                        </td>
+                        <td align="center">
+                            <span>@strActive</span>
+                        </td>
+                        <td align="center">
+                            <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" style="cursor: pointer;" onclick="SaveUpdateMusic_Label(@item.Music_Label_Code)"></a>
+                            <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" style="cursor: pointer;" onclick="CancelMusic_Label()"></a>
+                        </td>
+                    </tr>
+
+                }
+                else
+                {
+                    <tr>
+                        <td>
+                            <span>@item.Music_Label_Name</span>
+                        </td>
+                        <td align="center">
+                            <span>@strActive</span>
+                        </td>
+                        <td align="center">
+                            @{  bool canDeactive = true;
+                                string toolTipMsg = "";
+                                if (item.Music_Title_Label.Count > 0)
+                                {
+                                    canDeactive = false;
+                                    toolTipMsg = objMessageKey.CannotdeactivatethisMusicLabelasitisusedinMusicTitleLabel;
+                                }
+                                else if(item.Music_Deal.Count > 0)
+                                {
+                                    canDeactive = false;
+                                    toolTipMsg = objMessageKey.CannotdeactivatethisMusicLabelasitisusedinMusicDeal;
+                                }
+                                else if (a.Contains("~" + item.Music_Label_Code.ToString() + "~"))
+                                {
+                                    canDeactive = false;
+                                    toolTipMsg = objMessageKey.CannotdeactivatethisMusicLabelasitisusedinTitle;
+                                }
+                            }
+                            @if (item.Is_Active == "Y")
+                            {
+                                if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForEdit + "~"))
+                                {
+                                    <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer;" onclick="CheckRecordLock(@item.Music_Label_Code,'EDIT')"></a>
+                                }
+                                if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForDeactivate + "~"))
+                                {
+                                    if (canDeactive)
+                                    {
+                                        <a title="@objMessageKey.Deactivate" class="glyphicon glyphicon-thumbs-down" style="cursor: pointer;" onclick="ActiveDeactiveMusic_Label(@item.Music_Label_Code, 'N')"></a>
+                                    }
+                                    else
+                                    {
+                                        <a title="@toolTipMsg" class="glyphicon glyphicon-thumbs-down disabled" onclick="return false;"></a>
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForActivate + "~"))
+                                {
+                                    <a title="@objMessageKey.CannoteditthisMusicLabelasitisdeactivated" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
+                                    <a title="@objMessageKey.Activate" class="glyphicon glyphicon-thumbs-up" style="cursor: pointer;" onclick="ActiveDeactiveMusic_Label(@item.Music_Label_Code, 'Y')"></a>
+                                }
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+        }
+        else
+        {
+            if (TempData["Action"] != "AddMusic_Label")
+            {
+                <tr>
+                    <td colspan="5">@objMessageKey.Norecordfound</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+<script>
+    $("#Music_LabelName,#searchCommon,#Music_Label_NameEdit").keypress(function (event) {
+        var regex = new RegExp("^[a-zA-Z0-9 ]+$");
+        var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+        if (!regex.test(key)) { event.preventDefault(); return false; }
+    });
+</script>

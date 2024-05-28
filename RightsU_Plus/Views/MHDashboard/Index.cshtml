@@ -1,0 +1,546 @@
+﻿@using UTOFrameWork.FrameworkClasses;
+@model List<RightsU_Entities.USPMHRequisitionList_Result>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+}
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script src="~/scripts/loader.js"></script>
+
+<style>
+    svg > g:last-child > g:last-child {
+        pointer-events: none;
+    }
+
+    div.google-visualization-tooltip {
+        pointer-events: none;
+    }
+
+    #ddlPieChartSortType_chosen {
+        text-align: left;
+        float: right;
+        /*position:fixed !important;*/
+    }
+
+    #ddlBarChartSortType_chosen {
+        max-width:70% !important;
+        padding-left: 5px;
+        text-align: left;
+        /*float: right;*/
+    }
+    #ddlPieChartBU_chosen{     
+        max-width:90% !important;
+        text-align: left;
+        float: right;
+    }
+    #ddlPieChartShowType_chosen{
+        max-width:95% !important;
+        text-align: left;
+        float: right;
+    }
+    #ddlBarChartBU_chosen{
+        max-width:70% !important;
+        text-align: left;
+        float: right;
+    }
+    #ddlBarChartShowType_chosen{
+        max-width:95%!important;
+        text-align: left;
+        float: right;
+    }
+   
+</style>
+
+<script>
+    var URL_BindGrid = '@Url.Action("BindGrid", "MHDashboard")';
+    var URL_FetchPieChartData = '@Url.Action("FetchPieChartData", "MHDashboard")';
+    var URL_FetchBarChartData = '@Url.Action("FetchBarChartData", "MHDashboard")';
+   
+    google.charts.load('current', { 'packages': ['corechart'] });
+    google.charts.load('44', { 'packages': ['corechart'] });
+
+    $(document).ready(function () {
+        $('#hdnDDLFor').val('Both');
+        var DDLFor = $('#hdnDDLFor').val();
+        var DealTypeCode = $('#ddlPieChartShowType').val();
+        if (DealTypeCode == 0) {
+            DealTypeCode = $('#hdnAllDealTypeCode').val();
+        }
+        var BU = $('#ddlBarChartBU').val();
+        if (BU == 0) {
+            BU = $('#hdnAllBusinessCode').val();
+        }
+        FetchPieChartData('M', DealTypeCode, BU, 'PieChart', DDLFor);
+        FetchBarChartData('M', DealTypeCode, BU, 'BarChart', DDLFor);
+  
+        $('#ddlPieChartShowType').change(function () {         
+            $('#hdnDDLFor').val('ShowType');
+            var DealTypeCode = $('#ddlPieChartShowType').val();
+            if (DealTypeCode == 0) {
+                DealTypeCode = $('#hdnAllDealTypeCode').val();
+            }
+            FetchPieChartData('', DealTypeCode, '', 'PieChart', DDLFor);
+        });
+        $('#ddlBarChartShowType').change(function () {          
+            $('#hdnDDLFor').val('ShowType');
+            var DealTypeCode = $('#ddlBarChartShowType').val();
+            if (DealTypeCode == 0) {
+                DealTypeCode = $('#hdnAllDealTypeCode').val();
+            }
+            FetchBarChartData('', DealTypeCode, '', 'BarChart', DDLFor);
+        });
+        $('#ddlPieChartBU').change(function () {
+            $('#hdnDDLFor').val('BU');
+            var BU = $('#ddlPieChartBU').val();
+            if (BU == 0) {
+                BU = $('#hdnAllBusinessCode').val();
+            }
+            FetchPieChartData('', '', BU, 'PieChart', DDLFor);
+        });
+        $('#ddlBarChartBU').change(function () {
+            $('#hdnDDLFor').val('BU');
+            var BU = $('#ddlBarChartBU').val();
+            if (BU == 0) {
+                BU = $('#hdnAllBusinessCode').val();
+            }
+            FetchBarChartData('', '', BU, 'BarChart', DDLFor);
+        });
+        $('#ddlPieChartSortType').change(function () {
+            $('#hdnDDLFor').val('');
+            var SortType = $('#ddlPieChartSortType').val();
+            FetchPieChartData(SortType, '', '', 'PieChart', DDLFor);
+        });
+        $('#ddlBarChartSortType').change(function () {
+            $('#hdnDDLFor').val('');
+            var SortType = $('#ddlBarChartSortType').val();
+            FetchBarChartData(SortType, '', '', 'BarChart', DDLFor);
+        });      
+    });
+
+    function GetAllRequest(Key, MHRequestCode, callFor, MHTypeCode) {
+        debugger;
+        var URL = '@Url.Action("GetAllRequest", "MHRequisition", new { Key = "_Key_", MHRequestCode = "_MHRequestCode_", callFor = "_callFor_", MHTypeCode = "_MHTypeCode_" })';
+        URL = URL.replace("_Key_", Key);
+        URL = URL.replace("amp;", "");
+        URL = URL.replace("_MHRequestCode_", MHRequestCode);
+        URL = URL.replace("amp;", "");
+        URL = URL.replace("_callFor_", callFor);
+        URL = URL.replace("amp;", "");
+        URL = URL.replace("_MHTypeCode_", MHTypeCode);
+        window.location.href = URL;
+    }
+
+    function drawPieChart() {
+        $.get('GetChartData', {}, function (data) {
+            var tdata = new google.visualization.DataTable();
+            tdata.addColumn('string', 'Task');
+            tdata.addColumn('number', 'Hours per Day');
+            tdata.addColumn('string', 'VendorCode');
+            for (var i = 0; i < data.length; i++) {             
+                tdata.addRow([data[i].VendorName, data[i].RequestCount, data[i].VendorCodes]);
+            }
+            var options1 = {
+                is3D: true,
+                chartArea: { left: 10, top: 20, bottom: 10, 'width': '100%', 'height': '100%' },
+                legend: { position: 'right', 'alignment': 'center', maxLines: 10 },
+                pieSliceText: 'percentage',               
+            };
+
+
+            if (tdata.getNumberOfRows() == 0) {
+                $("#piechart").css('height', '150px');
+                $('#piechart').css('margin-top', '130px');
+                $("#piechart").html('<h4>NO DATA</h4>');
+            }
+            else {
+                $("#piechart").css('height', '300px');
+                $('#piechart').css('margin-top', '0px');
+                var chart1 = new google.visualization.PieChart(document.getElementById('piechart'));
+                chart1.draw(tdata, options1);
+
+                google.visualization.events.addListener(chart1, 'select', selectHandler1);
+
+                google.visualization.events.addListener(chart1, 'onmouseover', cursorHandler2);
+                google.visualization.events.addListener(chart1, 'onmouseout', cursorHandler3);
+
+                function selectHandler1() {                    
+                    var selectedItem = chart1.getSelection()[0];
+                    if (selectedItem) {
+                        var VendorCode = tdata.getValue(selectedItem.row, 2);
+                        $('#hdnVendorCode').val(VendorCode);
+                        $('#hdnCallFor').val("PieChart");
+                        $('#hdnStatus').val(" ");
+                        debugger;
+                        BindGrid('', '', '', '', '', 'PieChart');
+                    }
+                }
+
+                function cursorHandler2() {
+                    $('#piechart').css('cursor', 'pointer')
+                }
+                function cursorHandler3() {
+                    $('#piechart').css('cursor', 'default')
+                }
+            }
+        })
+    };
+
+    function drawChart() {
+        debugger
+        $.get('GetColumnChartData', {}, function (data) {
+            var tdata1 = new google.visualization.DataTable();        
+            tdata1.addColumn('string', 'VendorName');
+            tdata1.addColumn('number', 'Approved', { role: 'annotation' });
+            tdata1.addColumn('number', 'Pending', { role: 'annotation' });
+            tdata1.addColumn('number', 'Rejected', { role: 'annotation' });
+            tdata1.addColumn('number', 'Partially approved', { role: 'annotation' });
+
+            for (var i = 0; i < data.length; i++) {
+                tdata1.addRow([data[i].VendorName, data[i].ApprovedCount, data[i].PendingCount, data[i].RejectedCount, data[i].PartiallyApproved]);
+            }
+            var options2 = {
+                chart2: '',
+                is3D: true,
+                legend: { position: 'top', 'alignment': 'center', maxLines: 5 },
+                bar: { groupWidth: '80%' },
+                colors: ['#109619', '#3266cc', '#dc3812', '#ff9900'],
+                hAxis: { slantedText: true, slantedTextAngle: 43 }             
+            };
+
+            if (tdata1.getNumberOfRows() == 0) {
+                $("#columnchart_material").css('height', '150px');
+                $('#columnchart_material').css('margin-top', '130px');
+                $("#columnchart_material").html('<h4>NO DATA</h4>');
+            }
+            else {
+                $("#columnchart_material").css('height', '300px');
+                $('#columnchart_material').css('margin-top', '0px');
+                var chart2 = new google.visualization.ColumnChart(document.getElementById('columnchart_material'));
+                chart2.draw(tdata1, options2);
+
+                google.visualization.events.addListener(chart2, 'select', selectHandler2);
+
+                google.visualization.events.addListener(chart2, 'onmouseover', cursorHandler2);
+                google.visualization.events.addListener(chart2, 'onmouseout', cursorHandler3);
+
+                function selectHandler2() {                   
+                    var selectedItem = chart2.getSelection()[0];
+                    var selection = chart2.getSelection();
+                    var VendorCode = tdata1.getValue(selection[0].row, 0);
+                    var Status = tdata1.getColumnLabel(selection[0].column);
+
+                    $('#hdnVendorCode').val(VendorCode);
+                    $('#hdnStatus').val(Status);
+                    $('#hdnCallFor').val("BarChart");
+                    BindGrid('', '', '', '', '', 'BarChart');
+                }
+                function cursorHandler2() {
+                    var selection = chart2.getSelection();
+                    $('#columnchart_material').css('cursor', 'pointer')
+                }
+                function cursorHandler3() {
+                    $('#columnchart_material').css('cursor', 'default')
+                }
+            }
+        })
+    };
+
+    var MHRequestCode = "", VendorCodes = "", status = "", callFor = "";
+
+    function BindGrid(MHRequestCode, VendorCodes, DealType, BU, status, callFor) {    
+        var DDLFor = $('#hdnDDLFor').val();
+       
+        if (DDLFor == 'Both') {
+            DealType = $('#hdnAllDealTypeCode').val();
+            BU = $('#hdnAllBusinessCode').val();
+        }
+         if (callFor != "RecentRequest") {
+                callFor = $('#hdnCallFor').val();
+                VendorCodes = $('#hdnVendorCode').val();
+                status = $('#hdnStatus').val();
+            }
+            else if (callFor != "BarChart") {
+                $('#hdnCallFor').val("RecentRequest");
+                VendorCodes = $('#hdnVendorCode').val('');
+                status = $('#hdnStatus').val('');
+            }
+            else {
+                $('#hdnCallFor').val("RecentRequest");
+                VendorCodes = $('#hdnVendorCode').val('');
+            }
+
+        var PageNo = $('#hdnPageNumber').val();
+        var recordPerPage = $('#txtPgSize').val();
+    
+        $('#popup').modal();
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: URL_BindGrid,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                MHRequestCode: MHRequestCode,
+                VendorCodes: VendorCodes,
+                DealType: DealType,
+                BU: BU,
+                status: status,
+                callFor: callFor,
+                PageNo: PageNo,
+                recordPerPage: recordPerPage
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                  
+                    $('#hdnRequestCode').val(MHRequestCode);
+                    var RequestId = $('#RequestID_' + MHRequestCode).text();
+                    var ShowName = $('#ShowName_' + MHRequestCode).text();
+                    var Episode = $('#Episode_' + MHRequestCode).text();
+                    var ChannelName = $('#hdnChannelName_' + MHRequestCode).val();
+                    $('#pupupHtml').empty();
+                    $('#pupupHtml').html(result);
+                    hideLoading();
+                    if (ChannelName == "") {
+                        $('#popUpHeader').text(RequestId + " /" + ShowName + " (" + Episode + ")");
+                    }
+                    else {
+                        $('#popUpHeader').text(RequestId + " /" + ChannelName + " /" + ShowName + " (" + Episode + ")");
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    var SortType = '';
+    function FetchPieChartData(SortType, DealTypeCode, BU, CallFor, DDLFor) {
+        if ($('#ddlPieChartShowType').val() == "") {
+            DealTypeCode = "";
+        }
+        if ($('#ddlPieChartBU').val() == "") {
+            BU = "";
+        }
+        $.ajax({
+            type: "POST",
+            url: URL_FetchPieChartData,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                SortType: SortType,
+                DealTypeCode: DealTypeCode,
+                BU: BU
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {                    
+                        google.charts.setOnLoadCallback(drawPieChart);                 
+                    }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function FetchBarChartData(SortType, DealTypeCode, BU, CallFor, DDLFor) {     
+        if ($('#ddlBarChartShowType').val() == "") {
+            DealTypeCode = "";
+        }
+        if ($('#ddlBarChartBU').val() == "") {
+            BU = "";
+        }
+        $.ajax({
+            type: "POST",
+            url: URL_FetchBarChartData,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                SortType: SortType,
+                DealTypeCode: DealTypeCode,
+                BU: BU
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }                
+                else {                  
+                    google.charts.setOnLoadCallback(drawChart);                 
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+ 
+</script>
+
+<input type="hidden" id="hdnDDLFor" name="hdnDDLFor" />
+<input type="hidden" id="hdnVendorCode" name="hdnVendorCode" />
+<input type="hidden" id="hdnStatus" name="hdnStatus" />
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="title_block dotted_border clearfix">
+                <h2 class="pull-left">
+                    Music Hub
+                </h2>
+            </div>
+
+            <div class="row" style="height: 370px;" id="divCharts">
+                <div class="col-md-5">
+                    <div class="box box-success">
+                        <table>
+                            <tr style="width:430px;">
+                                <td colspan="3"><h4>Music Labels Consumed</h4></td>
+                            </tr>
+                            <tr style="width:430px;">
+                                <td style="padding-left:40px;width:185px;">
+                                    @Html.DropDownList("ddlPieChartBU", ViewBag.BU as SelectList, "All", new { @id = "ddlPieChartBU", @class = "form_input chosen-select" })
+                                    @Html.Hidden("hdnAllBusinessCode", (string)ViewBag.Business_Unit_Code_All, new { @id = "hdnAllBusinessCode" })
+                                </td>
+                                <td style="width:130px;">
+                                    @Html.DropDownList("ddlPieChartShowType", ViewBag.ShowType as SelectList,"All Shows", new { @id = "ddlPieChartShowType", @class = "form_input chosen-select" })
+                                    @Html.Hidden("hdnAllDealTypeCode", (string)ViewBag.Deal_Type_Codes_All, new { @id = "hdnAllDealTypeCode" })
+                                </td>
+                                <td style="width:125px;">
+                                    @Html.DropDownList("ddlPieChartSortType", (List<SelectListItem>)ViewBag.SortType, new { @id = "ddlPieChartSortType", @class = "form_input chosen-select" })
+                                </td>
+                            </tr>                     
+                        </table>  
+                        <div class="box-body">
+                            <div id="piechart" style="width: 450px; height: 300px; text-align:center">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-7">
+                    <div class="box box-success">
+                        <table>
+                            <tr style="width:400px;">
+                                <td colspan="3"><h4 style="padding-left:65px;">Music Tracks Consumed</h4></td>
+                            </tr>
+                            <tr style="width:400px;">
+                                <td style="width:190px;padding-left:112px;">
+                                    @Html.DropDownList("ddlBarChartBU", ViewBag.BU as SelectList, "All", new { @id = "ddlBarChartBU", @class = "form_input chosen-select" })
+                                </td>
+                                <td style="width:90px;">
+                                    @Html.DropDownList("ddlBarChartShowType", ViewBag.ShowType as SelectList,"All Shows", new { @id = "ddlBarChartShowType", @class = "form_input chosen-select" })
+                                </td>
+                                <td style="width:100px;padding-right:50px;">
+                                    @Html.DropDownList("ddlBarChartSortType", (List<SelectListItem>)ViewBag.SortType, new { @id = "ddlBarChartSortType", @class = "form_input chosen-select"  })
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div class="box-body">
+                            <div id="columnchart_material" style="width: 640px; height: 300px;text-align:center;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="title_block dotted_border clearfix">
+                <h4>
+                    Last 5 Requests
+                </h4>
+            </div>
+            <br />
+
+            <div class="tab-content clearfix table-wrapper scale_table_container" style="margin-top: 5px;">
+                <div class="scale_table_block">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th style="width:12%;">Request ID</th>
+                                <th style="width:13%;">Show Name</th>
+                                <th style="width:8%;">Episode No</th>
+                                <th style="width:5%;">Songs</th>
+                                <th style="width:12%;">Music Label</th>
+                                <th style="width:19%;">Requested By</th>
+                                <th style="width:9%;">Requested Date</th>
+                                <th style="width:8%;">Status</th>
+                                <th style="width:8%;">Pending Since</th>
+                                <th style="width:7%;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Count > 0)
+                            {
+                                foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            <a style="color:blue;" onclick="BindGrid(@item.MHRequestCode,'', '','','','RecentRequest')"  onmouseover="this.style.cursor='pointer';">
+                                                <span id="RequestID_@item.MHRequestCode">@item.RequestID</span>
+                                            </a>
+                                            <input type="hidden" id="hdnCallFor" name="hdnCallFor" value="RecentRequest" />
+                                            <input type="hidden" id="hdnChannelName_@item.MHRequestCode" name="MHRequestCode" value="@item.ChannelName">
+                                            <input type="hidden" id="hdnRequestCode" name="hdnRequestCode">
+                                        
+                                        <td><span id="ShowName_@item.MHRequestCode">@item.ShowName</span></td>
+                                        <td align="center"><span id="Episode_@item.MHRequestCode">@item.EpisodeNo</span></td>
+                                        <td style="text-align:center">
+                                            <a style="color:blue;" onclick="BindGrid(@item.MHRequestCode,'','','','','RecentRequest')" onmouseover="this.style.cursor='pointer';">
+                                                @item.Songs
+                                            </a>
+                                            <input type="hidden" id="hdnRequestCode" name="hdnRequestCode" value="@item.MHRequestCode" />
+
+                                        </td>
+                                        <td>@item.MusicLabel</td>
+                                        <td>@item.RequestedBy</td>
+                                        <td align="center">@string.Format("{0:" + GlobalParams.DateFormat_Display + "}", item.RequestedDate)</td>
+                                        <td>@item.Status</td>
+                                        <td style="text-align:center">@(item.PendingSince == "" ? "-" : @item.PendingSince)</td>
+                                        <td align="center">
+                                            <a title="View" class="glyphicon glyphicon-eye-open" onclick="GetAllRequest('VIEW',@item.MHRequestCode,'D',@item.MHRequestTypeCode)"></a>
+                                            @if (item.PendingCount > 0)
+                                            {
+                                                <a title="Approve" class="glyphicon glyphicon-log-in" onclick="GetAllRequest('CHILD',@item.MHRequestCode,'D',@item.MHRequestTypeCode)"></a>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+           <div style="margin-top:5px;">              
+                <a class="btn btn-primary pull-left"  onclick="GetAllRequest('LIST',0,'D',1)">
+                    <span class="glyphicon glyphicon-eye-open" style="color:white"></span>
+                    &nbsp;View all requests</a>
+            </div>
+        </div>
+    </section>
+</div>
+
+
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none; max-height:450px; ">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <div class="form_fields acq" id="pupupHtml">
+
+            </div>
+        </div>
+    </div>
+</div>
+

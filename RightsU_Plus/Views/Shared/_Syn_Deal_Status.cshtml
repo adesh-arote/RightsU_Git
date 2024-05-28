@@ -1,0 +1,50 @@
+﻿@model IEnumerable<RightsU_Entities.USP_List_Syn_Deal_Status_Result>
+<style>
+    #bindDealStatus td:not(:first-child) {text-align: center;}
+</style>
+@{
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<div class="modal_block">
+    @{string strCheckFor = new RightsU_BLL.System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Deal_Complete_Flag").Select(s => s.Parameter_Value).FirstOrDefault();}
+    <table class="table table-bordered table-hover" style="display: table;">
+        <tr>
+            <th class="movie" style="width: 400px;">@objMessageKey.TitleName</th>
+            @if (@strCheckFor.Contains('R'))
+            {   <th style="width: 120px;">@objMessageKey.RightsAdded</th>}
+            @if (@strCheckFor.Contains('C'))
+            {   <th style="width: 110px;">@objMessageKey.RevenueAdded</th>}
+            @if (@strCheckFor.Contains('B'))
+            {   <th style="width: 120px;">@objMessageKey.BudgetAdded</th>}
+        </tr>
+
+        @foreach (var objSynList in Model)
+        {
+            <tr>
+                <td>@objSynList.Title_Name</td>
+                @if (@strCheckFor.Contains('R'))
+                {<td>@objSynList.Is_Rights_Added</td>}
+                @if (@strCheckFor.Contains('C'))
+                {<td>@objSynList.Is_Cost_Added</td>}
+            </tr>
+        }
+    </table>
+</div>
+<div class="modal_block_full">
+    <div class="form_links">
+        <ul class="modal_block clearfix">
+            <li>
+                <a class="btn-primary" data-dismiss="modal" href="#">@objMessageKey.Cancel</a>
+            </li>
+        </ul>
+    </div>
+</div>

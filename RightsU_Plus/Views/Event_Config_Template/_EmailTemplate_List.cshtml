@@ -1,0 +1,201 @@
+﻿@model IEnumerable<RightsU_Entities.Email_Config_Template>
+@using UTOFrameWork.FrameworkClasses;
+
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+}
+<style>
+    td {
+        text-align: center;
+    }
+</style>
+
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th style="width: 30%">
+                Template Name
+            </th>
+            <th style="width: 20%">
+                Template Type
+            </th>
+            <th style="width: 20%">
+                Platform
+            </th>
+            <th style="width: 20%">
+                Status
+            </th>
+            <th style="width: 20%">
+                Action
+            </th>
+        </tr>
+    </thead>
+    @{
+        if (ViewBag.CommandName == "ADD")
+        {
+            <tr>
+                <td style="text-align:left;">
+                    @Html.DropDownList("lstEmailConfig", (IEnumerable<SelectListItem>)ViewBag.lst_EmailConfig, "Please Select", htmlAttributes: new { @id = "ddlEmailConfig", @class = "form_input chosen-select" })
+                </td>
+                <td style="text-align:left;">
+                    @Html.DropDownList("lstTemplateType", (IEnumerable<SelectListItem>)ViewBag.lst_TemplateType, "Please Select", htmlAttributes: new { @id = "ddlTemplateType", @class = "form_input chosen-select" })
+                </td>
+                <td style="text-align:left;">
+                    @Html.DropDownList("lstPlatform", (IEnumerable<SelectListItem>)ViewBag.lst_Platform, "Please Select", htmlAttributes: new { @id = "ddlPlatform", @class = "form_input chosen-select" })
+                </td>
+                <td>New</td>
+                <td style="width:75%">
+                    <a title="Save" class="glyphicon glyphicon-ok-circle" onclick="Save_Email_Config_Template(0)"></a>
+                    <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="Email_Config_Template_Cancel()"></a>
+                </td>
+            </tr>
+        }
+    }
+    @if (Model.Count() > 0)
+    {
+        foreach (var item in Model)
+        {
+            <tr>
+                @if (ViewBag.CommandName == "EDIT" && ViewBag.Email_Config_Template_Code == item.Email_Config_Template_Code)
+                {
+                <td style="text-align:left;">
+                    @Html.DropDownList("lstEmailConfig", (IEnumerable<SelectListItem>)ViewBag.lst_EmailConfig, "Please Select", htmlAttributes: new { @id = "ddlEmailConfig", @class = "form_input chosen-select" })
+                </td>
+
+                <td style="text-align:left;">
+                    @Html.DropDownList("lstTemplateType", (IEnumerable<SelectListItem>)ViewBag.lst_TemplateType, "Please Select", htmlAttributes: new { @id = "ddlTemplateType", @class = "form_input chosen-select" })
+                </td>
+
+                <td style="text-align:left;">
+                    @Html.DropDownList("lstPlatform", (IEnumerable<SelectListItem>)ViewBag.lst_Platform, "Please Select", htmlAttributes: new { @id = "ddlPlatform", @class = "form_input chosen-select" })
+                </td>
+                    <td>
+                        @if (item.Is_Active == "Y")
+                        {
+                            <span>Active</span>
+                        }
+                        else
+                        {
+                            <span>Deactive</span>
+                        }
+                    </td>
+                    <td>
+                        <a title="Save" class="glyphicon glyphicon-ok-circle" onclick="Save_Email_Config_Template(@item.Email_Config_Template_Code)"></a>
+                        <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="Email_Config_Template_Cancel()"></a>
+                    </td>
+                }
+                else
+                {
+                    <td style="text-align:left;">
+                        <span>
+                            @{
+                                RightsU_BLL.Email_Config_Service objECS = new RightsU_BLL.Email_Config_Service(objLoginEntity.ConnectionStringName);
+                                string TemplateName = "";
+                                if (item.Email_Config_Code > 0 && item.Email_Config_Code != null)
+                                {
+                                    TemplateName = objECS.GetById(Convert.ToInt32(item.Email_Config_Code)).Email_Type;
+                                }
+                                @TemplateName
+                            }
+                        </span>
+                    </td>
+                    <td>
+                        @if (item.Event_Template_Type == "T")
+                        {
+                            <span>TEXT</span>
+                        }
+                        else
+                        {
+                            <span>HTML</span>
+                        }
+                    </td>
+                    <td>
+                        <span>
+                            @{
+                                RightsU_BLL.Event_Platform_Service objPf = new RightsU_BLL.Event_Platform_Service(objLoginEntity.ConnectionStringName);
+                                string Platform = "";
+                                if (item.Event_Platform_Code > 0 && item.Event_Platform_Code != null)
+                                {
+                                    Platform = objPf.GetById(Convert.ToInt32(item.Event_Platform_Code)).Event_Platform_Name;
+                                }
+                                @Platform
+                            }
+                        </span>
+                    </td>
+                    <td>
+                        @if (item.Is_Active == "Y")
+                        {
+                            <span>Active</span>
+                        }
+                        else
+                        {
+                            <span>Deactive</span>
+                        }
+                    </td>
+                    <td>
+                        @if (item.Is_Active == "Y")
+                        {
+                            if (item.AllowEdit == "Y")
+                            {
+                                if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForEdit.ToString() + "~"))
+                                {
+                                    <a title="Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer" onclick="CheckRecordLock('EDIT', '@item.Email_Config_Template_Code')"></a>
+                                }
+                            }
+                            else
+                            {
+                                <a title="Cannot edit record as it is in use" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
+                            }
+                            if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForDeactivate + "~"))
+                            {
+                                <a title="@objMessageKey.Deactivate" class="glyphicon glyphicon-thumbs-down" style="cursor: pointer" onclick="ActivateDeactivate('@item.Email_Config_Template_Code', 'N')"></a>
+                            }
+                            if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForEdit.ToString() + "~"))
+                            {
+                                <a title="Configure" class="glyphicon glyphicon-cog" style="cursor: pointer" onclick="ConfigureTemplate('@item.Email_Config_Template_Code', '@item.Email_Config_Code', '@item.Event_Template_Code', '@item.Event_Platform_Code', '@item.Event_Template_Type')"></a>
+                            }
+                           
+                        }
+                        else
+                        {
+                            if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForEdit.ToString() + "~"))
+                            {
+                                <a title="Cannot edit record as it is deactivated" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
+                            }
+                            if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForActivate + "~"))
+                            {
+                                <a title="@objMessageKey.Activate" class="glyphicon glyphicon-thumbs-up" style="cursor: pointer;" onclick="ActivateDeactivate(@item.Email_Config_Template_Code, 'Y')"></a>
+                            }
+                            if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForEdit.ToString() + "~"))
+                            {
+                                <a title="Cannot configure template as record is deactivated" class="glyphicon glyphicon-cog disabled" onclick="return false;"></a>
+                            }
+                        }
+
+                    </td>
+                }
+            </tr>
+        }
+    }
+    else
+    {
+        <tr>
+            <td colspan="5">@objMessageKey.Norecordfound</td>
+        </tr>
+    }
+</table>

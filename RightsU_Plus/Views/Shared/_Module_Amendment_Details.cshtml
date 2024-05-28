@@ -1,0 +1,95 @@
+﻿@model RightsU_Entities.Acq_Amendement_History
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script>
+    $(document).ready(function () {
+        initializeDatepicker();
+    });
+
+    function ClosePopup() {
+        // $('#ddlLanguages').val("");
+        $('#popDealAmendmentDetailsPopup').modal('hide');
+
+
+    }
+
+</script>
+<style>
+    td {
+        padding: 1%
+    }
+</style>
+<div class="modal_block modal_header">
+    <a class="close" onclick="ClosePopup()">
+        <span>X</span>
+        <span class="sr-only">Close</span>
+    </a>
+    <h2>Agreement Amendment Details</h2>
+</div>
+<div class="modal_block sty" style="margin-left: 10px;margin-right: 10px;">
+    @if (Model != null)
+    {
+        <table class="add_title_popup">
+            <tr>
+                <td style="width:22%"><b>Amendment Date</b></td>
+                @*<td style="width:12%">
+                        <input type="hidden" id="hdnStartDate" />
+                        <input type="text" class="isDatepicker" value="@Model.Amendment_DtxtAmendedByate" id="txtAmendmentDate" name="AmendmentDate" placeholder="DD/MM/YYYY" width="100"
+                               title="@objMessageKey.StartDate" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" readonly />
+                    </td>*@
+                <td>
+                    @*<input type="text" name="AmendmentDate" id="txtAmendmentDate" class="textbox" maxlength="50" value="@Model.Amendment_Date" readonly style="width:85%"/>*@
+                    @Html.TextBoxFor(model => model.Amendment_Date, "{0:dd/MM/yyyy}", new
+                    {
+                        @name = "AmendmentDate",
+                        @id = "txtAmendmentDate",
+                        @placeholder = "DD/MM/YYYY",
+                        @width = "100",
+                        @ondrop = "return false",
+                        @onpaste = "return false",
+                        @onkeypress = "return false",
+                        @onkeydown = "return false",
+                        @style = "width:85%",
+                        @readonly = "readonly"
+                    })
+                </td>
+
+            </tr>
+            <tr>
+                <td><b>Amended By</b></td>
+                <td><input type="text" name="AmendedBy" id="txtAmendedBy" class="textbox" maxlength="50" value="@Model.Amended_By" readonly style="width:85%" /></td>
+            </tr>
+            <tr>
+                <td><b>Remarks</b></td>
+                <td>
+                    @*<input type="text" name="Remarks" id="txtRemarks" class="textbox" maxlength="50" value="@Model.Remarks" readonly style="width:85%" />*@
+                    <textarea style="width: 85%;" name="Remarks" id="txtRemarks" maxlength="4000" readonly>@Model.Remarks</textarea>
+                </td>
+            </tr>
+        </table>
+        <input type="hidden" name="Acq_Amendement_History_Code" value="@Model.Acq_Amendement_History_Code" />
+        <input type="hidden" name="RecordCode" value="@ViewBag.RecordCode" />
+        <input type="hidden" name="Version" value="@ViewBag.Version" />
+        <input type="hidden" name="ModuleCode" value="@ViewBag.ModuleCode" />
+    }
+    else
+    {
+        <span><b>No Records Found</b></span>
+    }
+
+</div>
+<div class="modal_block_full" style="margin-top: 10px;">
+    <div class="form_links">
+        <ul class="modal_block clearfix" style="padding-left:10px; padding-top: 10px;">
+            <li>
+                <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="ClosePopup()" />
+            </li>
+        </ul>
+    </div>
+</div>
+

@@ -1,0 +1,21 @@
+﻿CREATE TYPE [dbo].[Schedule_Data] AS TABLE (
+    [Program_Episode_ID]                  NVARCHAR (MAX) NULL,
+    [Program_Episode_Title]               NVARCHAR (MAX) NULL,
+    [Program_Episode_Number]              NVARCHAR (MAX) NULL,
+    [Program_Category]                    NVARCHAR (MAX) NULL,
+    [Program_Version_ID]                  NVARCHAR (MAX) NULL,
+    [Schedule_Item_Log_Date]              NVARCHAR (MAX) NULL,
+    [Schedule_Item_Log_Time]              NVARCHAR (MAX) NULL,
+    [Schedule_Item_Duration]              NVARCHAR (MAX) NULL,
+    [Scheduled_Version_House_Number_List] NVARCHAR (MAX) NULL,
+    [Program_Title]                       NVARCHAR (MAX) NULL,
+    [File_Code]                           NVARCHAR (MAX) NULL,
+    [Channel_Code]                        NVARCHAR (MAX) NULL,
+    [Inserted_By]                         NVARCHAR (MAX) NULL,
+    [Inserted_On]                         NVARCHAR (MAX) NULL,
+    [IsDealApproved]                      NVARCHAR (MAX) NULL,
+    [TitleCode]                           NVARCHAR (MAX) NULL,
+    [DMCode]                              NVARCHAR (MAX) NULL,
+    [Deal_Code]                           NVARCHAR (MAX) NULL,
+    [Deal_Type]                           NVARCHAR (MAX) NULL);
+

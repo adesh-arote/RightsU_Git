@@ -1,0 +1,109 @@
+﻿@model List<RightsU_Entities.USP_List_Country_Result>
+@using UTOFrameWork.FrameworkClasses
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }     
+}
+<script>
+    $('.expand_Country_Name').expander({
+        slicePoint: 26,
+        expandPrefix: '',
+        expandText: '...@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+
+    $('.expand_Language_Names').expander({
+        slicePoint: 20,
+        expandPrefix: '',
+        expandText: '...@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+</script>
+<table class="table table-bordered table-hover" id="tblMusicLink">
+    <thead>
+        <tr>
+            <th style="width:25%;">@objMessageKey.Country</th>
+            <th style="width:10%;">@objMessageKey.TheatricalTerritory</th>
+            <th style="width:20%;">@objMessageKey.Language</th>
+            <th style="width:15%;">@objMessageKey.BaseCountry</th>
+            <th style="width:15%;">@objMessageKey.Status</th> 
+            <th style="width:15%;">@objMessageKey.Action</th>  
+        </tr>
+    </thead>
+    <tbody>
+
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                string strActive = objMessageKey.Active;
+                if(item.Is_Active == "N")
+                {
+                    strActive = objMessageKey.Deactive;
+                }
+                <tr>
+                    <td>
+                        <span class="expand_Country_Name">@item.Country_Name</span> 
+                    </td>
+                    <td style="text-align:center">
+                        <span>@item.Theatrical_Territory</span>
+                    </td>
+                    <td>
+                        <div class="expand_Language_Names">@item.Language_Names</div>
+                    </td>
+                    <td style="text-align:center">
+                        @Html.Label(@item.Base_Country)
+                    </td>
+                    <td style="text-align:center;">
+                        <span>@strActive</span>
+                    </td>
+                    <td style="text-align:center">
+                        @if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForEdit + "~"))
+                        {
+                            if (item.Is_Active == "Y")
+                            {
+                                <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer;" onclick="CheckRecordLock(@item.Country_Code)"></a>
+                            }
+                            else
+                            {
+                                <a title="@objMessageKey.Cannoteditthiscountryasitisdeactivated" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
+                            }
+                        }
+                        @if (item.Is_Active == "Y")
+                        {
+                            if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForDeactivate + "~"))
+                            {
+                                if (item.Disable_Message == "")
+                                {
+                                    <a title="@objMessageKey.Deactivate" class="glyphicon glyphicon-thumbs-down" style="cursor: pointer;" onclick="ActiveDeactiveCountry(@item.Country_Code, 'N')"></a>
+                                }
+                                else
+                                {
+                                    <a title="@item.Disable_Message" class="glyphicon glyphicon-thumbs-down disabled" onclick="return false;"></a>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForActivate + "~"))
+                            {
+                                <a title="@objMessageKey.Activate" class="glyphicon glyphicon-thumbs-up" style="cursor: pointer;" onclick="ActiveDeactiveCountry(@item.Country_Code, 'Y')"></a>
+                            }
+                        }
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="6">@objMessageKey.Norecordfound</td>
+            </tr>
+        }
+    </tbody>
+</table>

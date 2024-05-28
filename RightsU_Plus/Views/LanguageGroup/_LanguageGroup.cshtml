@@ -1,0 +1,170 @@
+﻿@using RightsU_BLL;
+
+@model List<RightsU_Entities.Language_Group>
+@using UTOFrameWork.FrameworkClasses
+@{
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    var j = new Language_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script>
+    $('.expand_Language_Group_Details').expander({
+        slicePoint: 75,
+        expandPrefix: '',
+        expandText: '...@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+    $('.expand_Language_GroupName').expander({
+        slicePoint: 75,
+        expandPrefix: '',
+        expandText: '...@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+</script>
+<table class="table table-bordered table-hover" id="divLanguage_GroupList">
+    <thead>
+        <tr>
+            <th style="width:30%;">@objMessageKey.LanguageGroup</th>
+            <th style="width:51%;">@objMessageKey.Language</th>
+            <th style="width:10%;">@objMessageKey.Status</th>
+            <th style="width:10%;">@objMessageKey.Action</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @if (ViewBag.CommandName == "ADD")
+        {
+            <tr>
+                <td>
+                    <input id="txtLanguage_GroupName" type="text" value="" maxlength="1000" style="width:90%;" />
+                </td>
+                <td>
+                    <div id="divLanguage">
+                        @Html.DropDownList("ddlLanguage", ViewBag.LanguageList as MultiSelectList, new { @id = "ddlLanguage", @multiple = "multiple" })
+                    </div>
+
+                </td>
+                <td style="text-align:center">
+                    <span>@objMessageKey.Active</span>
+                </td>
+                <td style="text-align:center">
+                    <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" onclick="SaveLanguage_Group(0)"></a>
+                    <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" onclick="Cancel()"></a>
+                </td>
+            </tr>
+        }
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                string strActive = objMessageKey.Active;
+                if (item.Is_Active == "N")
+                {
+                    strActive = objMessageKey.Deactive;
+                }
+                <tr>
+                    @if (ViewBag.CommandName == "EDIT" && ViewBag.Language_Group_Code == item.Language_Group_Code)
+                    {
+                    <td>
+                        <input id="txtLanguage_GroupName" type="text" value="@item.Language_Group_Name" maxlength="1000" style="width:90%;" />
+                       
+                    </td>
+                        <td>
+                            @Html.DropDownList("ddlLanguage", ViewBag.LanguageList as MultiSelectList, new { @id = "ddlLanguage", @multiple = "multiple" })
+                        </td>
+                        <td style="text-align:center">
+                            <span>@strActive</span>
+                        </td>
+                        <td style="text-align:center">
+                            <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" onclick="SaveLanguage_Group(@item.Language_Group_Code)"></a>
+                            <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" onclick="Cancel()"></a>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            <span class="expand_Language_GroupName">@item.Language_Group_Name</span>
+                            
+                        </td>
+
+                        <td>
+                            @{var i = string.Join(", ", j.Join(item.Language_Group_Details.Select(p => p.Language_Code).ToList(), p => p.Language_Code, q => q.Value, (p, q) => p.Language_Name).ToList());}
+                            <div class="expand_Language_Group_Details">
+                                @i
+                            </div>
+                        </td>
+                        <td style="text-align:center">
+                            <span>@strActive</span>
+                        </td>
+                        <td style="text-align:center">
+                            @{
+                              bool canDeactive = true;
+                              string toolTipMsg = "";
+                              if (item.Acq_Deal_Rights_Dubbing.Count > 0 || item.Acq_Deal_Rights_Subtitling.Count > 0)
+                              {
+                                  canDeactive = false;
+                                  toolTipMsg = objMessageKey.Cannotdeactivatethislanguagegroupasitisusedinacquisitiondeal;
+                              }
+                              else if (item.Syn_Deal_Rights_Dubbing.Count > 0 || item.Syn_Deal_Rights_Subtitling.Count > 0)
+                              {
+                                  canDeactive = false;
+                                  toolTipMsg = objMessageKey.Cannotdeactivatethislanguagegroupasitisusedinsyndicationdeal;
+                              }
+
+                              if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForEdit.ToString() + "~"))
+                              {
+                                  if (item.Is_Active == "Y")
+                                  {
+                                    <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor:pointer;" onclick="CheckRecordLock(@item.Language_Group_Code, 'EDIT')"></a>
+                                  }
+                                  else
+                                  {
+                                    <a title="@objMessageKey.Cannoteditthislanguagegroupasitisdeactivated" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
+                                }
+                            }
+
+                            if (item.Is_Active == "Y")
+                            {
+                                if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForDeactivate + "~"))
+                                {
+                                    if (canDeactive)
+                                    {
+                                        <a title="@objMessageKey.Deactivate" class="glyphicon glyphicon-thumbs-down" style="cursor:pointer" onclick="ActiveDeactiveLanguage_Group(@item.Language_Group_Code, 'N')"></a>
+                                    }
+                                    else
+                                    {
+                                        <a title="@toolTipMsg" class="glyphicon glyphicon-thumbs-down disabled" onclick="return false;"></a>
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForActivate + "~"))
+                                {
+                                    <a title="@objMessageKey.Activate" class="glyphicon glyphicon-thumbs-up" style="cursor: pointer;" onclick="ActiveDeactiveLanguage_Group(@item.Language_Group_Code, 'Y')"></a>
+                                }
+                            }
+                            }
+                       </td>
+                    }
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4">@objMessageKey.Norecordfound</td>
+            </tr>
+        }
+    </tbody>
+</table>

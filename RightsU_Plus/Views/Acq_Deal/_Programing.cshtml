@@ -1,0 +1,911 @@
+﻿@model IEnumerable<RightsU_Entities.Acq_Sport_Ancillary_Wrapper>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script type="text/javascript">
+
+    var CallFromDeleted = '';
+
+    var URL_BindProgramming = '@Url.Action("BindProgramming", "Acq_Sport_Ancillary")';
+    var URL_GetSportAncProForEdit = '@Url.Action("GetSportAncProForEdit", "Acq_Sport_Ancillary")';
+    var URL_DeleteSportAncillary = '@Url.Action("DeleteSportAncillary", "Acq_Sport_Ancillary")';
+    var URL_ValidateDuplicate = '@Url.Action("ValidateDuplicate", "Acq_Sport_Ancillary")';
+    var URL_SavePrograming = '@Url.Action("SavePrograming", "Acq_Sport_Ancillary")'
+
+    $(document).ready(function () {       
+        $('#lblDisplayProTitle').SumoSelect();
+        $('#lblDisplayProTitle')[0].sumo.reload();
+        $(":radio[name=rdoProDisplayType]").change(function (e) {
+            var type = $(this).val();
+            debugger;
+            if (($('#lblDisplayProTitle').val() == '' || $('#lblDisplayProTitle').val() == null) && type == 'D') {
+                showAlert('E', '@objMessageKey.Pleaseselecttitle');
+                 
+
+                if (type == 'G')
+                    $('input[name=rdoProDisplayType][value=D]').prop('checked', true);
+                else
+                    $('input[name=rdoProDisplayType][value=G]').prop('checked', true);
+            }
+            else {
+                var arrTitles = ''
+
+                if ($('#lblDisplayProTitle').val() != null)
+                    arrTitles = $('#lblDisplayProTitle').val().join(',');
+
+                if (type == 'G') {
+                    arrTitles = ''
+                    $('#lblDisplayProTitle')[0].sumo.unSelectAll();
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: URL_BindProgramming,
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify({
+                        displayType: type,
+                        selectedTitle: arrTitles
+                    }),
+                    success: function (result) {
+                        if (result == "true") {
+                            redirectToLogin();
+                        }
+
+                        $('#hdnAcqDealSportAncillaryCode').val('');
+                        $('#divProgramming').html(result);
+                        initializeChosen();
+                        initializeExpander();
+                        $('#lblDisplayProTitle').val(arrTitles.split(','))[0].sumo.reload();
+                        $('input[name=rdoProDisplayType][value=' + type + ']').prop('checked', true);
+                    },
+                    error: function (result) {
+                        alert('Error: ' + result.responseText);
+                    }
+                });
+            }
+        });
+
+        $("#Duration").timeEntry({ show24Hours: true, showSeconds: true });
+
+        $("#Sport_Ancillary_Type_Code").change(function () {
+            $('#lblPeriodicity').text(' of ' + $("#Sport_Ancillary_Type_Code option:selected").text());
+        });
+
+        $('#Broadcast_Window').numeric({ maxDigits: 3 });
+    });
+    function sformat(s) {
+        var fm = [
+              Math.floor(s / 60 / 60) % 24, // HOURS
+              Math.floor(s / 60) % 60, // MINUTES
+              s % 60 // SECONDS
+        ];
+        return $.map(fm, function (v, i) { return ((v < 10) ? '0' : '') + v; }).join(':');
+    }
+    function openPopUp() {
+        clearControl();
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        $('#ddlTitleProgramming,#ddlWhenToBroadcastPro,#ddlSourceOfContentPro').SumoSelect();
+        $('#ddlTitleProgramming,#ddlWhenToBroadcastPro,#ddlSourceOfContentPro')[0].sumo.reload();
+        $('#Broadcast_Window').val('');
+        $('#Broadcast_Window').prop("disabled", "true");
+        $('#hdnAcqDealSportAncillaryCode').val('0');
+        $('#lblProgramHeading').text('@objMessageKey.AddSportsAncillaryProgramming');
+        var defaultValue = $("select#Sport_Ancillary_Periodicity_Code.form_input.chosen-select option:contains('Not defined')").val();
+        $("select#Sport_Ancillary_Periodicity_Code.form_input.chosen-select").val(defaultValue).trigger("chosen:updated");
+        $('#popSportAncillary').modal();
+        return false;
+    }
+    function closePopUp() {
+        clearControl();
+        $('#popSportAncillary').modal('hide');
+        return false;
+    }
+    function closeViewPopUp() {
+        $('#popSportAncillaryView').modal('hide');
+        return false;
+    }
+    function editProgramPopUp(obj, titleCodeForEdit) {
+        var type = $(":radio[name=rdoProDisplayType]:checked").val();
+
+        $.ajax({
+            type: "POST",
+            url: URL_GetSportAncProForEdit,
+            traditional: true,
+            async: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Acq_Deal_Sport_Ancillary_Code: obj
+            }),
+            success: function (result) {
+                var titleCode = '', broadCastCode = '', sourceCode = '';
+
+                if (result == "true") {
+                    redirectToLogin();
+                }
+
+                $('#hdnAcqDealSportAncillaryCode').val(result.Acq_Deal_Sport_Ancillary_Code);
+                if (type == 'G') {
+                    for (var i = 0; i < result.Acq_Deal_Sport_Ancillary_Title.length ; i++) {
+                        if (titleCode == '')
+                            titleCode = result.Acq_Deal_Sport_Ancillary_Title[i].Title_Code;
+                        else
+                            titleCode = titleCode + ',' + result.Acq_Deal_Sport_Ancillary_Title[i].Title_Code;
+                    }
+
+                    if (result.Acq_Deal_Sport_Ancillary_Title.length > 1)
+                        titleCode = titleCode.split(',');
+                }
+                else {
+                    if (titleCodeForEdit != '0')
+                        titleCode = titleCodeForEdit.split(',');
+                }
+                var titleName = "";
+                $('#hdnDetailsTitleCode').val(titleCode);
+            
+                $('#ddlTitleProgramming,#ddlWhenToBroadcastPro,#ddlSourceOfContentPro').SumoSelect();
+                $('#ddlTitleProgramming')[0].sumo.reload();
+                $('#ddlWhenToBroadcastPro')[0].sumo.reload();
+                $('#ddlSourceOfContentPro')[0].sumo.reload();
+                
+                $('#ddlTitleProgramming').val(titleCode)[0].sumo.reload();
+                $('#Sport_Ancillary_Type_Code').val(result.Sport_Ancillary_Type_Code).trigger("chosen:updated");
+
+                $('#lblPeriodicity').text(' of ' + $("#Sport_Ancillary_Type_Code option:selected").text());
+
+                if (result.Broadcast_Periodicity_Code == 0) {
+                    $('#Broadcast_Window').val('');
+                    $('#Broadcast_Window').prop("disabled", "true");
+                }
+
+                $('input[name=Broadcast_Periodicity_Code][value="' + result.Broadcast_Periodicity_Code + '"]').prop('checked', true);
+                $('input[name=Obligation_Broadcast][value="' + result.Obligation_Broadcast + '"]').prop('checked', true);
+
+                for (var i = 0; i < result.Acq_Deal_Sport_Ancillary_Broadcast.length ; i++) {
+                    if (broadCastCode == '')
+                        broadCastCode = result.Acq_Deal_Sport_Ancillary_Broadcast[i].Sport_Ancillary_Broadcast_Code;
+                    else
+                        broadCastCode = broadCastCode + ',' + result.Acq_Deal_Sport_Ancillary_Broadcast[i].Sport_Ancillary_Broadcast_Code;
+                }
+
+                if (result.Acq_Deal_Sport_Ancillary_Broadcast.length > 1)
+                    broadCastCode = broadCastCode.split(',');
+
+                $('#ddlWhenToBroadcastPro').val(broadCastCode)[0].sumo.reload();
+                $('#Broadcast_Window').val(result.Broadcast_Window);
+
+                for (var i = 0; i < result.Acq_Deal_Sport_Ancillary_Source.length ; i++) {
+                    if (sourceCode == '')
+                        sourceCode = result.Acq_Deal_Sport_Ancillary_Source[i].Sport_Ancillary_Source_Code;
+                    else
+                        sourceCode = sourceCode + ',' + result.Acq_Deal_Sport_Ancillary_Source[i].Sport_Ancillary_Source_Code;
+                }
+
+                if (result.Acq_Deal_Sport_Ancillary_Source.length > 1)
+                    sourceCode = sourceCode.split(',');
+
+                $("select#Sport_Ancillary_Periodicity_Code.form_input.chosen-select").val(result.Sport_Ancillary_Periodicity_Code).trigger("chosen:updated");
+
+                if (result.Duration != null)
+                    $('#Duration').val(sformat(result.Duration.TotalSeconds));
+                $('#ddlSourceOfContentPro').val(sourceCode)[0].sumo.reload();
+                $('#Remarks').val(result.Remarks);
+                $('#lblProgramHeading').text('@objMessageKey.EditSportsAncillaryProgramming');
+                $('#popSportAncillary').modal();
+
+                var txtRemark = document.getElementById('Remarks');
+                countChar(txtRemark);
+            },
+            error: function (result) { }
+        });
+
+        return false;
+    }
+    function viewProgramPopUp(obj, titleCodeForEdit) {
+        var type = $(":radio[name=rdoProDisplayType]:checked").val();
+        $.ajax({
+            type: "POST",
+            url: URL_GetSportAncProForEdit,
+            traditional: true,
+            async: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Acq_Deal_Sport_Ancillary_Code: obj
+            }),
+            success: function (result) {
+                var titleCode = '', broadCastCode = '', ProgrammingPerodicity = '', sourceCode = '';
+
+                if (result == "true") {
+                    redirectToLogin();
+                }
+
+                if (type == 'G') {
+                    for (var i = 0; i < result.Acq_Deal_Sport_Ancillary_Title.length ; i++) {
+                        if (titleCode == '')
+                            titleCode = result.Acq_Deal_Sport_Ancillary_Title[i].Title.Title_Name;
+                        else
+                            titleCode = titleCode + ',' + result.Acq_Deal_Sport_Ancillary_Title[i].Title.Title_Name;
+                    }
+                }
+                else {
+                    for (var i = 0; i < result.Acq_Deal_Sport_Ancillary_Title.length ; i++) {
+                        if (titleCodeForEdit == result.Acq_Deal_Sport_Ancillary_Title[i].Title_Code)
+                            titleCode = result.Acq_Deal_Sport_Ancillary_Title[i].Title.Title_Name;
+                    }
+                }
+
+                if (result.Sport_Ancillary_Type_Code != null) {
+                    $('#lblProgrammingType').text(result.Sport_Ancillary_Type.Name);
+                    $('#lblPeriodicityHeadeView').text(" of " + result.Sport_Ancillary_Type.Name);
+                }
+                else {
+                    $('#lblProgrammingType').text('');
+                    $('#lblPeriodicityHeadeView').text('');
+                }
+
+                if (result.Obligation_Broadcast == 'Y') {
+                    $('#lblProgrammingObligationToBroadcast').text('Yes');
+                }
+                else {
+                    $('#lblProgrammingObligationToBroadcast').text('No');
+                }
+
+                for (var i = 0; i < result.Acq_Deal_Sport_Ancillary_Broadcast.length ; i++) {
+                    if (broadCastCode == '')
+                        broadCastCode = result.Acq_Deal_Sport_Ancillary_Broadcast[i].Sport_Ancillary_Broadcast.Name;
+                    else
+                        broadCastCode = broadCastCode + ',' + result.Acq_Deal_Sport_Ancillary_Broadcast[i].Sport_Ancillary_Broadcast.Name;
+                }
+
+                if (result.Acq_Deal_Sport_Ancillary_Broadcast.length > 0 && result.Sport_Ancillary_Periodicity1 != null)
+                    broadCastCode = broadCastCode + '-';
+
+                if (result.Sport_Ancillary_Periodicity1 != null && result.Broadcast_Periodicity_Code > 0)
+                    broadCastCode = broadCastCode + result.Broadcast_Window + " " + result.Sport_Ancillary_Periodicity1.Name;
+
+                if (result.Sport_Ancillary_Periodicity_Code != null)
+                    ProgrammingPerodicity = result.Sport_Ancillary_Periodicity.Name;
+
+                if (result.Sport_Ancillary_Periodicity_Code != null && result.Duration != null)
+                    ProgrammingPerodicity = ProgrammingPerodicity + "-";
+
+                if (result.Duration != null)
+                    ProgrammingPerodicity = ProgrammingPerodicity + sformat(result.Duration.TotalSeconds);
+
+                for (var i = 0; i < result.Acq_Deal_Sport_Ancillary_Source.length ; i++) {
+                    if (sourceCode == '')
+                        sourceCode = result.Acq_Deal_Sport_Ancillary_Source[i].Sport_Ancillary_Source.Name;
+                    else
+                        sourceCode = sourceCode + ',' + result.Acq_Deal_Sport_Ancillary_Source[i].Sport_Ancillary_Source.Name;
+                }
+
+                $('#lblProgrammingTitles').text(titleCode);
+                $('#lblProgrammingWhenToBroadcast').text(broadCastCode);
+                $('#lblProgrammingPeriodicity').text(ProgrammingPerodicity);
+                $('#lblProgrammingSourceOfContent').text(sourceCode);
+                $('#lblProgrammingRemarks').text(result.Remarks);
+                $('#popSportAncillaryView').modal();
+                initializeExpander();
+            },
+            error: function (result) { }
+        });
+
+        return false;
+    }
+    function clearControl() {
+        $('#hdnAcqDealSportAncillaryCode').val('0');
+       // $("select#ddlTitleProgramming.form_input.chosen-select").val('').trigger("chosen:updated");
+      //  $("select#Sport_Ancillary_Type_Code.form_input.chosen-select").val('0').trigger("chosen:updated");
+        $('input[name=Broadcast_Periodicity_Code][value="0"]').prop('checked', true);
+        $('input[name=Obligation_Broadcast][value="N"]').prop('checked', true);
+        $("select#ddlWhenToBroadcastPro.form_input.chosen-select").val('').trigger("chosen:updated");
+        $('#Broadcast_Window').val('');
+        $("select#Sport_Ancillary_Periodicity_Code.form_input.chosen-select").val('0').trigger("chosen:updated");
+        $('#Duration').val('');
+        $("select#ddlSourceOfContentPro.form_input.chosen-select").val('').trigger("chosen:updated");
+        $('#Remarks').val('');
+    }
+    function setBroWindowVisibility(obj) {
+        if (obj.value === "0") {
+            $('#Broadcast_Window').removeClass('required');
+            $('#Broadcast_Window').val('');
+            $('#Broadcast_Window').prop("disabled", "true");
+        }
+        else
+            $('#Broadcast_Window').removeAttr("disabled");
+    }
+    function DeleteSportAncliallary(Acq_Deal_Sport_Ancillary_Code, titleCode) {
+        $('#hdnAcqDealSportAncillaryCode').val(Acq_Deal_Sport_Ancillary_Code);
+        $('#hdnTitleCode').val(titleCode);
+        CallFromDeleted = 'Y'
+        showAlert("I", "@objMessageKey.Areyousureyouwanttodeletethisrecord?", "OKCANCEL");
+    }
+    function handleOk() {
+
+        if (CallFromDeleted == 'Y') {
+            var Acq_Deal_Sport_Ancillary_Code = $('#hdnAcqDealSportAncillaryCode').val()
+            var titleCode = $('#hdnTitleCode').val();
+            var type = $(":radio[name=rdoProDisplayType]:checked").val();
+
+            $.ajax({
+                type: "POST",
+                url: URL_DeleteSportAncillary,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                async: false,
+                data: JSON.stringify({
+                    id: Acq_Deal_Sport_Ancillary_Code,
+                    titleCode: titleCode,
+                    DisplayType: type
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+
+                    if (result == 'Success') {
+                        var arrTitles = '';
+                        CallFromDeleted = '';
+                        showAlert("S", "@objMessageKey.RecordDeletedsuccessfully", "OK");
+
+                        if ($('#lblDisplayProTitle').val() != null)
+                            arrTitles = $('#lblDisplayProTitle').val().join(',');
+
+                        $.ajax({
+                            type: "POST",
+                            url: URL_BindProgramming,
+                            traditional: true,
+                            enctype: 'multipart/form-data',
+                            contentType: "application/json; charset=utf-8",
+                            data: JSON.stringify({
+                                displayType: type,
+                                selectedTitle: arrTitles
+                            }),
+                            success: function (result) {
+                                if (result == "true") {
+                                    redirectToLogin();
+                                }
+
+                                $('#divProgramming').html(result);
+                                initializeChosen();
+                                initializeExpander();
+                                $('#lblDisplayProTitle').val(arrTitles.split(',')).trigger("chosen:updated");
+                                $('input[name=rdoProDisplayType][value=' + type + ']').prop('checked', true);
+                            },
+                            error: function (result) {
+                                alert('Error: ' + result.responseText);
+                            }
+                        });
+                    }
+                    else {
+                        showAlert("E", result);
+                        return false;
+                    }
+                },
+                error: function (result) { }
+            });
+        }
+
+        $(document.getElementsByClassName('modal-open')).removeClass('modal-open');
+    }
+    function showAllClick() {
+        $.ajax({
+            type: "POST",
+            url: URL_BindProgramming,
+            traditional: true,
+            async: false,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                displayType: 'G',
+                selectedTitle: ''
+            }),
+            success: function (result) {
+                $('#divProgramming').html(result);
+                initializeChosen();
+                initializeExpander();
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function SavePrograming() {
+        debugger;
+        var type = $(":radio[name=rdoProDisplayType]:checked").val();
+
+        if ($("#ddlTitleProgramming").val() === null) {
+            $("#divddlTitleProgramming").addClass("required");
+            return false;
+        }
+        else {
+            $("#divddlTitleProgramming").removeClass("required");
+        }
+
+        if ($('#Sport_Ancillary_Type_Code').val() === '0') {
+            $('#Sport_Ancillary_Type_Code').addClass('required');
+            return false;
+        }
+        else
+            $('#Sport_Ancillary_Type_Code').removeClass('required');
+
+        if ($('input[name=Broadcast_Periodicity_Code]:checked').val() != '0' && $('#Broadcast_Window').val() === '') {
+            $("#Broadcast_Window").addClass("required");
+            return false;
+        }
+        else
+            $("#Broadcast_Window").removeClass("required");
+
+        if ($("#ddlSourceOfContentPro").val() === null) {
+            $("#divddlSourceOfContentPro").addClass("required");
+            return false;
+        }
+        else {
+            $("#divddlSourceOfContentPro").removeClass("required");
+        }
+
+        var isValid = false;
+        var Acq_Deal_Sport_Ancillary_Code = $('#hdnAcqDealSportAncillaryCode').val();
+        var titleCodes = $("#ddlTitleProgramming").val().join(',');
+        var Sport_Ancillary_Type_Code = $('#Sport_Ancillary_Type_Code').val();
+        var Obligation_Broadcast = $('input[name=Obligation_Broadcast]:checked').val();
+
+        var ddlWhenToBroadcastPro = "";
+
+        if ($('#ddlWhenToBroadcastPro').val() != null)
+            ddlWhenToBroadcastPro = $('#ddlWhenToBroadcastPro').val().join(',');
+
+        var Broadcast_Window = $('#Broadcast_Window').val();
+        var Broadcast_Periodicity_Code = $('input[name=Broadcast_Periodicity_Code]:checked').val();
+        var Sport_Ancillary_Periodicity_Code = $('#Sport_Ancillary_Periodicity_Code').val();
+        var Duration = $('#Duration').val();
+        var ddlSourceOfContentPro = $('#ddlSourceOfContentPro').val().join(',');
+        var Remarks = $('#Remarks').val();
+
+        $.ajax({
+            type: "POST",
+            url: URL_ValidateDuplicate,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: false,
+            data: JSON.stringify({
+                AnchillaryFor: 'P',
+                Title: titleCodes,
+                Sport_Ancillary_Type_Code: Sport_Ancillary_Type_Code,
+                Acq_Deal_Sport_Ancillary_Code: Acq_Deal_Sport_Ancillary_Code,
+                DisplayType: type,
+                DetailsTitleCode: $('#hdnDetailsTitleCode').val()
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+
+                if (result == 'Success') {
+                    $.ajax({
+                        type: "POST",
+                        url: URL_SavePrograming,
+                        traditional: true,
+                        enctype: 'multipart/form-data',
+                        contentType: "application/json; charset=utf-8",
+                        async: false,
+                        data: JSON.stringify({
+                            AnchillaryFor: 'P',
+                            Acq_Deal_Sport_Ancillary_Code: Acq_Deal_Sport_Ancillary_Code,
+                            Title: titleCodes,
+                            Sport_Ancillary_Type_Code: Sport_Ancillary_Type_Code,
+                            Obligation_Broadcast: Obligation_Broadcast,
+                            ddlWhenToBroadcastPro: ddlWhenToBroadcastPro,
+                            Broadcast_Window: Broadcast_Window,
+                            Broadcast_Periodicity_Code: Broadcast_Periodicity_Code,
+                            Sport_Ancillary_Periodicity_Code: Sport_Ancillary_Periodicity_Code,
+                            Duration: Duration,
+                            ddlSourceOfContentPro: ddlSourceOfContentPro,
+                            Remarks: Remarks,
+                            DisplayType: type
+                        }),
+                        success: function (result) {
+                            if (result == "true") {
+                                redirectToLogin();
+                            }
+
+                            if (result != 'Error') {
+                                var arrTitles = '';
+
+                                if ($('#lblDisplayProTitle').val() != null)
+                                    arrTitles = $('#lblDisplayProTitle').val().join(',');
+
+                                $.ajax({
+                                    type: "POST",
+                                    url: URL_BindProgramming,
+                                    traditional: true,
+                                    async: false,
+                                    enctype: 'multipart/form-data',
+                                    contentType: "application/json; charset=utf-8",
+                                    data: JSON.stringify({
+                                        displayType: type,
+                                        selectedTitle: arrTitles
+                                    }),
+                                    success: function (result) {
+                                        clearControl();
+                                        closePopUp();
+                                        $('div.modal-backdrop').not(document.getElementsByClassName('alert-overlay')).hide();
+                                        $('#divProgramming').html(result);
+                                        initializeChosen();
+                                        initializeExpander();
+                                        $('#lblDisplayProTitle').val(arrTitles.split(',')).trigger("chosen:updated");
+                                        $('input[name=rdoProDisplayType][value=' + type + ']').prop('checked', true);
+                                    },
+                                    error: function (result) {
+                                        alert('Error: ' + result.responseText);
+                                    }
+                                });
+
+                                CallFromDeleted = '';
+                                showAlert("S", result, "OK");
+                            }
+                            else {
+                                showAlert("E", result);
+                                return false;
+                            }
+                        },
+                        error: function (result) { }
+                    });
+                }
+                else {
+                    showAlert("E", result);
+                    return false;
+                }
+            },
+            error: function (result) { }
+        });
+
+        return true;
+    }
+</script>
+<style>
+    #divddlTitleProgramming,#divddlSourceOfContentPro,#divddlWhenToBroadcastPro{
+        width:94% !important;
+    }
+    #divddlTitleProgramming > div{
+        width : 286px !important;
+    }
+     #divddlSourceOfContentPro > div{
+        width : 286px !important;
+    }
+     #divddlWhenToBroadcastPro > div{
+         width : 286px !important;
+     }
+    .SumoSelect{
+        width:94% !important;
+    }
+     .form_wrapper{
+        max-width:900px!important;
+    }
+   
+</style>
+<div class="scale_table_block">
+    <table class="table abovePaging">
+        <tr>
+            <td class="bold" style="width: 10%;">@objMessageKey.PageView : </td>
+            <td style="width: 14%;">
+                <label class="radio-inline">
+                    <input type="radio" name="rdoProDisplayType" value="G" checked="checked" tabindex="0" />@objMessageKey.Group
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" name="rdoProDisplayType" value="D" tabindex="0" />@objMessageKey.Detail
+                </label>
+            </td>
+            <td style="width: 56%;">
+                @Html.ListBox("lblDisplayProTitle", ViewBag.DisplayProTitleList as MultiSelectList, new {  })
+            </td>
+            <td style="width: 10%;">
+                <input type="submit" class="btn-primary" value="@objMessageKey.ShowAll" onclick="showAllClick()">
+            </td>
+            <td style="width: 10%;">
+                @if (ViewBag.PageMode != "V" && ViewBag.PageMode != "APRV" && ViewBag.PageMode != "EWOA")
+                {
+                    <input type="button" class="btn-primary" value="@objMessageKey.Add" onclick="return openPopUp();" />
+                }
+            </td>
+        </tr>
+    </table>
+</div>
+<table class="table table-bordered table-hover" id="tblProgramming">
+    <thead>
+        <tr>
+            <th style="width: 21%;">@objMessageKey.Title</th>
+            <th style="width: 6%;">@objMessageKey.Type</th>
+            <th style="width: 8%;">@objMessageKey.ObligationtoBroadcast</th>
+            <th style="width: 13%;">@objMessageKey.WhentoBroadcast</th>
+            <th style="width: 10%;">@objMessageKey.Duration</th>
+            <th style="width: 16%;">@objMessageKey.SourceofContent</th>
+            <th style="width: 20%;">@objMessageKey.Remarks</th>
+            <th style="width: 6%;">@objMessageKey.Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <div class="expandable">
+                        @item.Title
+                    </div>
+                </td>
+                <td>@item.Type</td>
+                <td>@item.Obligation_Broadcast</td>
+                <td>@item.Obligation</td>
+                <td>@item.Duration</td>
+                <td>@item.Source</td>
+                <td>
+                    <div class="expandable">
+                        @item.Remarks
+                    </div>
+                </td>
+                @if (ViewBag.PageMode != "V" && ViewBag.PageMode != "APRV" && ViewBag.PageMode != "EWOA")
+                {
+                    <td><a title="@objMessageKey.Edit" class = "glyphicon glyphicon-pencil" onclick='editProgramPopUp(@item.Acq_Deal_Sport_Ancillary_Code,"@item.TitleCode");'/>&nbsp; <a title="Delete" class = "glyphicon glyphicon-trash" onclick='DeleteSportAncliallary(@item.Acq_Deal_Sport_Ancillary_Code,@item.TitleCode);'/></td>
+                }
+                else
+                {
+                    <td><a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" onclick='viewProgramPopUp(@item.Acq_Deal_Sport_Ancillary_Code,"@item.TitleCode");'/></td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+@Html.Hidden("hdnTitleCode")
+
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade" id="popSportAncillary" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form" id="Form1">
+                <div class="form_wrapper">
+                    <div class="form_fields acq">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>×
+                                </span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2 id="lblProgramHeading">@objMessageKey.AddSportsAncillaryProgramming</h2>
+                        </div>
+                        <div class="modal_block">
+                            <table id="divSportAncPro">
+                                <tr>
+                                    <td style="width:15%;padding-bottom:5px;">
+                                        <label class="bold">@objMessageKey.Titles</label>
+                                    </td>
+                                    <td style="width:35%;padding-bottom:5px;">
+                                        <div id="divddlTitleProgramming">
+                                            @Html.ListBox("ddlTitleProgramming", ViewBag.ProTitleList as MultiSelectList)
+                                        </div>
+
+                                        @Html.Hidden("hdnAcqDealSportAncillaryCode")
+                                        @Html.Hidden("hdnDetailsTitleCode")
+
+                                    </td>
+                                    <td style="width :15%;padding-bottom:5px;">
+                                        <label class="bold">@objMessageKey.Type</label>
+                                    </td>
+                                    <td style="width:35%;padding-bottom:5px;">
+                                        <div id="divSport_Ancillary_Type_Code">
+                                            @Html.DropDownList("Sport_Ancillary_Type_Code", ViewBag.ProTypeList as MultiSelectList, new { @class = "form_input chosen-select" })
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                </table>
+                            <table>
+                                <tr>
+                                    <td width="50%;padding-top:8px;">
+                                        <label class="radio-inline">
+                                            @Html.RadioButton("Obligation_Broadcast", "Y", false)@objMessageKey.ObligationtoBroadcast
+                                        </label>
+                                        <label class="radio-inline">
+                                            @Html.RadioButton("Obligation_Broadcast", "N", false)@objMessageKey.NoObligationtoBroadcast
+                                        </label>
+                                    </td>
+                                 
+                                    <td class="bold" style="width : 15%;padding-top:8px;">@objMessageKey.WhentoBroadcast</td>
+
+                                    <td style="width:35%;padding-top:8px;">
+                                        <div id="divddlWhenToBroadcastPro">
+                                            @Html.ListBox("ddlWhenToBroadcastPro", ViewBag.ProBroadcastList as MultiSelectList, new { })
+                                        </div>
+                                    </td>
+                                    
+                                </tr>
+                                </table>
+                            <table>
+                                <tr>
+                                   
+                                    <td style="width:15%;padding-top:8px;">
+                                        <label class="bold">@objMessageKey.BroadcastWindow</label>
+                                    </td>
+                                    <td style="width:35%;padding-top:8px;">
+                                        <input id="Broadcast_Window" class="text" style="width:18%;" />
+                                        @foreach (var item in ViewBag.ProBroadcastPeriodicityList)
+                                        {
+                                            <label class="radio-inline">
+                                                @Html.RadioButton("Broadcast_Periodicity_Code", (string)item.Value, false, new { @onclick = "setBroWindowVisibility(this);" })@item.Text
+                                            </label>
+                                        }
+                                    </td>
+                                    <td style="width:15%;padding-top:8px;">
+                                        <label class="bold">@objMessageKey.Periodicity</label>
+                                    </td>
+                                    <td style="width:35%;padding-top:8px;">
+                                        @Html.DropDownList("Sport_Ancillary_Periodicity_Code", ViewBag.ProPeriodicityList as MultiSelectList, new { @class = "form_input chosen-select" })
+                                    </td>
+                                </tr>
+                                </table>
+                            <table>
+                                <tr>
+                                    
+                                    <td style="width:15%;padding-top:8px;">
+                                        <label class="bold">@objMessageKey.Duration</label>
+                                    </td>
+                                    <td style="width:35%;padding-top:8px;">
+                                        <input id="Duration" class="text" />
+                                    </td>
+                                    <td style="width:15%;padding-top:8px;">
+                                        <label class="bold">@objMessageKey.SourceofContent:</label>
+                                    </td>
+                                    <td style="width:35%;padding-top:8px;">
+                                        <div id="divddlSourceOfContentPro">
+                                            @Html.ListBox("ddlSourceOfContentPro", ViewBag.ProSourceList as MultiSelectList)
+                                        </div>
+                                    </td>
+                                </tr>
+                                </table>                       
+                            <table>
+                                <tr>
+                                    <td>
+                                        <div class="divBlock" style="padding-top:10px;">
+                                            <div class="bold small_title" style="padding-right: 320px;">@objMessageKey.Remarks</div>
+                                            <div style="">&nbsp;&nbsp;</div>
+                                            <div id="CharNum" class="charNum" style="float: right;">0/4000</div>
+                                        </div>
+                                        @Html.TextArea("Remarks", new { @class = "textarea", @onkeypress = "countChar(this)", @onkeyup = "countChar(this)", @maxlength = 4000 })
+                                    </td>
+                                </tr>
+
+                                @*<table class="table">
+                    <thead>
+                        <tr>
+                            <th>
+                            <label id="lblPeriodicity"></label>
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+
+                            </td>
+                            <td>
+
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </li>
+            <li class="clearfix">
+
+
+            </li>
+            <li class="clearfix">
+                <div class="divBlock">
+                    <div class="bold small_title" style="padding-right: 320px;">Remarks</div>
+                    <div style="">&nbsp;&nbsp;</div>
+                    <div id="CharNum" class="charNum" style="float: right;">0/4000</div>
+                </div>
+                @Html.TextArea("Remarks", new { @class = "textarea", @onkeypress = "countChar(this)", @onkeyup = "countChar(this)", @maxlength = 4000 })
+            </li>*@
+                            </table>
+
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li>
+                                        <input type="button" class="btn btn-primary" value="@objMessageKey.Save" onclick='return SavePrograming()' />
+                                    </li>
+                                    <li>
+                                        <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="return closePopUp()" />
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade scroll" id="popSportAncillaryView" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form">
+                <div class="form_wrapper">
+                    <div class="form_fields acq">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>×
+                                </span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>@objMessageKey.ViewSportsAncillaryProgramming</h2>
+                        </div>
+                        <div class="modal_block">
+                            <ul id="divSportAncProView" class="form_fields_wrapper">
+                                <li class="clearfix">
+                                    <label class="bold">@objMessageKey.Titles</label>
+                                    <div class="expandable">
+                                        <label id="lblProgrammingTitles"></label>
+                                    </div>
+                                </li>
+                                <li class="clearfix">
+                                    <label class="bold">@objMessageKey.Type</label>
+                                    <label id="lblProgrammingType"></label>
+                                </li>
+                                <li class="clearfix">
+                                    <label class="bold">@objMessageKey.ObligationtoBroadcast: </label>
+                                    <label id="lblProgrammingObligationToBroadcast"></label>
+                                </li>
+                                <li class="clearfix">
+                                    <label class="bold">@objMessageKey.WhentoBroadcast: </label>
+                                    <label id="lblProgrammingWhenToBroadcast"></label>
+                                </li>
+
+                                <li class="clearfix">
+                                    <label class="bold">
+                                        @objMessageKey.Periodicity
+                                                <label id="lblPeriodicityHeadeView"></label>
+                                        :
+                                    </label>
+                                    <label id="lblProgrammingPeriodicity"></label>
+                                </li>
+                                <li class="clearfix">
+                                    <label class="bold">@objMessageKey.SourceofContent:</label>
+                                    <div class="expandable">
+                                        <label id="lblProgrammingSourceOfContent"></label>
+                                    </div>
+                                </li>
+                                <li class="clearfix">
+                                    <label class="bold">@objMessageKey.Remarks:</label>
+                                    <div class="expandable">
+                                        <label id="lblProgrammingRemarks"></label>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li>
+                                        <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="return closeViewPopUp()" />
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

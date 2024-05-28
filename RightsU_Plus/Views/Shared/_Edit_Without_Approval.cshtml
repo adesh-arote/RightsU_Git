@@ -1,0 +1,152 @@
+﻿@using UTOFrameWork.FrameworkClasses
+@{
+    RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
+    if (Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA] != null)
+    {
+        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA];
+    }
+}
+
+<script type="text/javascript">
+
+    function CommitSaveDeal(mode) {
+        debugger;
+        if ($("#txtEWARemarks").val() != "") {
+            var Isvalid = true;
+            $.ajax({
+                type: "POST",
+                url: URL_Commit,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    remarks: $("#txtEWARemarks").val(),
+                    Mode: mode
+                }),
+                async: false,
+                success: function (data) {
+                    location.href = '@Url.Action("Index","Acq_List")';
+                },
+                error: function (result) {
+                    Isvalid = false;
+                }
+            });
+        }
+        else {
+            showAlert('E', 'Please Enter Remark');
+            Isvalid = false;
+        }
+        return Isvalid;
+    }
+    @*$(document).ready(function () {
+        countChar(document.getElementById('approvalremarks'));
+    });
+    var DoConfirmation = ''
+    var ApprovalValue = ''
+    function setUserAction(value) {
+        var approvalremarks = $('#approvalremarks').val();
+        ApprovalValue = value;
+        if (approvalremarks == '') {
+            showAlert('I', 'Please enter remarks');
+        }
+        else {
+            if (value == 'A') {
+                showAlert('I', 'Are you sure you want to approve this deal?', 'OKCANCEL');
+                DoConfirmation = 'Y';
+            }
+            else if (value == 'RO') {
+                showAlert('I', 'Are you sure you want to Re-Open this deal?', 'OKCANCEL');
+                DoConfirmation = 'Y';
+            }
+            else {
+                showAlert('I', 'Are you sure you want to reject this deal?', 'OKCANCEL');
+                DoConfirmation = 'Y';
+            }
+        }
+        return false;
+    }
+
+    function handleCancel() { }
+
+    function handleOk() {
+        if (DoConfirmation == 'Y') {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("Approve_Reject_Deal", "Global")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                async: false,
+                data: JSON.stringify({
+                    user_Action: ApprovalValue,
+                    approvalremarks: $('#approvalremarks').val()
+                }),
+                success: function (result) {
+                    debugger;
+                    var message
+                    if (ApprovalValue == 'A')
+                        message = 'Deal Approved successfully';
+                    else if (ApprovalValue == 'RO') {
+                        location.href = '@Html.Raw(Url.Action("ButtonEvents", "Acq_List", new { CommandName = "Reopen", Acq_Deal_Code = objSchema.Deal_Code }))';
+                        return false;
+                    }
+                    else
+                        message = 'Deal Rejected successfully';
+                    if (result == 'Y')
+                        message = message + ', but unable to send mail. Please check the error log..';
+
+                    showAlert('S', message, 'OK');
+                    DoConfirmation = 'N';
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+        else {
+            location.href = '@Url.Action("Index","Acq_List")'
+        }
+    }*@
+</script>
+@*@using (Html.BeginForm("Approve_Reject_Deal", "Global", FormMethod.Get))
+    {
+*@<div class="scale_table_block">
+    <div class="divBlock">
+        <div class="bold" style="padding-right: 750px;">Edit Without Approval Remarks</div>
+        <div class="charNum">0/4000</div>
+    </div>
+    @Html.TextArea("txtEWARemarks", objSchema.EWA_Remark, new { @id = "txtEWARemarks", @class = "textarea", @row = "2", @cols = "20", @onkeyup = "countChar(this)" })
+    @*@Html.Hidden("user_Action")*@
+      @*<textarea id="txtEWARemarks" name="txtEWARemarks" class="textarea" onkeypress="countChar(this)" onkeyup="countChar(this)" maxlength=4000></textarea>*@
+</div>
+
+@*@if (objSchema.Mode == GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+{
+    <div class="tab-content clearfix table-wrapper scale_table_container">
+        <div class="tab-pane active scale_table_block" id="tabRestriction">
+            <textarea id="txtAcqRemarks" name="txtAcqRemarks" class="textarea" onkeypress="countChar(this)" onkeyup="countChar(this)" maxlength=4000></textarea>
+            <div class="divBlock">
+                <div class="charNum">0/4000</div>
+                <div style=""></div>
+            </div>
+        </div>
+    </div>
+}*@
+<div class="bottom_action">
+    <ul class="form_link_nav clearfix">
+        @{
+            <li>
+                <input type="button" id="btnSave" class="btn btn-primary" value="Save" onclick="CommitSaveDeal('SAV');" />
+            </li>
+            <li>
+                <input type="button" id="btnCommit" class="btn btn-primary" value="Commit" onclick="CommitSaveDeal('COM');" />
+            </li>
+            <li>
+                @*<input class="btn-primary" type="button" onclick="location.href='@Url.Action("Index", "Acq_List")'" value="Back To List" />*@
+                <input class="btn-primary" type="button" onclick="CommitSaveDeal('BAK');" value="Back To List" />
+            </li>
+        }
+    </ul>
+</div>
+    @*
+    }*@

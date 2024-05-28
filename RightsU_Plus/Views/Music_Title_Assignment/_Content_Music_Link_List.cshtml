@@ -1,0 +1,295 @@
+﻿@model List<RightsU_Entities.Content_Music_Link>
+@{
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    
+    var Title = new RightsU_BLL.Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
+    RightsU_Entities.System_Parameter_New objSPN = new RightsU_BLL.System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Parameter_Name == "DefaultVersionCode").FirstOrDefault();
+    int DefaultVersionCode = 0;
+    if (objSPN != null)
+    {
+        DefaultVersionCode = Convert.ToInt32(objSPN.Parameter_Value);
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script src="~/JS_Core/jquery.sumoselect.js"></script>
+<link href="~/CSS/sumoselect.css" rel="stylesheet" />
+<style>
+    .tdchkMusicLink {
+        width: 2%;
+    }
+    .sumo_Version {
+        width: 153px !important;
+    }
+</style>
+<div class="tableScroll_CML" style="max-height: 300px!important; overflow: initial !important;">
+    @*style="max-height: 200px!important;"*@
+    <table class="table table-bordered table-hover" id="tblMusicLink">
+        <thead>
+            <tr>
+                <th style="width:20%;text-align:center">@objMessageKey.Program</th>
+                <th style="width:10%;text-align:center">@objMessageKey.episode</th>
+                <th style="width:15%;text-align:center">@objMessageKey.Version</th>
+                <th style="width:15%;text-align:center">@objMessageKey.TCIn</th>
+                <th style="width:15%;text-align:center">@objMessageKey.TCOut</th>
+                <th style="width:15%;text-align:center">@objMessageKey.Duration</th>
+                <th style="width:10%;text-align:center">@objMessageKey.Action</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @{
+                string strFromAdd = "00:00:00", strToAdd = "00:00:00", strDurationAdd = "00:00:00", strFromFrameAdd = "00", strToFrameAdd = "00", strDurationFrameAdd = "00";
+                <tr id="trMusicLink">
+                    <td>
+                        <input type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" placeholder="@objMessageKey.Content" onkeyup="populateTitleContent(this)" />
+                        <input type="hidden" id="hdnDealTitleContentCode" />
+                    </td>
+                    <td>
+                        <select id="ddlEpisodeNo" class="form_input chosen-select"></select>
+                    </td>
+                    <td>
+                        @Html.DropDownList("Version", ViewBag.VersionList as SelectList, new { @id = "ddlVersion" })
+                        <script>
+                            $('#ddlVersion').val(@DefaultVersionCode);
+                        </script>
+                    </td>
+                    <td style="text-align:center">
+                        @*<input type="time" step="1" id="txtFrom_1" min="00:00:00" max="30:00:00" value="@strFromAdd" class="timeTextBox" onfocusout="calculateDuration(1, false, false)" style="width: 100px!important;line-height: 10px;">*@
+                        <input type="text" id="txtFrom_1" value="@strFromAdd" onfocusout="calculateDuration(1, false, false)"  style="width: 70px!important;line-height: 10px;" />
+                        <input type="text" id="txtFrameFrom_1" class="numeric_Frame smalltext" value="@strFromFrameAdd" onfocusout="calculateDuration(1, false, false)" style="width: 27px!important;" />
+                    </td>
+                    <td style="text-align:center">
+
+                        @*<input type="time" step="1" id="txtTo_1" min="00:00:00" max="30:00:00" value="@strToAdd" class="timeTextBox" onfocusout="calculateDuration(1, false, false)" style="width: 100px!important;line-height: 10px;">*@
+                        <input type="text" id="txtTo_1" value="@strToAdd" onfocusout="calculateDuration(1, false, false)" style="width: 70px!important;line-height: 10px;" />
+                        <input type="text" id="txtFrameTo_1" class="numeric_Frame smalltext" value="@strToFrameAdd" onfocusout="calculateDuration(1, false, false)" style="width: 27px!important;" />
+
+                    </td>
+                    <td style="text-align:center">
+
+                        @*<input type="time" step="1" id="lblDuration_1" min="00:00:00" max="30:00:00" value="@strDurationAdd" onkeypress="Clear(1)" onclick="Clear(1)" class="timeTextBox" style="width: 100px!important; line-height: 10px;">*@
+                        <input type="text" id="lblDuration_1" value="@strDurationAdd"  onkeypress="Clear(1)" onclick="Clear(1)" style="width: 70px!important;line-height: 10px;" />
+                        <input type="text" id="lblDurationFrame_1" value="@strDurationFrameAdd" class="numeric_Frame smalltext" onkeypress="Clear(1)" onclick="Clear(1)" style="width: 27px!important;" />
+
+                    </td>
+                    <td style="text-align:center">
+                        <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" id="CML_Save" style="cursor: pointer;"></a><!--onclick="btnSave_OnClick('ADD')"-->
+                        @*<a title="Cancel" class="glyphicon glyphicon-remove-circle" style="cursor: pointer;" onclick="CancelContentMusicLink()"></a>*@
+                    </td>
+                </tr>
+            }
+
+            @{ int i = 1; }
+            @if (Model.Count > 0)
+            {
+                foreach (var item in Model)
+                {
+                    var a = new RightsU_BLL.Title_Content_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Where(x => x.Title_Content_Code == item.Title_Content_Code).FirstOrDefault();
+                    string strFrom = "00:00:00", strTo = "00:00:00", strDuration = "00:00:00", strFromFrame = "00", strToFrame = "00", strDurationFrame = "00";
+                    if (item.From != null && item.To != null && item.Duration != null)
+                    {
+                        strFrom = item.From.Value.ToString();
+                        strTo = item.To.Value.ToString();
+                        strDuration = item.Duration.ToString();
+                    }
+                    if (item.From_Frame != null && item.To_Frame != null && item.Duration_Frame != null)
+                    {
+                        strFromFrame = item.From_Frame.Value.ToString("00");
+                        strToFrame = item.To_Frame.Value.ToString("00");
+                        strDurationFrame = item.Duration_Frame.Value.ToString("00");
+                    }
+                    if (ViewBag.Action == "EDIT" && item.Dummy_Guid == ViewBag.DummyID)
+                    {
+                        <tr>
+                            <td>
+                                <input type="hidden" id="hdnMusicCode_@i" value="@item.Music_Title_Code" />
+                                <input type="hidden" id="hdnDummyGuid_@i" value="@item.Dummy_Guid" />
+                                @if (a.Episode_Title == null)
+                                {
+                                    var temp = Title.Where(z => z.Title_Code == a.Title_Code).FirstOrDefault();
+                                    <input type="text" name="srchCommon" id="searchCommon_edit" value="@temp.Title_Name" class=" search" style="width:100%" placeholder="@objMessageKey.Content" onkeyup="populateTitleContent_Edit(this)" />
+                                    <input type="hidden" id="hdnDealTitleContentCode_edit" />
+                                }
+                                else
+                                {
+                                    <input type="text" name="srchCommon" id="searchCommon_edit" value="@a.Episode_Title" class=" search" style="width:100%" placeholder="@objMessageKey.Content" onkeyup="populateTitleContent_Edit(this)" />
+                                    <input type="hidden" id="hdnDealTitleContentCode_edit" />
+                                }
+                            </td>
+                            <td align="center">
+                                <div id="EpisodeNo_ddl_edit_div">
+                                    @Html.DropDownList("EpisodeNo_ddl_edit", ViewBag.EpisodeNo as List<SelectListItem>, "Please Select", new { @id = "EpisodeNo_ddl_edit" })
+                                </div>
+                                <div id="ddlEpisodeNo_Edit_div" style="display: none;">
+                                    <select id="ddlEpisodeNo_Edit" class="form_input chosen-select"></select>
+                                </div>
+                            </td>
+                            <td>
+                                @Html.DropDownList("Version", ViewBag.VersionList_Edit as SelectList, new { @id = "ddlVersion_Edit", @class = "form_input chosen-select" })
+                                <script>
+                                    $('#ddlVersion').val(@item.Version_Code);
+                                </script>
+                            </td>
+                            <td style="text-align:center">
+                               @* <input type="time" step="1" id="txtFrom_2" min="00:00:00" max="30:00:00" value="@strFrom" class="timeTextBox" onfocusout="calculateDuration(2, false, false)" style="width: 100px!important;line-height: 10px;">*@
+                                <input type="text" id="txtFrom_2" value="@strFrom" onfocusout="calculateDuration(2, false, false)" style="width: 70px!important;line-height: 10px;" />
+                                <input type="text" id="txtFrameFrom_2" class="numeric_Frame smalltext" value="@strFromFrame" onfocusout="calculateDuration(1, false, false)" style="width: 27px!important;" />
+
+                            </td>
+                            <td style="text-align:center">
+                                @*<input type="time" step="1" id="txtTo_2" min="00:00:00" max="30:00:00" value="@strTo" class="timeTextBox" onfocusout="calculateDuration(2, false, false)" style="width: 100px!important;line-height: 10px;">*@
+                                <input type="text" id="txtTo_2" value="@strTo" onfocusout="calculateDuration(1, false, false)" style="width: 70px!important;line-height: 10px;" />
+                                <input type="text" id="txtFrameTo_2" class="numeric_Frame smalltext" value="@strToFrame" onfocusout="calculateDuration(1, false, false)" style="width: 27px!important;" />
+                            </td>
+                            <td style="text-align:center">
+                                @*<input type="time" step="1" id="lblDuration_2" min="00:00:00" max="30:00:00" value="@strDuration" onkeypress="Clear(1)" onclick="Clear(1)" class="timeTextBox" style="width: 100px!important; line-height: 10px;">*@
+                                <input type="text" id="lblDuration_2" value="@strDuration" onkeypress="Clear(1)" onclick="Clear(1)" style="width: 70px!important;line-height: 10px;" />
+                                <input type="text" id="lblDurationFrame_2" value="@strDurationFrame" class="numeric_Frame smalltext" onkeypress="Clear(1)" onclick="Clear(1)" style="width: 27px!important;" />
+
+                            </td>
+                            <td style="text-align:center">
+                                <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" style="cursor: pointer;" onclick="btnSave_OnClick('EDIT','@item.Dummy_Guid')"></a>
+                                <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" style="cursor: pointer;" onclick="CancelContentMusicLink()"></a>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr>
+                            <td>
+                                <input type="hidden" id="hdnMusicCode_@i" value="@item.Music_Title_Code" />
+                                <input type="hidden" id="hdnDummyGuid_@i" value="@item.Dummy_Guid" />
+                                @if (a.Episode_Title == null)
+                                {
+                                    var temp = Title.Where(z => z.Title_Code == a.Title_Code).FirstOrDefault();
+                                    <span id="episodeTitle_Edit">@temp.Title_Name</span>
+                                }
+                                else
+                                {
+                                    <span id="episodeTitle_Edit">@a.Episode_Title</span>
+                                }
+                            </td>
+                            <td align="center">
+                                <span id="episodeNo_Edit">@a.Episode_No</span>
+                            </td>
+                            <td>
+                                @{
+                                    string versionName = "";
+                                    {
+                                        if (item.Title_Content_Version != null)
+                                        {
+                                            versionName = item.Title_Content_Version.Version.Version_Name;
+                                        }
+                                        else
+                                        {
+                                            versionName = new RightsU_BLL.Version_Service(objLoginEntity.ConnectionStringName).GetById((int)item.Version_Code).Version_Name;
+                                        }
+                                    }
+                                }
+                                <span>@versionName</span>
+                            </td>
+                            <td style="text-align:center">
+                                <span>@strFrom</span>
+                                <span>@strFromFrame</span>
+                            </td>
+                            <td style="text-align:center">
+                                <span>@strTo</span>
+                                <span>@strToFrame</span>
+                            </td>
+                            <td style="text-align:center">
+                                <span>@strDuration</span>
+                                <span>@strDurationFrame</span>
+                            </td>
+                            <td style="text-align:center">
+                                <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer;" onclick="AddContentMusicLink('EDIT','@item.Dummy_Guid','@a.Episode_Title','@a.Episode_No','@a.Title_Code','@item.Version_Code')"></a>
+                                <a title="@objMessageKey.Delete" class="glyphicon glyphicon-trash" style="cursor: pointer;" onclick="DeleteCML('@item.Dummy_Guid')"></a>
+                            </td>
+                        </tr>
+                    }
+                    i++;
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        debugger;
+        $('#ddlVersion').SumoSelect();
+        $('#ddlVersion_Edit').SumoSelect();
+        
+        //initializeChosen();
+        //initializeTooltip();
+        if (typeof $('#txtFrom_1') != undefined) {
+            $('#txtFrom_1').timeEntry({ show24Hours: true, showSeconds: true });
+            $('#txtTo_1').timeEntry({ show24Hours: true, showSeconds: true });
+            $('#lblDuration_1').timeEntry({ show24Hours: true, showSeconds: true });
+        }
+        if (typeof $('#txtFrom_2') != undefined) {
+            $('#txtFrom_2').timeEntry({ show24Hours: true, showSeconds: true });
+            $('#txtTo_2').timeEntry({ show24Hours: true, showSeconds: true });
+            $('#lblDuration_2').timeEntry({ show24Hours: true, showSeconds: true });
+        }
+        $('.timeEntry-control').hide();
+    });
+    function Clear(rowNo) {
+        $("#txtFrom_" + rowNo).val("00:00:00");
+        $("#txtFrameFrom_" + rowNo).val("00");
+        $("#txtTo_" + rowNo).val("00:00:00");
+        $("#txtFrameTo_" + rowNo).val("00");
+    }
+    $(".numeric_Frame").numeric({
+        allowMinus: false,
+        allowThouSep: false,
+        allowDecSep: false,
+        max: frameLimit - 1,
+        min: 0
+    });
+    $(".numeric_Duration").numeric({
+        allowMinus: false,
+        allowThouSep: false,
+        allowDecSep: true,
+        max: 999,
+        min: 1
+    });
+
+    var mybutton_counter = 0;
+    $('#CML_Save').on('click', function (event) {
+        if ($("#currentSong").text().trim() == "") {
+            showAlert('E', "Please Select Atleast one Music Track");
+            return false;
+        }
+        else {
+            if (mybutton_counter > 0) { return false; }
+            mybutton_counter++;
+            $('.required').removeClass('required');
+            var i = 1, removeCount = 0, addEditCount = 0;
+            var returnVal = true;
+            var tblMusicLink = $("#tblMusicLink tr:not(:has(th))");
+
+            if (validateCML("ADD")) {
+                var isValid = calculateDuration(1, true, true)
+                if (!isValid) {
+                    mybutton_counter = 0;
+                    returnVal = false;}
+            }
+            else {
+                mybutton_counter = 0;
+                returnVal = false;
+            }
+            if (returnVal) {
+                SaveAssignedMusic("S", "ADD")
+            }
+        }
+    });
+   
+</script>

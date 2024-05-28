@@ -1,0 +1,46 @@
+.tooltip-inner {
+    max-width: 200px;
+    white-space: nowrap;
+    word-break: break-all;
+}
+
+.avoid-clicks {
+    pointer-events: none;
+  }
+  .table-body{
+    /* height: 200px; */
+    /* overflow-y: scroll; */
+    overflow: visible;
+    /* overflow: visible; */
+}
+input.SearchTextBox {
+	width:20% !important;
+	margin-right:2px !important;
+	border: 1px solid #bbb !important;
+	padding:2px 2px !important;
+	border-top-left-radius: 4px !important;
+	border-bottom-left-radius: 4px !important;
+	border-top-right-radius: 4px !important;
+	border-bottom-right-radius: 4px !important;
+	height: 30px;
+}
+input.searchReqTextBox {
+    width:147px !important;
+    margin-right:2px !important;
+    border: 1px solid #bbb !important;
+    padding:2px 2px !important;
+    border-top-left-radius: 4px !important;
+    border-bottom-left-radius: 4px !important;
+    border-top-right-radius: 4px !important;
+    border-bottom-right-radius: 4px !important;
+    height: 30px;
+  }
+  .csslabel {
+    font-weight: normal !important;
+}
+label {
+    display: inline-block;
+    max-width: 100%;
+    margin-bottom: 5px;
+    font-weight: initial;
+}

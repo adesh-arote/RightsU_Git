@@ -1,0 +1,2414 @@
+﻿@model RightsU_Entities.Music_Title
+@using UTOFrameWork.FrameworkClasses
+@using System.Configuration;
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string Message = Convert.ToString(Session["Music_Message"]);
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script src="~/JS_Core/jquery.mark.min.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script>
+
+    var panelVisible = false;
+    var RightpanelHideCss = '-350px';
+    var RightpanelShowCss = '0px';
+    var IsCall = 'Y';
+
+    var RightpanelHideCsss = '-350px';
+    var RightpanelShowCsss = '350px';
+
+    var LeftpanelHideCss = '-350px';
+    var LeftpanelShowCss = '0px';
+
+    var LeftpanelHideCsss = '0px';
+    var LeftpanelShowCsss = '350px';
+
+
+    function BindSearch() {
+        BindAdvanced_Search_Controls('BTC');
+    }
+    $(document).ready(function () {
+        $('html').css("overflow-x", "hidden");
+        $(".radio-inline").hide();
+        if ('@objMessageKey.LayoutDirection' == 'RTL') {
+            $('.glyphicon-search').css({ transform: 'rotate(0deg)' });
+            $('#lbTitle_Code').css({ direction: 'rtl' });
+            $('.paging_area .pull-left,#Pagination').css({ direction: 'rtl' });
+            $('.paging_area .pull-right').css({ direction: 'rtl', marginTop: '5px' });
+        }
+
+        $('#ddlLanguage').SumoSelect();
+        $('#ddlMusicLBL').SumoSelect();
+        $('#ddlSinger').SumoSelect();
+        $('#ddlComposer').SumoSelect();
+        $('#ddlLyricists').SumoSelect();
+        $('#ddlGenres').SumoSelect();
+        $('#ddlTheme').SumoSelect();
+        $('#ddlStarCast').SumoSelect();
+
+        initializeChosen();
+        initializeSubMenu2();
+        AllsubmenuHide();
+        var lastScrollTop = 0;
+        var win = 0;
+        var st = 0;
+
+        var mark = function () {
+            var keyword = $("#lbTitle_Code").val();
+            var options = { 'separateWordSearch': true };
+            $(".Highlight").unmark({
+                done: function () {
+                    $(".Highlight").mark(keyword, options);
+                }
+            });
+            $("#lbTitle_Code").on("input", mark);
+            $("#lbTitle_Code").on("change", mark);
+        }
+
+        $(window).scroll(function (event) {
+            //debugger
+            var st = $(this).scrollTop();
+            if (st > lastScrollTop)
+                $("#pnlSearch").addClass("tinyADSearch")
+            else
+                $("#pnlSearch").removeClass("tinyADSearch")
+
+        });
+        var msg = "@ViewBag.Locking_Message";
+        if (msg != "") {
+            showAlert('E', '@ViewBag.Locking_Message');
+        }
+        $(window).resize(function () {
+            //debugger
+            win = $(this);
+            var a = win.width();
+            if (win.height() < 800) {
+                $('.btnRightSearch1').css({ 'bottom': "0" });
+                $('.btnRightSearch1').css({ 'margin-bottom': "0" });
+            }
+            else {
+                $('.btnRightSearch1').css({ 'bottom': "150px" });
+                $('.btnRightSearch1').css({ 'margin-bottom': "-33px" });
+            }
+        });
+
+        $(window).load(function () {
+            win = $(this);
+            var a = win.width();
+            if (win.height() < 800) {
+                $('.btnRightSearch1').css({ 'bottom': "0" });
+                $('.btnRightSearch1').css({ 'margin-bottom': "0" });
+            }
+            else {
+                $('.btnRightSearch1').css({ 'bottom': "150px" });
+                $('.btnRightSearch1').css({ 'margin-bottom': "-33px" });
+            }
+        });
+        addNumeric();
+    });
+
+    function togglePanelVisibility2(panelID) {
+        document.getElementById("showMore").innerHTML = "Show more...";
+        debugger
+        if ('@objMessageKey.LayoutDirection' == 'RTL') {
+            document.getElementById('pnlSearch').removeAttribute('hidden')
+            $('.leftPanel').css('right', panelHideCss);
+            $(".RightPanel:not(#" + panelID + ")").css("left", LeftpanelHideCss);
+            var panel = document.getElementById(panelID);
+            if (panel.style.left == LeftpanelShowCss) {
+                panel.style.left = LeftpanelHideCss;
+                panelVisible = false;
+                $('#sideNavi').show();
+            }
+            else {
+                panel.style.left = LeftpanelShowCss;
+                panelVisible = true;
+                $('#sideNavi').hide();
+            }
+
+            $('.ulRightSearch').css({ direction: 'rtl' });
+            $('#AdSearch').css({ marginLeft: '40px' });
+            $('.btnRightSearch1').css({ marginLeft: '-83px' });
+            $('.btnRightSearch1 .btn-primary').css({ float: 'right', marginLeft: '10px' });
+
+        } else {
+            document.getElementById('pnlSearch').removeAttribute('hidden')
+            $('.leftPanel').css('left', panelHideCss);
+            $(".RightPanel:not(#" + panelID + ")").css("right", RightpanelHideCss);
+            var panel = document.getElementById(panelID);
+            if (panel.style.right == RightpanelShowCss) {
+
+                panel.style.right = RightpanelHideCss;
+                panelVisible = false;
+                $('#sideNavi').show();
+            }
+            else {
+                panel.style.right = RightpanelShowCss;
+                panelVisible = true;
+                $('#sideNavi').hide();
+            }
+        }
+    }
+
+
+
+
+
+
+    function ShowMore(panelID) {
+        debugger;
+        document.getElementById('pnlShowmore').removeAttribute('hidden')
+        $('.leftPanel').css('left', panelHideCss);
+        $('.MoreActionDiv').hide('fast');
+        $(".RightPanel:not(#" + panelID + ")").css("right", RightpanelShowCss);
+        var panel = document.getElementById(panelID);
+        if (panel.style.right == RightpanelShowCsss) {
+            panel.style.right = RightpanelHideCss;
+            panelVisible = false;
+            $('#sideNavi').show();
+        }
+        else {
+            panel.style.right = RightpanelShowCsss;
+            panelVisible = true;
+            $('#sideNavi').hide();
+        }
+        if (panel.style.right == '350px') {
+            document.getElementById("showMore").innerHTML = "Show less...";
+        }
+        else {
+            document.getElementById("showMore").innerHTML = "Show more...";
+        }
+
+    }
+    function initializeSubMenu2() {
+        $('.RightPanel li.has-sub>a').on('click', function () {
+            $(this).removeAttr('href');
+            var element = $(this).parent('li');
+            if (element.hasClass('open')) {
+                element.removeClass('open');
+                element.find('li').removeClass('open');
+                element.find('ul').slideUp(200);
+            }
+            else {
+                element.addClass('open');
+                element.children('ul').slideDown(200);
+                element.siblings('li').children('ul').slideUp(200);
+                element.siblings('li').removeClass('open');
+                element.siblings('li').find('li').removeClass('open');
+                element.siblings('li').find('ul').slideUp(200);
+            }
+        });
+    }
+    function AllsubmenuHide() {
+        debugger
+        //$('.RightPanel').css('right', RightpanelHideCss);
+        //$('.leftPanel').css('left', panelHideCss);
+        //$('#sideNavi').show();
+        if ('@objMessageKey.LayoutDirection' == 'RTL') {
+            $('.RightPanel').css('left', LeftpanelHideCss);
+            $('.leftPanel').css('right', panelHideCss);
+            $('#sideNavi').show();
+        }
+        else {
+            $('.RightPanel').css('right', RightpanelHideCss);
+            $('.leftPanel').css('left', panelHideCss);
+            $('#sideNavi').show();
+        }
+
+    }
+
+    function SwitchMovieAlbumType_Advance() {
+
+        $('#txtmusicAlbumName').val('');
+        $('#hdnMovieAlbum').val('');
+    }
+
+</script>
+<style>
+    .tinyADSearch {
+        top: 40px;
+    }
+
+    .top_filter {
+        margin-top: 22px;
+    }
+
+    .search_area {
+        border-bottom: 1px dotted #777;
+        margin-bottom: 5px;
+    }
+
+    #divSearch {
+        padding: 6px 10px;
+        margin-bottom: 5px;
+        border: 1px solid #ddd;
+        background-color: #eee;
+    }
+
+        #divSearch > ul > li {
+            float: left;
+            min-height: 56px;
+            list-style-type: none;
+            padding: 0 3px;
+        }
+
+        #divSearch .chosen-container {
+            margin: 0;
+        }
+
+        #divSearch .checkbox-inline {
+            margin-bottom: 7px;
+        }
+
+    ul.first > li {
+        width: 25% !Important;
+    }
+
+        ul.first > li:nth-child(2) {
+            width: 25% !Important;
+        }
+
+        ul.first > li:last-child {
+            width: 25% !Important;
+        }
+
+    ul.second > li {
+        width: 25% !Important;
+    }
+
+        ul.second > li:nth-child(2) {
+            width: 25% !Important;
+        }
+
+        ul.second > li:last-child {
+            width: 25% !Important;
+        }
+
+    .top_area input.search {
+        width: 525px !important;
+    }
+
+    ul.third > li {
+        width: 25% !Important;
+    }
+
+        ul.third > li:nth-child(2) {
+            width: 25% !Important;
+        }
+
+        ul.third > li:last-child {
+            width: 25% !Important;
+        }
+
+    #divSearch label {
+        display: inline-block;
+    }
+
+    #lbSearchTitles_chosen {
+        width: 85% !Important;
+    }
+
+    .AdSearch {
+        margin-left: 8px;
+        /*margin-top: 3px;*/
+    }
+
+    /*#AdvanceSearchPanel {
+        overflow-y: auto;
+        height: 850px;
+    }*/
+    #AdvanceSearchPanel {
+        overflow-y: auto;
+        height: 100%;
+    }
+
+    .pagination_popup .current.prev, .pagination .current.next {
+        z-index: -1 !important;
+    }
+
+    .btnRightSearch1 {
+        text-align: center;
+        text-align: center;
+        position: fixed;
+        width: 350px;
+        height: 38px;
+        bottom: 150px;
+        /*top: 710px;*/
+        color: #fff;
+        background-color: #dbdbdb;
+        padding: 10px;
+        z-index: 99;
+    }
+
+    .ulRightSearch {
+        /*overflow: hidden !important;*/
+        position: relative;
+        /*position: fixed;*/
+        height: 100%;
+        z-index: 99;
+        max-height: 700px;
+    }
+
+    .SumoSelect {
+        width: 250px !important;
+    }
+
+    .details a,
+    .copyright a {
+        text-decoration: none;
+        color: #2b64a5;
+    }
+
+    .details {
+        padding-left: 15px;
+        margin-top: 6px;
+        color: black;
+    }
+
+    .RightPanel {
+        bottom: 45px;
+        padding-left: 10px;
+        background-color: #dbdbdb;
+        width: 350px;
+        height: 850px;
+        top: 0px;
+        position: absolute;
+        z-index: 98;
+        right: 0px;
+        box-shadow: 6px -9px 10px rgba(0,0,0,0.3);
+        -moz-box-shadow: 6px -9px 10px rgba(0,0,0,0.3);
+        -webkit-box-shadow: 6px -9px 10px rgba(0,0,0,0.3);
+        transition: all 0.3s;
+        -o-transition: all 0.3s;
+        -moz-transition: all 0.3s;
+        -webkit-transition: all 0.3s;
+    }
+
+    .slimScrollDiv {
+        border: 0px !important;
+        max-height: 700px !important;
+        height: 738px !important;
+    }
+
+    .container {
+        min-height: 738px;
+    }
+</style>
+
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div id="sideNavi">
+            <div class="side-navi-item item1" style="top:0px ;width: 46px !important;" onclick="javascript: togglePanelVisibility2('pnlSearch'); BindSearch();"><div><span class="glyphicon glyphicon-search" style="transform: rotate(-270deg);"></span></div></div>
+        </div>
+        <div class="RightPanel" id="pnlSearch" hidden="hidden">
+            <div id="AdvanceSearchPanel">
+                <h4>@objMessageKey.AdvanceSearch</h4>
+                <a class="close" href="#" onclick="javascript: panelVisible = true; togglePanelVisibility2('pnlSearch');"><span class="Reviewclose">x</span></a>
+                <ul id="AdSearch" style="margin-top: 11px;border-bottom: 0;border-left: 0px;border-right: 0px;">
+                    <li class="AdSearch">
+                        <label>@objMessageKey.MusicTrack:</label>
+                        <br>
+                        <input type="text" placeholder="@objMessageKey.MusicTrack" id="txtTitleSearch" autocomplete="on" style="width:250px" onkeyup="populateTitle(event)" />
+                        @Html.Hidden("hdnTitleSearch")
+                    </li>
+                    <li class="AdSearch">
+                        <label>@objMessageKey.MusicLanguage:</label><br />
+                        <select id="ddlLanguage" multiple="multiple"></select>
+                    </li>
+                    <li class="AdSearch">
+                        <label>@objMessageKey.Movie/@objMessageKey.Album Type:</label><br />
+
+                        <input type="radio" name="Movie_Album_Type" id="rdbMovie" value="M" style="width:20px" checked onclick="SwitchMovieAlbumType_Advance();" />
+                        <label for="rdbMovie" style="vertical-align:2px">@objMessageKey.Movie</label>
+                        <input type="radio" name="Movie_Album_Type" id="rdbShow" value="S" style="width:20px" onclick="SwitchMovieAlbumType_Advance();" />
+                        <label for="rdbShow" style="vertical-align:2px">@objMessageKey.Show</label>
+                        @if (ViewBag.MusicAlbumVisibility == "Y")
+                        {
+                            <input type="radio" name="Movie_Album_Type" id="rdbAlbum" value="A" style="width:20px" onclick="SwitchMovieAlbumType_Advance();" />
+                            <label for="rdbAlbum" style="vertical-align:2px">@objMessageKey.Album</label>
+                        }
+
+                    </li>
+                    <li class="AdSearch">
+                        <label>@objMessageKey.Movie/@objMessageKey.Album:</label><br />
+                        <input type="text" placeholder="@objMessageKey.Movie/@objMessageKey.Album" id="txtmusicAlbumName" autocomplete="on" style="width:250px" onkeyup="AutoMovieAlbum(event)" />
+                        @Html.Hidden("hdnMovieAlbum")
+
+                        @*@Html.DropDownList("ddlAlbum", ViewBag.Album as MultiSelectList, new { @id = "ddlAlbum", @class = "form_input chosen-select", @multiple = "multiple" })*@
+
+                    </li>
+                    <li class="AdSearch">
+                        <label>@objMessageKey.MusicLabel:</label><br />
+                        <select id="ddlMusicLBL" multiple="multiple"></select>
+                    </li>
+                    <li class="AdSearch">
+                        <label>@objMessageKey.YearOfRelease:</label><br>
+                        <input type="text" placeholder="@objMessageKey.YearOfRelease" class="text" onkeypress="return isNumber(event);" maxlength="4" id="txtYearOfRelease" style="width: 118px;" />
+                    </li>
+                    <li class="AdSearch">
+                        <label>@objMessageKey.Singer:</label><br />
+                        <select id="ddlSinger" multiple="multiple"></select>
+                    </li>
+                    <li class="AdSearch">
+                        <a onclick="ShowMore('pnlShowmore')" id="showMore">Show more...</a>
+                    </li>
+                    <li>
+                        @if (ViewBag.IsMuciVersionSPN == "Y")
+                        {
+                            <div style="text-align:center;">
+                                <label class="checkbox-inline">
+                                    <input type="checkbox" id="chkPublicDomain" onchange="valueChanged()" />
+                                    @* <input type="checkbox" id="chkPublicDomain" value="N"/>*@
+                                    @objMessageKey.IncludePublicDomain
+                                </label>
+                                <label class="radio-inline">@Html.RadioButtonFor(m => Model.Public_Domain, "Y", new { @id = "PublicDomain" })@objMessageKey.Yes</label>
+                                <label class="radio-inline">@Html.RadioButtonFor(m => Model.Public_Domain, "N", new { @id = "PublicDomain" })@objMessageKey.NO</label>
+                                <br><br>
+                            </div>
+                        }
+                    </li>
+                </ul>
+
+                <a style="margin-left:80px;" class="btn-primary" href="#" onclick="validateSearch();">@objMessageKey.Search</a>
+                <a class="btn-primary" href="#" onclick="ClearAll();">@objMessageKey.ClearAll</a>
+                <input type="hidden" id="hdnClearAll" />
+                @*<div class="btnRightSearch1">
+
+                    </div>*@
+            </div>
+        </div>
+
+
+        <div class="RightPanel" style="overflow-y: auto;" id="pnlShowmore" hidden="hidden" dir="@objMessageKey.LayoutDirection">
+            <div id="AdvanceSearchPanel">
+                <h4>Additional Options</h4>
+                <a class="close" href="#" onclick="javascript: panelVisible=true;ShowMore('pnlSearch');">@*<span class="Reviewclose">x</span>*@</a>
+                <ul id="AdSearch" style="margin-top: 11px;border-bottom: 0;border-left: 0px;border-right: 0px;">
+                    <li class="AdSearch">
+                        <label>@objMessageKey.SongStarCast:</label><br />
+                        <select id="ddlStarCast" multiple="multiple"></select>
+                    </li>
+                    <li class="AdSearch">
+                        <label>@objMessageKey.MusicComposer:</label><br />
+                        <select id="ddlComposer" multiple="multiple"></select>
+                    </li>
+                    <li class="AdSearch">
+                        <label>@objMessageKey.Lyricist:</label><br />
+                        <select id="ddlLyricists" multiple="multiple"></select>
+                    </li>
+                    @if (ViewBag.MusicThemeVisibility == "G")
+                    {
+                        <li class="AdSearch">
+                            <label>@objMessageKey.Genres :</label><br />
+                            <select id="ddlGenres" multiple="multiple"></select>
+                        </li>
+                        <li class="AdSearch"></li>
+                    }
+                    else if (ViewBag.MusicThemeVisibility == "T")
+                    {
+                        <li class="AdSearch">
+                            <label>@objMessageKey.MusicTheme:</label><br />
+                            <select id="ddlTheme" multiple="multiple"></select>
+                        </li>
+                        <li class="AdSearch"></li>
+                    }
+                    else
+                    {
+                        <li class="AdSearch">
+                            <label>@objMessageKey.Genres:</label><br />
+                            <select id="ddlGenres" multiple="multiple"></select>
+                        </li>
+                        <li class="AdSearch">
+                            <label>@objMessageKey.MusicTheme:</label><br />
+                            <select id="ddlTheme" multiple="multiple"></select>
+                        </li>
+                    }
+                    <li class="AdSearch">
+                        <label>Music Tag:</label><br />
+                        <input type="text" placeholder="@objMessageKey.Tag" id="txtTag" maxlength="400" style="width:250px" />
+                    </li>
+                    @*<li class="AdSearch"></li>
+                        <li>
+                                <br />
+                                <div>
+                                    <a class="btn-primary" href="#" onclick="validateSearch();">Search</a>
+                                    <a class="btn-primary" href="#" onclick="ClearAll();">Clear All</a>
+                                    <input type="hidden" id="hdnClearAll" />
+                                </div>
+                            </li>*@
+
+
+                </ul>
+            </div>
+        </div>
+
+        <div class="container acq main_col" onclick="AllsubmenuHide(); $('.leftPanel').css('left', panelHideCss);">
+            <div class="top_area">
+                <h2 class="pull-left">@objMessageKey.MusicTrackList</h2>
+                <div class="right_nav pull-right" style="margin-right: 17px;">
+                    <ul>
+                        @*<li>
+            <input class="btn btn-primary" type="submit" id="btnSearch" value="@objMessageKey.Search" onclick="javascript: panelVisible = true; togglePanelVisibility2('pnlSearch'); searchList();" />
+        </li>
+        <li>
+            <a class="glyphicon glyphicon-refresh" title="@objMessageKey.ShowAll" id="btnShowAll" onclick="javascript: panelVisible = true; togglePanelVisibility2('pnlSearch'); ShowAll()"></a>
+        </li>*@
+                        <li>
+                            <input type="button" class="btn btn-primary" value="@objMessageKey.Search" id="btnSearch" onclick="return searchList();" />
+                        </li>
+                        <li>
+                            <a class="glyphicon glyphicon-refresh" title="@objMessageKey.ShowAll" id="btnShowAll" onclick="ShowAll()"></a>
+                        </li>
+                        <li>
+                            @if (ViewBag.VisibilityforAdd.Contains("~" + GlobalParams.RightCodeForExportToExcel + "~"))
+                            {
+                                <label for="btnExportToExcel" class="glyphicon glyphicon-floppy-save" title="@objMessageKey.SaveToExcel">
+
+                                    @using (Html.BeginForm("ExportToExcel", "Music_Title"))
+                                    {
+                                        <input type="submit" style="display: none" id="btnExportToExcel" />
+                                        @Html.Hidden("TitleName")
+                                    }
+                                </label>
+                            }
+                        </li>
+                        <li>
+                            @if (ViewBag.VisibilityforAdd.Contains("~" + GlobalParams.RightCodeForMusicBulkImport + "~"))
+                            {
+                                <label for="btnTitleImport" @*class="glyphicon glyphicon-floppy-open"*@ class="glyphicon glyphicon-floppy-open"
+                                       onclick="javascript: panelVisible = true; togglePanelVisibility2('pnlSearch'); @("window.location.href='" + @Url.Action("Music_Title_Import", "Music_Title") + "'");" title="@objMessageKey.MusicTrackBulkImport">
+                                </label>
+                            }
+                        </li>
+                        <li>
+
+                            @if (ViewBag.VisibilityforAdd.Contains("~" + GlobalParams.RightCodeForAdd + "~"))
+                            {
+                                <a class="btn btn-primary" data-toggle="modal" onclick=" AddTitle()">@objMessageKey.AddMusicTrack</a>
+                            }
+
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="top_filter pull-right">
+                    <input type="text" name="lbTitle_Code" id="lbTitle_Code" class="search" value="@ViewBag.SearchedTitle"
+                           placeholder="@objMessageKey.SearchbyMusicAlbum , @objMessageKey.Track ,@objMessageKey.MusicTheme , @objMessageKey.Talent , @objMessageKey.MusicLabel , @objMessageKey.MusicLanguage" />
+                </div>
+
+            </div>
+            <div class="paging_area clearfix">
+                <span class="pull-left">@objMessageKey.TotalRecords : </span>
+                <span class="pull-left" id="lblRecordCount"></span>
+                <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="@((ViewBag.PageNo ?? 1))" />
+                <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+                <div id="Pagination" class="pagination"></div>
+                <span class="pull-right">
+                    @objMessageKey.PageSize :
+                    <input id="PageSize" type="text" class="smallTextBox pagingSize" onchange="txtPageSize_OnChange()"
+                           value="@((ViewBag.PageSize ?? 10))" onblur="setDefaultPaging('PageSize')" />
+                </span>
+            </div>
+            <div id="TitleListGrid">
+            </div>
+        </div>
+    </section>
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade in small_popup" id="popAddTitle" role="dialog" tabindex="-1" aria-hidden="false">
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade in" id="popAssignMusicLabel" role="dialog" tabindex="-1" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form">
+                <div class="form_wrapper">
+                    <div>
+                        <div class="modal_block modal_header">
+                            <a class="close" id="closeChangeLabel" data-dismiss="modal" onclick="CloseAssignMusicLabelPopup()">
+                                <span>X</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>@objMessageKey.ChangeMusicLabel</h2>
+                        </div>
+                        <div class="modal_block">
+                            <ul class="add_title_popup">
+                                <li>
+                                    <table>
+                                        <tr style="height:35px;">
+                                            <td style="width:25%"><label>@objMessageKey.MusicTrack :</label></td>
+                                            <td>
+                                                <strong><label id="lblMusicTitleName"></label></strong>
+                                            </td>
+                                        </tr>
+                                        <tr style="height:35px;">
+                                            <td><label>@objMessageKey.MusicLabel : </label></td>
+                                            <td>
+                                                <select name="ddlMusicLabel" id="ddlMusicLabel" class="form_input chosen-select" style="width:150px;"></select>
+                                            </td>
+                                        </tr>
+                                        <tr style="height:35px;">
+                                            <td><label>@objMessageKey.EffectiveFrom : </label></td>
+                                            <td>
+
+                                                <input type="text" id="effectiveDate" value="" class="isDatepicker" placeholder="DD/MM/YYYY" style="width:150px;line-height: initial;" size="9" />
+                                                <input type="hidden" id="hdnMinEffectiveFrom" value="" />
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </li>
+                                <li>
+                                    <label><strong>@objMessageKey.History</strong></label>
+                                    <div id="divMusicLabelHistory">
+                                    </div>
+                                </li>
+
+                            </ul>
+
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li>
+                                        <a class="btn btn-primary" onclick="SaveAssignedMusicLabel()">@objMessageKey.Save</a>
+                                    </li>
+                                    <li>
+                                        <a class="btn btn-primary" onclick="CloseAssignMusicLabelPopup()">@objMessageKey.Cancel</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    var tmp_IsAdvanced = '@ViewBag.isAdvanced';
+    var tmp_IsSearch = '@ViewBag.isSearch';
+    var URL_Bind_Title = '@Url.Action("Bind_Title", "Music_Title")';
+    var URL_BindAdvanced_Search_Controls = '@Url.Action("BindAdvanced_Search_Controls", "Music_Title")';
+    var URL_AutoCompleteMovieAlbum = '@Url.Action("AutoMovieAlbum", "Music_Title")';
+    var URL_AutoCompleteMovieStarCast = '@Url.Action("AutoCompleteMovieStarCast", "Music_Title")';
+    var searchText = "";
+    var command = "SHOW_ALL";
+    var IsMenu = "N";
+
+    function populateTitle(evt) {
+
+        var Selected_BUCode = 0;
+        var Selected_Title_Codes = "";
+        var selectedtxt = $('#txtTitleSearch').val()
+        var txt = selectedtxt.split('﹐');
+        var iscomplete = true;
+        if (txt[txt.length - 1].trim() == "")
+            iscomplete = false;
+        if (iscomplete) {
+            $("#txtTitleSearch").autocomplete({
+                focus: function () {
+                    return false;
+                },
+                search: function (e, u) {
+                    $(this).addClass('loader');
+                },
+                source: function (request, response) {
+                    var param = {
+                        Selected_deal_type_Code: '0',
+                        Selected_BUCode: Selected_BUCode,
+                        Selected_Title_Codes: Selected_Title_Codes,
+                        Searched_Title: $('#txtTitleSearch').val()
+                    };
+                    $.ajax({
+                        url: URL_Bind_Title,
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+                            if (data.length == 0) {
+                                data[0] = 'Result Not Found';
+                                response($.map(data, function (v, i) {
+                                    $('#txtTitleSearch').removeClass('loader');
+                                    return {
+                                        label: 'Result Not Found',
+                                        val: '0'
+                                    }
+                                }))
+                            }
+                            else {
+                                response($.map(data, function (v, i) {
+                                    $('#txtTitleSearch').removeClass('loader');
+                                    return {
+                                        label: v.Music_Title_Name,
+                                        val: v.Music_Title_Code
+                                    }
+                                }))
+                            }
+                            //$("#lbTitle_Code").val('');
+                            //response($.map(data, function (v, i) {
+                            //    return {
+                            //        label: v.Music_Title_Name,
+                            //        val: v.Music_Title_Code
+                            //    }
+                            //}))
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                            // alert("Error" + textStatus);
+                        }
+                    });
+                },
+                select: function (event, i) {
+
+                    var text = this.value.split(/﹐\s*/);
+                    text.pop();
+                    text.push(i.item.value);
+                    text.push("");
+                    this.value = text;
+                    this.value = text.join("﹐");
+                    var value = $("#hdnTitleSearch").val().split(/,\s*/);
+                    value.pop();
+                    value.push(i.item.val);
+                    value.push("");
+                    $("#hdnTitleSearch")[0].value = value.join(", ");
+                    return false;
+                },
+                minLength: 3,
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("position", "auto");
+                    $(".ui-autocomplete").css("max-height", "200px");
+                    $(".ui-autocomplete").css("max-width", "250px");
+                    $(".ui-autocomplete").css("overflow-y", "auto");
+                    $(".ui-autocomplete").css("overflow-x", "hidden");
+                    $(".ui-autocomplete").css("z-index", "2147483647");
+                },
+
+            });
+        }
+        else
+            return false;
+    }
+    var URL_BindAdvanced_Search_Controls = '@Url.Action("BindAdvanced_Search_Controls", "Music_Title")';
+    function BindAdvanced_Search_Controls(callfrom) {
+
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        $("#TitleName").val("");
+        // $("#lbTitle_Code").val('');
+
+        if (callfrom == 'BTC')
+            $('#divSearch').slideToggle(400);
+        var Is_async = true;
+        if (tmp_IsAdvanced == 'Y')
+            Is_async = false;
+        if (parseInt($("#ddlStarCast option").length) == 0) {
+            $.ajax({
+                type: "POST",
+                url: URL_BindAdvanced_Search_Controls,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                }),
+                async: Is_async,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+
+                        $("#ddlStarCast").empty();
+                        $("#ddlStarCast").empty();
+                        $("#ddlStarCast").empty();
+                        $("#ddlLanguage").empty();
+                        $("#ddlAlbum").empty();
+                        $("#ddlGenres").empty();
+                        $("#ddlMusicLBL").empty();
+                        $("#ddlLyricists").empty();
+                        $("#ddlTheme").empty();
+                        var obj_Search = $(result.objPage_Properties);
+                        $(result.lstMStarCast).each(function (index, item) {
+                            $("#ddlStarCast").append($("<option>").val(this.Value).text(this.Text));
+                        });
+                        $("#ddlStarCast").val(obj_Search[0].StarCastCodes_Search.split(',')).attr("selected", "true")[0].sumo.reload();
+                        $(result.lstMSinger).each(function (index, item) {
+                            $("#ddlSinger").append($("<option>").val(this.Value).text(this.Text));
+                        });
+                        $("#ddlSinger").val(obj_Search[0].SingerCodes_Search.split(',')).attr("selected", "true")[0].sumo.reload();
+                        $(result.lstMComposer).each(function (index, item) {
+                            $("#ddlComposer").append($("<option>").val(this.Value).text(this.Text));
+                        });
+                        $("#ddlComposer").val(obj_Search[0].ComposerCodes_Search.split(',')).attr("selected", "true")[0].sumo.reload();
+                        $(result.lstLanguageList).each(function (index, item) {
+                            $("#ddlLanguage").append($("<option>").val(this.Value).text(this.Text));
+                        });
+                        $("#ddlLanguage").val(obj_Search[0].LanguagesCodes_Search.split(',')).attr("selected", "true")[0].sumo.reload();
+
+                        $(result.lstAlbumList).each(function (index, item) {
+                            $("#ddlAlbum").append($("<option>").val(this.Value).text(this.Text));
+                        });
+                        $("#ddlAlbum").val(obj_Search[0].AlbumsCodes_Search.split(',')).attr("selected", "true").trigger("chosen:updated")
+
+                        if ('@ViewBag.MusicThemeVisibility' == "G") {
+                            $(result.lstGenres).each(function (index, item) {
+                                $("#ddlGenres").append($("<option>").val(this.Value).text(this.Text));
+                            });
+                            $("#ddlGenres").val(obj_Search[0].GenresCodes_Search.split(',')).attr("selected", "true")[0].sumo.reload();
+                        }
+                        else if ('@ViewBag.MusicThemeVisibility' == "T") {
+                            $(result.lstMTheme).each(function (index, item) {
+                                $("#ddlTheme").append($("<option>").val(this.Value).text(this.Text));
+                            });
+                            $("#ddlTheme").val(obj_Search[0].ThemeCodes_Search.split(',')).attr("selected", "true")[0].sumo.reload();
+                        }
+                        else {
+                            $(result.lstGenres).each(function (index, item) {
+                                $("#ddlGenres").append($("<option>").val(this.Value).text(this.Text));
+                            });
+                            $("#ddlGenres").val(obj_Search[0].GenresCodes_Search.split(',')).attr("selected", "true")[0].sumo.reload();
+                            $(result.lstMTheme).each(function (index, item) {
+                                $("#ddlTheme").append($("<option>").val(this.Value).text(this.Text));
+                            });
+
+                            $("#ddlTheme").val(obj_Search[0].ThemeCodes_Search.split(',')).attr("selected", "true")[0].sumo.reload();
+
+                        }
+                        $(result.lstMLabel).each(function (index, item) {
+                            $("#ddlMusicLBL").append($("<option>").val(this.Value).text(this.Text));
+                        });
+
+                        $("#ddlMusicLBL").val(obj_Search[0].MusicLabelCodes_Search.split(',')).attr("selected", "true")[0].sumo.reload();
+
+                        $(result.lstMLyricist).each(function (index, item) {
+                            $("#ddlLyricists").append($("<option>").val(this.Value).text(this.Text));
+                        });
+
+                        $("#ddlLyricists").val(obj_Search[0].LyricistCodes_Search.split(',')).attr("selected", "true")[0].sumo.reload();
+
+                        $('#txtYearOfRelease').val(obj_Search[0].YearOfRelease);
+                        $('#txtTag').val(obj_Search[0].Music_Tag_Search);
+                        $('#txtmusicAlbumName').val(obj_Search[0].MusicAlbumName);
+                        $('#txtTitleSearch').val(obj_Search[0].MusicTitleName_Search);
+                        $('#chkPublicDomain').val(obj_Search[0].Public_Domain);
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    }
+
+    /*Validaet Advanced Search*/
+    function validateSearch() {
+        debugger;
+        tmp_IsAdvanced = 'Y';
+        tmp_IsSearch = 'N';
+        $('#hdnClearAll').val('N');
+        var tmpStarCast = '', tmpLanguage = '', tmpAlbum = '', tmpMusicAlbumName = '', tmpGenres = '', tmpMusicLabel = '', tmpSinger = '', tmpComposer = '', tmpLyricist = '', tmptxtTitleSearch = '', tmpTheme = '', tmptxtTag = '', tmppublic_Domain = '', tmpmovie_Album_Type = '';
+
+        if ($('#ddlStarCast').val())
+            tmpStarCast = $('#ddlStarCast').val().join(',');
+
+        if ($('#ddlSinger').val())
+            tmpSinger = $('#ddlSinger').val().join(',');
+
+        if ($('#ddlComposer').val())
+            tmpComposer = $('#ddlComposer').val().join(',');
+
+        if ($('#ddlLanguage').val())
+            tmpLanguage = $('#ddlLanguage').val().join(',');
+
+        if ($('#hdnMovieAlbum').val())
+            tmpAlbum = $('#hdnMovieAlbum').val();
+
+        if ($('#txtmusicAlbumName').val())
+            tmpMusicAlbumName = $('#txtmusicAlbumName').val();
+
+        if ($('#ddlGenres').val())
+            tmpGenres = $('#ddlGenres').val().join(',');
+
+        if ($('#ddlMusicLBL').val())
+            tmpMusicLabel = $('#ddlMusicLBL').val().join(',');
+
+        if ($('#ddlLyricists').val())
+            tmpLyricist = $('#ddlLyricists').val().join(',');
+
+        if ($("#ddlTheme").val())
+            tmpTheme = $("#ddlTheme").val().join(',');
+
+        if ($('#txtTitleSearch').val())
+            tmptxtTitleSearch = $('#txtTitleSearch').val();
+        var txtYearOfRelease = $('#txtYearOfRelease').val();
+
+        var tmptxtTag = $('#txtTag').val();
+
+        tmpmovie_Album_Type = $('input[name="Movie_Album_Type"]:checked').val();
+
+        //var tmppublic_Domain = $('#chkPublicDomain').prop('checked');
+        //if (tmppublic_Domain == true)
+        //    tmppublic_Domain = "Y";
+        //else
+        //    tmppublic_Domain = "N";
+
+        if ($('#chkPublicDomain').prop('checked') == true)
+        {
+            var tmppublic_Domain = $("#PublicDomain").prop("checked");
+            if (tmppublic_Domain == true)
+                tmppublic_Domain = "Y";
+            else
+                tmppublic_Domain = "N";
+        }
+        else
+        {
+            tmppublic_Domain = "";
+        }
+
+
+        if (tmpStarCast == '' && tmpLanguage == '' && tmpMusicAlbumName == '' && tmpGenres == '' && tmpMusicLabel == '' && txtYearOfRelease == '' && tmpSinger == '' && tmpComposer == '' && tmpLyricist == '' && tmptxtTitleSearch == '' && tmpTheme == '' && tmptxtTag == '') {
+
+            showAlert('e', '@objMessageKey.Pleaseselectentersearchcriteria');
+            return false;
+        }
+        else {
+            showLD = 'Y';
+            AdvanceSearch();
+        }
+    }
+    function valueChanged() {
+        if ($('#chkPublicDomain').is(":checked")) {
+            $(".radio-inline").show();
+            $("#PublicDomain").prop("checked", true);
+        }
+        else
+            $(".radio-inline").hide();
+    }
+
+    function ClearAll() {
+        $('#hdnClearAll').val('');
+        Clear();
+        AdvanceSearch();
+    }
+
+    function Clear() {
+
+        $("#ddlStarCast").find("option").attr("selected", false);
+        $("#ddlStarCast").val('')[0].sumo.reload();
+
+        $("#ddlSinger").find("option").attr("selected", false);
+        $("#ddlSinger").val('')[0].sumo.reload();
+
+        $("#ddlComposer").find("option").attr("selected", false);
+        $("#ddlComposer").val('')[0].sumo.reload();
+
+        $("#ddlLanguage").find("option").attr("selected", false);
+        $("#ddlLanguage").val('')[0].sumo.reload();
+
+        $('#txtmusicAlbumName').val('');
+        $('#hdnMovieAlbum').val('');
+
+        if ('@ViewBag.MusicThemeVisibility' == "G") {
+            $("#ddlGenres").find("option").attr("selected", false);
+            $("#ddlGenres").val('')[0].sumo.reload();
+        }
+        else if ('@ViewBag.MusicThemeVisibility' == "T") {
+            $("#ddlTheme").find("option").attr("selected", false);
+            $("#ddlTheme").val('')[0].sumo.reload();
+        }
+        else {
+            $("#ddlGenres").find("option").attr("selected", false);
+            $("#ddlGenres").val('')[0].sumo.reload();
+            $("#ddlTheme").find("option").attr("selected", false);
+            $("#ddlTheme").val('')[0].sumo.reload();
+        }
+
+        $("#ddlMusicLBL").find("option").attr("selected", false);
+        $("#ddlMusicLBL").val('')[0].sumo.reload();
+
+        $("#ddlLyricists").find("option").attr("selected", false);
+        $("#ddlLyricists").val('')[0].sumo.reload();
+
+        $('#txtTitleSearch').val('')
+        $("#txtYearOfRelease").val('');
+        $("#txtTag").val('');
+        $('#chkPublicDomain').attr('checked', false);
+        $(".radio-inline").hide();
+        $('input:radio[name=Movie_Album_Type]')[0].checked = true;
+    }
+
+    $(function () {
+        var meesage = '@Message'
+        if ('@ViewBag.Message' != '') {
+            showAlert("M", '@ViewBag.Message');
+        }
+        if (meesage != '') {
+            showAlert('S', meesage);
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("ResetMessageSession", "Music_Title")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                async: false,
+                data: JSON.stringify({}),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+        $('#divSearch').hide();
+        var searchText = '@ViewBag.searchText';
+        if ('@ViewBag.AdvanceSearch' == 'Y') {
+            command = "ADVANCE_SEARCH";
+            $('#divSearch').show();
+            BindAdvanced_Search_Controls('');
+        }
+        else if (searchText != "") {
+            $('#lbTitle_Code').val(searchText);
+            command = "SEARCH";
+        }
+        BindGrid(searchText, command, "N");
+        setChosenWidth("#ddlDeal_Type_Code", "200px");
+    });
+
+
+    function BindGrid(searchText, command, IsMenu) {
+        showLoading();
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#PageSize').val();
+        var SearchText = '@ViewBag.searchtext';
+        SearchText = $("#lbTitle_Code").val();
+
+        if (SearchText != null && SearchText != "") {
+
+            searchText = SearchText;
+            //page_index = '@ViewBag.PageNo';
+            $("#lbTitle_Code").val(SearchText);
+            command = "SEARCH";
+        }
+        if (command == "") {
+            searchText = "";
+            $("#lbTitle_Code").val('');
+        }
+        if (command == "SHOW_ALL") {
+            searchText = "";
+            $("#lbTitle_Code").val('');
+        }
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindGrid", "Music_Title")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            async: true,
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                searchText: searchText,
+                pageNo: pageNo, //($('#PageSize').val() == '' ? 10 : $('#PageSize').val())
+                recordPerPage: recordPerPage,
+                command: command,
+                IsMenu: IsMenu
+            }),
+            success: function (result) {
+
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+
+
+                    $("#TitleListGrid").empty();
+                    $("#TitleListGrid").html(result);
+
+                    if ($('.pagination'))
+
+                        SetPaging();
+
+                    if ($('#lbTitle_Code').val().trim() != '') {
+                        var keyword = $("#lbTitle_Code").val();
+                        var options = { 'separateWordSearch': true };
+                        $(".Highlight").unmark({
+                            done: function () {
+                                $(".Highlight").mark(keyword, options);
+                            }
+                        });
+                        // $("#lbTitle_Code").on("input", mark);
+                        // $("#lbTitle_Code").on("change", mark);
+                    }
+
+                    initializeTooltip();
+                    hideLoading();
+                }
+            },
+            error: function (result) {
+                alert(result);
+            }
+        });
+        //initializeExpander();
+
+        $("#hdnPageNo").val(pageNo);
+    }
+
+    function AdvanceSearch() {
+        var tmpStarCast = '', tmpLanguage = '', tmpAlbum = '', tmpAlbumName = '', tmpGenres = '', tmpMusicLabel = '', tmpSinger = '', tmpComposer = '', tmpLyricist = '', tmptxtTitleSearch = '', tmpTheme = '',tmpmovie_Album_Type='';
+        if ($('#ddlStarCast').val())
+            tmpStarCast = $('#ddlStarCast').val().join(',');
+
+        if ($('#ddlLanguage').val())
+            tmpLanguage = $('#ddlLanguage').val().join(',');
+
+        if ($('#hdnMovieAlbum').val())
+            tmpAlbum = $('#hdnMovieAlbum').val();
+
+
+        if ($('#txtmusicAlbumName').val())
+            var tmpAlbumName = $('#txtmusicAlbumName').val();
+
+        if (tmpAlbum == "" && tmpAlbumName != "")
+            tmpAlbum = 0;
+        //if ($('#ddlAlbum').val())
+        //    tmpAlbum = $('#ddlAlbum').val().join(',');
+
+        if ($('#ddlGenres').val())
+            tmpGenres = $('#ddlGenres').val().join(',');
+
+        if ($('#ddlMusicLBL').val())
+            tmpMusicLabel = $('#ddlMusicLBL').val().join(',');
+
+        if ($('#ddlLyricists').val())
+            tmpLyricist = $('#ddlLyricists').val().join(',');
+
+        if ($('#ddlTheme').val())
+            tmpTheme = $('#ddlTheme').val().join(',');
+
+        if ($('#txtTitleSearch').val())
+            tmptxtTitleSearch = $('#txtTitleSearch').val();
+
+        if ($('#ddlSinger').val())
+            tmpSinger = $('#ddlSinger').val().join(',');
+
+        if ($('#ddlComposer').val())
+            tmpComposer = $('#ddlComposer').val().join(',');
+
+        var txtYearOfRelease = $('#txtYearOfRelease').val();
+        var txtTag = $('#txtTag').val();
+
+        //var tmppublic_Domain = $('#chkPublicDomain').prop('checked');
+        //if (tmppublic_Domain == true)
+        //    tmppublic_Domain = "Y";
+        //else
+        //    tmppublic_Domain = "N";
+
+        if ($('#chkPublicDomain').prop('checked') == true) {
+            var tmppublic_Domain = $("#PublicDomain").prop("checked");
+            if (tmppublic_Domain == true)
+                tmppublic_Domain = "Y";
+            else
+                tmppublic_Domain = "N";
+        }
+        else {
+            tmppublic_Domain = "";
+        }
+
+        $("#lbTitle_Code").val('');
+        debugger;
+        if ($('#hdnClearAll').val()=='') {
+            tmpmovie_Album_Type = '';
+        } else {
+            tmpmovie_Album_Type=$('input[name="Movie_Album_Type"]:checked').val();
+        }
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("AdvanceSearch", "Music_Title")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            async: false,
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                SrchStarCast: tmpStarCast,
+                SrchLanguage: tmpLanguage,
+                SrchAlbum: tmpAlbum,
+                SrchGenres: tmpGenres,
+                SrchMusicLabel: tmpMusicLabel,
+                SrchYearOfRelease: txtYearOfRelease,
+                SrchSinger: tmpSinger,
+                SrchComposer: tmpComposer,
+                SrchLyricist: tmpLyricist,
+                SrchMusic: $('#txtTitleSearch').val(),
+                SrchTheme: tmpTheme,
+                SrchMusicTag: txtTag,
+                SrchMusicAlbumName: tmpAlbumName,
+                SrchPublicDomain: tmppublic_Domain,
+                SrchMovieAlbumType:tmpmovie_Album_Type
+            }),
+            success: function (result) {
+
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+
+                    command = "ADVANCE_SEARCH"
+                    $('#hdnPageNo').val(1);
+                    BindGrid("", command, "N");
+                }
+            },
+            error: function (result) {
+                alert(result);
+            }
+        });
+    }
+    $(document).ready(function () {
+
+
+
+        $('#lbTitle_Code').keyup(function (e) {
+
+            //if (e.keyCode == 13) {
+            //searchList()
+            // return false;
+            //  }
+        });
+    });
+    function searchList() {
+
+        command = "SEARCH";
+        Clear();
+        $('#divSearch').hide();
+        $("#lbTitle_Code").removeClass("required");
+
+        if ($('#lbTitle_Code').val() != "" && $('#lbTitle_Code').val() != null) {
+            var searchText = $('#lbTitle_Code').val();
+
+            $('#hdnPageNo').val(1);
+
+            BindGrid(searchText, command, '@ViewBag.IsMenu');
+
+            if ($('#lbTitle_Code').val().trim() != '') {
+                var keyword = $("#lbTitle_Code").val();
+                var options = { 'separateWordSearch': true };
+                $(".Highlight").unmark({
+                    done: function () {
+                        $(".Highlight").mark(keyword, options);
+                    }
+                });
+                // $("#lbTitle_Code").on("input", mark);
+                // $("#lbTitle_Code").on("change", mark);
+            }
+            return true;
+        }
+        else {
+            $("#lbTitle_Code").addClass("required");
+            //showAlert("E", 'Please enter search criteria');
+            return false;
+        }
+
+    }
+    function AddTitle() {
+        debugger
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("AddMusicTitle", "Music_Title")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            async: false,
+            contentType: "application/json; charset=utf-8",
+            data: "",
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    hideLoading();
+                    $("#popAddTitle").html(result);
+                    $("#popAddTitle").modal();
+                    initializeChosen();
+                }
+            },
+            error: function (result) { }
+        });
+    }
+    function Ask_Confirmation(commandName, RowNum) {
+        $("#hdnRowNum").val(RowNum);
+        if (commandName == "ACTIVATE") {
+            var RowNum = $("#hdnRowNum").val();
+            var obj = $("#" + RowNum + "_hdnTitleCode").val();
+            DeActivateTitle(obj, 'Y');
+        }
+        if (commandName == "DEACTIVATE") {
+
+            showAlert("I", '@objMessageKey.Areyousureyouwanttodeactivatethisrecord ?', "OKCANCEL");
+        }
+        if (LayoutDirection_G == 'RTL') {
+            $('.btn-primary').css('float', 'left');
+            $('.fade.in label').css({ float: 'right', direction: 'rtl' });
+        }
+    }
+
+    function handleCancel() {
+        $("#hdnRowNum").val('');
+    }
+
+    function handleOk() {
+        var RowNum = $("#hdnRowNum").val();
+        var obj = $("#" + RowNum + "_hdnTitleCode").val();
+        DeActivateTitle(obj, 'N');
+    }
+
+
+    function DeActivateTitle(obj, type) {
+        debugger;
+        showLoading();
+        var TitleCode = obj;
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("DeactivateTitle", "Music_Title")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            async: false,
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                TitleCode: TitleCode,
+                Type: type
+            }),
+            success: function (result) {
+
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Error != "")
+                        showAlert("E", result.Error);
+                    else {
+                        showAlert("S", result.Message);
+                        BindGrid(searchText, command, "N");
+                    }
+                    hideLoading();
+                }
+            },
+            error: function (result) { }
+        });
+    }
+
+    function AssignMusicLabel(musicTitleCode, musicTitleName) {
+        debugger;
+        if ('@objMessageKey.LayoutDirection' == "RTL") {
+            $(".add_title_popup").css({ direction: "rtl" });
+            $(".modal-dialog h2").css({ direction: "rtl" });
+            $("#closeChangeLabel").css({ paddingLeft: "0px" });
+        }
+        $("#ddlMusicLabel").removeClass("required");
+        $("#effectiveDate").removeClass("required");
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("AssignMusicLabel", "Music_Title")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            async: false,
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                musicTitleCode: musicTitleCode
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Status == "S") {
+                        $('#hdnMinEffectiveFrom').val(result.MinEffectiveFrom);
+                        $('#lblMusicTitleName').text(musicTitleName);
+                        $("#ddlMusicLabel option").remove();
+                        $.each(result.MusicLabelList, function () {
+                            $("#ddlMusicLabel").append($("<option />").val(this.Value).text(this.Text));
+                        });
+                        $("#ddlMusicLabel").trigger("chosen:updated");
+                        BindMusicLabelHistory(0, "", '');
+                        $('#popAssignMusicLabel').modal();
+                    }
+                    else {
+                        showAlert("E", result.Message);
+                    }
+                }
+            },
+            error: function (result) { }
+        });
+    }
+
+    function BindMusicLabelHistory(musicLabelCode, commandName, hdnEffectiveFrom) {
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindMusicLabelHistory", "Music_Title")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                musicLabelCode: musicLabelCode,
+                commandName: commandName,
+                hdnEffectiveFrom: hdnEffectiveFrom
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divMusicLabelHistory').empty();
+                    $('#divMusicLabelHistory').html(result);
+                    initializeDatepicker();
+
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function SaveMusicLabelHistory(musicTitleLabelCode) {
+
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var Effective_From = $.trim($('#txtEffectiveFrom_' + musicTitleLabelCode).val());
+        var EffectiveDate = $('#hdnEffectiveFrom').val();
+        var isValid = true;
+
+        if (Effective_From == '') {
+            $('#txtEffectiveFrom_' + musicTitleLabelCode).val('')
+            $('#txtEffectiveFrom_' + musicTitleLabelCode).attr('required', true)
+            isValid = false;
+        }
+        var strEffectiveDate = MakeDateFormate(Effective_From);
+        if (new Date(strEffectiveDate) <= new Date(EffectiveDate)) {
+            isValid = false;
+            showAlert("E", "@objMessageKey.PleaseSelectEffectiveDateGreaterthan " + EffectiveDate);
+        }
+        //if (Effective_From < EffectiveDate)
+        //{
+        //    showAlert("E", "Please select Effective Date greater than" + EffectiveDate);
+        //    $("#txtEffectiveFrom_").addClass("required");
+        //    isValid = false;
+        //}
+        if (!isValid)
+            return false;
+
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("SaveMusicLabelHistory", "Music_Title")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                musicTitleLabelCode: musicTitleLabelCode,
+                Effective_From: Effective_From
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    hideLoading();
+                    if (result.Status == "S") {
+                        $('#hdnMusicLabelCode').val("")
+                        showAlert("S", result.Message);
+                        BindMusicLabelHistory(musicTitleLabelCode, "", '')
+
+                    }
+                    else {
+                        showAlert("E", result.Message);
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+    function EditMusicLabel_OnClick(musicLabelCode, commandName) {
+
+        $('#hdnMusicLabelCode').val(musicLabelCode);
+        BindMusicLabelHistory(musicLabelCode, commandName);
+    }
+    function CloseAssignMusicLabelPopup() {
+
+        $('#hdnMinEffectiveFrom').val("");
+        $('#lblMusicTitleName').text('');
+        $('#effectiveDate').val("");
+        // $('#effectiveDate').attr('required', false);
+        $("#ddlMusicLabel option").remove();
+
+        $('#divMusicLabelHistory').empty();
+        $('#popAssignMusicLabel').modal('hide');
+        $('#ddlMusicLabel').val('').attr('required', false)
+        $("#effectiveDate").attr('required', false);
+    }
+
+    function SaveAssignedMusicLabel() {
+
+        $(".required").removeClass("required");
+        var isValid = true;
+        var musicLabelCode = $("#ddlMusicLabel").val();
+        var effectiveDate = $('#effectiveDate').val();
+        var minEffectiveDate = $('#hdnMinEffectiveFrom').val();
+
+        if (musicLabelCode == 0 || musicLabelCode == null) {
+            $('#ddlMusicLabel').val('').attr('required', true)
+            //  $("#ddlMusicLabel").addClass("required");
+            //// $('#ddlMusicLabel').attr('required', true);
+            isValid = false;
+        }
+        if (effectiveDate == "" || effectiveDate == undefined) {
+            $("#effectiveDate").attr('required', true);
+            //$("#effectiveDate").addClass("required");
+            isValid = false;
+        }
+        else if (minEffectiveDate != "") {
+            var strEffectiveDate = MakeDateFormate(effectiveDate);
+            if (new Date(strEffectiveDate) <= new Date(minEffectiveDate)) {
+                $("#effectiveDate").addClass("required");
+                isValid = false;
+                showAlert("E", "@objMessageKey.PleaseSelectEffectiveDateGreaterthan " + minEffectiveDate);
+            }
+        }
+
+        if (!isValid)
+            return false
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("SaveAssignedMusicLabel", "Music_Title")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            async: false,
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                musicLabelCode: musicLabelCode,
+                effectiveDate: effectiveDate
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Status == "S") {
+                        showAlert("S", result.Message);
+                        CloseAssignMusicLabelPopup();
+                        BindGrid(searchText, command, "N");
+                    }
+                    else {
+                        showAlert("E", result.Message);
+                    }
+                }
+            },
+            error: function (result) { }
+        });
+    }
+
+    function MakeDateFormate(dateInString) {
+        if (dateInString != null || dateInString != "") {
+            var array = dateInString.split('/');
+            var month = parseFloat(array[1]);
+            switch (month) {
+                case 1:
+                    array[1] = "Jan";
+                    break;
+
+                case 2:
+                    array[1] = "Feb";
+                    break;
+
+                case 3:
+                    array[1] = "Mar";
+                    break;
+
+                case 4:
+                    array[1] = "Apr";
+                    break;
+
+                case 5:
+                    array[1] = "May";
+                    break;
+
+                case 6:
+                    array[1] = "Jun";
+                    break;
+
+                case 7:
+                    array[1] = "Jul";
+                    break;
+
+                case 8:
+                    array[1] = "Aug";
+                    break;
+
+                case 9:
+                    array[1] = "Sep";
+                    break;
+
+                case 10:
+                    array[1] = "Oct";
+                    break;
+
+                case 11:
+                    array[1] = "Nov";
+                    break;
+
+                case 12:
+                    array[1] = "Dec";
+                    break;
+            }
+            var format = array[2] + " " + array[1] + " " + array[0];
+            return format;
+        }
+        return "";
+    }
+    function SetPaging() {
+
+        IsCall = 'N';
+        var pageNo = parseInt($('#hdnPageNo').val());
+        var recordCount = parseInt($('#hdnRecordCount').val());
+        var pagePerBatch = parseInt($('#hdnPagePerBatch').val());
+        var recordPerPage = parseInt($('#PageSize').val());
+
+        var cnt = pageNo * recordPerPage;
+        if (cnt >= recordCount) {
+            var v1 = parseInt(recordCount / recordPerPage);
+            if ((v1 * recordPerPage) == recordCount)
+                pageNo = v1;
+            else
+                pageNo = v1 + 1;
+        }
+
+        if (pageNo == 0)
+            pageNo = 1;
+
+        var index = pageNo - 1;
+        $('#hdnPageNo').val(pageNo);
+
+        var opt = null;
+        opt = { callback: pageselectCallback };
+        opt["items_per_page"] = recordPerPage;
+        opt["num_display_entries"] = pagePerBatch;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = index;
+        $("#Pagination").pagination(recordCount, opt);
+    }
+
+    function pageselectCallback(page_index, jq) {
+
+        if (!ValidatePageSize())
+            return false;
+        var searchText = $('#lbTitle_Code').val();
+        var pageNo = page_index + 1
+        $('#hdnPageNo').val(pageNo);
+        if (IsCall == 'Y') {
+            BindGrid(searchText, command, "N");
+        }
+        else
+            IsCall = 'Y';
+    }
+    function txtPageSize_OnChange() {
+
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+
+        if (!ValidatePageSize())
+            return false;
+
+        BindGrid(searchText, command, "N");
+        SetPaging();
+    }
+    function ValidatePageSize() {
+
+        var recordPerPage = $('#PageSize').val();
+        if ($.trim(recordPerPage) == 0) {
+            $('#PageSize').val(10);
+        } else if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#PageSize').attr('required', true)
+        return false
+    }
+    function pageBinding() {
+        BindGrid(searchText, command, "N");
+        SetPaging();
+    }
+    function addNumeric() {
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
+    function ShowAll() {
+
+        Clear();
+        if ($("#PageSize").val() == "") {
+            $("#PageSize").val('10');
+        }
+        $('#divSearch').hide();
+
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        $('#hdnPageNo').val(1);
+        $("#TitleName").val("");
+        //$("#lbTitle_Code").find("option").attr("selected", false);
+        //$("#lbTitle_Code").val('').trigger("chosen:updated");
+        $("#lbTitle_Code").val('');
+        //$("#DealTypeCode").val("1");
+        //window.location.href = location.pathname;
+
+        $('#txtYearOfRelease').val('');
+        $("#ddlSrchTitle").find("option").attr("selected", false);
+        $("#ddlSrchTitle").val('').trigger("chosen:updated");
+        showLD = 'Y';
+        command = "SHOW_ALL";
+        if ('@ViewBag.IsMenu' == "N") {
+            $("#lbTitle_Code").val('');
+            if (searchText != "") {
+
+                searchText = "";
+            }
+        }
+        BindGrid(searchText, command, '@ViewBag.IsMenu');
+    }
+    function AutoMovieAlbum(keyword) {
+
+        var selectedtxt = $('#txtmusicAlbumName').val()
+        var Movie_Album_Type = $('input[name="Movie_Album_Type"]:checked').val();
+        var txt = selectedtxt.split('﹐');
+        var iscomplete = true;
+        if (txt[txt.length - 1].trim() == "")
+            iscomplete = false;
+        if (iscomplete) {
+            $("#txtmusicAlbumName").autocomplete({
+                focus: function () {
+                    return false;
+                },
+                search: function (e, u) {
+                    $(this).addClass('loader');
+                },
+                source: function (request, response) {
+                    var param = {
+                        keyword: $('#txtmusicAlbumName').val(),
+                        Movie_Album_Type: Movie_Album_Type
+                    };
+                    $.ajax({
+                        url: URL_AutoCompleteMovieAlbum,
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+                            if (data.length == 0) {
+                                data[0] = '@objMessageKey.ResultNotFound';
+                                response($.map(data, function (v, i) {
+                                    $('#txtmusicAlbumName').removeClass('loader');
+                                    return {
+                                        label: '@objMessageKey.ResultNotFound',
+                                        val: '0'
+                                    }
+                                }))
+                            }
+                            else {
+                                response($.map(data, function (v, i) {
+                                    $('#txtmusicAlbumName').removeClass('loader');
+                                    return {
+                                        label: v.Music_Album_Name,
+                                        val: v.Music_Album_Code
+                                    }
+                                }))
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                            alert("Error" + textStatus);
+                        }
+                    });
+                },
+                select: function (event, i) {
+
+                    var text = this.value.split(/﹐\s*/);
+                    text.pop();
+                    text.push(i.item.value);
+                    text.push("");
+                    this.value = text;
+                    this.value = text.join("﹐");
+                    var value = $("#hdnMovieAlbum").val().split(/,\s*/);
+                    value.pop();
+                    value.push(i.item.val);
+                    value.push("");
+                    $("#hdnMovieAlbum")[0].value = value.join(", ");
+                    return false;
+                },
+                minLength: 3,
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("position", "auto");
+                    $(".ui-autocomplete").css("max-height", "200px");
+                    $(".ui-autocomplete").css("max-width", "250px");
+                    $(".ui-autocomplete").css("overflow-y", "auto");
+                    $(".ui-autocomplete").css("overflow-x", "hidden");
+                    $(".ui-autocomplete").css("z-index", "2147483647");
+                },
+
+            });
+        }
+        else
+            return false;
+    }
+
+</script>
+<script>
+
+    (function ($) {
+
+        $.fn.extend({
+            slimScroll: function (options) {
+                if (LayoutDirection_G == "RTL") {
+                    var defaults = {
+
+                        // width in pixels of the visible scroll area
+                        width: 'auto',
+
+                        // height in pixels of the visible scroll area
+                        //height: '788px',
+
+                        // width in pixels of the scrollbar and rail
+                        size: '7px',
+
+                        // scrollbar color, accepts any hex/color value
+                        color: '#000',
+
+                        // scrollbar position - left/right
+                        position: 'left',
+
+                        // distance in pixels between the side edge and the scrollbar
+                        distance: '1px',
+
+                        // default scroll position on load - top / bottom / $('selector')
+                        start: 'top',
+
+                        // sets scrollbar opacity
+                        opacity: .4,
+
+                        // enables always-on mode for the scrollbar
+                        alwaysVisible: false,
+
+                        // check if we should hide the scrollbar when user is hovering over
+                        disableFadeOut: false,
+
+                        // sets visibility of the rail
+                        railVisible: false,
+
+                        // sets rail color
+                        railColor: '#333',
+
+                        // sets rail opacity
+                        railOpacity: .2,
+
+                        // whether  we should use jQuery UI Draggable to enable bar dragging
+                        railDraggable: true,
+
+                        // defautlt CSS class of the slimscroll rail
+                        railClass: 'slimScrollRail',
+
+                        // defautlt CSS class of the slimscroll bar
+                        barClass: 'slimScrollBar',
+
+                        // defautlt CSS class of the slimscroll wrapper
+                        wrapperClass: 'slimScrollDiv',
+
+                        // check if mousewheel should scroll the window if we reach top/bottom
+                        allowPageScroll: false,
+
+                        // scroll amount applied to each mouse wheel step
+                        wheelStep: 20,
+
+                        // scroll amount applied when user is using gestures
+                        touchScrollStep: 200,
+
+                        // sets border radius
+                        borderRadius: '7px',
+
+                        // sets border radius of the rail
+                        railBorderRadius: '7px'
+                    };
+                }
+                else {
+                    var defaults = {
+
+                        // width in pixels of the visible scroll area
+                        width: 'auto',
+
+                        // height in pixels of the visible scroll area
+                        //height: '110px',
+
+
+                        // width in pixels of the scrollbar and rail
+                        size: '7px',
+
+                        // scrollbar color, accepts any hex/color value
+                        color: '#000',
+
+                        // scrollbar position - left/right
+                        position: 'right',
+
+                        // distance in pixels between the side edge and the scrollbar
+                        distance: '1px',
+
+                        // default scroll position on load - top / bottom / $('selector')
+                        start: 'top',
+
+                        // sets scrollbar opacity
+                        opacity: .4,
+
+                        // enables always-on mode for the scrollbar
+                        alwaysVisible: false,
+
+                        // check if we should hide the scrollbar when user is hovering over
+                        disableFadeOut: false,
+
+                        // sets visibility of the rail
+                        railVisible: false,
+
+                        // sets rail color
+                        railColor: '#333',
+
+                        // sets rail opacity
+                        railOpacity: .2,
+
+                        // whether  we should use jQuery UI Draggable to enable bar dragging
+                        railDraggable: true,
+
+                        // defautlt CSS class of the slimscroll rail
+                        railClass: 'slimScrollRail',
+
+                        // defautlt CSS class of the slimscroll bar
+                        barClass: 'slimScrollBar',
+
+                        // defautlt CSS class of the slimscroll wrapper
+                        wrapperClass: 'slimScrollDiv',
+
+                        // check if mousewheel should scroll the window if we reach top/bottom
+                        allowPageScroll: false,
+
+                        // scroll amount applied to each mouse wheel step
+                        wheelStep: 20,
+
+                        // scroll amount applied when user is using gestures
+                        touchScrollStep: 200,
+
+                        // sets border radius
+                        borderRadius: '7px',
+
+                        // sets border radius of the rail
+                        railBorderRadius: '7px'
+                    };
+                }
+
+                var o = $.extend(defaults, options);
+
+                // do it for every element that matches selector
+                this.each(function () {
+
+                    var isOverPanel, isOverBar, isDragg, queueHide, touchDif,
+                        barHeight, percentScroll, lastScroll,
+                        divS = '<div></div>',
+                        minBarHeight = 30,
+                        releaseScroll = false;
+
+                    // used in event handlers and for better minification
+                    var me = $(this);
+
+                    // ensure we are not binding it again
+                    if (me.parent().hasClass(o.wrapperClass)) {
+                        // start from last bar position
+                        var offset = me.scrollTop();
+
+                        // find bar and rail
+                        bar = me.siblings('.' + o.barClass);
+                        rail = me.siblings('.' + o.railClass);
+
+                        getBarHeight();
+
+                        // check if we should scroll existing instance
+                        if ($.isPlainObject(options)) {
+                            // Pass height: auto to an existing slimscroll object to force a resize after contents have changed
+                            if ('height' in options && options.height == 'auto') {
+                                me.parent().css('height', 'auto');
+                                me.css('height', 'auto');
+                                var height = me.parent().parent().height();
+                                me.parent().css('height', height);
+                                me.css('height', height);
+                            } else if ('height' in options) {
+                                var h = options.height;
+                                me.parent().css('height', h);
+                                me.css('height', h);
+                            }
+
+                            if ('scrollTo' in options) {
+                                // jump to a static point
+                                offset = parseInt(o.scrollTo);
+                            }
+                            else if ('scrollBy' in options) {
+                                // jump by value pixels
+                                offset += parseInt(o.scrollBy);
+                            }
+                            else if ('destroy' in options) {
+                                // remove slimscroll elements
+                                bar.remove();
+                                rail.remove();
+                                me.unwrap();
+                                return;
+                            }
+
+                            // scroll content by the given offset
+                            scrollContent(offset, false, true);
+                        }
+
+                        return;
+                    }
+                    else if ($.isPlainObject(options)) {
+                        if ('destroy' in options) {
+                            return;
+                        }
+                    }
+
+                    // optionally set height to the parent's height
+                    o.height = (o.height == 'auto') ? me.parent().height() : o.height;
+
+                    // wrap content
+                    var wrapper = $(divS)
+                        .addClass(o.wrapperClass)
+                        .css({
+                            position: 'relative',
+                            //overflow: 'hidden',
+                            width: o.width,
+                            height: o.height
+                        });
+
+                    // update style for the div
+                    me.css({
+                        //overflow: 'hidden',
+                        width: o.width,
+                        height: o.height
+                    });
+
+                    // create scrollbar rail
+                    var rail = $(divS)
+                        .addClass(o.railClass)
+                        .css({
+                            width: o.size,
+                            height: '100%',
+                            position: 'absolute',
+                            top: 0,
+                            display: (o.alwaysVisible && o.railVisible) ? 'block' : 'none',
+                            'border-radius': o.railBorderRadius,
+                            background: o.railColor,
+                            opacity: o.railOpacity,
+                            zIndex: 90
+                        });
+
+                    // create scrollbar
+                    var bar = $(divS)
+                        .addClass(o.barClass)
+                        .css({
+                            background: o.color,
+                            width: o.size,
+                            position: 'absolute',
+                            top: 0,
+                            opacity: o.opacity,
+                            display: o.alwaysVisible ? 'block' : 'none',
+                            'border-radius': o.borderRadius,
+                            BorderRadius: o.borderRadius,
+                            MozBorderRadius: o.borderRadius,
+                            WebkitBorderRadius: o.borderRadius,
+                            zIndex: 99
+                        });
+
+                    // set position
+                    var posCss = (o.position == 'right') ? { right: o.distance } : { left: o.distance };
+                    rail.css(posCss);
+                    bar.css(posCss);
+
+                    // wrap it
+                    me.wrap(wrapper);
+
+                    // append to parent div
+                    me.parent().append(bar);
+                    me.parent().append(rail);
+
+                    // make it draggable and no longer dependent on the jqueryUI
+                    if (o.railDraggable) {
+                        bar.bind("mousedown", function (e) {
+                            var $doc = $(document);
+                            isDragg = true;
+                            t = parseFloat(bar.css('top'));
+                            pageY = e.pageY;
+
+                            $doc.bind("mousemove.slimscroll", function (e) {
+                                currTop = t + e.pageY - pageY;
+                                bar.css('top', currTop);
+                                scrollContent(0, bar.position().top, false);// scroll content
+                            });
+
+                            $doc.bind("mouseup.slimscroll", function (e) {
+                                isDragg = false; hideBar();
+                                $doc.unbind('.slimscroll');
+                            });
+                            return false;
+                        }).bind("selectstart.slimscroll", function (e) {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            return false;
+                        });
+                    }
+
+                    // on rail over
+                    rail.hover(function () {
+                        showBar();
+                    }, function () {
+                        hideBar();
+                    });
+
+                    // on bar over
+                    bar.hover(function () {
+                        isOverBar = true;
+                    }, function () {
+                        isOverBar = false;
+                    });
+
+                    // show on parent mouseover
+                    me.hover(function () {
+                        isOverPanel = true;
+                        showBar();
+                        hideBar();
+                    }, function () {
+                        isOverPanel = false;
+                        hideBar();
+                    });
+
+                    // support for mobile
+                    me.bind('touchstart', function (e, b) {
+                        if (e.originalEvent.touches.length) {
+                            // record where touch started
+                            touchDif = e.originalEvent.touches[0].pageY;
+                        }
+                    });
+
+                    me.bind('touchmove', function (e) {
+                        // prevent scrolling the page if necessary
+                        if (!releaseScroll) {
+                            e.originalEvent.preventDefault();
+                        }
+                        if (e.originalEvent.touches.length) {
+                            // see how far user swiped
+                            var diff = (touchDif - e.originalEvent.touches[0].pageY) / o.touchScrollStep;
+                            // scroll content
+                            scrollContent(diff, true);
+                            touchDif = e.originalEvent.touches[0].pageY;
+                        }
+                    });
+
+                    // set up initial height
+                    getBarHeight();
+
+                    // check start position
+                    if (o.start === 'bottom') {
+                        // scroll content to bottom
+                        bar.css({ top: me.outerHeight() - bar.outerHeight() });
+                        scrollContent(0, true);
+                    }
+                    else if (o.start !== 'top') {
+                        // assume jQuery selector
+                        scrollContent($(o.start).position().top, null, true);
+
+                        // make sure bar stays hidden
+                        if (!o.alwaysVisible) { bar.hide(); }
+                    }
+
+                    // attach scroll events
+                    attachWheel(this);
+
+                    function _onWheel(e) {
+                        // use mouse wheel only when mouse is over
+                        if (!isOverPanel) { return; }
+
+                        var e = e || window.event;
+
+                        var delta = 0;
+                        if (e.wheelDelta) { delta = -e.wheelDelta / 120; }
+                        if (e.detail) { delta = e.detail / 3; }
+
+                        var target = e.target || e.srcTarget || e.srcElement;
+                        if ($(target).closest('.' + o.wrapperClass).is(me.parent())) {
+                            // scroll content
+                            scrollContent(delta, true);
+                        }
+
+                        // stop window scroll
+                        if (e.preventDefault && !releaseScroll) { e.preventDefault(); }
+                        if (!releaseScroll) { e.returnValue = false; }
+                    }
+
+                    function scrollContent(y, isWheel, isJump) {
+                        releaseScroll = false;
+                        var delta = y;
+                        var maxTop = me.outerHeight() - bar.outerHeight();
+
+                        if (isWheel) {
+                            // move bar with mouse wheel
+                            delta = parseInt(bar.css('top')) + y * parseInt(o.wheelStep) / 100 * bar.outerHeight();
+
+                            // move bar, make sure it doesn't go out
+                            delta = Math.min(Math.max(delta, 0), maxTop);
+
+                            // if scrolling down, make sure a fractional change to the
+                            // scroll position isn't rounded away when the scrollbar's CSS is set
+                            // this flooring of delta would happened automatically when
+                            // bar.css is set below, but we floor here for clarity
+                            delta = (y > 0) ? Math.ceil(delta) : Math.floor(delta);
+
+                            // scroll the scrollbar
+                            bar.css({ top: delta + 'px' });
+                        }
+
+                        // calculate actual scroll amount
+                        percentScroll = parseInt(bar.css('top')) / (me.outerHeight() - bar.outerHeight());
+                        delta = percentScroll * (me[0].scrollHeight - me.outerHeight());
+
+                        if (isJump) {
+                            delta = y;
+                            var offsetTop = delta / me[0].scrollHeight * me.outerHeight();
+                            offsetTop = Math.min(Math.max(offsetTop, 0), maxTop);
+                            bar.css({ top: offsetTop + 'px' });
+                        }
+
+                        // scroll content
+                        me.scrollTop(delta);
+
+                        // fire scrolling event
+                        me.trigger('slimscrolling', ~~delta);
+
+                        // ensure bar is visible
+                        showBar();
+
+                        // trigger hide when scroll is stopped
+                        hideBar();
+                    }
+
+                    function attachWheel(target) {
+                        if (window.addEventListener) {
+                            target.addEventListener('DOMMouseScroll', _onWheel, false);
+                            target.addEventListener('mousewheel', _onWheel, false);
+                        }
+                        else {
+                            document.attachEvent("onmousewheel", _onWheel)
+                        }
+                    }
+
+                    function getBarHeight() {
+                        // calculate scrollbar height and make sure it is not too small
+                        barHeight = Math.max((me.outerHeight() / me[0].scrollHeight) * me.outerHeight(), minBarHeight);
+                        bar.css({ height: barHeight + 'px' });
+
+                        // hide scrollbar if content is not long enough
+                        var display = barHeight == me.outerHeight() ? 'none' : 'block';
+                        bar.css({ display: display });
+                    }
+
+                    function showBar() {
+                        // recalculate bar height
+                        getBarHeight();
+                        clearTimeout(queueHide);
+
+                        // when bar reached top or bottom
+                        if (percentScroll == ~~percentScroll) {
+                            //release wheel
+                            releaseScroll = o.allowPageScroll;
+
+                            // publish approporiate event
+                            if (lastScroll != percentScroll) {
+                                var msg = (~~percentScroll == 0) ? 'top' : 'bottom';
+                                me.trigger('slimscroll', msg);
+                            }
+                        }
+                        else {
+                            releaseScroll = false;
+                        }
+                        lastScroll = percentScroll;
+
+                        // show only when required
+                        if (barHeight >= me.outerHeight()) {
+                            //allow window scroll
+                            releaseScroll = true;
+                            return;
+                        }
+                        bar.stop(true, true).fadeIn('fast');
+                        if (o.railVisible) { rail.stop(true, true).fadeIn('fast'); }
+                    }
+
+                    function hideBar() {
+                        // only hide when options allow it
+                        if (!o.alwaysVisible) {
+                            queueHide = setTimeout(function () {
+                                if (!(o.disableFadeOut && isOverPanel) && !isOverBar && !isDragg) {
+                                    bar.fadeOut('slow');
+                                    rail.fadeOut('slow');
+                                }
+                            }, 1000);
+                        }
+                    }
+
+                });
+
+                // maintain chainability
+                return this;
+            }
+        });
+
+        $.fn.extend({
+            slimscroll: $.fn.slimScroll
+        });
+
+    })(jQuery);
+
+</script>
+<script type="text/javascript">
+
+    $(function () {
+        $('#slimscroll').slimscroll();
+        $('#AdvanceSearchPanel').slimScroll();
+        $('#AdvanceSearchPanel').css("height", 693);
+    });
+</script>

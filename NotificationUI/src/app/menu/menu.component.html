@@ -1,0 +1,38 @@
+<div id="icon" (click)="menuOverLay.toggle($event)" pTooltip="Menu" tooltipPosition="left">
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+</div>
+<p-overlayPanel #menuOverLay class="overlayClass">
+  <!-- <span class="span1" (click)="navigateToFeature('search');menuOverLay.hide()">{{LABEL.SearchScreen}}</span>
+  <br>
+  <span class="span1" (click)="navigateToFeature('config');menuOverLay.hide()">{{LABEL.ConfigurationScreen}}</span> -->
+  <div class="row sidebar-collapse">
+    <div class="menu-item col-lg-4 col-xl-4 mb-5 menu-item-current-module">
+      <a (click)="navigateToFeature('search');menuOverLay.hide()" class="current-module">
+        <i class="fa fa-search" aria-hidden="true"></i>
+        <span tooltipPosition="bottom" pTooltip="Search">
+          Search
+        </span>
+      </a>
+
+    </div>
+    <div class="menu-item col-lg-4 col-xl-4 mb-5 menu-item-current-module">
+      <a (click)="navigateToFeature('config');menuOverLay.hide()" class="current-module">
+        <i class="fa fa-cog" aria-hidden="true"></i>
+        <span tooltipPosition="bottom" pTooltip="Config">
+          Config
+        </span>
+      </a>
+
+    </div>
+  </div>
+</p-overlayPanel>
+<app-search-screen *ngIf="showComponent"></app-search-screen>
+<app-config-screen *ngIf="!showComponent"></app-config-screen>

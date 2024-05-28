@@ -1,0 +1,186 @@
+﻿@model RightsU_Entities.Acq_Deal_Run
+
+@{
+    RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
+    if (Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA] != null)
+    {
+        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA];
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<td class='normal'>
+    <table id="tblChannelWise" class="table table-bordered table-hover">
+        @if (Model.Run_Definition_Type.Trim() == "C")
+        {
+    
+            <thead>
+                <tr>
+                    <th style="width:70%">@objMessageKey.Channel</th>
+                    <th style="width:30%">@objMessageKey.NoofRuns </th>
+                    @*<th>Scheduled Runs</th>*@
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Acq_Deal_Run_Channel.Count; i++)
+                {
+                    <tr>
+                        <td align="left">
+                            @Html.Label(Model.Acq_Deal_Run_Channel.ElementAt(i).ChannelNames)
+                            @Html.Hidden("Acq_Deal_Run_Channel[" + i + "].ChannelNames", Model.Acq_Deal_Run_Channel.ElementAt(i).ChannelNames)
+                            @Html.Hidden("Acq_Deal_Run_Channel[" + i + "].Channel_Code", Model.Acq_Deal_Run_Channel.ElementAt(i).Channel_Code)
+                            @Html.HiddenFor(m => Model.Acq_Deal_Run_Channel.ElementAt(i).Acq_Deal_Run_Code)
+                            @Html.HiddenFor(m => Model.Acq_Deal_Run_Channel.ElementAt(i).Acq_Deal_Run_Channel_Code)
+                        </td>
+                        @if (objSchema.Mode != "V" && objSchema.Mode != "APRV")
+                        {
+                            <td align="center">
+                                @Html.TextBox("Acq_Deal_Run_Channel[" + i + "].Min_Runs", Model.Acq_Deal_Run_Channel.ElementAt(i).Min_Runs, new { @class = "numbertext" })
+                            </td>
+                        }
+                        else
+                        {
+                            <td align="center">
+                                @Model.Acq_Deal_Run_Channel.ElementAt(i).Min_Runs
+                            </td>
+                        }
+                        @*<td align="center">
+                            @((Model.Acq_Deal_Run_Channel.ElementAt(i).No_Of_Runs_Sched == null) ? "0" : Model.Acq_Deal_Run_Channel.ElementAt(i).No_Of_Runs_Sched.ToString())
+                            
+                        </td>*@
+                        @Html.Hidden("Acq_Deal_Run_Channel[" + i + "].No_Of_Runs_Sched", (Model.Acq_Deal_Run_Channel.ElementAt(i).No_Of_Runs_Sched == null) ? "0" : Model.Acq_Deal_Run_Channel.ElementAt(i).No_Of_Runs_Sched.ToString())
+                    </tr>
+                }
+            </tbody>
+        
+        }
+
+        @if (Model.Run_Definition_Type.Trim() == "CS")
+        {
+@*<td class='normal'>
+        <table id="tblChannelWiseShared" class="table table-bordered table-hover">*@
+            <thead>
+                <tr>
+                    <th>@objMessageKey.ChannelName</th>
+                    <th>@objMessageKey.NoofRuns</th>
+                    <th>@objMessageKey.Maximum</th>
+                    @*<th>Scheduled Runs</th>*@
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Acq_Deal_Run_Channel.Count; i++)
+                {
+                    <tr>
+                        <td align="center">@Html.Label(Model.Acq_Deal_Run_Channel.ElementAt(i).ChannelNames)
+                            @Html.Hidden("Acq_Deal_Run_Channel[" + i + "].ChannelNames", Model.Acq_Deal_Run_Channel.ElementAt(i).ChannelNames)
+                            @Html.Hidden("Acq_Deal_Run_Channel[" + i + "].Channel_Code", Model.Acq_Deal_Run_Channel.ElementAt(i).Channel_Code)
+                            @Html.HiddenFor(m => Model.Acq_Deal_Run_Channel.ElementAt(i).Acq_Deal_Run_Code)
+                            @Html.HiddenFor(m => Model.Acq_Deal_Run_Channel.ElementAt(i).Acq_Deal_Run_Channel_Code)
+                        </td>
+                        @if (objSchema.Mode != "V")
+                        {
+                            <td align="center">
+                                @Html.TextBox("Acq_Deal_Run_Channel[" + i + "].Min_Runs", Model.Acq_Deal_Run_Channel.ElementAt(i).Min_Runs, new { @class = "numbertext" })
+                            </td>
+                            <td align="center">
+                                @Html.TextBox("Acq_Deal_Run_Channel[" + i + "].Max_Runs", Model.Acq_Deal_Run_Channel.ElementAt(i).Max_Runs, new { @class = "numbertext" })
+                            </td>
+                        }
+                        else
+                        {
+                            <td align="center">
+                                @Model.Acq_Deal_Run_Channel.ElementAt(i).Min_Runs
+                            </td>
+                            <td align="center">
+                                @Model.Acq_Deal_Run_Channel.ElementAt(i).Max_Runs
+                            </td>
+                        }
+                        @*<td align="center">
+                            @((Model.Acq_Deal_Run_Channel.ElementAt(i).No_Of_Runs_Sched == null) ? "0" : Model.Acq_Deal_Run_Channel.ElementAt(i).No_Of_Runs_Sched.ToString())
+                            @Html.Hidden("Acq_Deal_Run_Channel[" + i + "].No_Of_Runs_Sched", (Model.Acq_Deal_Run_Channel.ElementAt(i).No_Of_Runs_Sched == null) ? "0" : Model.Acq_Deal_Run_Channel.ElementAt(i).No_Of_Runs_Sched.ToString())
+                            @Html.CheckBox("chkDo_Not_Consume_Rights", (Model.Acq_Deal_Run_Channel.ElementAt(i).Do_Not_Consume_Rights == "Y") ? true : false, new { @onchange = "checkvalue(this," + i + ")" })
+                            @Html.Hidden("Acq_Deal_Run_Channel[" + i + "].Do_Not_Consume_Rights", Model.Acq_Deal_Run_Channel.ElementAt(i).Do_Not_Consume_Rights)
+                        </td>*@
+                        @Html.Hidden("Acq_Deal_Run_Channel[" + i + "].No_Of_Runs_Sched", (Model.Acq_Deal_Run_Channel.ElementAt(i).No_Of_Runs_Sched == null) ? "0" : Model.Acq_Deal_Run_Channel.ElementAt(i).No_Of_Runs_Sched.ToString())
+                    </tr>
+                }
+            </tbody>
+@*</table>
+    </td>*@
+        }
+
+        @if (Model.Run_Definition_Type.Trim() == "A")
+        {
+@*<td class='normal'>
+        <table id="tblChannnelWiseAll" class="table table-bordered table-hover">*@
+            <thead>
+                <tr>
+                    <th>@objMessageKey.ChannelName</th>
+                    <th>@objMessageKey.AllChannel</th>
+                    @*<th>Scheduled Runs</th>*@
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Acq_Deal_Run_Channel.Count; i++)
+                {
+                    <tr>
+                        <td align="center">@Html.Label(Model.Acq_Deal_Run_Channel.ElementAt(i).ChannelNames)
+                            @Html.Hidden("Acq_Deal_Run_Channel[" + i + "].ChannelNames", Model.Acq_Deal_Run_Channel.ElementAt(i).ChannelNames)
+                            @Html.Hidden("Acq_Deal_Run_Channel[" + i + "].Channel_Code", Model.Acq_Deal_Run_Channel.ElementAt(i).Channel_Code)
+                            @Html.HiddenFor(m => Model.Acq_Deal_Run_Channel.ElementAt(i).Acq_Deal_Run_Code)
+                            @Html.HiddenFor(m => Model.Acq_Deal_Run_Channel.ElementAt(i).Acq_Deal_Run_Channel_Code)
+                        </td>
+                        <td align="center">@Html.Label("Acq_Deal_Run_Channel[" + i + "].Min_Runs", "1")</td>
+                        @*<td align="center">
+                            @((Model.Acq_Deal_Run_Channel.ElementAt(i).No_Of_Runs_Sched == null) ? "0" : Model.Acq_Deal_Run_Channel.ElementAt(i).No_Of_Runs_Sched.ToString())
+                            @Html.Hidden("Acq_Deal_Run_Channel[" + i + "].No_Of_Runs_Sched", (Model.Acq_Deal_Run_Channel.ElementAt(i).No_Of_Runs_Sched == null) ? "0" : Model.Acq_Deal_Run_Channel.ElementAt(i).No_Of_Runs_Sched.ToString())
+                            @Html.CheckBox("chkDo_Not_Consume_Rights", (Model.Acq_Deal_Run_Channel.ElementAt(i).Do_Not_Consume_Rights == "Y") ? true : false, new { @onchange = "checkvalue(this," + i + ")" })
+                            @Html.Hidden("Acq_Deal_Run_Channel[" + i + "].Do_Not_Consume_Rights", Model.Acq_Deal_Run_Channel.ElementAt(i).Do_Not_Consume_Rights)
+                        </td>*@
+                        @Html.Hidden("Acq_Deal_Run_Channel[" + i + "].No_Of_Runs_Sched", (Model.Acq_Deal_Run_Channel.ElementAt(i).No_Of_Runs_Sched == null) ? "0" : Model.Acq_Deal_Run_Channel.ElementAt(i).No_Of_Runs_Sched.ToString())
+                    </tr>
+                }
+            </tbody>@*
+        </table>
+    </td>*@
+        }
+
+        @if (Model.Run_Definition_Type.Trim() == "S")
+        {
+@*<td class='normal'>
+        <table id="tblShared" class="table table-bordered table-hover">*@
+            <thead>
+                <tr>
+                    <th>@objMessageKey.ChannelName</th>
+                    @*<th>Scheduled Runs</th>*@
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Acq_Deal_Run_Channel.Count; i++)
+                {
+                    <tr>
+                        <td align="left">@Html.Label(Model.Acq_Deal_Run_Channel.ElementAt(i).ChannelNames)
+                            @Html.Hidden("Acq_Deal_Run_Channel[" + i + "].ChannelNames", Model.Acq_Deal_Run_Channel.ElementAt(i).ChannelNames)
+                            @Html.Hidden("Acq_Deal_Run_Channel[" + i + "].Channel_Code", Model.Acq_Deal_Run_Channel.ElementAt(i).Channel_Code)
+                            @Html.HiddenFor(m => Model.Acq_Deal_Run_Channel.ElementAt(i).Acq_Deal_Run_Code)
+                            @Html.HiddenFor(m => Model.Acq_Deal_Run_Channel.ElementAt(i).Acq_Deal_Run_Channel_Code)
+                        </td>
+                        @*<td align="center">
+                            @((Model.Acq_Deal_Run_Channel.ElementAt(i).No_Of_Runs_Sched == null) ? "0" : Model.Acq_Deal_Run_Channel.ElementAt(i).No_Of_Runs_Sched.ToString())
+                            @Html.Hidden("Acq_Deal_Run_Channel[" + i + "].No_Of_Runs_Sched", (Model.Acq_Deal_Run_Channel.ElementAt(i).No_Of_Runs_Sched == null) ? "0" : Model.Acq_Deal_Run_Channel.ElementAt(i).No_Of_Runs_Sched.ToString())
+                            @Html.CheckBox("chkDo_Not_Consume_Rights", (Model.Acq_Deal_Run_Channel.ElementAt(i).Do_Not_Consume_Rights == "Y") ? true : false, new { @onchange = "checkvalue(this," + i + ")" })
+                            @Html.Hidden("Acq_Deal_Run_Channel[" + i + "].Do_Not_Consume_Rights", Model.Acq_Deal_Run_Channel.ElementAt(i).Do_Not_Consume_Rights)
+                        </td>*@
+                        @Html.Hidden("Acq_Deal_Run_Channel[" + i + "].No_Of_Runs_Sched", (Model.Acq_Deal_Run_Channel.ElementAt(i).No_Of_Runs_Sched == null) ? "0" : Model.Acq_Deal_Run_Channel.ElementAt(i).No_Of_Runs_Sched.ToString())
+                    </tr>
+                }
+            </tbody>
+@*</table>
+    </td>*@
+        }
+    </table>
+</td>

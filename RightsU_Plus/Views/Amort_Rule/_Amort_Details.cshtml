@@ -1,0 +1,308 @@
+﻿@using UTOFrameWork.FrameworkClasses;
+@using System.Configuration;
+@model IEnumerable<RightsU_Entities.Amort_Rule_Details>
+@{
+    Layout = null;
+}
+<script>
+    $(document).ready(function () {
+        debugger;
+        /*---Collect Variable Cost Details---*/
+        if('@ViewBag.RuleType'=='R')
+            var RevenueSharing = $("#tbl_Run tr:not(:has(th),.hide)");
+        else if('@ViewBag.RuleType'=='P')
+            var RevenueSharing = $("#tbl_Period tr:not(:has(th),.hide)");
+        else if('@ViewBag.RuleType'=='O')
+            var RevenueSharing = $("#tbl_Other tr:not(:has(th),.hide)");
+        else if('@ViewBag.RuleType'=='C')
+            var RevenueSharing = $("#tbl_Premier tr:not(:has(th),.hide)");
+        var i = 0;
+        RevenueSharing.each(function (rowId_outer) {
+            $("#txt_Per_Cent_" + i).numeric({
+                allowMinus: false,
+                allowThouSep: false,
+                allowDecSep: true,
+                maxDecimalPlaces: 3,
+                maxPreDecimalPlaces: 3
+            });
+
+            i = i + 1;
+        });
+    })
+    function AssignHdn(id)
+    {
+        var ddlid=id.id;
+        var count=(ddlid.split('_'))[2];
+        $("#hdn_Month_"+count).val($('#'+id.id+ ' option:selected').val());
+    }
+    function assignval(id)
+    {
+        $('#hdn_Period_Type').val(id);
+    }
+    </script>
+@if (ViewBag.RuleType == "R")
+{
+    <table class="table table-bordered table-hover" id="tbl_Run" style="text-align:center">
+        <tr>
+            <th>From Run *</th>
+            <th>To Run *</th>
+            <th>Percentage (%) *</th>
+            <td colspan="2">&nbsp; </td>
+        </tr>
+         @if (Model != null)
+         {
+             for (int i = 0; i < Model.Count(); i++)
+             {
+                 int count = Model.Count();
+                 RightsU_Entities.Amort_Rule_Details objARD = Model.ElementAt(i);
+            <tr>
+                @if (ViewBag.AmortDetailCommand == "Add")
+                { 
+                    <td> @Html.TextBox("Amort_Rule_Details[" + i + "].From_Range", objARD.From_Range, new { @id = "txt_From_Range_" + i , autocomplete="off",onkeypress="return isNumber(event);",onpaste="return false",maxlength="3"})  
+                        @Html.Hidden("Amort_Rule_Details[" + i + "].Amort_Rule_Code", objARD.Amort_Rule_Code, new { @id="hdn_Rule_Code_"+i})
+                        @Html.Hidden("Amort_Rule_Details[" + i + "].Amort_Rule_Details_Code", objARD.Amort_Rule_Details_Code, new { @id="hdn_Detail_Code_"+i})
+                    </td>
+                     <td> @Html.TextBox("Amort_Rule_Details[" + i + "].To_Range", objARD.To_Range, new { @id = "txt_To_Range_" + i, autocomplete="off",onkeypress="return isNumber(event);",onpaste="return false",maxlength="3"})   </td>
+                    <td> @Html.TextBox("Amort_Rule_Details[" + i + "].Per_Cent", objARD.Per_Cent, new { @id = "txt_Per_Cent_" + i, autocomplete="off",onpaste="return false"})   </td>
+                    <td>
+                     
+                        <input class="button" type="submit" id='bt_Add_@i'  value="Add" onclick="return ADDNewRow(@ViewBag.TableIndex,@i,@count,'Add');" />
+                    @*</td>
+                    <td>*@
+                        @if(i!=0)
+                        {
+                        <input class="button" type="submit" id="bt_Del_@i"  value="Cancel" onclick="return ADDNewRow(@ViewBag.TableIndex,@i,@count,'Cancel');" />
+                        }</td>
+                }
+            </tr>
+          
+             }
+         }
+           
+    </table>
+}
+else if (ViewBag.RuleType == "P")
+{
+    <table class="table table-bordered table-hover" id="tbl_Period" style="display: none;text-align:center">
+        <tr>
+            <th>From Effective Month *</th>
+            <th>To Effective Month *</th>
+            <th>Percentage (%) *</th>
+            <td colspan="2"></td>
+        </tr>
+       @if (Model != null)
+       {
+           for (int i = 0; i < Model.Count(); i++)
+           {
+               int count = Model.Count();
+               RightsU_Entities.Amort_Rule_Details objARD = Model.ElementAt(i);
+            <tr id="trPriodAmortDeatil">
+                @if (ViewBag.AmortDetailCommand == "Add")
+                { 
+                    <td> @Html.TextBox("Amort_Rule_Details[" + i + "].From_Range", objARD.From_Range, new { @id = "txt_From_Range_" + i, autocomplete="off",onkeypress="return isNumber(event);",onpaste="return false",maxlength="3"})  
+                         @Html.Hidden("Amort_Rule_Details[" + i + "].Amort_Rule_Code", objARD.Amort_Rule_Code, new { @id="hdn_Rule_Code_"+i })
+                         @Html.Hidden("Amort_Rule_Details[" + i + "].Amort_Rule_Details_Code", objARD.Amort_Rule_Details_Code, new { @id="hdn_Detail_Code_"+i})
+                    </td>
+                     <td> @Html.TextBox("Amort_Rule_Details[" + i + "].To_Range", objARD.To_Range, new { @id = "txt_To_Range_" + i, autocomplete="off",onkeypress="return isNumber(event);",onpaste="return false",maxlength="3"})   </td>
+                    <td> @Html.TextBox("Amort_Rule_Details[" + i + "].Per_Cent", objARD.Per_Cent, new { @id = "txt_Per_Cent_" + i, autocomplete="off",onpaste="return false"})   </td>
+                    <td>
+                        <input class="button" type="submit" id='btn_Add_@i'  value="Add" onclick="return ADDNewRow(@ViewBag.TableIndex,@i,@count,'Add');" />
+                    @*</td>
+                    <td>*@
+                        @if(i!=0)
+                        {
+                        <input class="button" type="submit" id="btn_Del_@i"  style="display:none;" value="Cancel" onclick="return ADDNewRow(@ViewBag.TableIndex,@i,@count,'Cancel');" />
+                   
+                        }</td>
+                }
+            </tr>
+          
+           }
+       }
+           
+    </table>
+}
+else if (ViewBag.RuleType == "O")
+{
+    <table class="table table-bordered table-hover" id="tbl_Other" style="display: none;text-align:center">
+        <tr>
+            <th>Month Year *</th>
+            <th>Percentage (%) *</th>
+            <td colspan="2">&nbsp;</td>
+        </tr>
+        @if (Model != null)
+        {
+            for (int i = 0; i < Model.Count(); i++)
+            {
+                int count = Model.Count();
+                RightsU_Entities.Amort_Rule_Details objARD = Model.ElementAt(i);
+            <tr>
+                @if (ViewBag.AmortDetailCommand == "Add")
+                {
+                    string Month=string.Empty;
+                    bool flag = true;
+                    switch (objARD.Month)
+                    {
+                        case 1: Month = "Jan";
+                            break;
+                        case 2: Month = "Feb";
+                            break;
+                        case 3: Month = "Mar";
+                            break;
+                        case 4: Month = "Apr";
+                            break;
+                        case 5: Month = "May";
+                            break;
+                        case 6: Month = "Jun";
+                            break;
+                        case 7: Month = "July";
+                            break;
+                        case 8: Month = "Aug";
+                            break;
+                        case 9: Month = "Sep";
+                            break;
+                        case 10: Month = "Oct";
+                            break;
+                        case 11: Month = "Nov";
+                            break;
+                        case 12: Month = "Dec";
+                            break;
+                        default: Month = "Month";
+                            break;
+                    }
+                    <td>
+                        @Html.Hidden("Amort_Rule_Details[" + i + "].Month", objARD.Month, new { @id = "hdn_Month_" + i }) 
+                       
+                     @Html.DropDownList("Amort_Rule_Details[" + i + "].Month",  new SelectList(new[] 
+                {
+                    new { Value = "", Text = "Month"},
+                    new { Value = "1", Text = "Jan"},
+	                new { Value = "2", Text = "Feb"  },
+	                new { Value = "3", Text = "Mar" },
+	                new { Value = "4", Text = "Apr" },
+                    new { Value = "5", Text = "May" },
+                    new { Value = "6", Text = "Jun" },
+                    new { Value = "7", Text = "Jul" },
+                    new { Value = "8", Text = "Aug" },
+                    new { Value = "9", Text = "Sep" },
+                    new { Value = "10", Text = "Oct" },
+                    new { Value = "11", Text = "Nov" },
+                    new { Value = "12", Text = "Dec" }
+                   },
+           "Value", "Text",objARD.Month), new { @id = "ddl_Month_" + i, onchange="return AssignHdn(this)",@class = "required" })
+                     @Html.TextBox("Amort_Rule_Details[" + i + "].Year", objARD.Year, new { @id = "txt_Year_" + i , @maxlength="4", autocomplete="off",onkeypress="return isNumber(event);",onpaste="return false"})  
+                     @Html.Hidden("Amort_Rule_Details[" + i + "].Amort_Rule_Code", objARD.Amort_Rule_Code, new { @id="hdn_Rule_Code_"+i})
+                     @Html.Hidden("Amort_Rule_Details[" + i + "].Amort_Rule_Details_Code", objARD.Amort_Rule_Details_Code, new { @id="hdn_Detail_Code_"+i})
+                    </td>
+                    <td>@Html.TextBox("Amort_Rule_Details[" + i + "].Per_Cent", objARD.Per_Cent, new { @id = "txt_Per_Cent_" + i , autocomplete="off",onpaste="return false"})   </td>
+                    <td>
+
+                        <input class="button" type="submit" id='btnAdd_@i'  value="Add" onclick="return ADDNewRow(@ViewBag.TableIndex,@i,@count,'Add');" />
+                   @* </td>
+                    <td>*@
+                        @if(i!=0)
+                        {
+                        <input class="button" type="submit" id="btnDel_@i"  style="display:none;" value="Cancel" onclick="return ADDNewRow(@ViewBag.TableIndex,@i,@count,'Cancel');" />
+                        }
+                            </td>
+                }
+            </tr>
+          
+           }
+       }
+       
+@*@for (int i = 0; i < ViewBag.TableIndex; i++)
+        {
+            <tr>
+                @if (ViewBag.AmortDetailCommand == "Add" )
+                {
+                    <td>@Html.TextBox("Month") &nbsp; @Html.TextBox("Year") </td>
+                    <td>@Html.TextBox("Per_Cent")</td>
+                    <td>
+                        <input class="button" type="submit" id="btAdd" value="Add" onclick="return ADDNewRow(@ViewBag.TableIndex);" />
+                    </td>
+                    <td>
+                        <input class="button" type="submit" id="btDel" style="display: none;" value="Cancel" onclick="return search();" />
+                    </td>
+                }
+            </tr>
+        }*@
+    </table>
+}
+else if (ViewBag.RuleType == "C")
+{
+    <table class="table table-bordered table-hover" id="tbl_Premier" >
+
+        <tr>
+            <th>Run/Year</th>
+            <th>Percent</th>
+        </tr>
+
+          @if (Model != null)
+        {
+            for (int i = 0; i < Model.Count(); i++)
+            {
+                int count = Model.Count();
+                RightsU_Entities.Amort_Rule_Details objARD = Model.ElementAt(i);
+                if (ViewBag.AmortDetailCommand == "Add")
+                { 
+                    if(i == 0)
+                    {
+                         <tr>
+                            <td>
+                                <input type="text" id="Nos" name="Nos"  autocomplete="off" value="1" readonly  />
+                                Run &nbsp; </td>
+                            <td >@Html.TextBox("Amort_Rule_Details[" + i + "].Per_Cent", objARD.Per_Cent, new { @id = "txt_Per_Cent_" + i,autocomplete="off",onkeypress="return isNumberForPer(event,this)" ,onpaste="return false"}) 
+                               @Html.Hidden("Amort_Rule_Details[" + i + "].Amort_Rule_Code", objARD.Amort_Rule_Code, new { @id="hdn_Rule_Code_"+i})
+                               @Html.Hidden("Amort_Rule_Details[" + i + "].Amort_Rule_Details_Code", objARD.Amort_Rule_Details_Code, new { @id="hdn_Detail_Code_"+i})
+                            </td>
+                         </tr>
+                    }
+                   else
+                    {
+                        <tr>
+                             <td>  @Html.TextBox("Amort_Rule_Details[" + i + "].Year", objARD.Year, new { @id = "txt_Year_" + i, @maxlength="4" , autocomplete="off",onkeypress="return isNumber(event);",onpaste="return false"})  Year</td>
+                             <td>@Html.TextBox("Amort_Rule_Details[" + i + "].Per_Cent", objARD.Per_Cent, new { @id = "txt_Per_Cent_" + i , autocomplete="off",onpaste="return false"}) 
+                                 @Html.Hidden("Amort_Rule_Details[" + i + "].Amort_Rule_Code", objARD.Amort_Rule_Code, new { @id="hdn_Rule_Code_"+i})
+                                 @Html.Hidden("Amort_Rule_Details[" + i + "].Amort_Rule_Details_Code", objARD.Amort_Rule_Details_Code, new { @id="hdn_Detail_Code_"+i})
+                         &nbsp;
+                                 
+                                  <label class="radio-inline">
+                                                              @Html.RadioButtonFor(m=>objARD.Period_Type, "R", new { @id = "CarrierType_Dist",@checked="checked",onclick="return assignval('R')"})Till Right End
+                                                            </label>
+                                                            <label class="radio-inline">
+                                                                @Html.RadioButtonFor(m => objARD.Period_Type, "E", new { @id = "CarrierType_Dist" ,onclick="return assignval('E')"})Year End
+                                                            </label>
+                                 @if (objARD.Period_Type == null || objARD.Period_Type == "")
+                                 {@Html.Hidden("Amort_Rule_Details[" + i + "].Period_Type", "R", new { @id="hdn_Period_Type"})}
+                                 else
+                                 {@Html.Hidden("Amort_Rule_Details[" + i + "].Period_Type", objARD.Period_Type, new { @id="hdn_Period_Type"})}
+                        @* <input type="radio" name="CarrierType_Dist" value="R" />Till Right End &nbsp;
+                         <input type="radio" name="CarrierType_Dist" value="E" />Year End*@
+                          </td>
+                        </tr>
+                    }
+                }
+            
+          
+           }
+       }
+
+      @*  @if (ViewBag.AmortDetailCommand == "Add")
+        {
+            <tr>
+                <td>@Html.TextBox("Nos") Run</td>
+                <td>@Html.TextBox("Per_Cent") </td>
+            </tr>
+            <tr>
+                <td>@Html.TextBox("Year") Year</td>
+                <td>@Html.TextBox("Per_Cent")
+                    &nbsp;
+            <input type="radio" name="PeriodType_Dist" />Till Right End &nbsp;
+             <input type="radio" name="PeriodType_Dist" value="D" />Year End
+                </td>
+            </tr>
+        }*@
+
+    </table>
+}

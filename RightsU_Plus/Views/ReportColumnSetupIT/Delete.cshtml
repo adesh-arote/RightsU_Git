@@ -1,0 +1,165 @@
+﻿@model RightsU_Entities.Report_Column_Setup_IT
+
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="">
+                <h4>Report_Column_Setup_IT</h4>
+                <hr />
+                <br />
+                <table class="table table-bordered table-hover">
+                    <tbody>
+                        <tr>
+                            <td style="width:25%">
+                                View Name
+                            </td>
+                            <td style="text-align:left;">
+                                @Html.DisplayFor(model => model.View_Name)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width:25%">
+                                Name In DB
+                            </td>
+                            <td style="text-align:left;">
+                                @Html.DisplayFor(model => model.Name_In_DB)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width:25%">
+                                Display Name
+                            </td>
+                            <td style="text-align:left;">
+                                @Html.DisplayFor(model => model.Display_Name)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width:25%">
+                                Valued As
+                            </td>
+                            <td style="text-align:left;">
+                                @Html.DisplayFor(model => model.Valued_As)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width:25%">
+                                Display Order
+                            </td>
+                            <td style="text-align:left;">
+                                @Html.DisplayFor(model => model.Display_Order)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width:25%">
+                                Is Part of Select Only
+                            </td>
+                            <td style="text-align:left;">
+                                @Html.DisplayFor(model => model.IsPartofSelectOnly)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width:25%">
+                                List Source
+                            </td>
+                            <td style="text-align:left;">
+                                @Html.DisplayFor(model => model.List_Source)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width:25%">
+                                Lookup Column
+                            </td>
+                            <td style="text-align:left;">
+                                @Html.DisplayFor(model => model.Lookup_Column)
+                            </td>
+                        </tr>                          
+                        <tr>
+                            <td style="width:25%">
+                                Display Column
+                            </td>
+                            <td style="text-align:left;">
+                                @Html.DisplayFor(model => model.Display_Column)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width:25%">
+                                Right Code
+                            </td>
+                            <td style="text-align:left;">
+                                @Html.DisplayFor(model => model.Right_Code)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width:25%">
+                                Column Code
+                            </td>
+                            <td style="text-align:left;">
+                                @Html.DisplayFor(model => model.Column_Code)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width:25%">
+                                Max Length
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Max_Length)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width:25%">
+                                Wh Condition
+                            </td>
+                            <td style="text-align:left;">
+                                @Html.DisplayFor(model => model.WhCondition)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width:25%">
+                                Valid OpList
+                            </td>
+                            <td style="text-align:left;">
+                                @Html.DisplayFor(model => model.ValidOpList)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width:25%">
+                                Alternate Config Code
+                            </td>
+                            <td style="text-align:left;">
+                                @Html.DisplayFor(model => model.Alternate_Config_Code)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width:25%">
+                                Display Type
+                            </td>
+                            <td style="text-align:left;">
+                                @Html.DisplayFor(model => model.Display_Type)
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+                <div>
+                    <div style="margin:20px; text-align:center">
+                        @if (ViewBag.details != "Details")
+                        {
+                            <input type="submit" value="Delete" class="btn btn-primary" style="width:100px;" />
+                        }
+                        @Html.ActionLink("Back to List", "Index", "", new { @class = "btn btn-primary" })
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+</div>

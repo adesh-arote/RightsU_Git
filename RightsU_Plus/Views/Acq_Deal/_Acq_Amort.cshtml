@@ -1,0 +1,280 @@
+﻿<script type="text/javascript">
+    var dealMode_G = '@ViewBag.PageMode';
+    var recordLockingCode_G = @ViewBag.Record_Locking_Code;
+    $(document).ready(function () {
+    });
+    var URL_GetTotalEposide = '@Url.Action("NoOfEposide", "Acq_Amort")';
+    var ShowMessage = {
+        "MsgPlaceSearch": '@objMessageKey.Search'
+    }
+    function ValidateSave() {
+        var Isvalid = true;
+        if (Isvalid) {
+            if (dealMode_G == dealMode_View || dealMode_G == dealMode_Approve || dealMode_G == dealMode_EditWOA) {
+                hideLoading();
+                var tabName = $('#hdnTabName').val();
+                BindPartialTabs(tabName);
+            }
+        }
+        hideLoading();
+        return Isvalid;
+    }
+    function Edit() {
+        $('#AGroup').css('display', 'block');
+        $('#btnChangeRule').css('display', 'none');
+        $('#btnUpdate').css('display', 'block');
+        $('#btnCancel').css('display', 'block');
+        $('#lblGroup').css('display', 'none');
+    }
+    function Update() {
+        $('#btnUpdate').css('display', 'none');
+        $('#btnCancel').css('display', 'none');
+        $('#AGroup').css('display', 'none');
+        $('#btnChangeRule').css('display', 'block');
+        $('#lblGroup').css('display', 'block');
+    }
+    function Cancel() {
+        $('#btnUpdate').css('display', 'none');
+        $('#btnCancel').css('display', 'none');
+        $('#AGroup').css('display', 'none');
+        $('#btnChangeRule').css('display', 'block');
+        $('#lblGroup').css('display', 'block');
+    }
+</script>
+<style>
+    .navigation_tabs {
+        overflow: visible !important;
+    }
+
+    .chosen-container chosen-container-single {
+        width: 50% !important;
+    }
+</style>
+
+<div class="grid_area">
+    <div class="navigation_tabs">
+        <div class="tabbable">
+            <div class="tab-content clearfix table-wrapper scale_table_container acq">
+                <div class="scale_table_block">
+                    <table class="four_column table style_table">
+                        <tbody>
+                            <tr>
+                                <td style="width:15% !important">Movie</td>
+                                <td style="width:25% !important;text-align:left !important">
+                                  @*@Html.DropDownList("ddlTitleCode", ViewBag.TitleList as MultiSelectList, new { @Class = "" })*@
+                                  @Html.DropDownList("ddlTitleCode", (List<SelectListItem>)ViewBag.TitleList, new { @id = "ddlTitleCode", @class = "chosen-select", @onchange = "ddlNoOfEposide_Search_OnChange()" })
+                                </td>
+                                <td style="width:15% !important"> licensor</td>
+                                <td style="width:25% !important"> @ViewBag.licensor</td>
+                            </tr>
+                            <tr>
+                                <td>Total Episodes</td>
+                                <td>
+                                      <label id="lblNoOfEposide"></label>
+                                </td>
+                                <td>
+                                    Channels
+                                </td>
+                                <td>All Channels</td>
+                            </tr>
+                            <tr>
+                                <td>Rights Period</td>
+                                <td>@ViewBag.Rights</td>
+                                <td>
+                                    Current Open Month
+                                </td>
+                                <td>Apr 2012</td>
+                            </tr>
+                            @*<tr>
+                                <td colspan="2" rowspan="2">Amort Type</td>
+                                <td colspan="2" rowspan="2">
+                                    <input type="checkbox" checked />Episode wise<br />
+                                    <input type="checkbox" />Channel wise
+                                </td>
+                            </tr>*@
+                        </tbody>
+                    </table>
+                </div>
+                <div class="scale_table_block">
+                    <input type="hidden" id="hdnTabName" name="hdnTabName" />
+                    <table id="tblMovie" class="table table-bordered table-hover" style="display: table;">
+                        <thead>
+                            <tr>
+                                <th style="width:10%!important">Episode</th>
+                                <th style="width:10%!important">Channel</th>
+                                <th style="width:15%!important">Cost</th>
+                                <th>Amortized</th>
+                                <th style="width:15%!important">Balance</th>
+                                <th style="width:25%!important">Amort Rule Group</th>
+                                <th style="width:15%!important">Amort Rule</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Dangal - Episode1</td>
+                                <td>All Channels</td>
+                                <td style="text-align:right">50,000.00</td>
+                                <td style="text-align:right">12,500.00</td>
+                                <td style="text-align:right">37,500.00</td>
+                                <td>
+                                    <label id="lblGroup">
+                                        Period Defined Manually for 12 month
+                                    </label>
+                                    <select id="AGroup" class="" style="display:none; width:80%;padding:0px;">
+                                        <option>
+                                            Period Defined Manually for 12 month
+                                        </option>
+                                        <option>
+                                            Period Equally Distribute
+                                        </option>
+                                        <option>
+                                            Premier for movie
+                                        </option>
+                                        <option>
+                                            This Second  Run Type
+                                        </option>
+                                        <option>
+                                            Premier for movies
+                                        </option>
+                                    </select>
+                                </td>
+                                <td>Premier for movie</td>
+                                <td>
+                                    <input type="submit" value="View Rule" class="btn btn-primary" data-target="#popViewRule" data-toggle="modal" />
+                                    <input type="submit" value="Change Rule" id="btnChangeRule" class="btn btn-primary" onclick="Edit()" />
+                                    <input type="submit" value="Update" id="btnUpdate" class="btn btn-primary" onclick="Update()" style="display:none" />
+                                    <input type="submit" value="Cancel" id="btnCancel" class="btn btn-primary" onclick="Cancel()" style="display:none" />
+
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup in" id="popViewRule" role="dialog" tabindex="-1" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form" id="movie_popup">
+                <div class="">
+                    <div class="form_fields acq">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>View Amort Rule</h2>
+                        </div>
+                        <div class="modal_block">
+                            <ul class="form_fields_wrapper add_title_popup">
+                                <li>
+                                    <span style="font-weight:700;padding-right:15px">
+                                        Amort Rule Type
+                                    </span>
+                                    <span>
+                                        Period
+                                    </span>
+                                </li>
+                                <li>
+                                    <span style="font-weight:700;padding-right:15px">
+                                        # Rule
+                                    </span>
+                                    <span>
+                                        Period Defined Manually for 12 month
+                                    </span>
+                                </li>
+                                <li>
+                                    <span style="font-weight:700;padding-right:15px">
+                                        Rule Description
+                                    </span>
+                                    <span>
+                                        Period Defined Manually for 12 month
+                                    </span>
+                                </li>
+                                <li>
+                                    <span style="font-weight:700;padding-right:15px">
+                                        Distribution Type
+                                    </span>
+                                    <span>
+                                        Period Defined Manually and Equally distributed
+                                    </span>
+                                </li>
+                                <li>
+                                    <table class="table table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>From</th>
+                                                <th>To</th>
+                                                <th>Percentage</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>1</td>
+                                                <td>12</td>
+                                                <td>100.00</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li>
+                                        <a data-dismiss="modal" class="btn btn-primary" href="#">Close</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+        debugger;
+        $('#lblNoOfEposide').text(@ViewBag.NoOfEposide);
+    });
+    function ddlNoOfEposide_Search_OnChange() {
+        debugger;
+        var SelectedTitles = $("#ddlTitleCode").val();
+        if (SelectedTitles != null) {
+            GetTotalEposide(SelectedTitles);
+        }
+    }
+    function GetTotalEposide(SelectedTitles) {
+        $.ajax({
+            type: "POST",
+            url: URL_GetTotalEposide,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                TitleCode: SelectedTitles
+            }),
+            async: false,
+            success: function (result) {
+                debugger;
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger;
+                    if (result.Status == "S") {
+                        $('#lblNoOfEposide').text(result.NoOfEposide);
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+</script>

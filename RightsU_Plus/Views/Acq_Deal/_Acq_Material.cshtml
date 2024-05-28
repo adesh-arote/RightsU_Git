@@ -1,0 +1,661 @@
+﻿@model List<RightsU_Entities.Acq_Deal_Material>
+@using UTOFrameWork.FrameworkClasses;
+@{
+    RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
+    if (Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA] != null)
+    {
+        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA];
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<script type="text/javascript">
+
+    var PaymentIntCode = 0;
+    var IsAddEditMode="N";
+    var MessageFrom = '';
+
+    var recordLockingCode_G = @ViewBag.Record_Locking_Code;
+    var message_G = '@ViewBag.Message';
+    var dealMode_G = '@ViewBag.PageMode';
+
+    var URL_Global_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global", null, Request.Url.Scheme)'
+    var URL_BindGridAcqMaterial = '@Url.Action("BindGridAcqMaterial", "Acq_Material")';
+    var URL_SaveMaterial = '@Url.Action("SaveMaterial", "Acq_Material")';
+    var URL_Delete = '@Url.Action("Delete", "Acq_Material")';
+    var URL_Global_SetApprovalRemarks = '@Url.Action("SetApprovalRemarks", "Global")';
+    var URL_Create = '@Url.Action("Create", "Acq_Material")';
+    var URL_Edit = '@Url.Action("Edit", "Acq_Material")';
+    var URL_Index = '@Url.Action("Index", "Acq_List")';
+    var URL_Cancel = '@Url.Action("Cancel", "Acq_Material")';
+
+    $(document).ready(function () {
+        // $("#ancFileName").attr('href', '../Help/Masters/Layout.html?acq_Material');
+        if (recordLockingCode_G > 0)
+            Call_RefreshRecordReleaseTime(recordLockingCode_G,URL_Global_Refresh_Lock);
+
+        if(message_G != '')
+        {
+            if(message_G=='Error')
+                showAlert("E",message_G);
+            else
+                showAlert("S",message_G);
+        }
+
+        $("#Quantity").numeric({
+            allowMinus   : false,
+            allowThouSep : false,
+            allowDecSep  : false
+        });
+        addNumeric();
+        LoadAcqDealMaterial(0,'Y');
+        initializeTooltip();
+
+        if (dealMode_G != "V" && dealMode_G != "APRV" && dealMode_G != "EWOA") {
+            var txtRemark = document.getElementById('txtMaterialRemarks');
+            countChar(txtRemark);
+        }
+
+    });
+
+    function addNumeric() {
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
+    function ValidatePageSize() {
+        var recordPerPage = $('#txtPageSize').val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize').addClass("required");
+        return false;
+    }
+    function PageSize_OnChange() {
+        if (CheckEditMode()) {
+            $('.required').removeClass('required');
+            $("[required='required']").removeAttr("required");
+            var IsValid = ValidatePageSize();
+            if (IsValid) {
+                LoadAcqDealMaterial(0, 'Y');
+            }
+            else
+                return false;
+        }
+    }
+    function pageBinding() {
+        LoadAcqDealMaterial(0, 'Y');
+    }
+    /*Bind Acq Material Grid*/
+    function LoadAcqDealMaterial(pagenumber, isLoad) {
+        debugger;
+        var txtPageSize = $("#txtPageSize").val();
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: URL_BindGridAcqMaterial,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                txtPageSize: txtPageSize,
+                page_No: pagenumber
+            }),
+            success: function (result) {
+                if (result == "true")
+                {
+                    redirectToLogin();
+                }
+                else{
+                    $('#dvDealAcqMaterialList').html(result);
+                    SetPaging(txtPageSize);
+                    initializeTooltip();
+                    hideLoading();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function CheckEditMode(){
+        if(IsAddEditMode == 'Y'){
+            message = '@objMessageKey.PleasecompletetheAddEditfirst.';
+            showAlert('E',message);
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+    function RequiredFieldValidation()
+    {
+        var returnVal = true;
+        var Is_Acq_Syn_Material_MultiTitle = $("#hdnIsAcqSynMaterialMultiTitle").val();
+        if(Is_Acq_Syn_Material_MultiTitle == "Y")
+        {
+            var strAddTitle_Code = $("#ddlTitle_Code").val();
+            if(strAddTitle_Code == "")
+            {
+                $('#ddlTitle_Code').addClass('required');
+                returnVal = false;
+            }
+        }
+        else
+        {
+            var Title_Code = $("#Title_Code").val();
+        }
+
+        var Material_Type_Code = $("#Material_Type_Code").val();
+        var Material_Medium_Code = $("#Material_Medium_Code").val();
+        var Quantity = $("#Quantity").val();
+
+        if (Title_Code == "0") {
+            $('#Title_Code').addClass('required');
+            returnVal = false;
+        }
+
+        else if (Material_Type_Code == "0") {
+            $('#Material_Type_Code').addClass('required');
+            returnVal = false;
+        }
+
+        else if (Material_Medium_Code == "0") {
+            $('#Material_Medium_Code').addClass('required');
+            returnVal = false;
+        }
+
+        else if (Quantity == "") {
+            $('#Quantity').addClass('required');
+            returnVal = false;
+        }
+
+        if ( parseInt(Quantity) == 0) {
+            showAlert('E'," @objMessageKey.Quantitycannotbezero");
+            //return false;
+            $('#Quantity').addClass('required');
+            returnVal = false;
+        }
+        return returnVal;
+    }
+    /*Save/Update Payment Terms */
+    function SaveMaterial(Acq_Deal_Material_Code,Title_Code,Material_Type_Code,Material_Medium_Code,Quantity,Title_Codes, strAddTitle_Code)
+    {
+        var pageNo = $('#hdnpage_index').val();
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: URL_SaveMaterial,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                Acq_Deal_Material_Code: Acq_Deal_Material_Code,
+                Title_Code: Title_Code,
+                Material_Type_Code: Material_Type_Code,
+                Material_Medium_Code: Material_Medium_Code,
+                Quantity:Quantity,
+                Title_Codes:Title_Codes,
+                strAddTitle_Code:strAddTitle_Code
+            }),
+            success: function (result) {
+                if (result == "true")
+                {
+                    redirectToLogin();
+                }
+                else{
+                    hideLoading();
+                    if(result == "N")
+                    {
+                        showAlert('E', "@objMessageKey.CombinationconflictswithotherMaterialrecords.");
+                        return false;
+                    }
+                    else if(result != "N" && result != "Y")
+                    {
+                        debugger;
+                        var strResult = result;
+                        showAlert('E', strResult + " "+ "@objMessageKey.CombinationconflictswithotherMaterialrecords.");
+                    }
+                    else {
+                        //$('#dvDealAcqMaterialList').empty();
+                        //$('#dvDealAcqMaterialList').html(result);
+                        var strMessage="@objMessageKey.Materialaddedsuccessfully";
+                        if(Acq_Deal_Material_Code > 0)
+                            strMessage="@objMessageKey.Materialupdatedsuccessfully";
+                        showAlert('S', strMessage);
+                        IsAddEditMode="N";
+                        LoadAcqDealMaterial(pageNo, 'Y');
+                        initializeTooltip();
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function checkForsave(NewRow) {
+        debugger;
+        $('.required').removeClass('required');
+        var  returnVal =  RequiredFieldValidation();
+        if(returnVal)
+        {
+            var Acq_Deal_Material_Code = 0
+            if (NewRow == 1)
+                Acq_Deal_Material_Code = $("#Acq_Deal_Material_Code").val();
+            var strAddTitle_Code = '', Title_Codes = '';
+            var Is_Acq_Syn_Material_MultiTitle = $("#hdnIsAcqSynMaterialMultiTitle").val();
+            if(Is_Acq_Syn_Material_MultiTitle == "Y")
+            {
+                strAddTitle_Code = ($("#ddlTitle_Code").val()).join(',');
+                //Title_Codes = ($("#ddlTitle_Code option:selected").text()).join(',');
+
+                var items = [];
+                $('#ddlTitle_Code option:selected').each(function(){ items.push($(this).text()); });
+                Title_Codes = items.join(',');
+                var Title_Code = 0;
+            }
+            else
+            {
+                var Title_Codes= $("#Title_Code option:selected").text();
+                var Title_Code = $("#Title_Code").val();
+            }
+
+            var Material_Type_Code = $("#Material_Type_Code").val();
+            var Material_Medium_Code = $("#Material_Medium_Code").val();
+            var Quantity = $("#Quantity").val();
+            SaveMaterial(Acq_Deal_Material_Code,Title_Code,Material_Type_Code,Material_Medium_Code,Quantity,Title_Codes,strAddTitle_Code);
+        }
+    }
+    function OnDeleteClick(Acq_Deal_Material_Code)
+    {
+        if(CheckEditMode())
+        {
+            PaymentIntCode = Acq_Deal_Material_Code;
+            $('#hdn_Command_Name').val('DELETE');
+            showAlert("I","@objMessageKey.Areyousureyouwanttodeletethismaterial? ","OKCANCEL");
+        }
+    }
+    function handleOk() {      
+
+        if (MessageFrom == 'SV') {
+            if ($('#hdnTabName').val() == '') {
+                $('#hdn_Command_Name').val('');
+                window.location.href = URL_Index;
+            }
+        }
+        if ($('#hdn_Command_Name').val() != undefined && $('#hdn_Command_Name').val() != '' && $('#hdn_Command_Name').val() == "CANCEL_SAVE_DEAL") {
+            location.href = URL_Cancel;
+        } else if ($('#hdn_Command_Name').val() != undefined && $('#hdn_Command_Name').val() != '' && $('#hdn_Command_Name').val() == "DELETE") {
+            DeleteMaterial();
+        }
+    }
+    function handleCancel() {
+        return false;
+    }
+    function ValidateSave() {
+        if(CheckEditMode())
+        {
+            showLoading();
+            var Isvalid = true;
+            $("#hdnMaterialRemark").val($("#txtMaterialRemarks").val());
+            if (dealMode_G == 'APRV') {
+                var approvalremarks = $('#approvalremarks').val();
+                $.ajax({
+                    type: "POST",
+                    url: URL_Global_SetApprovalRemarks,
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    async: true,
+                    data: JSON.stringify({
+                        approvalremarks: $('#approvalremarks').val()
+                    }),
+                    success: function (result) {
+                        if (result == "true")
+                        {
+                            redirectToLogin();
+                        }
+                        else{
+                            Isvalid = true;
+                        }
+                    },
+                    error: function (result) {
+                        Isvalid = false;
+                    }
+                });
+            }
+            else
+                Isvalid = true;
+
+            if(Isvalid)
+            {
+                hideLoading();
+                var tabName = $('#hdnTabName').val();
+                BindPartialTabs(tabName);
+            }
+            hideLoading();
+            return Isvalid;
+        }
+    }
+    /*On Add or Cancel Click*/
+    function AddCancelMaterial(isAdd) {
+        if ($("#txtPageSize").val() == "") {
+            return false;
+        }
+        var txtPageSize = $("#txtPageSize").val();
+        var pageNo = $('#hdnpage_index').val();
+        if (isAdd == "0" || (CheckEditMode() && isAdd == "1")) {
+            showLoading();
+            if(isAdd == "0")
+                IsAddEditMode="N";
+            else
+                IsAddEditMode="Y";
+            $.ajax({
+                type: "POST",
+                url: URL_Create,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                data: JSON.stringify({
+                    isAdd: isAdd,
+                    txtPageSize: txtPageSize,
+                    pageNo: pageNo
+                }),
+                success: function (result) {
+                    if (result == "true")
+                    {
+                        redirectToLogin();
+                    }
+                    else {
+                        debugger;
+                        $('#dvDealAcqMaterialList').empty();
+                        $('#dvDealAcqMaterialList').html(result);
+                        initializeChosen();
+                        initializeTooltip();
+                        hideLoading();
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    }
+    /*Edit Material*/
+    function EditMaterial(Acq_Deal_Material_Code) {
+        debugger;
+        var txtPageSize = $("#txtPageSize").val();
+        var pageNo = $('#hdnpage_index').val();
+        if (CheckEditMode()) {
+            IsAddEditMode="Y";
+            $.ajax({
+                type: "POST",
+                url: URL_Edit,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                data: JSON.stringify({
+                    Acq_Deal_Material_Code: Acq_Deal_Material_Code,
+                    txtPageSize: txtPageSize,
+                    pageNo: pageNo
+                }),
+                success: function (result) {
+                    if (result == "true")
+                    {
+                        redirectToLogin();
+                    }
+                    else {
+                        $('#dvDealAcqMaterialList').empty();
+                        $('#dvDealAcqMaterialList').html(result);
+                        initializeChosen();
+                        initializeTooltip();
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    }
+    function ClearHidden() {
+        if (!clickedOnTab) {
+            $("#hdnTabName").val('');
+        }
+    }
+    function OnFinalSaveClick() {
+        if (!clickedOnTab) {
+            if ($(event.target).val().toUpperCase() == "SAVE & APPROVE") {
+                $('input[name=hdnReopenMode]').val('RO');
+            }
+            else {
+                $('input[name=hdnReopenMode]').val('E');
+            }
+        }
+        else {
+            $('input[name=hdnReopenMode]').val('E');
+        }
+
+        var Isvalid = true;
+        if (CheckEditMode()) {
+            $("#hdnMaterialRemark").val($("#txtMaterialRemarks").val());
+        }
+        else {
+            Isvalid = false;
+        }
+        return Isvalid;
+    }
+    function Save_Success(message) {
+        hideLoading();
+        if (message == "true") {
+            redirectToLogin();
+        }
+        else {
+            if (message.Success_Message != "") {
+                MessageFrom = "SV"
+                showAlert('S', message.Success_Message, 'OK');
+            }
+            else {
+                var tabName = $('#hdnTabName').val();
+                BindPartialTabs(tabName);
+            }
+        }
+
+        if (message.Status == "SA") {
+            $.ajax({
+                type: "POST",
+                url: URL_Approve_Reject_Reopen,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    user_Action: 'A',
+                    approvalremarks: ''//$('#txtRemark').val()
+                }),
+                async: false,
+                success: function (data) { }
+            });
+        }
+
+    }
+    function DeleteMaterial() {
+        var txtPageSize = $("#txtPageSize").val();
+        var pageNo = $('#hdnpage_index').val();
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: URL_Delete,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                Acq_Deal_Material_Code: PaymentIntCode,
+                txtPageSize: txtPageSize,
+                pageNo: pageNo
+            }),
+            success: function (result) {
+                if (result == "true")
+                {
+                    redirectToLogin();
+                }
+                else{
+                    hideLoading();
+                    $('#dvDealAcqMaterialList').html(result);
+                    showAlert('S', "@objMessageKey.Materialdeletedsuccessfully");
+                    initializeTooltip();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function CancelSaveDeal() {
+        $('#hdn_Command_Name').val('CANCEL_SAVE_DEAL');
+        showAlert("I", '@objMessageKey.AllUnsavedDataWillBeLostStillWantToGoAhead?', "OKCANCEL");
+    }
+    function ClearHidden() {
+        if (!clickedOnTab) {
+            $("#hdnTabName").val('');
+        }
+    }
+</script>
+<script>
+    $('.expand_AcqMaterialRemarks').expander({
+        slicePoint: 520,
+        expandPrefix: '',
+        expandText: '...@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+</script>
+<style>
+    .navigation_tabs {
+        overflow: visible !important;
+    }
+</style>
+@using (Ajax.BeginForm("ChangeTab", "Acq_Material", new AjaxOptions { OnSuccess = "Save_Success" }))
+{
+    @Html.Hidden("hdnMaterialRemark")
+    @Html.Hidden("hdn_Command_Name")
+    <div class="grid_area">
+        <div class="navigation_tabs">
+            <div class="tabbable">
+                <div class="tab-content clearfix table-wrapper scale_table_container acq">
+                    <div class="tab-pane active" id="tabPayTerm">
+                        <div class="scale_table_block">
+                            <div class="sub_block clearfix">
+                                <div class="pull-right">
+                                    @if (ViewBag.PageMode != "V" && ViewBag.PageMode != "APRV" && ViewBag.PageMode != "EWOA")
+                                    {
+                                        <a class="btn btn-primary" title="@objMessageKey.AddMaterial" onclick="return AddCancelMaterial(1);">@objMessageKey.Add</a>
+                                    }
+                                </div>
+                            </div>
+                            <div class="paging_area clearfix">
+                                <span id="spanRecordCount" class="pull-left">@objMessageKey.TotalRecords:  @ViewBag.RecordCount</span>
+                                <input type="hidden" id="hdnpage_index" name="hdnpage_index" value="1" />
+                                <div class="pagination" id="Pagination"></div>
+                                <span class="pull-right">
+                                    @objMessageKey.PageSize:
+                                    <input type="text" class="smallTextBox pagingSize" value="10" id="txtPageSize" onchange="return PageSize_OnChange();"
+                                           onfocus="CheckEditMode()" onblur="setDefaultPaging('txtPageSize')" />
+                                </span>
+                            </div>
+                            <div class="scale_table_block" id="dvDealAcqMaterialList">
+                            </div>
+                            <div>
+                                <span class="remarks">@objMessageKey.Remarks:</span>
+                                @if (ViewBag.PageMode != "V" && ViewBag.PageMode != "APRV" && ViewBag.PageMode != "EWOA")
+                                {
+                                    <textarea name="txtMaterialRemarks" id="txtMaterialRemarks" style="margin-left:0px;" class="textarea" onkeypress="countChar(this)" onkeyup="countChar(this)">@ViewBag.Remark</textarea>
+                                    <div class="divBlock">
+                                        <div id="CharNum" class="charNum">4000</div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <br />
+                                    <div class="expand_AcqMaterialRemarks" style="margin-left:0px;">
+                                        @if (ViewBag.Remark != null)
+                                        {
+                                            @Html.Raw(ViewBag.Remark.Replace("\r\n", "<br/>").Replace("\n", "<br/>"))<br /><br /><br /><br />
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    @if (ViewBag.PageMode == "EWOA")
+                    {
+                        @Html.Partial("_Edit_Without_Approval")
+                    }
+                    @if (ViewBag.PageMode == "APRV")
+                    {
+                        @Html.Partial("_Approved_List")
+                        <br />
+                    }
+                    else if (objSchema.Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                    {
+
+                        <div class="bottom_action">
+
+                            @Html.Hidden("HdnRemark")
+                            <ul class="form_link_nav clearfix">
+                                @if (ViewBag.PageMode != "V" && ViewBag.PageMode != "APRV")
+                                {
+                                    <li>
+                                        <input type="submit" id="btnSaveDeal" title="@objMessageKey.Save" value="@objMessageKey.Save" class="btn btn-primary" onclick="ClearHidden(); return OnFinalSaveClick();" />
+                                        <input type="hidden" id="hdnReopenMode" name="hdnReopenMode" value="E" />
+                                    </li>
+                                    if (objSchema.Deal_Workflow_Flag == GlobalParams.DEAL_MODE_REOPEN || objSchema.Mode == GlobalParams.DEAL_MODE_REOPEN)
+                                    {
+                                        <li>
+                                            <input type="submit" id="btnSaveApproveDeal" title="@objMessageKey.SaveApprove" value="@objMessageKey.SaveApprove" class="btn btn-primary" onclick="ClearHidden(); return OnFinalSaveClick();" />
+                                        </li>
+                                    }
+                                    <li>
+                                        <input type="button" id="btnCancelDeal" title="@objMessageKey.Cancel" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                               onclick="if(CheckEditMode()) CancelSaveDeal()">
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li>
+                                        @if (Convert.ToInt32(ViewBag.prevAcq_Deal) > 0)
+                                        {
+                                            <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                                   onclick="location.href='@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = ViewBag.prevAcq_Deal })'">
+                                        }
+                                        else
+                                        {
+                                            <input type="button" id="btnCancel_Deal" title="@objMessageKey.Cancel" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                                   onclick="if(CheckEditMode()) location.href='@Url.Action("Cancel", "Acq_Material") '">
+                                        }
+                                    </li>
+                                }
+                            </ul>
+
+                        </div>
+                    }
+                    <input type="hidden" id="hdnTabName" name="hdnTabName" />
+                </div>
+            </div>
+        </div>
+    </div>
+}

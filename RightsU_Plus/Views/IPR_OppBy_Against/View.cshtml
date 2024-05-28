@@ -1,0 +1,1478 @@
+﻿@model RightsU_Entities.IPR_Opp
+@using System.Configuration;
+@using UTOFrameWork.FrameworkClasses
+@{
+    ViewBag.Title = "View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<string> lstFrq = (List<string>)ViewBag.Frq_List;
+    string FileName = string.Empty;
+    RightsU_Entities.IPR_Opp_Attachment objAtt = Model.IPR_Opp_Attachment.Where(a => a.Flag == "M").FirstOrDefault();
+    if (objAtt != null)
+    {
+        FileName = objAtt.File_Name;
+    }
+    ViewData["Mode"] = "V";
+}
+
+
+<script type="text/javascript">
+
+
+
+    $(document).ready(function () {
+        initializeDatepicker();
+        initializeExpander();
+
+        if(@Model.IPR_Opp_Code > 0)
+        {
+            SetIprRepCode(@Model.IPR_Rep_Code);
+            LinkApplication();
+            if('@FileName' != '')
+            {
+                if('@Model.IPR_For' == 'B')
+                    document.getElementById('lnkBtnBy_AttachedFile').style.display = 'block';
+                else
+                    document.getElementById('lnkBtnAgainst_AttachedFile').style.display = 'block';
+            }
+        }
+    });
+    @*function clickOnImage(For,SystemFileName)
+    {
+        var f=For;
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("checkDownloadFile", "IPR_OppBy_Against")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            async: false,
+            data: JSON.stringify({
+                For:f,
+                systemFileName:SystemFileName
+            }),
+            success: function (result) {
+                var s=SystemFileName;
+                if(result=="")
+                    showAlert('S',"Image Not Found",'OK');
+                else
+                {
+                    var parameter="?For="+For+"&systemFileName="+SystemFileName;
+                    var URL = '@Url.Action("DownloadFile", "IPR_OppBy_Against", new { SearchedTitle = "Searched_Text" })';
+                    URL = URL.replace("Searched_Text",parameter);
+                    window.location.href = URL;
+                    //window.location = "~/IPR_OppBy_Against/DownloadFile?For="+For+"&systemFileName="+SystemFileName;
+                }
+            },
+            error: function (result) {
+            }
+        });
+    }*@
+    function clickOnImage(For,SystemFileName)
+    {
+        debugger;
+        var f=For;
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("checkDownloadFile", "IPR_OppBy_Against")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                For:f,
+                systemFileName:SystemFileName
+            }),
+            success: function (result) {
+                //alert(result.systemFileName);
+                var s=SystemFileName;
+                if(result.path=="")
+                    showAlert('S',"Image Not Found",'OK');
+                else
+                {
+                    var parameter="?&For="+f+"&systemFileName="+result.systemFileName;
+                    var URL = '@Url.Action("DownloadFile", "IPR_OppBy_Against", new { SearchedTitle = "Searched_Text" })';
+                    URL = URL.replace("Searched_Text",parameter);
+                    window.location.href = URL;
+                    //window.location = "~/IPR_OppBy_Against/DownloadFile?For="+For+"&systemFileName="+SystemFileName;
+                }
+            },
+            error: function (result) {
+            }
+        });
+    }
+    function LinkApplication() {
+        debugger;
+        if ($('#hdnRepCode').val() != '') {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("GetApplicationProperty", "IPR_OppBy_Against")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: false,
+                data: JSON.stringify({
+                    rep_Code: $('#hdnRepCode').val()
+                }),
+                success: function (result) {
+                    debugger;
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        debugger;
+                        $('#lblApp_No').text(result.Application_No);
+                        $('#lblName_Of_Entity').text(result.Entity);
+                        $('#lblTradeMark').text(result.Trademark);
+                        $('#lblClass').html(result.ClassName);
+                        $('#lblStatus').text(result.App_Status);
+                        $('#lblTrademarkAttorney').text(result.Trademark_Attorney);
+                        $('#lblType').text(result.Type);
+                        if (result.ImageUrl == "" ) {
+                            $('#imgLogo').attr('src', '@Url.Content("~/Images/NoImageFound.jpg")');
+                        }
+                        else {
+                            //result.ImageUrl.slice(1)
+                            $('#imgLogo').attr({src:   result.ImageUrl});
+                            // alert(result.ImageUrl)
+                        }
+                       
+                       // $('#imgLogo').attr('src', result.ImageUrl);
+                        initializeExpander();
+                    }
+                },
+                error: function (result) {
+                    var StrErrMessage = "Please wait....Page is loading";
+                    alert('Error: ' + StrErrMessage);
+                }
+            });
+        }
+        else {
+            showAlert('E', 'Please select application no.')
+        }
+        return false;
+    }
+
+    function SetIprRepCode(obj) {
+        $('#hdnRepCode').val(obj);
+    }
+
+    function OnCancelClick()
+    {
+        location.href= '@Url.Action("Cancel", "IPR_OppBy_Against", new { TABNAME = Model.IPR_For })'
+    }
+
+</script>
+<style type="text/css">
+
+    .scale_table_block {
+        margin-bottom: 10px;
+        background-color: #fff;
+        padding: 0px !important;
+    }
+
+    .tdbackgourd {
+        background-color: #EEE;
+    }
+
+    .card {
+        background: #fff;
+        border-radius: 2px;
+        display: inline-block;
+        margin-left: 3px;
+        margin-right: 3px;
+        position: relative;
+    }
+
+    .cardheader {
+        background-color: #80878e;
+        padding: 5px 5px 5px 10px;
+        color: white;
+        margin: 0px;
+        width: 100%;
+    }
+
+    .firstBox {
+        margin-top: 5px;
+        width: 99.3%;
+        height: 50px;
+    }
+
+    td {
+        padding: 5px 0px;
+    }
+
+    .chosen-container {
+        margin: 2px 0px;
+        width: 87% !important;
+    }
+
+    #oppByDetail, #oppParty {
+        width: 49.3%;
+        height: 290px;
+    }
+
+    #publicationDetail {
+        width: 99.3%;
+        height: 170px;
+    }
+
+    #procesuctionDetail_OppBy, #procesuctionDetail_OppAgainst {
+        width: 99.3%;
+        height: 280px
+    }
+
+    #attachment, #hearing, #statusHistory {
+        width: 99.3%;
+    }
+
+
+    textarea {
+        overflow: auto;
+        width: 95% !important;
+        height: 60px !important;
+    }
+
+    .form-control {
+        display: inline-block !important;
+    }
+
+    .container .top_area {
+        border-bottom: none !important;
+    }
+</style>
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container ipr main_col" onclick="$('.leftPanel').css('left', panelHideCss);">
+            <div class="top_area">
+                <div class="title_block dotted_border clearfix">
+                    <h2 class="pull-left">
+                        @if (Model.IPR_For == "B")
+                        {
+                            @:View Opposition By
+                        }
+                        else
+                        {
+                            @:View Opposition Against
+                        }
+                        <span></span>
+                    </h2>
+                </div>
+                @*</div>
+                    <div class="grid_area">*@
+                @*<div class="navigation_tabs">*@
+                @*<div class="tabbable">*@
+
+
+
+                <table class="table_brif table" style="background:#e2e1e0">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="card firstBox">
+                                    <table style="margin:10px; margin-top: 5px;">
+                                        <tr>
+                                            <td style="width:15%"><b>Opposition Number</b></td>
+                                            <td style="width:35%">
+                                                @Model.Opp_No&nbsp;&nbsp;@Model.Version
+                                                @Html.HiddenFor(m => m.IPR_Opp_Code)
+                                                @Html.HiddenFor(m => m.IPR_For)
+                                                <input type="hidden" id="hdnIsSubmit" name="hdnIsSubmit" />
+                                            </td>
+                                            <td style="width:15%"><b>Opposition Status</b></td>
+                                            <td style="width:35%">
+                                                @if (Model.IPR_Opp_Status_Code != null)
+                                                {
+                                                    @Model.IPR_Opp_Status.Opp_Status
+                                                }
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="card" id="oppByDetail">
+                                    <div class="card cardheader">
+                                        <b>Opposition By Details</b>
+                                    </div>
+                                    <table style="margin:10px;">
+                                        <tr>
+                                            <td style="width:30%"><b>Application No.</b></td>
+                                            <td style="width:40%">
+                                                <span id="lblApp_No"></span>
+                                            </td>
+                                            <td style="width:30%" rowspan="3">
+                                                <img alt="Logo" id="imgLogo" style="height: 100px; width: 145px;">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>Name of the Entity</b></td>
+                                            <td><span id="lblName_Of_Entity"></span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>Trade Mark</b></td>
+                                            <td><span id="lblTradeMark"></span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>Class</b></td>
+                                            <td colspan="2"><div id="lblClass" class="expandable"></div></td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>Status</b></td>
+                                            <td colspan="2"><span id="lblStatus"></span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>Trademark Attorney</b></td>
+                                            <td colspan="2"><span id="lblTrademarkAttorney"></span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>Type</b></td>
+                                            <td colspan="2"><span id="lblType"></span></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="card" id="oppParty">
+                                    <div class="card cardheader">
+                                        <b>Opposite Party</b>
+                                    </div>
+                                    <table style="margin:10px;">
+                                        <tr>
+                                            <td style="width:30%"><b>Opposite Party Name</b></td>
+                                            <td style="width:70%">@Model.Party_Name</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>Trade Mark</b></td>
+                                            <td>@Model.Trademark</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>Application No.</b></td>
+                                            <td>@Model.Application_No</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>Class</b></td>
+                                            <td>
+                                                @if (Model.IPR_Class_Code != null)
+                                                {
+                                                    @Model.IPR_CLASS.Description
+                                                }
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>Status</b></td>
+                                            <td>
+                                                @if (Model.IPR_App_Status_Code != null)
+                                                {
+                                                    @Model.IPR_APP_STATUS.App_Status
+                                                }
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>Business Unit</b></td>
+                                            <td>
+                                                @ViewBag.BusinessUnitList
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>Channel</b></td>
+                                            <td>
+                                                @ViewBag.ChannelList
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="card" id="publicationDetail">
+                                    <div class="card cardheader">
+                                        <b>Publication Details</b>
+                                    </div>
+
+                                    @if (Model.IPR_For == "B")
+                                    {
+                                        <table style="margin:10px; width:47.5%; float:right">
+                                            <tr>
+                                                <td style="width:30%"><b>Journal No.</b></td>
+                                                <td style="width:70%">
+                                                    @Model.Journal_No
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Date of Publication</b></td>
+                                                <td>
+                                                    @if (Model.Publication_Date != null)
+                                                    {
+                                                        @Model.Publication_Date.Value.ToString("dd/MM/yyyy")
+                                                    }
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Page No.</b></td>
+                                                <td>
+                                                    @Model.Page_No
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <b>Attachment</b>
+                                                </td>
+                                                <td>
+                                                    <a id="lnkBtnBy_AttachedFile" style="cursor:pointer; text-decoration:underline; display:none; " onclick="clickOnImage('M','')">@FileName</a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    }
+                                    else
+                                    {
+                                        <table style="margin:10px; width:47.5%; float:left">
+                                            <tr>
+                                                <td style="width:30%"><b>Journal No.</b></td>
+                                                <td style="width:70%">
+                                                    @Model.Journal_No
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Date of Publication</b></td>
+                                                <td>
+                                                    @if (Model.Publication_Date != null)
+                                                    {
+                                                        @Model.Publication_Date.Value.ToString("dd/MM/yyyy")
+                                                    }
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Page No.</b></td>
+                                                <td>
+                                                    @Model.Page_No
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <b>Attachment</b>
+                                                </td>
+                                                <td>
+                                                    <a id="lnkBtnAgainst_AttachedFile" style="cursor:pointer; text-decoration:underline; display:none; " onclick="clickOnImage('M','')">@FileName</a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    }
+
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="card" id="procesuctionDetail_OppBy">
+                                    <div class="card cardheader">
+                                        <b>Prosecution Details</b>
+                                    </div>
+                                    <table style="margin:10px;">
+                                        @if (Model.IPR_For == "B")
+                                        {
+                                            <tr>
+                                                <td style="width:25%"><b>Date of filing of Notice of Opposition</b></td>
+                                                <td style="width:25%">
+                                                    @if (Model.Date_Opposition_Notice != null)
+                                                    {
+                                                        @Model.Date_Opposition_Notice.Value.ToString("dd/MM/yyyy")
+                                                    }
+                                                </td>
+                                                <td style="width:25%"><b>Deadline for filing Counter Statement</b></td>
+                                                <td style="width:25%">
+                                                    @if (Model.Deadline_Counter_Statement != null)
+                                                    {
+                                                        @Model.Deadline_Counter_Statement.Value.ToString("dd/MM/yyyy")
+                                                    }
+                                                </td>
+                                            </tr>
+                                            <tr>
+
+                                                <td>
+                                                    <b> Reminder Frequency(date of Notice Opp)</b>
+                                                </td>
+                                                <td>
+                                                    @lstFrq[0]&nbsp;@lstFrq[1]&nbsp;@lstFrq[2]&nbsp;@lstFrq[3]&nbsp;@lstFrq[4]&nbsp;@lstFrq[5]
+                                                </td>
+
+
+                                                <td>
+                                                    <b> Deadline to file Evidence u/r 51</b>
+                                                </td>
+                                                <td>
+                                                    @if (Model.Deadline_Evidence_UR51 != null)
+                                                    {
+                                                        @Model.Deadline_Evidence_UR51.Value.ToString("dd/MM/yyyy")
+                                                    }
+                                                </td>
+                                            </tr>
+                                            <tr>
+
+                                                <td>
+                                                    <b>Date of Receipt of Counter Statement</b>
+                                                </td>
+                                                <td>
+                                                    @if (Model.Date_Counter_Statement != null)
+                                                    {
+                                                        @Model.Date_Counter_Statement.Value.ToString("dd/MM/yyyy")
+                                                    }
+                                                </td>
+                                                <td></td>
+                                                <tb></tb>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <b> Deadline for filing Evidence u/r 50</b>
+                                                </td>
+                                                <td>
+                                                    @if (Model.Deadline_Evidence_UR50 != null)
+                                                    {
+                                                        @Model.Deadline_Evidence_UR50.Value.ToString("dd/MM/yyyy")
+                                                    }
+                                                </td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <b>Date of filing Evidence u/r 50</b>
+                                                </td>
+                                                <td>
+                                                    @if (Model.Date_Evidence_UR50 != null)
+                                                    {
+                                                        @Model.Date_Evidence_UR50.Value.ToString("dd/MM/yyyy")
+                                                    }
+                                                </td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+
+                                                <td>
+                                                    <b>Date of receipt of Evidence u/r 51</b>
+                                                </td>
+                                                <td>
+                                                    @if (Model.Date_Evidence_UR51 != null)
+                                                    {
+                                                        @Model.Date_Evidence_UR51.Value.ToString("dd/MM/yyyy")
+                                                    }
+                                                </td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <b> Deadline to file Rebuttal u/r 52</b>
+                                                </td>
+                                                <td>
+                                                    @if (Model.Deadline_Rebuttal_UR52 != null)
+                                                    {
+                                                        @Model.Deadline_Rebuttal_UR52.Value.ToString("dd/MM/yyyy")
+                                                    }
+                                                </td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+
+                                                <td>
+                                                    <b> Date of filling Rebuttal u/r 52</b>
+                                                </td>
+                                                <td>
+                                                    @if (Model.Date_Rebuttal_UR52 != null)
+                                                    {
+                                                        @Model.Date_Rebuttal_UR52.Value.ToString("dd/MM/yyyy")
+
+                                                    }
+                                                </td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+
+                                            @*Opposition by Code end*@
+                                        }
+                                        else
+                                        {
+                                            @*Opposition Against Code Start*@
+
+                                            <tr>
+
+                                                <td style="width:25%">
+                                                    <b>Date of Receipt of Notice of Opposition</b>
+                                                </td>
+                                                <td style="width:25%">
+                                                    @if (Model.Date_Opposition_Notice != null)
+                                                    {
+                                                        @Model.Date_Opposition_Notice.Value.ToString("dd/MM/yyyy")
+                                                    }
+                                                </td>
+
+                                                <td style="width:25%">
+                                                    <b> Deadline for filing of Notice of Opposition</b>
+                                                </td>
+                                                <td style="width:25%">
+                                                    @if (Model.Deadline_Opposition_Notice != null)
+                                                    {
+                                                        @Model.Deadline_Opposition_Notice.Value.ToString("dd/MM/yyyy")
+                                                    }
+                                                </td>
+                                            </tr>
+                                            <tr>
+
+                                                <td>
+                                                    <b>Deadline for filing Counter Statement</b>
+                                                </td>
+                                                <td>
+                                                    @if (Model.Deadline_Counter_Statement != null)
+                                                    {
+                                                        @Model.Deadline_Counter_Statement.Value.ToString("dd/MM/yyyy")
+                                                    }
+                                                </td>
+
+
+                                                <td>
+                                                    <b>Deadline to file Evidence u/r 50</b>
+                                                </td>
+                                                <td>
+                                                    @if (Model.Deadline_Evidence_UR50 != null)
+                                                    {
+                                                        @Model.Deadline_Evidence_UR50.Value.ToString("dd/MM/yyyy")
+                                                    }
+                                                </td>
+                                            </tr>
+                                            <tr>
+
+                                                <td>
+                                                    <b>Reminder Frequency</b>
+                                                </td>
+                                                <td>
+                                                    @lstFrq[0]&nbsp;@lstFrq[1]&nbsp;@lstFrq[2]&nbsp;@lstFrq[3]&nbsp;@lstFrq[4]&nbsp;@lstFrq[5]
+                                                </td>
+                                                <td>
+                                                    <b>Deadline to file Rebuttal u/r 52</b>
+                                                </td>
+                                                <td>
+                                                    @if (Model.Deadline_Rebuttal_UR52 != null)
+                                                    {
+                                                        @Model.Deadline_Rebuttal_UR52.Value.ToString("dd/MM/yyyy")
+                                                    }
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <b>Date of filling of Counter Statement</b>
+                                                </td>
+                                                <td>
+                                                    @if (Model.Date_Counter_Statement != null)
+                                                    {
+                                                        @Model.Date_Counter_Statement.Value.ToString("dd/MM/yyyy")
+                                                    }
+                                                </td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+
+                                                <td>
+                                                    <b>Date of receipt of Evidence u/r 50</b>
+                                                </td>
+                                                <td>
+                                                    @if (Model.Date_Evidence_UR50 != null)
+                                                    {
+                                                        @Model.Date_Evidence_UR50.Value.ToString("dd/MM/yyyy")
+                                                    }
+                                                </td>
+                                                <td></td>
+                                                <td></td>
+
+                                            </tr>
+                                            <tr>
+
+                                                <td>
+                                                    <b>Deadline for filing Evidence u/r 51</b>
+                                                </td>
+                                                <td>
+                                                    @if (Model.Deadline_Evidence_UR51 != null)
+                                                    {
+                                                        @Model.Deadline_Evidence_UR51.Value.ToString("dd/MM/yyyy")
+                                                    }
+                                                </td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+
+                                                <td>
+                                                    <b>Date of filling Evidence u/r 51</b>
+                                                </td>
+                                                <td>
+                                                    @if (Model.Date_Evidence_UR51 != null)
+                                                    {
+                                                        @Model.Date_Evidence_UR51.Value.ToString("dd/MM/yyyy")
+                                                    }
+                                                </td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <b> Date of receipt of Rebuttal u/r 52</b>
+                                                </td>
+                                                <td>
+                                                    @if (Model.Date_Rebuttal_UR52 != null)
+                                                    {
+                                                        @Model.Date_Rebuttal_UR52.Value.ToString("dd/MM/yyyy")
+                                                    }
+                                                </td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+
+                                            @*Opposition Against Code end*@
+                                        }
+                                    </table>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="card" id="hearing">
+                                    <div class="card cardheader">
+                                        <b>Hearing</b>
+                                    </div>
+
+                                    <table style="margin:10px; width:98% !important">
+                                        <tr>
+                                            <td style="width:10%"><b>Order Date</b></td>
+                                            <td style="width:90%" colspan="3">
+                                                @if (Model.Order_Date != null)
+                                                {
+                                                    @Model.Order_Date.Value.ToString("dd/MM/yyyy")
+                                                }
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width:10%"><b>Outcome</b></td>
+                                            <td style="width:40%; text-align:right; padding-right: 30px;">
+                                                @*<div class="divBlock">
+                                                        <div id="divOutcomesCharCount">0/1000</div>
+                                                        <div style=""></div>
+                                                    </div>*@
+                                            </td>
+                                            <td style="width:25%"><b>Comments</b></td>
+                                            <td style="width:25%; text-align:right; padding-right: 30px;">
+                                                @*<div class="divBlock">
+                                                        <div id="divCommentsCharCount">0/1000</div>
+                                                        <div style=""></div>
+                                                    </div>*@
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">
+                                                <div class="expandable">
+                                                    @Model.Outcomes
+                                                </div>
+                                            </td>
+                                            <td colspan="2">
+                                                <div class="expandable">
+                                                    @Model.Comments
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="card" id="attachment">
+                                    <div class="card cardheader">
+                                        <b>Attachment</b>
+                                    </div>
+                                    <div id="divAttachments">
+                                        @Html.Partial("_List_IPR_Opp_Attachment", Model.IPR_Opp_Attachment.Where(a => a.Flag == "G").ToList(), ViewData)
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="card" id="statusHistory">
+                                    <div class="card cardheader">
+                                        <b>Status History</b>
+                                    </div>
+                                    <table style="margin:10px; width:98%" class="table table-bordered table-hover">
+                                        <tr>
+                                            <td style="width:20%"><b>Status</b></td>
+                                            <td style="width:20%"><b>Changed On</b></td>
+                                            <td style="width:60%"><b>Changed By</b></td>
+                                        </tr>
+
+                                        @foreach (RightsU_Entities.USP_List_IPR_Opp_Status_History_Result objStatusHist in ViewBag.IPR_Status_History)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    @objStatusHist.IPR_Status
+                                                </td>
+                                                <td>
+                                                    @objStatusHist.Changed_On
+                                                </td>
+                                                <td>
+                                                    @objStatusHist.UserName
+                                                </td>
+                                            </tr>
+                                        }
+                                    </table>
+                                    <input type="hidden" id="hdnCommandName" />
+                                    <input type="hidden" id="hdnAttchRowIndex" />
+                                    <input type="hidden" id="hdnRepCode" value="@Model.IPR_Rep_Code" />
+                                    <div class="bottom_action" style="margin-top:5px">
+                                        <ul class="form_link_nav clearfix">
+                                            <li>
+                                                <a type="button" id="btnCancelDeal" class="btn btn-primary" onclick="OnCancelClick();">Cancel</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+        </div>
+    </section>
+</div>
+
+
+@*<div class="top_area">
+    <div class="title_block clearfix">
+        <h2 class="pull-left">
+            @if (Model.IPR_For == "B")
+            {
+                @:View Opposition By
+                        }
+            else
+            {
+                @:View Opposition Against
+                        }
+        </h2>
+    </div>
+</div>
+
+<div class="grid_area">
+    <div class="navigation_tabs">
+        <div class="tabbable">
+            <div class="tab-content clearfix table-wrapper scale_table_container">
+                <div class="tab-pane active" id="tabRights">
+                    <div class="scale_table_block">
+                        <table width="100%" class="table">
+                            <tr>
+                                <td width="25%" valign="top">
+                                    Opposition Number
+                                </td>
+                                <td width="25%" valign="top" colspan="2">
+                                    @Model.Opp_No&nbsp;&nbsp;@Model.Version
+                                    @Html.HiddenFor(m => m.IPR_Opp_Code)
+                                    @Html.HiddenFor(m => m.IPR_For)
+                                    <input type="hidden" id="hdnIsSubmit" name="hdnIsSubmit" />
+                                </td>
+                                <td width="25%" valign="top">
+                                    Opposition Status
+                                </td>
+                                <td valign="top">
+                                    @if (Model.IPR_Opp_Status_Code != null)
+                                    {
+                                        @Model.IPR_Opp_Status.Opp_Status
+                                    }
+                                </td>
+                            </tr>
+                            <tr class="tdbackgourd">
+                                <td valign="top" class="bold" colspan="3">
+                                    Opposition By Details
+                                </td>
+                                <td valign="top" colspan="2" class="bold">
+                                    Opposite Party
+                                </td>
+                            </tr>
+                            <tr>
+                                <td valign="top">
+                                    Application No.
+                                </td>
+                                <td valign="top">
+                                    <span id="lblApp_No"></span>
+                                </td>
+                                <td valign="top" rowspan="3">
+                                    <img id="imgLogo" style="height: 70px; width: 110px;" />
+                                </td>
+                                <td valign="top">
+                                    Opposite Party Name
+                                </td>
+                                <td valign="top">
+                                    @Model.Party_Name
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="25%" valign="top">
+                                    Name of the Entity
+                                </td>
+                                <td valign="top">
+                                    <span id="lblName_Of_Entity"></span>
+                                </td>
+                                <td valign="top">
+                                    Trade Mark
+                                </td>
+                                <td valign="top">
+                                    @Model.Trademark
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="25%" valign="top">
+                                    Trade Mark
+                                </td>
+                                <td valign="top">
+                                    <span id="lblTradeMark"></span>
+                                </td>
+                                <td valign="top">
+                                    Application No.
+                                </td>
+                                <td valign="top">
+                                    @Model.Application_No
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="25%" valign="top">
+                                    Class
+                                </td>
+                                <td valign="top" colspan="2">
+                                    <div id="lblClass" class="expandable"></div>
+                                </td>
+                                <td valign="top">
+                                    Class
+                                </td>
+                                <td valign="top">
+                                    @if (Model.IPR_Class_Code != null)
+                                    {
+                                        @Model.IPR_CLASS.Description
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="25%" valign="top">
+                                    Status
+                                </td>
+                                <td valign="top" colspan="2">
+                                    <span id="lblStatus"></span>
+                                </td>
+                                <td valign="top">
+                                    Status
+                                </td>
+                                <td valign="top">
+                                    @if (Model.IPR_App_Status_Code != null)
+                                    {
+                                        @Model.IPR_APP_STATUS.App_Status
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="25%" valign="top">
+                                    Trademark Attorney
+                                </td>
+                                <td valign="top" colspan="2">
+                                    <span id="lblTrademarkAttorney"></span>
+                                </td>
+                                <td valign="top">Business Unit</td>
+                                <td valign="top">
+                                    <div class="expandable">
+                                        @ViewBag.BusinessUnitList
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="25%" valign="top">
+                                    Type
+                                </td>
+                                <td valign="top" colspan="2">
+                                    <span id="lblType"></span>
+                                </td>
+                                <td valign="top">Channel</td>
+                                <td valign="top">
+                                    <div class="expandable">
+                                        @ViewBag.ChannelList
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="tdbackgourd">
+                                <td colspan="5">
+                                    <label class="bold">Publication Details</label>
+                                </td>
+                            </tr>
+                            @if (Model.IPR_For == "B")
+                            {
+                                <tr>
+                                    <td valign="top" colspan="3"></td>
+                                    <td valign="top">
+                                        Journal No.
+                                    </td>
+                                    <td valign="top">
+                                        @Model.Journal_No
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top" colspan="3"></td>
+                                    <td valign="top">
+                                        Date of Publication
+                                    </td>
+                                    <td valign="top">
+                                        @if (Model.Publication_Date != null)
+                                        {
+                                            @Model.Publication_Date.Value.ToString("dd/MM/yyyy")
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top" colspan="3"></td>
+                                    <td valign="top">
+                                        Page No
+                                    </td>
+                                    <td valign="top">
+                                        @Model.Page_No
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" valign="top"></td>
+                                    <td valign="top">
+                                        Attachment
+                                    </td>
+                                    <td valign="top">
+                                        
+                                        <a id="lnkBtnBy_AttachedFile" style="cursor:pointer; text-decoration:underline; display:none; " onclick="clickOnImage('M','')">@FileName</a>
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td valign="top">Journal No.</td>
+                                    <td valign="top" colspan="2">
+                                        @Model.Journal_No
+                                    </td>
+                                    <td valign="top" colspan="2"></td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">
+                                        Date of Publication
+                                    </td>
+                                    <td valign="top" colspan="2">
+                                        @if (Model.Publication_Date != null)
+                                        {
+                                            @Model.Publication_Date.Value.ToString("dd/MM/yyyy")
+                                        }
+                                    </td>
+                                    <td valign="top" colspan="2"></td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">
+                                        Page No.
+                                    </td>
+                                    <td valign="top" colspan="2">
+                                        @Model.Page_No
+                                    </td>
+                                    <td valign="top" colspan="2"></td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">
+                                        Attachment
+                                    </td>
+                                    <td valign="top" colspan="2">
+                                        
+                                        <a id="lnkBtnAgainst_AttachedFile" style="cursor:pointer; text-decoration:underline; display:none; " onclick="clickOnImage('M','')">@FileName</a>
+                                    </td>
+                                    <td valign="top" colspan="2"></td>
+                                </tr>
+                            }
+                            <tr class="tdbackgourd">
+                                <td colspan="5">
+                                    <label class="bold">Procesuction Details</label>
+                                </td>
+                            </tr>
+                      
+                            @if (Model.IPR_For == "B")
+                            {
+                                <tr>
+                                    <td valign="top">
+                                        Date of filing of Notice of Opposition
+                                    </td>
+                                    <td valign="top" colspan="2">
+                                        @if (Model.Date_Opposition_Notice != null)
+                                        {
+                                            @Model.Date_Opposition_Notice.Value.ToString("dd/MM/yyyy")
+                                        }
+                                    </td>
+
+                                    <td valign="top">
+                                        Deadline for filing Counter Statement
+                                    </td>
+                                    <td valign="top">
+                                        @if (Model.Deadline_Counter_Statement != null)
+                                        {
+                                            @Model.Deadline_Counter_Statement.Value.ToString("dd/MM/yyyy")
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
+
+                                    <td valign="top">
+                                        Reminder Frequency(date of Notice Opp)
+                                    </td>
+                                    <td valign="top" colspan="2">
+                                        @lstFrq[0]&nbsp;@lstFrq[1]&nbsp;@lstFrq[2]&nbsp;@lstFrq[3]&nbsp;@lstFrq[4]&nbsp;@lstFrq[5]
+                                    </td>
+
+
+                                    <td valign="top">
+                                        Deadline to file Evidence u/r 51
+                                    </td>
+                                    <td valign="top">
+                                        @if (Model.Deadline_Evidence_UR51 != null)
+                                        {
+                                            @Model.Deadline_Evidence_UR51.Value.ToString("dd/MM/yyyy")
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
+
+                                    <td valign="top">
+                                        Date of Receipt of Counter Statement
+                                    </td>
+                                    <td valign="top" colspan="2">
+                                        @if (Model.Date_Counter_Statement != null)
+                                        {
+                                            @Model.Date_Counter_Statement.Value.ToString("dd/MM/yyyy")
+                                        }
+                                    </td>
+                                    <td colspan="2"></td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">
+                                        Deadline for filing Evidence u/r 50
+                                    </td>
+                                    <td valign="top" colspan="2">
+                                        @if (Model.Deadline_Evidence_UR50 != null)
+                                        {
+                                            @Model.Deadline_Evidence_UR50.Value.ToString("dd/MM/yyyy")
+                                        }
+                                    </td>
+                                    <td colspan="2"></td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">
+                                        Date of filing Evidence u/r 50
+                                    </td>
+                                    <td valign="top" colspan="2">
+                                        @if (Model.Date_Evidence_UR50 != null)
+                                        {
+                                            @Model.Date_Evidence_UR50.Value.ToString("dd/MM/yyyy")
+                                        }
+
+                                    </td>
+
+                                    <td colspan="2"></td>
+                                </tr>
+                                <tr>
+
+                                    <td valign="top">
+                                        Date of receipt of Evidence u/r 51
+                                    </td>
+                                    <td valign="top" colspan="2">
+                                        @if (Model.Date_Evidence_UR51 != null)
+                                        {
+                                            @Model.Date_Evidence_UR51.Value.ToString("dd/MM/yyyy")
+                                        }
+
+                                    </td>
+
+                                    <td colspan="2"></td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">
+                                        Deadline to file Rebuttal u/r 52
+                                    </td>
+                                    <td valign="top" colspan="2">
+                                        @if (Model.Deadline_Rebuttal_UR52 != null)
+                                        {
+                                            @Model.Deadline_Rebuttal_UR52.Value.ToString("dd/MM/yyyy")
+                                        }
+                                    </td>
+
+                                    <td colspan="2"></td>
+                                </tr>
+                                <tr>
+
+                                    <td valign="top">
+                                        Date of filling Rebuttal u/r 52
+                                    </td>
+                                    <td valign="top" colspan="2">
+                                        @if (Model.Date_Rebuttal_UR52 != null)
+                                        {
+                                            @Model.Date_Rebuttal_UR52.Value.ToString("dd/MM/yyyy")
+                                        }
+                                    </td>
+                                    <td colspan="2"></td>
+                                </tr>
+
+                               
+                            }
+                            else
+                            {
+                             
+
+                                <tr>
+
+                                    <td valign="top">
+                                        Date of Receipt of Notice of Opposition
+                                    </td>
+                                    <td valign="top" colspan="2">
+                                        @if (Model.Date_Opposition_Notice != null)
+                                        {
+                                            @Model.Date_Opposition_Notice.Value.ToString("dd/MM/yyyy")
+                                        }
+
+                                    </td>
+
+                                    <td valign="top">
+                                        Deadline for filing of Notice of Opposition
+                                    </td>
+                                    <td valign="top">
+                                        @if (Model.Deadline_Opposition_Notice != null)
+                                        {
+                                            @Model.Deadline_Opposition_Notice.Value.ToString("dd/MM/yyyy")
+                                        }
+
+                                    </td>
+                                </tr>
+                                <tr>
+
+                                    <td valign="top">
+                                        Deadline for filing Counter Statement
+                                    </td>
+                                    <td valign="top" colspan="2">
+                                        @if (Model.Deadline_Counter_Statement != null)
+                                        {
+                                            @Model.Deadline_Counter_Statement.Value.ToString("dd/MM/yyyy")
+                                        }
+
+                                    </td>
+
+
+                                    <td valign="top">
+                                        Deadline to file Evidence u/r 50
+                                    </td>
+                                    <td valign="top">
+                                        @if (Model.Deadline_Evidence_UR50 != null)
+                                        {
+                                            @Model.Deadline_Evidence_UR50.Value.ToString("dd/MM/yyyy")
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
+
+                                    <td valign="top">
+                                        Reminder Frequency
+                                    </td>
+                                    <td valign="top" colspan="2">
+                                        @lstFrq[0]&nbsp;@lstFrq[1]&nbsp;@lstFrq[2]&nbsp;@lstFrq[3]&nbsp;@lstFrq[4]&nbsp;@lstFrq[5]
+                                    </td>
+                                    <td valign="top">
+                                        Deadline to file Rebuttal u/r 52
+                                    </td>
+                                    <td valign="top">
+                                        @if (Model.Deadline_Rebuttal_UR52 != null)
+                                        {
+                                            @Model.Deadline_Rebuttal_UR52.Value.ToString("dd/MM/yyyy")
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">
+                                        Date of filling of Counter Statement
+                                    </td>
+                                    <td valign="top" colspan="2">
+                                        @if (Model.Date_Counter_Statement != null)
+                                        {
+                                            @Model.Date_Counter_Statement.Value.ToString("dd/MM/yyyy")
+                                        }
+                                    </td>
+                                    <td colspan="2"></td>
+                                </tr>
+                                <tr>
+
+                                    <td valign="top">
+                                        Date of receipt of Evidence u/r 50
+                                    </td>
+                                    <td valign="top" colspan="2">
+                                        @if (Model.Date_Evidence_UR50 != null)
+                                        {
+                                            @Model.Date_Evidence_UR50.Value.ToString("dd/MM/yyyy")
+                                        }
+
+                                    </td>
+                                    <td colspan="2"></td>
+
+                                </tr>
+                                <tr>
+
+                                    <td valign="top">
+                                        Deadline for filing Evidence u/r 51
+                                    </td>
+                                    <td valign="top" colspan="2">
+                                        @if (Model.Deadline_Evidence_UR51 != null)
+                                        {
+                                            @Model.Deadline_Evidence_UR51.Value.ToString("dd/MM/yyyy")
+                                        }
+                                    </td>
+                                    <td colspan="2"></td>
+                                </tr>
+                                <tr>
+
+                                    <td valign="top">
+                                        Date of filling Evidence u/r 51
+                                    </td>
+                                    <td valign="top" colspan="2">
+                                        @if (Model.Date_Evidence_UR51 != null)
+                                        {
+                                            @Model.Date_Evidence_UR51.Value.ToString("dd/MM/yyyy")
+                                        }
+                                    </td>
+                                    <td colspan="2"></td>
+                                </tr>
+                                <tr>
+
+                                    <td valign="top">
+                                        Date of receipt of Rebuttal u/r 52
+                                    </td>
+                                    <td valign="top" colspan="2">
+                                        @if (Model.Date_Rebuttal_UR52 != null)
+                                        {
+                                            @Model.Date_Rebuttal_UR52.Value.ToString("dd/MM/yyyy")
+                                        }
+                                    </td>
+                                    <td colspan="2"></td>
+                                </tr>
+
+                               
+                            }
+                            <tr class="tdbackgourd">
+                                <td colspan="5">
+                                    <label class="bold">Hearing</label>
+                                </td>
+                            </tr>
+                            <tr>
+
+                                <td valign="top">
+                                    Order Date
+                                </td>
+                                <td valign="top" colspan="2">
+                                    @if (Model.Order_Date != null)
+                                    {
+                                        @Model.Order_Date.Value.ToString("dd/MM/yyyy")
+                                    }
+                                </td>
+                                <td rowspan="2" valign="top">
+                                    Comments
+                                </td>
+                                <td rowspan="2" valign="top">
+                                    <div class="expandable">
+                                        @Model.Comments
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+
+                                <td valign="top">
+                                    Outcome
+                                </td>
+                                <td valign="top" colspan="2">
+                                    <div class="expandable">
+                                        @Model.Outcomes
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="tdbackgourd">
+                                <td colspan="5">
+                                    <label class="bold">Attachment</label>
+                                </td>
+                            </tr>
+                            <tr class="tdbackgourd">
+                                <td colspan="5">
+                                    <div class="pull-right">
+
+                                    </div>
+                                    <div class="tab-content clearfix table-wrapper scale_table_container">
+                                        <div class="tab-pane active scale_table_block" id="divAttachments">
+                                            @Html.Partial("_List_IPR_Opp_Attachment", Model.IPR_Opp_Attachment.Where(a => a.Flag == "G").ToList(), ViewData)
+
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="tdbackgourd">
+                                <td colspan="5">
+                                    <label class="bold">Status History</label>
+                                </td>
+                            </tr>
+                            <tr class="tdbackgourd">
+                                <td colspan="5">
+                                    <div class="tab-content clearfix table-wrapper scale_table_container">
+                                        <div class="tab-pane active scale_table_block">
+                                            <table class="table table-bordered table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Status</th>
+                                                        <th>Changed On</th>
+                                                        <th>Changed By</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (RightsU_Entities.USP_List_IPR_Opp_Status_History_Result objStatusHist in ViewBag.IPR_Status_History)
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                @objStatusHist.IPR_Status
+                                                            </td>
+                                                            <td>
+                                                                @objStatusHist.Changed_On
+                                                            </td>
+                                                            <td>
+                                                                @objStatusHist.UserName
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="bottom_action">
+                    <ul class="form_link_nav clearfix">
+                        <li>
+                            <a type="button" id="btnCancelDeal" class="btn btn-primary" onclick="OnCancelClick();">Cancel</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <input type="hidden" id="hdnCommandName" />
+            <input type="hidden" id="hdnAttchRowIndex" />
+            <input type="hidden" id="hdnRepCode" value="@Model.IPR_Rep_Code" />
+        </div>
+    </div>
+</div>*@
+
+

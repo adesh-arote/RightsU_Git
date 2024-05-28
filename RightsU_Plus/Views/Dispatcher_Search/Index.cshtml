@@ -1,0 +1,551 @@
+﻿@using UTOFrameWork.FrameworkClasses
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+
+<style>
+    #divFilter {
+        background: #eee;
+        padding: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    #divResult {
+        margin-top: 10px;
+    }
+
+    .SumoSelect {
+        width: 220px;
+    }
+
+    #ddlDealTypeAd_chosen {
+        width: 89% !important;
+    }
+
+
+
+    table.tblFormat {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+
+    th.tblHead {
+        border: 1px solid black;
+        color: #ffffff;
+        background-color: #585858;
+        font-family: verdana;
+        font-size: 12px;
+    }
+
+    td.tblData {
+        border: 1px solid black;
+        vertical-align: top;
+        font-family: verdana;
+        font-size: 12px;
+    }
+
+    .textFont {
+        color: black;
+        font-family: verdana;
+        font-size: 12px;
+    }
+
+    #divFooter {
+        color: gray;
+    }
+</style>
+
+<script>
+    var sort_Type = "T";
+    var URL_GetNotifications = '@Url.Action("GetNotifications", "Dispatcher_Search")';
+    var URL_SearchNotification = '@Url.Action("SearchDispatcher", "Dispatcher_Search")';
+
+    $(document).ready(function () {
+        debugger;
+        addNumeric();
+
+        $('.Expand_Error').expander({
+            slicePoint: 50,
+            expandPrefix: '',
+            expandText: '...readmore',
+            collapseTimer: 0,
+            userCollapseText: '<span>[^]</span>'
+        });
+    });
+
+    function GetNotifications() {
+        debugger;
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+
+
+            showLoading();
+            $.ajax({
+                type: "POST",
+                url: URL_GetNotifications,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    pageNo: pageNo,
+                    recordPerPage: recordPerPage,
+                    sortType: sort_Type
+                }),
+               // async: false,
+                success: function (result) {
+                    debugger;
+                    hideLoading();
+                    $('#divResult').empty();
+                    $('#divResult').html(result);
+                    //if (result.Status == "E") {
+                    //    showAlert("E", result.Message, "OK");
+                    //}
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+    }
+    function addNumeric() {
+        debugger;
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
+
+    function SetPaging() {
+        debugger;
+        IsCall = 'N';
+        var pageNo = parseInt($('#hdnPageNo').val());
+        var recordCount = parseInt($('#hdnRecordCount').val());
+        var pagePerBatch = parseInt($('#hdnPagePerBatch').val());
+        var recordPerPage = parseInt($('#txtPageSize').val());
+
+        var cnt = pageNo * recordPerPage;
+        if (cnt >= recordCount) {
+            var v1 = parseInt(recordCount / recordPerPage);
+            if ((v1 * recordPerPage) == recordCount)
+                pageNo = v1;
+            else
+                pageNo = v1 + 1;
+        }
+
+        if (pageNo == 0)
+            pageNo = 1;
+
+        var index = pageNo - 1;
+        $('#hdnPageNo').val(pageNo);
+
+        var opt = null;
+        opt = { callback: pageselectCallback };
+        opt["items_per_page"] = recordPerPage;
+        opt["num_display_entries"] = pagePerBatch;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = index;
+        $("#Pagination").pagination(recordCount, opt);
+    }
+
+    function pageselectCallback(page_index, jq) {
+        debugger;
+            $('.required').removeClass('required');
+
+            if (!ValidatePageSize())
+                return false;
+
+            var pageNo = page_index + 1
+            $('#hdnPageNo').val(pageNo);
+            if (IsCall == 'Y')
+                GetNotifications();
+            else
+                IsCall = 'Y';
+    }
+    function ValidatePageSize() {
+        debugger;
+        var recordPerPage = $('#txtPageSize').val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize').attr('required', true)
+        return false
+    }
+
+    function txtPageSize_OnChange() {
+        debugger;
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        if (!ValidatePageSize())
+            return false;
+
+        GetNotifications();
+        SetPaging();
+    }
+    function SearchNotification(btnType) {
+        debugger;
+        var returnVal = true;
+        var StartDate = $('#StartDate').val();
+        var EndDate = $('#EndDate').val();
+        var EventType = $('#ddlEventType').val();
+        var Platform = $('#ddlPlatform').val();
+        var MessageType = $('#ddlMessageType').val();
+        var MessageTo = $('#txtMessageTo').val();
+        if (btnType == "AR") {
+            StartDate = "";
+            EndDate = "";
+            $('#StartDate').val('');
+            $('#EndDate').val('');
+        }
+
+        showLoading();
+        if (returnVal) {
+            $.ajax({
+                type: "POST",
+                url: URL_SearchNotification,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    strStartDate: StartDate,
+                    strEndDate: EndDate,
+                    EventType: EventType,
+                    Platform: Platform,
+                    MessageType: MessageType,
+                    MessageTo: MessageTo,
+                    BtnType: btnType
+                }),
+                //  async: false,
+                success: function (result) {
+                    debugger;
+                    if (result.Status == "E") {
+                        showAlert("E", result.Message, "OK");
+                        hideLoading();
+                        return false;
+                    }
+                    else {
+                        $('#hdnPageNo').text(1);
+                        $('#hdnPageNo').val(1);
+                        $('#lblRecordCount').text(result.Record_Count);
+                        $("#hdnRecordCount").val(result.Record_Count);
+                        GetNotifications();
+                        SetPaging();
+                        hideLoading();
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                    hideLoading();
+                }
+            });
+        }
+    }
+
+
+    function MessagePopup(Id, MsgType) {
+            var URL_MessagePopUpBody = '@Url.Action("MessagePopUpBody", "Dispatcher_Search")';
+        debugger;
+            $.ajax({
+                type: "POST",
+                url: URL_MessagePopUpBody,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                data: JSON.stringify({
+                    NotificationCode: Id,
+                    MsgType: MsgType
+                }),
+                async: false,
+                success: function (result) {
+                    debugger;
+                    $('#popup').modal();
+                    $('#MsgpupupHtml').empty();
+                    $('#MsgpupupHtml').html(result);
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+        });
+    }
+    function StatusPopup(Id, NotificationType) {
+
+     var URL_MessagePopUpBody = '@Url.Action("GetNotificationStatus", "Dispatcher_Search")';
+
+        debugger;
+            $.ajax({
+                type: "POST",
+                url: URL_MessagePopUpBody,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                data: JSON.stringify({
+                    NotificationCode: Id,
+                    NotificationType: NotificationType
+                }),
+                async: false,
+                success: function (result) {
+                    debugger;
+                    var JsonResponse = JSON.parse(JSON.parse(result))
+                    $('#Message').empty();
+                    $('#SentDate').empty();
+                    $('#RetryOfCount').empty();
+                    $('#ErrorCode').empty();
+                    $('#ErrorCodeDetails').empty();                
+
+                    var sentDateTime = JsonResponse.Response.SentOrReadDateTime;
+                    var dateObject = new Date(sentDateTime);
+                    var formattedDate = dateObject.toLocaleDateString(); 
+                    var formattedTime = dateObject.toLocaleTimeString(); 
+                    var formattedDateTime = formattedDate + ' ' + formattedTime;
+
+                    $('#Message').html(JsonResponse.Response.NotificationStatus);
+                    $('#SentDate').html(formattedDateTime);
+                    if (JsonResponse.Response.IsSend == false) {
+                        $('#RetryOfCount').html(JsonResponse.Response.NoOfRetry);
+                        $('#ErrorCode').html(JsonResponse.Response.ErrorCode);
+                        $('#ErrorCodeDetails').html(JsonResponse.Response.ErrorDetails);
+                    }
+                    $('#Statuspopup').modal();
+
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+        });
+    }
+
+
+
+    function ClosePopup() {
+        debugger;
+        $('#popup').modal('hide');
+        $('#MsgpupupHtml').empty();
+
+    }
+    function CloseStatusPopup() {
+        debugger;
+        $('#Statuspopup').modal('hide');
+    }
+</script>
+
+<style>
+    .StatusHead {
+        font-size: 16px;
+        color: #37302E;
+        font-weight: 500;
+        padding-left: 13px;
+    }
+
+    .Statusmsg {
+        font-size: 12px;
+        color: #37302E;
+        padding-left: 13px;
+    }
+
+    .Status-head {
+        text-align: left;
+        width: 20%;
+    }
+
+    .scrollable-content {
+        max-height: 250px; 
+        overflow-y: auto; 
+    }
+
+    .scrollable-content-Html {
+        max-height: 450px; 
+        overflow-y: auto; 
+    }
+</style>
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="title_block dotted_border clearfix">
+                <h2>Notifications</h2>
+            </div>
+            <div id="divFilter">
+                <table border="0" style="border-spacing: 5px;border-collapse: separate;padding: 0px;">
+                    <tr>
+                        <td style="width:8%"><label style="font-weight:bold">Event Type:</label></td>
+                        <td style="width:30% !important">
+                            @Html.DropDownList("EventType", (List<SelectListItem>)ViewBag.EventType, "Please Select", new { @id = "ddlEventType", @class = "form_input chosen-select" })
+                        </td>
+                        <td style="width:9%"><label style="font-weight:bold"> Message Type:</label></td>
+                        <td style="width:30% !important">
+                            <select class="form_input chosen-select" id="ddlMessageType">
+                                <option value="HTML">HTML</option>
+                                <option value="TEXT">TEXT</option>
+                            </select>
+                        </td>
+                        <td style="width:8%"><label style="font-weight:bold"> Message To:</label></td>
+                        <td style="width:30% !important">
+                            <input type="text" id="txtMessageTo" placeholder="Please Enter Sent User Id" style="width:100%" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width:8%"><label style="font-weight:bold"> Platform:</label></td>
+                        <td style="width:30% !important">
+                            @Html.DropDownList("Platform", (List<SelectListItem>)ViewBag.EventPlatform, "Please Select", new { @id = "ddlPlatform", @class = "form_input chosen-select" })
+                        </td>
+                        <td style="width:8%"><label style="font-weight:bold"> Period:</label></td>
+                        <td style="width:30% !important">
+                            <input type="text" id="StartDate" class="isDatepicker shortDate common" autocomplete="off" style="width:45%" placeholder="From" />
+                            <label style="font-weight:bold"> To</label>
+                            <input type="text" id="EndDate" class="isDatepicker shortDate common" autocomplete="off" style="width:45%" placeholder="To" />
+                        </td>
+                        <td colspan="2">
+                            <div class="pull-right">
+                                <input type="button" id="btnShow" class="btn btn-primary " value="Search" onclick="SearchNotification('NA')"> &nbsp; &nbsp;
+                                <input type="button" id="btnReset" class="btn btn-primary " value="Search in Archive" onclick="SearchNotification('AR')">
+                            </div>
+                        </td>
+                    </tr>
+
+                    @*<tr>
+                            <td colspan="6">
+                                <div class="pull-right" style="padding-right: 19px;">
+                                    <input type="button" id="btnShow" class="btn btn-primary " value="Search" onclick="GetNotifications('NA')"> &nbsp; &nbsp;
+                                    <input type="button" id="btnReset" class="btn btn-primary " value="Search in Archive" onclick="GetNotifications('AR')">
+                                </div>
+                            </td>
+                        </tr>*@
+
+                </table>
+            </div>
+            <div class="grid_area">
+                <div style="border-bottom: 1px dotted #777; display:none;"></div>
+                <div class="paging_area clearfix">
+                    <span class="pull-left">@objMessageKey.TotalRecords: </span>
+                    <span class="pull-left" id="lblRecordCount"></span>
+                    <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                    <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                    <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+
+                    <div id="Pagination" class="pagination">
+                    </div>
+                    <span class="pull-right">
+                        @objMessageKey.PageSize:
+                        <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="txtPageSize_OnChange()" onblur="setDefaultPaging('txtPageSize')">
+                    </span>
+                </div>
+
+                @*<div class="tab-content clearfix table-wrapper scale_table_container">
+                        <div class="scale_table_block">
+                            <input type="hidden" id="hdnAction" value="" />
+                            <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
+                            <div id="divExtendedList" class="deal clearfix">
+
+                            </div>
+                        </div>
+                    </div>*@
+            </div>
+            <div class="title_block dotted_border clearfix">
+            </div>
+            <br />
+            <div id="divResult" class="deal clearfix">
+
+            </div>
+        </div>
+    </section>
+</div>
+
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none; max-height:80%;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <div class="form_fields acq" id="MsgpupupHtml">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="Statuspopup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none; max-height:80%;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <div class="form_fields acq" id="StatuspupupHtml">
+                <div class="modal_block modal_header">
+                    <a class="close" onclick="CloseStatusPopup()">
+                        <span>X</span>
+                        <span class="sr-only">Close</span>
+                    </a>
+                    <h2>
+                        Notification Status
+                    </h2>
+                </div>
+                <div class="modal_block">
+                    <div class="tab-content clearfix table-wrapper scale_table_container">
+                        <div class="scale_table_block">
+                            <table class="table table-responsive">
+                                <tr>
+                                    <th class="Status-head">
+                                        Status :
+                                    </th>
+                                    <td id="Message"></td>
+                                </tr>
+                                <tr>
+                                    <th class="Status-head">
+                                        Sent Date :
+                                    </th>
+
+                                    <td id="SentDate"></td>
+                                </tr>
+                                <tr>
+                                    <th class="Status-head">
+                                        Retry of count :
+                                    </th>
+                                    <td id="RetryOfCount"></td>
+                                </tr>
+                                <tr>
+                                    <th class="Status-head">
+                                        Error Code :
+                                    </th>
+                                    <td id="ErrorCode"></td>
+                                </tr>
+                                <tr>
+                                    <th class="Status-head">
+                                        Error Details :
+                                    </th>
+                                    <td>
+                                        <div class="scrollable-content Expand_Error" id="ErrorCodeDetails">
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal_block_full" style="margin-top: 10px;">
+                    <div class="form_links">
+                        <ul class="modal_block clearfix" style="padding-left:10px;padding-top: 10px;">
+                            <li>
+                                <input type="button" class="btn btn-primary" value="Cancel" onclick="CloseStatusPopup()" />
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

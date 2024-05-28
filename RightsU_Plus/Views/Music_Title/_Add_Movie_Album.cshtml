@@ -1,0 +1,290 @@
+﻿@model RightsU_Entities.Music_Album
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script>
+    $(document).ready(function () {
+        if (LayoutDirection_G == "RTL") {
+            $('#AddMovie_Album_popup').css("width", "395px");
+        }
+        else {
+            $('#AddMovie_Album_popup').css("width", "500px");
+        }
+
+        setChosenWidth("#Music_Album_Name", "89%");
+        $('#ddlStarCastAdd').SumoSelect({ selectAll: false });
+    });
+
+    function closemodel() {
+        $('#AddMovie_Album_popup').modal('hide');
+        $("#txtMovieAlbum").val('');
+        $("#ddlStarCastAdd").find("option").attr("selected", false);
+        $("#ddlStarCastAdd").val('')[0].sumo.reload();
+    }
+    function Save_OnSuccess(result) {
+        //  alert(result);
+        if (result.Message != undefined) {
+            showAlert("E", result.Message, "");
+            return false;
+        }
+        //var ddlMovieAlbumValues = "<option value = " + result.Value + " >" + result.Text + "</option>";
+        ////   alert(ddlMovieAlbumValues);
+        //$("#Music_Album_Name").append(ddlMovieAlbumValues);
+        ////$("#Music_Album_Name").val(ddlMovieAlbumValues);
+        //$("#Music_Album_Name").val(result.Value).trigger('chosen:updated')
+        $('#txtmusicAlbumName').val(result.Text);
+        $('#txtmusicAlbum').val(result.Text);
+        $('#hdnMovieAlbumCode').val(result.Value);
+        $('#hdnMovieAlbum').val(result.Value);
+        //$("#Music_Album_Name").append($("<option />").val(result.Value).text(result.Text));
+        $("#lblStarcast").html(result.listStarCast);
+        $('#AddMovie_Album_popup').modal('hide');
+        $("#txtMovieAlbum").val('');
+        $("#ddlStarCastAdd").find("option").attr("selected", false);
+        $("#ddlStarCastAdd").val('')[0].sumo.reload();
+    }
+    function OnBegin() {
+        //  alert('OnBegin');
+    }
+    function AutoCompleteMovieStarCast(keyword) {
+        var keyword = $("#txtMovieStarCast").val();
+        $("#txtMovieStarCast").autocomplete({
+            focus: function () {
+                return false;
+            },
+            search: function (e, u) {
+                $(this).addClass('loader');
+            },
+            source: function (request, response) {
+                var param = {
+                    keyword: keyword
+                };
+                $.ajax({
+                    url: URL_AutoCompleteMovieStarCast,
+                    data: JSON.stringify(param),
+                    dataType: "json",
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    dataFilter: function (data) { return data; },
+                    success: function (data) {
+                        if (data.length == 0) {
+                            data[0] = 'Result Not Found';
+                            response($.map(data, function (v, i) {
+                                $('#txtMovieStarCast').removeClass('loader');
+                                return {
+                                    label: 'Result Not Found',
+                                    val: '0'
+                                }
+                            }))
+                        }
+                        else {
+                            response($.map(data, function (v, i) {
+                                $('#txtMovieStarCast').removeClass('loader');
+                                return {
+                                    label: v.Talent_Name,
+                                    val: v.Talent_Code
+                                }
+                            }))
+                        }
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert("Error" + textStatus);
+                    }
+              
+                });
+              
+            },
+           
+            select: function (event, i) {
+                debugger
+                var text = this.value.split(/﹐\s*/);
+                text.pop();
+                text.push(i.item.value);
+                text.push("");
+                this.value = text;
+                this.value = text.join("﹐");
+                var value = $("#hdnMoviestarCastList").val().split(/,\s*/);
+                value.pop();
+                value.push(i.item.val);
+                value.push("");
+                $("#hdnMoviestarCastList")[0].value = value.join(", ");
+                return false;
+            },
+            minLength: 2,
+            open: function (event, ui) {
+                $(".ui-autocomplete").css("position", "absolute");
+                $(".ui-autocomplete").css("max-height", "200px");
+                $(".ui-autocomplete").css("max-width", "250px");
+                $(".ui-autocomplete").css("overflow-y", "auto");
+                $(".ui-autocomplete").css("overflow-x", "hidden");
+                $(".ui-autocomplete").css("z-index", "2147483647");
+                $(".ui-autocomplete").css("right", "auto");
+            },
+        });
+    }
+</script>
+<style>
+    .loader {
+        /*background: url(loader.gif);*/
+        /*background: url('../../Images/ajax-loader.gif');*/
+        background: url('../../Images/ajax-loader.gif');
+        background-repeat: no-repeat;
+        background-position: right;
+    }
+</style>
+<div class="modal-dialog" id="model">
+    <div class="modal-content clearfix">
+        @*<form class="form" id="movie_popup">*@
+        @using (Ajax.BeginForm("SaveMovieAlbum", "Music_Title", new AjaxOptions { OnBegin = "OnBegin", OnSuccess = "Save_OnSuccess" }, new { @id = "frmAddMusic" }))
+        {
+            <div id="frmSample">
+                <div class="form_wrapper">
+                    <div class="form_fields">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>Add Music Movie/Album</h2>
+                        </div>
+                        <div class="modal_block">
+                            <ul class="add_title_popup">
+                                <li>
+                                    <label>Add Music Movie/Album</label>
+                                    <input type="text" id="txtMovieAlbum" name="Music_Album_Name" maxlength="50" />
+                                    @Html.Hidden("hdnMovieAlbum")
+                                </li>
+                                <li>
+                                    <label>@objMessageKey.Type</label>
+                                    @Html.RadioButton("rdoMovieAlbum", "M", true, new { @class = "checktype" }) <span>@objMessageKey.Movie</span>
+                                    @Html.RadioButton("rdoMovieAlbum", "A", false, new { @class = "checktype" }) <span>@objMessageKey.Album</span>
+                                </li>
+                                <li>
+                                    <label>@objMessageKey.MovieStarCast</label>
+                                    <input type="text" placeholder="Search Here" name="Movie_StarCast" id="txtMovieStarCast" value="@ViewBag.MovieAlbum" autocomplete="on" style="width:250px" onkeyup="AutoCompleteMovieStarCast(this)" />
+                                    @Html.Hidden("hdnStarCastList")
+                                    <input type="hidden" id="hdnMoviestarCastList" />
+                                </li>
+                                @*<li>
+                                        <label>@objMessageKey.MovieStarCast</label>
+                                        @Html.ListBox(
+                                          "ddlStarCastAdd",
+                                          ViewBag.StarCastList as MultiSelectList, new { @multiple="multiple", id = "ddlStarCastAdd" }
+                                                            )
+
+                                        @Html.Hidden("hdnStarCastList")
+                                    </li>*@
+                            </ul>
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li>
+                                        <input type="submit" class="btn btn-primary" value="@objMessageKey.Save" onclick="return MovieAlbumSave();" />
+                                        @*<a class="btn btn-primary" href="#" onclick="MovieAlbumSave();">Save</a>*@
+                                    </li>
+                                    <li>
+                                        <a class="btn btn-primary" href="#" onclick="closemodel();">@objMessageKey.Cancel</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        @*</form>*@
+
+    </div>
+</div>
+<script>
+    function MovieAlbumSave() {
+        debugger;
+        var hdnMovieAlbum = "";
+        var selectedValue = $("#hdnMoviestarCastList").val();
+
+        //var selectedLanguageObj = $("#ddlStarCastAdd option").filter(":selected");
+        //if (selectedLanguageObj.length > 0) {
+        //    $.each(selectedLanguageObj, function () {
+        //        selectedValue += $(this).val() + ",";
+        //    });
+        //}
+
+        //added by akshay and commented if condition by akshay
+        $("#hdnStarCastList").val(selectedValue);
+        /* if (selectedValue == '') {
+             //alert($("#ddlLanguage"));
+             $("#ddlStarCastAdd").attr('required', true);
+             // $("#ddlLanguage").addClass("required");
+             showAlert("E", "Please select atleast one Movie Starcast", "");
+             Error = "E";
+         }
+         else
+         {
+             $("#hdnStarCastList").val(selectedValue);
+         }
+         */
+        if ($("#txtMovieAlbum").val() != "")
+            hdnMovieAlbum = $("#txtMovieAlbum").val();
+        else {
+            //showAlert("E", "Please Select Deal Type", "");
+            Error = "E";
+            $("#txtMovieAlbum").attr('required', true);
+            showAlert("E", '@objMessageKey.Pleaseentermoviealbum');
+            return false;
+        }
+
+        var rdoMovieAlbum = $('.checktype:checked').val();
+        if (rdoMovieAlbum == '' || rdoMovieAlbum == null) {
+            showAlert("E", "Please select type", "");
+            Error = "E";
+        }
+        $("#hdnMovieAlbum").val(rdoMovieAlbum);
+        // return true;
+        @*if (Error != "E") {
+          var formData = new FormData();
+          formData.append("hdnMovieAlbum", hdnMovieAlbum);
+          formData.append("rdoMovieAlbum", rdoMovieAlbum);
+          formData.append("selectedValue", selectedValue);
+          $('#divMusicLabel').hide();
+          $('.modal_header h2').html('Add Talent');
+          showLoading();
+          $.ajax({
+              type: "POST",
+              url: '@Url.Action("SaveMovieAlbum", "Music_Title")',
+              dataType: "json",
+              type: "POST",
+              contentType: "application/json; charset=utf-8",
+              url:URL_SaveMovieAlbum,
+              //data: formData,
+              data: JSON.stringify(
+                 formData
+                //  $('formData').serializeObject()
+              ),
+              success: function (result) {
+
+                  if (result == "true") {
+                      redirectToLogin();
+                  }
+                  else {
+                      if (result.Status == "S") {
+                          showAlert("I", result.Message, "OK");
+                      }
+                      else {
+                          showAlert("E", result.Message, "OK");
+                      }
+                  }
+                  hideLoading();
+              },
+              error: function (result) {
+                  alert('Error: ' + result.responseText);
+                  hideLoading();
+              }
+          });
+      }*@
+    }
+</script>

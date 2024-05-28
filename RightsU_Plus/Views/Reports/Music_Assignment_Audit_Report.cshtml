@@ -1,0 +1,270 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<script>
+    var URL_BindMusicAssignmentAuditReport = '@Url.Action("BindMusicAssignmentAuditReport", "Reports")';
+    var URL_PopulateUsers = '@Url.Action("PopulateUsers", "Reports")';
+
+    $(document).ready(function () {     
+        $('#txtFrom').change(function () {
+            SetMinDt();
+        });
+        $('#txtTo').change(function () {
+            SetMaxDt();
+        });
+    });
+    function btnShow_OnClick() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        $('#txtUser').removeClass('required');
+
+        var userCode = $('#txtUser').val();
+        var dateFrom = $('#txtFrom').val();
+        var dateTo = $('#txtTo').val();
+        var returnVal = true;
+        if ($('#txtUser').val() == '0' || $('#txtUser').val() == '0, ') {
+            $('#txtUser').val('');
+            $('#txtUser').val(0);
+            userCode = ' ';
+        }
+        else {
+            var userCode = $('#txtUser').val();
+        }
+        if ($('#txtUser').val() == "" || $('#txtUser').val() !="") {
+            returnVal = true;
+        }
+
+         if (returnVal) {
+            $.ajax({
+                type: "POST",
+                url: URL_BindMusicAssignmentAuditReport,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    userCode: userCode,
+                    dateFrom:dateFrom,
+                    dateTo: dateTo,
+                    dateformat: $('#ddlDateFormat').val()
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        $('#divResult').empty();
+                        $('#divResult').html(result);
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    }
+    function SetMaxDt() {
+        setMinMaxDates('txtFrom', '', $('#txtTo').val());
+    }
+    function SetMinDt() {
+        setMinMaxDates('txtTo', $('#txtFrom').val(), '');
+    }
+    function PopulateUsers(keyword) {
+        if ($('#txtUser').val().length == "0") {
+            $('#hdnUserCode').val(0);
+        }
+        var selectedtxt = $('#txtUser').val()
+        var txt = selectedtxt.split('﹐');
+        var iscomplete = true;
+        if (txt[txt.length - 1].trim() == "")
+            iscomplete = false;
+        if (iscomplete) {
+            $("#txtUser").autocomplete({
+                focus: function () {
+                    return false;
+                },
+                search: function (e, u) {
+                    $(this).addClass('loader');
+                },
+                source: function (request, response) {
+                    var param = {
+                        keyword: $('#txtUser').val()
+
+                    };
+                    $.ajax({
+                        url: URL_PopulateUsers,
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+                            if (data.length == 0) {
+                                data[0] = 'Result Not Found';
+                                response($.map(data, function (v, i) {
+                                    $('#txtUser').removeClass('loader');
+                                    return {
+                                        label: '@objMessageKey.ResultNotFound',
+                                        val: '0'
+                                    }
+                                }))
+                            }
+                            else {
+                                response($.map(data, function (v, i) {
+                                    $('#txtUser').removeClass('loader');
+                                    return {
+                                        label: v.Login_Name,
+                                        val: v.Users_Code
+                                    }
+                                }))
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                            alert("Error" + textStatus);
+                        }
+                    });
+                },
+                select: function (event, i) {
+                    debugger;
+                    if (i.item.value != "@objMessageKey.ResultNotFound") {
+                        var text = this.value.split(/﹐\s*/);
+                        text.pop();
+                        text.push(i.item.value);
+                        text.push("");
+                        this.value = text;
+                        this.value = text.join("﹐");
+                        var value = $("#hdnUserCode").val().split(/,\s*/);
+                        value.pop();
+                        value.push(i.item.val);
+                        value.push("");
+                        $("#hdnUserCode")[0].value = value.join(", ");
+                        return false;
+                    }
+                    else {
+                        $('#txtUser').val("");
+                        return false;
+                    }
+                },
+                minLength: 3,
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("position", "absolute");
+                    $(".ui-autocomplete").css("max-height", "200px");
+                    $(".ui-autocomplete").css("max-width", "285px");
+                    $(".ui-autocomplete").css("overflow-y", "auto");
+                    $(".ui-autocomplete").css("overflow-x", "hidden");
+                    $(".ui-autocomplete").css("z-index", "2147483647");
+                    $(".ui-autocomplete").css("direction", "@objMessageKey.LayoutDirection");
+                },
+
+            });
+        }
+        else
+            return false;
+    }
+    function ShowHideSearchCriteria(show) {
+        if (show == 'S') {
+            $('#divFilter').show();
+            $('#tdShowImg').hide();
+            $('#tdHideImg').show();
+            $('#divFilter').width = '100%';
+        }
+        else if (show == 'H') {
+            debugger;
+            $('#divFilter').hide();
+            $('#tdHideImg').hide();
+            $('#tdShowImg').show();
+            $('#divFilter').width = '100%';
+        }
+    }
+</script>
+<style>
+    #divFilter {
+        background: #eee;
+        padding: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    #divResult {
+        margin-top: 10px;
+    }
+
+    /*#ddlUser_chosen {
+        width: 100%;
+        max-width: 100%;
+    }*/
+
+    input.isDatepicker {
+        width: 100px;
+        z-index: auto;
+    }
+    #ddlDateFormat_chosen{
+        width:167px!important;
+    }
+</style>
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="title_block dotted_border clearfix" style="direction: @objMessageKey.LayoutDirection">
+                <h2>@objMessageKey.MusicAssignmentActivityReport</h2>
+            </div>
+            <div id="divFilter">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td style="width:10%"><b>@objMessageKey.UserName :</b></td>
+                            <td style="width:20%">
+                                <input type="text" id="txtUser" class="search" maxlength="100" style="width:285px" placeholder="@objMessageKey.User" onkeyup="PopulateUsers(event)" autocomplete="on" />
+                                <input type="hidden" id="hdnUserCode" value="0" />
+</td>
+                            <td style="width:10%"><b>&nbsp;@objMessageKey.FromDate:</b></td>
+                            <td style="width:10%">
+                                <input type="text" class="isDatepicker" id="txtFrom" name="Date_From" placeholder="DD/MM/YYYY" width="100"
+                                       title="@objMessageKey.FromDate" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" />
+                            </td>
+                            <td style="width:6%"><b>@objMessageKey.ToDate:</b></td>
+                            <td style="width:10%">
+                                <input type="text" class="isDatepicker" id="txtTo" name="Date_To" placeholder="DD/MM/YYYY" width="100"
+                                       title="@objMessageKey.ToDate" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" />
+                            </td>
+                            <td style="width:10%"><b>@objMessageKey.DateFormat:</b></td>
+                            <td style="width:17%">
+                                @Html.DropDownList("DateFormat", (List<SelectListItem>)ViewBag.DateFormat,  new { @id = "ddlDateFormat", @class = "form_input chosen-select" })
+                        </td>
+                            <td style="width:25%;"><input type="button" id="btnShow" class="btn btn-primary" value="@objMessageKey.Show" onclick="btnShow_OnClick()"> </td>
+
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="title_block dotted_border clearfix">
+            </div>
+            <div>
+                <table>
+                    <tr align="left" id="trImg">
+                        <td id='tdShowImg' align='left' style="display: none">
+                            <input type="image" title="Expand" alt="Expand Search Criteria" style="cursor:pointer;" src="~/Images/expand.jpg" onclick="return ShowHideSearchCriteria('S');" />
+                        </td>
+                        <td id='tdHideImg' align="left">
+                            <input type="image" title="Collapse" alt="Collapse Search Criteria" style="cursor:pointer;" src="~/Images/collapse.jpg" onclick="return ShowHideSearchCriteria('H');" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div id="divResult">
+
+            </div>
+        </div>
+    </section>
+</div>

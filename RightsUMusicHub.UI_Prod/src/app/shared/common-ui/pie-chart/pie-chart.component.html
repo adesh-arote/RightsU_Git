@@ -1,0 +1,53 @@
+<!-- <div id="piechart" style="height: 240px"></div> -->
+<div *ngIf="!showPieLabel">
+  <!-- <div id="piechart" style="height: 240px"></div> -->
+  <google-chart style="height: 240px;margin-left: 10%;cursor: pointer;"
+  [type]="chart.type"
+  [data]="chart.data"
+  [columnNames]="chart.columnNames"
+  [options]="chart.options"
+  (select)="onSelect($event)">
+</google-chart>
+</div>
+<div *ngIf="showPieLabel" style="text-align: center;height: 240px">
+  <label style="margin-top: 100px;">No Data</label>
+</div>
+
+<p-dialog [(visible)]="showChartDetails" [modal]="true" [responsive]="false" [width]="1200" [positionTop]="60" [contentStyle]="{'overflow':'visible'}"
+  [closable]="true" (onHide)="close()" [blockScroll]="true" [draggable]="false">
+  <p-header>
+    {{alertHeader}}
+  </p-header>
+  <div class="Row">
+    <div>
+      <label>Search</label>&nbsp;
+      <input id="input" class="SearchTextBox" #gb [(ngModel)]="chartSearch"  type="text" size="30" placeholder="{{chartPlaceHolderText}}" pInputText autocomplete="off">
+
+    </div>
+
+  </div>
+  <br>
+
+  <p-dataTable #piechart [value]="pieChartDetailsList" [globalFilter]="gb" [rowsPerPageOptions]="[10,15,20]" [globalFilter]="chartSearch"
+    [paginator]="true" [rows]="10" [responsive]="true" [alwaysShowPaginator]="true" [scrollable]="true" scrollHeight="300px">
+    <p-column header="Sr.No" [style]="{'width':'50px'}" styleClass="text-center">
+      <ng-template pTemplate="body" let-row="rowData" let-index="rowIndex" let-col>
+        <span>{{index+1}}</span>
+      </ng-template>
+    </p-column>
+    <p-column field="ShowName" header="Show Name" [sortable]="true" [style]="{'width':'150px'}"></p-column>
+    <p-column field="MusicTrackName" header="Music Track Name" [sortable]="true" [style]="{'width':'150px'}"></p-column>
+    <p-column field="Movie_Album" header="Movie/Album" [sortable]="true" [style]="{'width':'150px'}"></p-column>
+    <!-- <p-column field="Music_Tag" header="Music Tag" [sortable]="true" [style]="{'width':'150px'}" styleClass="text-center"></p-column> -->
+    <p-column field="MusicLanguage" header="Music Language" [sortable]="true" [style]="{'width':'80px'}" styleClass="text-center"></p-column>
+    <p-column field="YearOfRelease" header="Year Of Release" [sortable]="true" [style]="{'width':'80px'}" styleClass="text-center"></p-column>
+    <p-footer>
+      Total Records: {{piechart.totalRecords}}
+    </p-footer>
+  </p-dataTable>
+
+  <p-footer>
+    <button type="button" pButton (click)="close()" label="Close"></button>
+    <!-- <button type="button" pButton icon="pi pi-close" (click)="" label="Cancel"></button> -->
+  </p-footer>
+</p-dialog>

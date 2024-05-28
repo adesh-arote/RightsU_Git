@@ -1,0 +1,61 @@
+﻿@model List<RightsU_Entities.USP_GetContentsStatusHistoryData_Result>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script>
+    $(document).ready(function () {
+        $('#hdnPageNo').val('@ViewBag.PageNo');
+        $('#txtPageSize').val('@ViewBag.PageSize');
+        $('#hdnRecordCount').val('@ViewBag.RecordCount');
+        $('#lblRecordCount').text('@ViewBag.RecordCount');
+        SetPaging();
+        initializeTooltip();
+        initializeExpander();
+    });
+</script>
+<div class="scale_table_block" style="max-height:400px">
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th style="width:30%;">@objMessageKey.Date</th>
+                <th style="width:35%;">@objMessageKey.ActionBy</th>
+                <th style="width:35%;">@objMessageKey.Remarks</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Count > 0)
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        @{
+                            System.Globalization.CultureInfo cultureinfo = new System.Globalization.CultureInfo("ar-AE");
+                        }
+                        @if (objMessageKey.LayoutDirection == "RTL")
+                        {
+                            <td>@(Convert.ToDateTime(item.Created_On).ToString("dd MMM yyyy hh:mm:ss tt", cultureinfo))</td>
+                            <td>@item.Created_By</td>
+                            <td>@item.Remarks</td>
+                        }
+                        else
+                        { 
+                             <td>@(Convert.ToDateTime(item.Created_On).ToString("dd MMM yyyy hh:mm:ss tt"))</td>
+                             <td>@item.Created_By</td>
+                             <td>@item.Remarks</td>
+                        }
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="3">@objMessageKey.Norecordfound</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

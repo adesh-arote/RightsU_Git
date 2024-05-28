@@ -1,0 +1,141 @@
+<div id="musicAssignment" class="content-wrapper">
+  <!-- Content Header (Page header) -->
+
+  <section class="content-header">
+    <h1>Music Assignment
+    </h1>
+    <div class="pull-right" style="margin-top: -2.5%;">
+        <table>
+            <tr>
+              <!-- <td class="bold" style="width:15%;">Music Cue Sheet:</td> -->
+              <td style="float: right;">
+
+                  <span style="margin:2px; ">
+                      <button type="button"   (click)="exportToExcel()"  class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Export to Excel"><i class="fa fa-file-excel-o fa-lg"></i></button>
+                  </span>
+                  <span style="margin:2px; ">
+                      <button type="button"   (click)="uploadFile(0)"  class="btn btn-warning" data-toggle="tooltip" data-placement="top" title="Upload"><i class="fa fa-upload fa-lg"></i></button>
+                  </span>
+                  <span style="margin:2px; ">
+                      <a href="../../../assets/template/CuesheetImport.xlsx" download="CuesheetImport.xlsx"><button type="button"  class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Download"><i class="fa fa-download fa-lg"></i></button></a>
+                  </span>
+                  <span style="margin:2px; ">
+                      <button type="button" (click)="visibleSidebar2 = true" class="btn btn-info" data-toggle="tooltip" data-placement="top" title="Search"><i class="fa fa-search fa-lg"></i></button>
+                  </span>
+                
+              </td>
+
+            </tr>
+          </table>
+
+    </div>
+    <hr class="hrborder">
+    
+  </section>
+  <p-sidebar [(visible)]="visibleSidebar2" position="right" [ngStyle]="{width:'400px'}" [baseZIndex]="10000">
+    <!-- <h1 style="font-weight:normal">Right Sidebar</h1> -->
+    <div class="row" style="text-align: center;margin-top: -9%;">
+      <h3 style="background-color: lightgray;padding: 2%;">Search</h3>
+
+    </div>
+    <br>
+    <div class="row">
+      <div class="col-lg-6" style="margin-right: -17%;">
+          <label>From :</label>
+      </div>
+      <div class=" col-lg-4" > 
+          <div style="margin-top: -5%; margin-left: -65%;">
+              <p-calendar [(ngModel)]="searchFromDate" [showIcon]="true" readonlyInput="true"  dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy" ></p-calendar>
+          </div>
+      </div>
+      </div>
+      <div class="row" style="padding-top: 5%;">
+          <div class="col-lg-6" style="margin-right: -17%;">
+              <label>To : </label>
+          </div>
+      <div class=" col-lg-4">
+          <div style="margin-top: -5%;margin-left: -65%;">
+          <p-calendar [(ngModel)]="searchToDate" [showIcon]="true" readonlyInput="true"  dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy" ></p-calendar>
+          </div>
+        </div>
+    </div>
+    <div class="row" style=" padding-top: 5%;">
+        <div class="col-lg-4">
+            <label>Status : </label>
+        </div>
+        <div class=" col-lg-4" style="margin-top: -1%; " > 
+            
+            <div  style="margin-left: -65%;">
+                <p-multiSelect [options]="Status" [resetFilterOnHide]="true" [(ngModel)]="searchStatus" [panelStyle]="{'width':'146px'}" [maxSelectedLabels]="1" defaultLabel="Status"></p-multiSelect>
+             
+            </div>
+        </div>
+    </div>
+    
+    <div style="padding-top:10%;"> 
+        <button pButton type="button" (click)="searchClick();visibleSidebar2 = false" label="Search" class="ui-button-success"></button>
+        &nbsp;&nbsp;
+        <button pButton type="button" (click)="clearAllClick();visibleSidebar2 = false" label="Clear All" class="ui-button-success"></button>
+    </div>
+       
+   
+    
+</p-sidebar>
+  <!-- Main content -->
+  <section class="content" style="margin-top: -1%;">
+    <app-common-music-assignment [musicassignmentDetails]="uploadedFilesList" [totalRecords]="recordCountmusic"></app-common-music-assignment>
+  </section>
+  <!-- /.content -->
+  <!-- Content Header (Page header) -->
+
+  <p-dialog [(visible)]="fileUploadDialog" [width]="500" [positionTop]="60" [draggable]="false" [blockScroll]="true" [modal]="true" [responsive]="false" >
+    <p-header>
+      {{alertHeader}}
+    </p-header>
+    <span>
+      <input type="file" #chooseUpload class="upload" (change)="changeEventData=$event;" class="" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+    </span>
+    <div class="remarkDiv" style="margin-top:20px">
+      <label for="comment">Remark </label> (
+      <i>{{textRemarkCount}} / 4000 </i> )<span class="asterisk">*</span>
+      <textarea rows="3" id="remark" [(ngModel)]="remarks" (ngModelChange)="remarkChange()" required name="Remarks" maxlength=4000></textarea>
+    </div>
+    <!-- <span style="float:right"> -->
+      <p-footer>
+          <div class="pull-left">
+              <div class= " dropdown staticdropdown" >
+                  <!-- (click)="op1.toggle($event)" -->
+              <input type="checkbox" name="termCondition" value="termCondition" [(ngModel)]="termCondition"> I agree to the <a style="color: blue" class="dropdown-toggle" data-toggle="dropdown" >Terms and Conditions</a><br>
+              <ul class="dropdown-menu dropdown-menu-left">
+                  <div class="dropdwnbody" >
+                    <li> 
+                      {{termsTextFirst}} <b>{{productionHouseName}}</b> {{termsTextSecond}}  
+                      
+                    </li>
+                  
+                  </div>
+                 
+                  </ul>
+          </div>
+          </div>
+          <button class="btn btn-sm  btn-primary " #btnUpload (click)="submit(changeEventData,chooseUpload);" [disabled]="!chooseUpload.value">
+              <span *ngIf="!upload">Submit</span>
+              <span *ngIf="upload">
+                <i class="fa fa-spinner fa-spin"></i>Uploading</span>
+            </button>
+      </p-footer>
+     
+    <!-- </span> -->
+
+
+  </p-dialog>
+  
+
+      <div *ngIf="displayalertMessage">
+        <app-message-box  [messageData]="messageData"></app-message-box>
+    
+      </div>
+      
+    <div *ngIf="load" id="loadingDiv"></div>
+    
+</div>

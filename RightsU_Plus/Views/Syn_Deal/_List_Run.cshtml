@@ -1,0 +1,146 @@
+﻿@model List<RightsU_Entities.USP_Syn_List_Runs_Result>
+@using UTOFrameWork.FrameworkClasses;
+@{
+    RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
+    if (Session[RightsU_Entities.RightsU_Session.Syn_DEAL_SCHEMA] != null)
+    {
+        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.Syn_DEAL_SCHEMA];
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script>
+    $(document).ready(function () {
+        initializeTooltip();
+        $('#spanRecordCount').html('@objMessageKey.TotalRecords: @ViewBag.RecordCount');
+    });
+    function OpenPopup(id) {
+        $('#' + id).modal('show');
+    }
+    function ClosePopup(id) {
+        $('#' + id).modal('hide');
+    }
+    var IsCall = 'Y';
+    function SetPaging() {
+        debugger;
+        var txtPageSize = $('#txtPageSize').val();
+        IsCall = 'N';
+        var PageNo, recordCnt;
+
+        if ('@ViewBag.PageNo' != null)
+            PageNo = '@ViewBag.PageNo';
+
+        if ('@ViewBag.RecordCount' != null)
+            recordCnt = '@ViewBag.RecordCount';
+
+        PageNo = PageNo - 1;
+
+        var opt = { callback: pageselectCallback };
+        opt["items_per_page"] = parseInt(txtPageSize);
+        opt["num_display_entries"] = 5;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = PageNo;
+        $("#Pagination").pagination(recordCnt, opt);
+    }
+
+    function pageselectCallback(page_index, jq) {
+        if ($('#txtPageSize').val() != "") {
+            if (IsCall == 'Y') {
+                LoadGrid(page_index);
+            }
+            else
+                IsCall = 'Y';
+        }
+    }
+
+    function CheckPageNumber() {
+        $('#txtPageSize').removeClass("required");
+        var txtPageSize = $("#txtPageSize");
+        if (parseInt(txtPageSize.val()) > 0) {
+            return true;
+        }
+        else {
+            txtPageSize.val("");
+            $('#txtPageSize').addClass("required");
+            return false;
+        }
+    }
+</script>
+<table class="table table-bordered table-hover" id="tblMain">
+    <thead>
+        <tr>
+            <th style="width: 20%;">@objMessageKey.Title</th>
+            <th style="width: 40%;">@objMessageKey.Platform</th>
+            <th style="width: 10%;">@objMessageKey.Runs</th>
+            <th style="width: 10%;">@objMessageKey.IsRuleRight</th>
+            <th style="width: 5%;">@objMessageKey.Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count() != 0)
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Title_Name&#x200E; </td>
+                    <td>
+                        <div class="expandable">
+                            <ul>
+                                <li>
+                                    @Html.Raw(item.Platform_Hiearachy.Replace(",", "</li><li>"))
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+
+                    @if (item.Run_Type == "U")
+                    {
+                        <td>
+                            @objMessageKey.Unlimited
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            @Html.Label(item.No_Of_Runs.ToString())
+                        </td>
+                    }
+                    @if (item.Is_Rule_Right.TrimEnd() == "Y")
+                    {
+                        <td>@objMessageKey.Yes</td>
+                    }
+                    else
+                    {
+                        <td>@objMessageKey.NO</td>
+                    }
+                    @if (objSchema.Mode == GlobalParams.DEAL_MODE_APPROVE || objSchema.Mode == GlobalParams.DEAL_MODE_VIEW)
+                    {
+                        <td>
+                            @*@Html.ActionLink(" ", "ButtonEvents", "Syn_Run_List", new { id = item.Syn_Deal_Run_Code }, new { @class = "glyphicon glyphicon-eye-open", @onclick = "return ValidateSave();" })*@
+                            <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" onclick="ButtonEvents(@item.Syn_Deal_Run_Code)"></a>
+                    </td>
+                    }
+                    else
+                    {
+                        <td>
+                            @*@Html.ActionLink(" ", "ButtonEvents", "Syn_Run_List", new { id = item.Syn_Deal_Run_Code }, new { @class = "glyphicon glyphicon-pencil", @title = "Edit", @onclick = "return ValidateSave();" })*@
+                            <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" onclick="ButtonEvents(@item.Syn_Deal_Run_Code)"></a>
+                            &nbsp;<a class="glyphicon glyphicon-trash" title="@objMessageKey.Delete" onclick="return ValidateDelete('@item.No_Of_Runs','@item.Syn_Deal_Run_Code')" />
+                        </td>
+                    }
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="6">@objMessageKey.NoResultFound</td>
+            </tr>
+        }
+    </tbody>
+</table>

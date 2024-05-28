@@ -1,0 +1,150 @@
+﻿@model List<RightsU_Entities.Program>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }  
+}
+<table class="table table-bordered table-hover" id="tblProgram">
+    <thead>
+        <tr>
+            <th style="width:30%;">@objMessageKey.Program</th>
+            <th style="width:20%">@objMessageKey.DealType</th>
+            <th style="width:20%">@objMessageKey.Genres</th>
+            <th style="width:20%;">@objMessageKey.Status</th>
+            <th style="width:30%;">@objMessageKey.Action</th>
+        </tr>
+    </thead>
+    <tbody>
+
+
+        @if (ViewBag.CommandName == "ADD")
+        {
+            <tr>
+                <td>
+                    <input id="txtProgramName_0" type="text" value="" maxlength="100" />
+                </td>
+                <td>
+                    @Html.DropDownList("ddlDealType", ViewBag.DealType as SelectList, "Please Select", new { @id = "ddlDealType_" + 0, @class = "form_input chosen-select" })
+                </td>
+                <td>
+                    @Html.DropDownList("ddlGenre", ViewBag.Genre as SelectList, "Please Select", new { @id = "ddlGenre_" + 0, @class = "form_input chosen-select" })
+                </td>
+                <td align="center">
+                    <span>@objMessageKey.Active</span>
+                </td>
+                <td align="center">
+                    <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" onclick="SaveProgram(0)"></a>
+                    <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" onclick="Cancel()"></a>
+                </td>
+            </tr>
+        }
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                string strActive = objMessageKey.Active;
+                if (item.Is_Active == "N")
+                {
+                    strActive = objMessageKey.Deactive;
+                }
+                <tr>
+                    @if (ViewBag.CommandName == "EDIT" && ViewBag.Program_Code == item.Program_Code)
+                    {
+                        <td>
+                            <input id="txtProgramName_@item.Program_Code" type="text" value="@item.Program_Name" maxlength="100" />
+                        </td>
+                        <td>
+                            @Html.DropDownList("ddlDealType", ViewBag.DealType as SelectList, "Please Select", new { @id = "ddlDealType_" + @item.Program_Code, @class = "form_input chosen-select" })
+                        </td>
+                        <td>
+                            @Html.DropDownList("ddlGenre", ViewBag.Genre as SelectList, "Please Select", new { @id = "ddlGenre_" + item.Program_Code, @class = "form_input chosen-select" })
+                        </td>
+                        <td align="center">
+                            <span>@strActive</span>
+                        </td>
+                        <td align="center">
+                            <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" onclick="SaveProgram(@item.Program_Code)"></a>
+                            <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" onclick="Cancel()"></a>
+                        </td>
+                    }
+                    else
+                    {
+
+                        <td>
+                            @*<span> @Html.Raw(item.Program_Name.Replace("A", "<span class='highlighted'>" + "A" + "</span>")) </span>*@
+                            <span>@item.Program_Name</span>
+                        </td>
+
+                        <td>
+                            @if (@item.Deal_Type != null)
+                            {
+                                @item.Deal_Type.Deal_Type_Name
+                            }
+                        </td>
+                        <td>
+                            @if (@item.Genre != null)
+                            {
+                                @item.Genre.Genres_Name
+                            }
+                        </td>
+                        <td align="center">
+
+                            <span>@strActive</span>
+                        </td>
+                        <td align="center">
+                            @if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForEdit + "~"))
+                            {
+                                if (item.Is_Active == "Y")
+                                {
+                                    <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor:pointer;" onclick="CheckRecordLock(@item.Program_Code, 'EDIT')"></a>
+                                }
+                                else
+                                {
+                                    <a title="@objMessageKey.Cannoteditthisprogramasitisdeactivated" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
+                                }
+                            }
+                            @if (item.Is_Active == "Y")
+                            {
+                                bool canDeactivate = true;
+                                string strToolTip = "";
+                                if (canDeactivate)
+                                {
+                                    if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForDeactivate + "~"))
+                                    {
+                                        if (item.Titles.Count > 0)
+                                        {
+                                            <a title="@objMessageKey.CannotdeactivatethisprogramasitisusedinTitle" class="glyphicon glyphicon-thumbs-down disabled" onclick="return false;"></a>
+                                        }
+                                        else
+                                        {
+                                            <a title="@objMessageKey.Deactivate" class="glyphicon glyphicon-thumbs-down" style="cursor:pointer" onclick="ActiveDeactiveProgram(@item.Program_Code, 'N')"></a>
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    <a title="@strToolTip" class="glyphicon glyphicon-thumbs-down disabled" onclick="return false;"></a>
+                                }
+                            }
+                            else
+                            {
+                                if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForActivate + "~"))
+                                {
+                                    <a title="@objMessageKey.Activate" class="glyphicon glyphicon-thumbs-up" style="cursor: pointer;" onclick="ActiveDeactiveProgram(@item.Program_Code, 'Y')"></a>
+                                }
+                            }
+                        </td>
+                    }
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="3">@objMessageKey.Norecordfound</td>
+            </tr>
+        }
+    </tbody>
+</table>

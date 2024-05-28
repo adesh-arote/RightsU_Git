@@ -1,0 +1,477 @@
+
+.search-container {
+  width: 98%;
+  padding: 2% 1%;
+  margin-left: 10px;
+  margin-top: 5px;
+  border-radius: 10px;
+  box-shadow: 0 3px 6px 0 rgb(0 0 0 / 11%);
+  background-color: #cfdcf7;
+}
+
+.spinner {
+  position: fixed;
+  z-index: 1031;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 40px;
+  color: #1273b9;
+}
+
+.blur-background {
+  pointer-events: none;
+  filter: blur(1px);
+}
+
+
+.loader-txt {
+  color: black;
+  margin-top: 126%;
+  margin-left: -100%;
+  position: absolute;
+  font-size: 14px;
+}
+
+.error-messages-style {
+  font-family: WorkSans-Regular;
+  font-size: 15px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  color: #d0021b !important;
+  padding-inline-start: 1px;
+}
+
+.tblFormat {
+  border: 1px solid black;
+}
+
+.tblHead {
+  border: 1px solid black;
+}
+
+.tblData {
+  border: 1px solid black;
+}
+
+.bold-font {
+  font-weight: bold;
+}
+
+.top-margin {
+  margin-top: 2%;
+}
+
+.left-margin {
+  margin-left: 0%;
+}
+
+.event-div {
+  width: 12%;
+  font-weight: bold;
+}
+
+.trans-div {
+  width: 14%;
+  font-weight: bold;
+}
+
+.status-div {
+  width: 8%;
+  font-weight: bold;
+}
+
+.noOfRetry-div {
+  width: 10%;
+  font-weight: bold
+}
+
+.notification-div {
+  width: 13%;
+  font-weight: bold;
+  margin-left: 0%;
+}
+
+.user-div {
+  width: 5%;
+  font-weight: bold;
+  margin-left: -22px;
+}
+
+.recepient-div {
+  font-weight: bold;
+  width: 7%;
+}
+
+.recepientInput-div {
+  margin-left: 2px;
+}
+
+.recipient-input {
+  width: 80%;
+}
+
+.subject-div {
+  font-weight: bold;
+  margin-left: -37px;
+  width: 6%;
+}
+
+.subjectInput-div {
+  margin-left: 46px;
+}
+
+.subject-input {
+  width: 82%;
+}
+
+.export-btn {
+  float: right;
+  margin-right: 40px;
+  margin-bottom: -10px;
+}
+
+.table-div {
+  margin-top: 2%;
+  margin-left: 0%;
+  width: 100%;
+}
+
+.divCenter {
+  width: 100%;
+  margin: 0 auto;
+  text-align: center;
+  padding: 5px;
+  background-color: lightgray;
+}
+
+.headerCls {
+  font-size: 18px;
+  font-family: proxima_novaregular;
+}
+
+:host ::ng-deep .dropdownPanel .p-multiselect {
+  //width: 100%;
+  width: 80%;
+}
+
+
+:host ::ng-deep .dropdownPanel2 .p-dropdown {
+  width: 100%;
+}
+
+:host ::ng-deep .singleSelectDrpdwn .p-dropdown {
+  //  width: 98%;
+  width: 80%;
+}
+
+:host ::ng-deep .p-calendar {
+  width: 85%;
+}
+
+.btnClass {
+  color: white;
+  background: black;
+  width: 10%;
+  margin: 1% 2%;
+}
+
+
+.no-records-found {
+  height: 24px;
+  font-family: WorkSans-Medium;
+  font-size: 24px;
+  font-weight: 500;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  color: #444444;
+  text-align: center !important;
+}
+
+:host ::ng-deep .confirmBox .p-dialog {
+  width: 28%;
+}
+
+:host ::ng-deep .viewPopup .p-dialog {
+  width: 70%;
+}
+
+:host ::ng-deep .viewPopup .p-dialog .p-dialog-header {
+  border-bottom: 0 none;
+  background: lightgray;
+  color: black;
+  padding: 0.5rem;
+  border-top-right-radius: 3px;
+  border-top-left-radius: 3px;
+}
+
+:host ::ng-deep .viewPopup .p-dialog .p-dialog-content {
+  background: #ffffff;
+  color: #495057;
+  padding: 14px 0.5rem 2rem 0.5rem;
+  font-size: 13px;
+  overflow-x: auto;
+}
+
+:host ::ng-deep .viewPopup .p-dialog .p-dialog-header .p-dialog-title {
+  font-weight: 600;
+  font-size: 1.25rem;
+  margin-left: 2%;
+}
+
+:host ::ng-deep .confirmBox .p-dialog .p-dialog-header {
+  border-bottom: 0 none;
+  background: lightgray;
+  color: black;
+  padding: 0.5rem;
+  border-top-right-radius: 3px;
+  border-top-left-radius: 3px;
+}
+
+:host ::ng-deep .confirmBox .p-dialog .p-dialog-content {
+  background: #ffffff;
+  color: #495057;
+  padding: 14px 0.5rem 2rem 0.5rem;
+  font-size: 13px;
+}
+
+:host ::ng-deep .p-overflow-hidden {
+  overflow: visible !important;
+}
+
+
+:host ::ng-deep .p-dropdown-panel .p-dropdown-items .p-dropdown-item {
+  color: black;
+  font-family: WorkSans-Regular;
+  font-size: 12px;
+}
+
+:host ::ng-deep .p-dropdown-panel .p-dropdown-items .p-dropdown-item.p-highlight {
+  color: black;
+  font-family: WorkSans-Regular;
+  font-size: 12px;
+  background-color: #2196f3;
+}
+
+:host ::ng-deep .p-dropdown .p-dropdown-label {
+  color: black;
+  font-family: WorkSans-Regular;
+  font-size: 12px;
+}
+
+:host ::ng-deep .p-multiselect .p-multiselect-label {
+  color: black;
+  font-family: WorkSans-Regular;
+  font-size: 12px;
+}
+
+:host ::ng-deep .p-multiselect-panel .p-multiselect-items .p-multiselect-item.p-highlight {
+  color: black;
+  font-family: WorkSans-Regular;
+  font-size: 12px;
+}
+
+:host ::ng-deep .p-multiselect-panel .p-multiselect-items .p-multiselect-item {
+  color: black;
+  font-family: WorkSans-Regular;
+  font-size: 12px;
+}
+
+::ng-deep .p-calendar .p-datepicker {
+  //.CalenderClass {
+  min-width: 100%;
+  top: 28px !important;
+  //  }
+}
+
+
+:host ::ng-deep .p-inputtext {
+  color: black;
+  font-family: WorkSans-Regular;
+  font-size: 12px;
+}
+
+:host ::ng-deep .p-datepicker table td > span {
+  color: black;
+  font-family: WorkSans-Regular;
+  font-size: 12px;
+}
+
+:host ::ng-deep .p-datepicker table td > span.p-highlight {
+  background-color: #2196f3;
+  color: black;
+  font-family: WorkSans-Regular;
+  font-size: 12px;
+}
+
+.p-tooltip {
+  color: orangered;
+  max-width: fit-content;
+  background-color: aqua;
+}
+
+
+::ng-deep .p-datatable .p-datatable-tbody > tr:nth-child(even) {
+  background-color: #f2f2f2;
+
+  button.action-buttons {
+    background-color: #f2f2f2;
+  }
+}
+
+
+::ng-deep .p-datatable {
+  position: relative;
+  width: 98%;
+  margin-left: 1%;
+}
+
+::ng-deep .p-datatable .p-datatable-tbody > tr:hover {
+  background-color: #ddd;
+
+  button.action-buttons {
+    background-color: #ddd;
+  }
+}
+
+::ng-deep .p-datatable .p-datatable-thead > tr > th {
+  text-align: left;
+  padding: 0rem 1rem;
+  border: 1px solid #e9ecef;
+  border-width: 0 0 1px 0;
+  font-weight: bold;
+  font-size: 14px;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  color: #333;
+  background: #c1cfdb;
+  transition: box-shadow 0.2s;
+  text-align: center;
+}
+
+.column-data {
+  width: 30px;
+  text-align: center !important;
+}
+
+.column-name {
+  width: 30px;
+}
+
+
+::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+  button.action-buttons {
+    visibility: visible;
+    display: inline-block !important;
+    font-size: 15px;
+    background-color: #ffffff;
+    color: #2893d3;
+    border: none;
+  }
+}
+
+.error-msgs {
+  color: #d0021b;
+  font-size: 11px;
+  font-weight: 100;
+  padding: 1% 1%;
+}
+
+
+.period-val {
+  position: absolute;
+  width: 102%;
+  margin-top: 17%;
+  margin-left: -73%;
+}
+
+.col-text {
+  display: inline-block;
+  width: 100px;
+  white-space: nowrap;
+  overflow: hidden !important;
+  text-overflow: ellipsis;
+  text-align: center;
+}
+
+.popup-text {
+  display: list-item;
+  white-space: nowrap;
+  overflow: hidden !important;
+  text-overflow: ellipsis;
+  text-align: center;
+}
+
+.divMargin {
+  margin-left: -1%;
+}
+
+.divMargin2 {
+  margin-left: -2%;
+}
+
+.divMargin3 {
+  margin-left: -3%;
+}
+
+.divMargin4 {
+  margin-left: 96px;
+}
+
+.divMargin5 {
+  margin-left: 33px;
+}
+
+.divMargin6 {
+  margin-left: 6px;
+}
+
+.divMargin7 {
+  width: 14%;
+}
+
+.divMargin8 {
+  width: 14%;
+  margin-left: -20px;
+}
+
+.divMargin9 {
+  width: 14%;
+  margin-left: -12px;
+}
+
+.divMargin10 {
+  width: 14%;
+  margin-left: -21px;
+}
+
+.divMargin11 {
+  width: 15%;
+}
+
+.divMargin12 {
+  margin-left: -3%;
+  width: 15%;
+}
+
+.divMargin13 {
+  margin-left: -21px;
+  width: 15%;
+}
+
+.divMargin14 {
+  margin-left: -33px;
+  width: 15%;
+}
+
+.searchInput {
+  width: 125%;
+}
+
+.span1 {
+  left: 6%;
+}

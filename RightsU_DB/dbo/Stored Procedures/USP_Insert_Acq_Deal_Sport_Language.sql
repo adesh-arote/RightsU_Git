@@ -1,0 +1,27 @@
+﻿CREATE Proc [dbo].[USP_Insert_Acq_Deal_Sport_Language](@Acq_Deal_Sport_Code Int, @Language_Type Char(1), @Language_Code Int, @Language_Group_Code Int, @Flag Char(1))
+As
+Begin
+	Declare @Loglevel int
+	select @Loglevel = Parameter_Value from System_Parameter_New where Parameter_Name='loglevel'
+	if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_Insert_Acq_Deal_Sport_Language]', 'Step 1', 0, 'Started Procedure', 0, ''
+	
+		If(@Language_Type = 'G')
+		Begin
+			Delete From Acq_Deal_Sport_Language Where Acq_Deal_Sport_Code = @Acq_Deal_Sport_Code And IsNull(Language_Group_Code, 0) = IsNull(@Language_Group_Code, 0)
+
+			Insert InTo Acq_Deal_Sport_Language(Acq_Deal_Sport_Code, Language_Type, Language_Code, Language_Group_Code, Flag)
+			Select @Acq_Deal_Sport_Code, @Language_Type, NULL, @Language_Group_Code, @Flag 
+			--From Language_Group_Details
+			--Where Language_Group_Code = @Language_Group_Code And Language_Code In (Select Language_Code From [Language] Where Is_Active = 'Y')
+		End
+		Else
+		Begin
+			Delete From Acq_Deal_Sport_Language Where Acq_Deal_Sport_Code = @Acq_Deal_Sport_Code And IsNull(Language_Code, 0) = IsNull(@Language_Code, 0)
+			Insert InTo Acq_Deal_Sport_Language(Acq_Deal_Sport_Code, Language_Type, Language_Code, Language_Group_Code, Flag)
+			Select @Acq_Deal_Sport_Code, @Language_Type, @Language_Code, Null, @Flag
+		End
+
+		SELECT SCOPE_IDENTITY() AS Acq_Deal_Sport_Language_Code
+	 
+	if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_Insert_Acq_Deal_Sport_Language]', 'Step 2', 0, 'Procedure Excution Completed', 0, ''
+End

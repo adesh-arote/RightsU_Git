@@ -1,0 +1,189 @@
+﻿@{
+    ViewBag.Title = "ShowPlatforms";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var List = (SelectList)ViewBag.PlatformList;
+}
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<style>
+    #Rights_Platform {
+        height:478px;
+    }
+    .right_nav {
+        margin-top: 0px !important;
+    }
+
+        .right_nav li {
+            float: none;
+        }
+
+    .chosen-container {
+        width: 50% !important;
+    }
+
+    .ui-fancytree {
+        height: 657px;
+        overflow-y: auto;
+    }
+
+    .fancytree-container {
+        height: 400px;
+        width: 410px;
+    }
+
+    .fancytree-container {
+        height: 400px;
+        width: 100%;
+    }
+</style>
+<div class="main_section">
+    @{
+        var datetime = (string)ViewBag.LastUpdatedTime;
+        var date = Convert.ToDateTime(datetime).ToString("dd MMM yyyy");
+    }
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="top_area">
+                <h2 class="pull-left">Show All Platforms </h2>
+                <input type="hidden" id="hdnTVCodes" name="hdnTVCodes" />
+                <table>
+                    <tr>
+                        <td>
+                            <span>
+                                <select name="Platform_List" id="ddlPlatforms" class="form_input chosen-select" multiple="multiple" data-placeholder="Search by Platform"></select>
+                                <a href="#" onclick="ShowAll();">
+                                    <span class="glyphicon glyphicon-refresh" title="Show All" id="ShowAll"></span>
+                                </a>
+                                <label style="float:right;">@date</label>
+                                <label style="float:right;"><b>Last Updated : </b></label>
+                            </span>
+                        </td>
+                    </tr>
+                </table>
+
+            </div>
+            <div class="right_nav">
+
+                <div id="Platform_List"></div>
+                <div class="grid_area deal" style="width:43%;float:left;margin-top:20px;border:1.5px #808080 dotted;padding:10px;height:500px">
+                    <div id="tree" class="treeClass">
+                    </div>
+                </div>
+                @*@Html.Partial("_List_Platforms", Model)*@
+            </div>
+
+        </div>
+    </section>
+</div>
+<script>
+    var IsCall = 'Y';
+    var chosenSelected = [];
+    var textSelected = [];
+    var intervalForHideTree = null;
+    $(document).ready(function () {
+        debugger
+        BindPlatform();
+        BindPlatformTree();
+        //
+        LoadPlatforms(0, []);
+        intervalForHideTree = setInterval(HideTreeCheckBox, 300);
+        $("#ddlPlatforms").chosen().change(function () {
+            //if (!jQuery.isEmptyObject(textSelected) && $(this).val() != null) {
+            //    textSelected.push($(this).val().toString());
+            //    chosenSelected = textSelected;
+            //}
+            //else {
+            //    if (!jQuery.isEmptyObject(textSelected)) {
+            //        chosenSelected = textSelected;
+            //    }
+            //    else {
+            //        chosenSelected = $(this).val();
+            //    }
+            //}
+            //alert(j);
+            chosenSelected = $(this).val();
+            LoadPlatforms(0, chosenSelected);
+        });
+
+       // $("#ancFileName").attr('href', '../Help/Masters/Layout.html?Glossary_AllPlatforms');
+    });
+
+    function HideTreeCheckBox()
+    {
+        $("#Rights_Platform").fancytree({ checkbox: false });
+        clearInterval(intervalForHideTree)
+    }
+    function ShowAll() {
+        chosenSelected = [];
+        $('#ddlPlatforms').val('').trigger("chosen:updated");
+        LoadPlatforms(0, chosenSelected);
+    }
+    function LoadPlatforms(pagenumber, commsearch) {
+        showLoading();
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("ShowPlatform_Partial", "Glossary")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                pageNo: pagenumber + 1,
+                commonSearch: commsearch
+            }),
+            success: function (data) {
+                debugger;
+                hideLoading();
+                $('#Platform_List').html('').html(data);
+            }
+        });
+    }
+
+    function BindPlatformTree() {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindPlatformTreeView", "Acq_Rights")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                strPlatform: ''//$("#hdnTVCodes").val()
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                $('#tree').html(result);
+                
+            },
+            error: function (result) { }
+        });
+    }
+
+    function BindPlatform() {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindPlatform", "Glossary")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: false,
+            success: function (result) {
+                debugger;
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                //$('#ddlPlatforms').html(result);
+                $.each(result, function (index, value) {
+                    $('#ddlPlatforms').append('<option value="' + value["Text"] + '">' + value["Text"] + '</option>');
+                });
+                $('#ddlPlatforms').trigger("chosen:updated");
+            },
+            error: function (result) { }
+        });
+    }
+
+</script>

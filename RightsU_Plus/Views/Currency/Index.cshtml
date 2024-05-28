@@ -1,0 +1,813 @@
+﻿@using UTOFrameWork.FrameworkClasses
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }     
+}
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+
+<script>
+    var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T",Module_Code_G = @ViewBag.Code, SysLanguageCode_G = @ViewBag.LangCode;
+    var URL_BindCurrencyList = '@Url.Action("BindCurrencyList", "Currency")';
+    var URL_SearchCurrency = '@Url.Action("SearchCurrency", "Currency")';
+    var URL_ActiveDeactiveCurrency = '@Url.Action("ActiveDeactiveCurrency", "Currency")';
+    var URL_AddEditViewCurrency = '@Url.Action("AddEditViewCurrency", "Currency")';
+    var URL_SaveCurrency = '@Url.Action("SaveCurrency", "Currency")';
+    var URL_BindExchangeRateList = '@Url.Action("BindExchangeRateList", "Currency")';
+    var URL_DeleteExchangeRate = '@Url.Action("DeleteExchangeRate", "Currency")';
+    var URL_SaveExchangeRate = '@Url.Action("SaveExchangeRate", "Currency")';
+    var URL_CheckRecordLock = '@Url.Action("CheckRecordLock", "Currency")';
+    var URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")';
+    var URL_Release_Lock = '@Url.Action("Release_Lock", "Global")';
+    var URL_Reload_Current_Page  = '@Url.Action("Index","Currency")';
+
+    $(document).ready(function () {
+        if(LayoutDirection_G == "RTL")
+        {
+            $('#btnUser').css("float","right");
+            $('#txtSort').css("text-align", "left");
+            $('#ddlSortType_chosen').css("text-align", "right");
+        }
+        else
+        {
+            $('#btnUser').css("float","left");
+            $('#txtSort').css("text-align","right");
+            $('#ddlSortType_chosen').css("text-align", "left");
+        }
+        addNumeric();
+        SearchCurrency("");
+        $('#searchCommon').keypress(function (e) {
+            if (e.keyCode == 13) {
+                btnSearch_OnClick()
+                return false;
+            }
+        });
+        $("#ddlSortType").change(function () {
+            sort_Type = $('#ddlSortType').val();
+            $('#hdnPageNo').val(1);
+            var searchtext= $("#searchCommon").val();
+            SearchCurrency(searchtext);
+        });
+       // $("#ancFileName").attr('href', '../Help/Masters/Layout.html?Currency');
+    });
+
+    function addNumeric() {
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+
+        $(".exchangeRate").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: true,
+            max: 9999,
+            min: 0
+        });
+    }
+
+    function SetPaging() {
+        IsCall = 'N';
+        var pageNo = parseInt($('#hdnPageNo').val());
+        var recordCount = parseInt($('#hdnRecordCount').val());
+        var pagePerBatch = parseInt($('#hdnPagePerBatch').val());
+        var recordPerPage = parseInt($('#txtPageSize').val());
+
+        var cnt = pageNo * recordPerPage;
+        if (cnt >= recordCount) {
+            var v1 = parseInt(recordCount / recordPerPage);
+            if ((v1 * recordPerPage) == recordCount)
+                pageNo = v1;
+            else
+                pageNo = v1 + 1;
+        }
+
+        if (pageNo == 0)
+            pageNo = 1;
+
+        var index = pageNo - 1;
+        $('#hdnPageNo').val(pageNo);
+
+        var opt = null;
+        opt = { callback: pageselectCallback };
+        opt["items_per_page"] = recordPerPage;
+        opt["num_display_entries"] = pagePerBatch;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = index;
+        $("#Pagination").pagination(recordCount, opt);
+    }
+
+    function pageselectCallback(page_index, jq) {
+        if (checkCurrentAction()) {
+            $('.required').removeClass('required');
+
+            if (!ValidatePageSize())
+                return false;
+
+            var pageNo = page_index + 1
+            $('#hdnPageNo').val(pageNo);
+            if (IsCall == 'Y')
+                BindCurrencyList();
+            else
+                IsCall = 'Y';
+        }
+    }
+
+    function txtPageSize_OnChange() {
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        if (!ValidatePageSize())
+            return false;
+
+        BindCurrencyList()
+        SetPaging();
+    }
+
+    function ValidatePageSize() {
+        var recordPerPage = $('#txtPageSize').val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize').attr('required', true)
+        return false
+    }
+    
+    function pageBinding() {
+        BindCurrencyList()
+        SetPaging();
+    }
+
+    function btnSearch_OnClick() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        if (!ValidatePageSize())
+            return false;
+
+        var searchText = $.trim($('#searchCommon').val());
+
+        if (searchText == '') {
+            $('#searchCommon').val('');
+            $('#searchCommon').attr('required', true)
+            return false;
+        }
+        SearchCurrency(searchText);
+    }
+
+    function btnShowAll_OnClick() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        if (!ValidatePageSize())
+            return false;
+
+        sort_Type = "T";
+        $("#ddlSortType").find("option").attr("selected", false);
+        $("#ddlSortType").val('T').trigger("chosen:updated");
+        $('#hdnPageNo').val(1);
+        $('#searchCommon').val('');
+        SearchCurrency("");
+    }
+
+    function BindCurrencyList() {
+        debugger;
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindCurrencyList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+                sortType : sort_Type
+            }),
+            success: function (result) {
+                debugger;
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divCurrencyList').empty();
+                    $('#divCurrencyList').html(result);
+                    initializeTooltip();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function SearchCurrency(searchText) {
+        debugger;
+        $('#searchCommon').val(searchText);
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: URL_SearchCurrency,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                searchText: searchText
+            }),
+            async: false,
+            success: function (result) {
+                debugger;
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#hdnPageNo').text(1);
+                    $('#hdnPageNo').val(1);
+                    $('#lblRecordCount').text(result.Record_Count);
+                    $("#hdnRecordCount").val(result.Record_Count);
+                    SetPaging()
+                    BindCurrencyList();
+                    hideLoading();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+    function ActiveDeactiveCurrency(currencyCode, doActive) {
+        if (checkCurrentAction()) {
+            $.ajax({
+                type: "POST",
+                url: URL_ActiveDeactiveCurrency,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    currencyCode: currencyCode,
+                    doActive: doActive
+                }),
+                async: false,
+                success: function (result) {
+                    debugger;
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        if (result.Status == "S") {
+                            showAlert("S", result.Message);
+                            if ($("#searchCommon").val() != "") {
+                                SearchCurrency($("#searchCommon").val())
+                            }
+                            else {
+                                BindCurrencyList();
+                            }
+                        }
+                        else {
+                            showAlert("E", result.Message);
+                        }
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                    hideLoading();
+                }
+            });
+        }
+    }
+
+    function checkCurrentAction() {
+        var action = $.trim($('#hdnAction').val());
+        if (action == "ADD") {
+            showAlert("E", "@objMessageKey.CompleteAddOperationFirst")
+            return false;
+        }
+        else if (action == "EDIT") {
+            showAlert("E", "@objMessageKey.CompleteEditOperationFirst")
+            return false;
+        }
+        return true;
+    }
+
+    function handleOk() {
+
+        if (Command_Name == "DELETE_EXCHANGE_RATE") {
+            $('#popup').css('z-index','1050');
+            DeleteExchangeRate(dummyGuid_G, true);
+        }
+    }
+
+    function handleCancel() {
+        $('#popup').css('z-index','1050');
+        Command_Name = "";
+        dummyGuid_G = "";
+    }
+
+    function AddEditViewCurrency(currencyCode, commandName) {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        $('#hdnAction').val("");
+        $.ajax({
+            type: "POST",
+            url: URL_AddEditViewCurrency,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                currencyCode: currencyCode,
+                commandName: commandName
+            }),
+            success: function (result) {
+                debugger;
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#popup').modal();
+                    $('#pupupHtml').empty();
+                    $('#pupupHtml').html(result);
+                    if (commandName != "VIEW")
+                        commandName = "";
+
+                    BindExchangeRateList(commandName, "");
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function SaveCurrency() {
+        if (!checkCurrentAction())
+            return false;
+        var returnVal = true;
+        var currencyName = $.trim($('#txtCurrencyName').val());
+        var currencySign = $.trim($('#txtCurrencySign').val());
+        var Record_Code= $('#hdnRecodLockingCode').val();
+
+        if (currencyName == "") {
+            $('#txtCurrencyName').val('').attr('required', true)
+            returnVal = false;
+        }
+
+        if (currencySign == "") {
+            $('#txtCurrencySign').val('').attr('required', true)
+            returnVal = false;
+        }
+
+
+        var length = $("table tr[id*='trExchangeRate_']").length
+        if (length == 0) {
+            returnVal = false;
+            showAlert("E", "@objMessageKey.Pleaseaddcurrencyexchangerate", "OK");
+        }
+
+        if (returnVal) {
+            var currencyCode = $('#hdnCurrencyCode').val();
+            var isBaseCurrency = $('#chkBaseCurrency').prop("checked");
+            $.ajax({
+                type: "POST",
+                url: URL_SaveCurrency,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                async: false,
+                data: JSON.stringify({
+                    currencyCode: currencyCode,
+                    currencyName: currencyName,
+                    currencySign: currencySign,
+                    isBaseCurrency: isBaseCurrency,
+                    Record_Code:Record_Code
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+
+                    }
+                    else {
+                        if (result.Status == "S") {
+                            $('#lblRecordCount').text(result.RecordCount);
+                            $('#hdnRecodLockingCode').val(0);
+                            ClosePopup();
+                            if ($("#searchCommon").val() != "") {
+                                SearchCurrency($("#searchCommon").val())
+                            }
+                            else {
+                                BindCurrencyList();
+                            }
+                            showAlert("S", result.Message);
+                        }
+                        else
+                            showAlert("E", result.Message);
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            })
+        }
+    }
+
+    function ClosePopup() {
+        var recordLockingCode = parseInt($('#hdnRecodLockingCode').val())
+        if (recordLockingCode > 0)
+            ReleaseRecordLock(recordLockingCode, URL_Release_Lock);
+
+        if (!checkCurrentAction())
+            return false;
+
+        $('#hdnAction').val("");
+        $('#popup').modal('hide');
+        $('#pupupHtml').empty();
+    }
+
+    function BindExchangeRateList(commandName, dummyGuid) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_BindExchangeRateList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            async: false,
+            data: JSON.stringify({
+                commandName: commandName,
+                dummyGuid: dummyGuid
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divCurrencyExchangeRate').empty();
+                    $('#divCurrencyExchangeRate').html(result);
+                    var length = $("table tr[id*='trExchangeRate_']").length
+                    $('#lblRecordCountPopup').text(length);
+                    initializeDatepicker();
+                    initializeTooltip();
+                    addNumeric();
+
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function AddEditExchangeRate(commandName, dummyGuid) {
+        if (!checkCurrentAction())
+            return false;
+
+        $('#hdnAction').val(commandName);
+        BindExchangeRateList(commandName, dummyGuid);
+    }
+
+    function SaveExchangeRate(dummyGuid, rowNumber) {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        var returnVal = true;
+        var d = new Date();
+        var month = d.getMonth() + 1;
+        var day = d.getDate();
+        var currentDate = d.getFullYear() + '/' +
+            (month < 10 ? '0' : '') + month + '/' +
+            (day < 10 ? '0' : '') + day;
+        var effectiveDate = $.trim($('#txtEffectiveDate_' + rowNumber).val());
+        var exchangeRate = $.trim($('#txtExchangeRate_' + rowNumber).val());
+
+        if (effectiveDate == "") {
+            $('#txtEffectiveDate_' + rowNumber).attr('required', true)
+            returnVal = false;
+        }
+        else if (effectiveDate.length != 10) {
+            $('#txtEffectiveDate_' + rowNumber).attr('required', true)
+            returnVal = false;
+            showAlert("E", "Invalid Date");
+        }
+
+        if (exchangeRate == "") {
+            $('#txtExchangeRate_' + rowNumber).attr('required', true)
+            returnVal = false;
+        }
+        else if(parseFloat(exchangeRate) <= 0)
+        {
+            $('#txtExchangeRate_' + rowNumber).addClass('required');
+            returnVal = false;
+        }
+        if (returnVal) {
+            var effectiveDate = new Date(MakeDateFormate(effectiveDate));
+            var currentDate = new Date(MakeDateFormate(currentDate));
+            if (effectiveDate > currentDate) {
+                returnVal = false;
+                showAlert("E", "@objMessageKey.Effectivestartdatecannotbefuturedate");
+            }
+            if (isNaN(effectiveDate)) {
+                $('#txtEffectiveDate_' + rowNumber).attr('required', true)
+                returnVal = false;
+                showAlert("E", "@objMessageKey.InvalidDate");
+            }
+
+            if (returnVal) {
+
+                var strMaxDate = $('#hdnMaxDate').val();
+                var Model_Count = $('#Model_Count').val();
+                var LastMaxDate = $('#hdnLastMaxDate').val().slice(0, -9);
+                var Action = $('#hdnAction').val();
+                if (Action == "ADD") {
+                    if (strMaxDate != "") {
+                        var ComparestrMaxDateDate = new Date(MakeDateFormate(strMaxDate));
+                        if (ComparestrMaxDateDate.getDate() == effectiveDate.getDate()) {
+                            returnVal = false;
+                            message = "@objMessageKey.EffectiveStartDateshouldbegreaterthanlastrecordEffectiveStartDate";
+                            showAlert("E", message);
+                        }
+                    }
+                }
+
+                if (Model_Count == 0) {
+                    strMaxDate = "";
+                }
+                else {
+                    if (Action == "EDIT") {
+                        strMaxDate = LastMaxDate;
+                    }
+                }
+
+                if (Action == "EDIT") {
+                    if (strMaxDate != "") {
+                        var ComparestrMaxDateDate = new Date(MakeDateFormate(strMaxDate));
+                        if (ComparestrMaxDateDate.getDate() == effectiveDate.getDate()) {
+                            returnVal = false;
+                            message = "@objMessageKey.EffectiveStartDateshouldbegreaterthanlastrecordEffectiveStartDate";
+                            showAlert("E", message);
+                        }
+                    }
+                }
+
+                if (strMaxDate != "") {
+                    strMaxDate = MakeDateFormate(strMaxDate);
+                    var effectiveMaxDate = new Date(strMaxDate);
+
+                    if (effectiveMaxDate > effectiveDate || (effectiveMaxDate == effectiveDate && rowNumber == 0)) {
+                        returnVal = false;
+                        $('#txtEffectiveDate_' + rowNumber).attr('required', true)
+                        var message = "@objMessageKey.Effectivestartdatemustbegreaterthan " + strMaxDate;
+                        if (rowNumber > 0)
+                            message = "@objMessageKey.Effectivestartdatemustbegreaterthanorequalto " + strMaxDate;
+                        showAlert("E", message);
+                    }
+
+                }
+            }
+        }
+
+        if (returnVal) {
+            $.ajax({
+                type: "POST",
+                url: URL_SaveExchangeRate,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    dummyGuid: dummyGuid,
+                    effectiveDate: effectiveDate,
+                    exchangeRate: exchangeRate
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        if (result.Status == "S") {
+                            $('#hdnAction').val("");
+                            BindExchangeRateList("", "");
+                        }
+                        else
+                            showAlert("E", result.Message);
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            })
+        }
+    }
+
+    function ExchangeRate_Cancel() {
+        $('#hdnAction').val("");
+        BindExchangeRateList("", "");
+    }
+
+    function DeleteExchangeRate(dummyGuid, confirmed) {
+        if (!checkCurrentAction())
+            return false;
+
+        if (confirmed) {
+            Command_Name = "";
+            dummyGuid_G = "";
+
+            $.ajax({
+                type: "POST",
+                url: URL_DeleteExchangeRate,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    dummyGuid: dummyGuid
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        BindExchangeRateList("", "");
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            })
+        }
+        else {
+            Command_Name = "DELETE_EXCHANGE_RATE";
+            dummyGuid_G = dummyGuid;
+            
+            $('#popup').css('z-index','1040');
+            showAlert("I", "@objMessageKey.Areyousureyouwanttodeletethisrecord?", "OKCANCEL")
+        }
+    }
+
+    function ExportToExcel() {
+
+        debugger;
+        var type = "";
+        var Module_Name = "Currency";
+        type = $('#ddlSortType').val();
+        var StrSearchCriteria = $.trim($('#searchCommon').val());
+
+        window.location.href = '@Url.Action("ExportToExcel", "Global")?Module_Code=' + Module_Code_G + '&SysLanguageCode=' + SysLanguageCode_G + '&Module_Name=' + Module_Name + '&sortColumnOrder=' + type + '&StrSearchCriteria=' + StrSearchCriteria;
+
+    }
+
+    //------------------------------Record Locking----------------
+
+    function CheckRecordLock(currencyCode, commandName)
+    {   debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_CheckRecordLock,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                currencyCode: currencyCode
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Is_Locked == "Y") {
+                        AddEditViewCurrency(currencyCode, commandName)
+                        $('#hdnRecodLockingCode').val(result.Record_Locking_Code); // This syntax must be after AddEditCountry() this
+                        Call_RefreshRecordReleaseTime(result.Record_Locking_Code, URL_Refresh_Lock);
+                    }
+                    else
+                        showAlert("E", result.Message);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+</script>
+<style>
+    td {
+        padding: 5px 0px;
+    }
+
+    .form-control {
+        display: inline-block !important;
+    }
+
+    .paging_area {
+        border-bottom: 1px dotted #777;
+        height: 36px;
+        margin-top: 10px;
+    }
+    
+    #ddlSortType_chosen {
+        max-width: 56%;
+        text-align:left;
+    }
+</style>
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="">
+                <div class="title_block dotted_border clearfix">
+                    <h2 class="pull-left">
+                        @objMessageKey.CurrencyList
+                    </h2>
+                    <div class="right_nav pull-right">
+                        <ul>
+                            <li id="btnUser">
+                                @if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForAdd + "~"))
+                                {
+                                    <input type="button" class="btn btn-primary" value="@objMessageKey.Add" onclick="AddEditViewCurrency(0, 'ADD')" />
+                                }
+                            </li>
+                            <li>
+                                @if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForExportToExcel.ToString() + "~"))
+                                {
+                                    <a title="@objMessageKey.SaveToExcel" class="glyphicon glyphicon-floppy-save" style="cursor:pointer; text-decoration:underline; " onclick="ExportToExcel()">
+                                    </a>
+                                }
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="search_area" style="background-color: #eee; padding:5px;">
+                    <table class="table">
+                        <tr>
+                            <td style="width:10%;text-align:center;padding-top:8px;">
+                                @objMessageKey.SearchText :
+                            </td>
+                            <td style="width:30%;">
+                                <input type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" placeholder="@objMessageKey.CurrencyName, @objMessageKey.CurrencySign" />
+                            </td>
+                            <td>
+                                <input type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearch_OnClick()">
+                                <input type="button" id="btnShowAll" class="button" value="@objMessageKey.ShowAll" onclick="btnShowAll_OnClick()">
+                            </td>
+                            <td id="txtSort">
+                                @objMessageKey.SortBy:
+                                @Html.DropDownList("SortType", (List<SelectListItem>)ViewBag.SortType, new { @id = "ddlSortType", @class = "form_input chosen-select" })
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="grid_area">
+                    <div style="border-bottom: 1px dotted #777; display:none;"></div>
+                    <div class="paging_area clearfix">
+                        <span class="pull-left">@objMessageKey.TotalRecords: </span>
+                        <span class="pull-left" id="lblRecordCount"></span>
+                        <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                        <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                        <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+
+                        <div id="Pagination" class="pagination">
+                        </div>
+                        <span class="pull-right">
+                            @objMessageKey.PageSize:
+                            <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="txtPageSize_OnChange()" onblur="setDefaultPaging('txtPageSize')">
+                        </span>
+                    </div>
+                    <div class="tab-content clearfix table-wrapper scale_table_container">
+                        <div class="scale_table_block">
+                            <input type="hidden" id="hdnAction" value="" />
+                            <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
+                            <div id="divCurrencyList" class="deal clearfix">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <div class="form_fields acq" id="pupupHtml">
+
+            </div>
+        </div>
+    </div>
+</div>

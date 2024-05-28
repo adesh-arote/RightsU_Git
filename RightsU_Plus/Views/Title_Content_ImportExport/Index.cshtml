@@ -1,0 +1,251 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<style>
+    #divSearchedMusicList {
+        overflow: auto;
+        max-height: 130px;
+    }
+
+    #divSelectedMusicList {
+        overflow: auto;
+        max-height: 130px;
+    }
+
+    .timeTextBox {
+        width: 120px !important;
+        line-height: initial !important;
+    }
+
+    .numeric_Frame {
+        width: 40px !important;
+    }
+
+    .paging_area {
+        border-bottom: 1px dotted #777;
+        height: 36px;
+        margin-top: 10px;
+    }
+</style>
+<script>
+    var URL_PopulateContent = '@Url.Action("PopulateContent", "Title_Content")';
+    var URL_SearchProgram = '@Url.Action("SearchProgram", "Title_Content")';
+    var URL_BindProgramList = '@Url.Action("BindProgramList", "Title_Content")';
+    var URL_ExportData = '@Url.Action("ExportData", "Title_Content_ImportExport")';
+    var URL_DeleteUploadFile = '@Url.Action("DeleteUploadFile", "Title_Content_ImportExport")';
+    var URL_Back_TitleContent = '@Url.Action("BackTitleContent", "Title_Content_ImportExport")';
+    var URL_Reload_Current_Page = '@Url.Action("Index", "Title_Content_ImportExport")';
+    $(document).ready(function () {
+        if(LayoutDirection_G == "RTL")
+        {
+            $('#btnExport').css("direction", "rtl");
+        }
+        else {
+            $('#btnExport').css("direction", "ltr");
+        }
+    });
+</script>
+<script src="~/Custom_Scripts/Title_Content_ImportExport.js"></script>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings[" Version_No"]" />
+<script>
+    var deleteInterval;
+    function SaveExportData() {
+        var ContentExportList = new Array();
+        var tblData = $("#tblConsiderExport tbody tr");
+        if (tblData.length > 0) {
+            $.each($(tblData), function (index, value) {
+                var CurrentRow = $(value);
+                var _Title_Content_Code = 0;
+                var hdn_Title_Content_Code = $(CurrentRow).find('input[name="hdn_Title_Content_Code"]');
+                if ($(hdn_Title_Content_Code).length > 0) {
+                    _Title_Content_Code = $(hdn_Title_Content_Code).val();
+                }
+                if (_Title_Content_Code > 0) {
+                    var _Title_Name = '';
+                    var _Episode = '';
+                    var _Duration_In_Min = '';
+                    var hdn_Title_Name = $(CurrentRow).find('input[name="hdn_Title_Name"]');
+                    var hdn_Episode = $(CurrentRow).find('input[name="hdn_Episode"]');
+                    var hdn_Duration_In_Min = $(CurrentRow).find('input[name="hdn_Duration_In_Min"]');
+
+                    if ($(hdn_Title_Name).length > 0) {
+                        _Title_Name = $(hdn_Title_Name).val();
+                    }
+                    if ($(hdn_Episode).length > 0) {
+                        _Episode = $(hdn_Episode).val();
+                    }
+                    if ($(hdn_Duration_In_Min).length > 0) {
+                        _Duration_In_Min = $(hdn_Duration_In_Min).val();
+                    }
+                    ContentExportList.push({
+                        Title_Content_Code: _Title_Content_Code, Title_Name: _Title_Name,
+                        Episode: _Episode, Duration_In_Min: _Duration_In_Min
+                    });
+                }
+            });
+            $.ajax({
+                type: "POST",
+                url: URL_ExportData,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    lst: ContentExportList
+                }),
+                async: false,
+                success: function (result) {
+                    if (result.Status == "E") {
+                        showAlert('E', result.Error_Message);
+                        returnVal = false;
+                    }
+                    else {
+                        var FileName = result.FileName
+                        var host = result.Host
+                        var Url_File_Path = ''
+                        if (host == 'localhost')
+                            Url_File_Path = '/UploadFolder/' + FileName;
+                        else {
+                            var pathName = window.location.pathname;
+                            Url_File_Path = pathName.replace('Title_Content_ImportExport', 'UploadFolder') + "/" + FileName;
+                        }
+                        window.location.href = Url_File_Path;
+                        setTimeout("DeleteUploadFile('" + FileName + "')", 5000);
+                    }
+                },
+                error: function (result, xhr) {
+                    alert('Error: ' + result);
+                }
+            });
+        }
+        else
+        {
+            showAlert('E', "@objMessageKey.Pleaseselectcontenttoexport");
+        }
+        return true;
+    }
+
+    function DeleteUploadFile(FileName) {
+        if (FileName != undefined) {
+            $.ajax({
+                type: "POST",
+                url: URL_DeleteUploadFile,
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    fileName: FileName
+                }),
+                async: false,
+                success: function (result) {
+                }
+            });
+        }
+    }
+
+    function BackTitleContent() {
+        window.location.href = URL_Back_TitleContent;
+    }
+    function isNumeric(e, t) {
+        if (window.event) {
+            var charCode = window.event.keyCode;
+        }
+        else if (e) {
+            var charCode = e.which;
+        }
+        else { return true; }
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        return true;
+    }
+</script>
+<body>
+    <div class="main_section">
+        <section class="rightsU_container clearfix">
+            <div class="container acq main_col">
+                <div class="">
+                    <div class="title_block dotted_border clearfix">
+                        <h2 class="pull-left">
+                           @objMessageKey.ContentList
+                            <span></span>
+                        </h2>
+                        <div class="right_nav pull-right">
+                        </div>
+                    </div>
+                    <div class="search_area" style="background-color:#eee">
+                        <table class="table">
+                            <tr>
+                                <td style="width:10%;   line-height:26px">
+                                    @objMessageKey.Content / @objMessageKey.Title
+                                </td>
+                                <td style="width:30%;">
+                                    <input type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" placeholder="Content" />
+                                </td>
+                                <td style="width:9%; text-align:center;  line-height:26px"> @objMessageKey.episode #</td>
+                                <td style="width:12%;">
+                                    <input type="text" id="txtEpisodeFrom" style="width:50px" class="episodeRange" placeholder="@objMessageKey.From" />
+                                    <input type="text" id="txtEpisodeTo" style="width:50px" class="episodeRange" placeholder="@objMessageKey.To" />
+                                </td>
+                                <td>
+                                    <input type="button" id="btnSearch" class="btn btn-primary" value="@objMessageKey.Search">
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="grid_area">
+                        <div style="border-bottom: 1px dotted #777; display:none;"></div>
+                        <div class="paging_area clearfix">
+                            <span class="pull-left">@objMessageKey.TotalRecords: </span>
+                            <span class="pull-left" id="lblRecordCount"></span>
+                            <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                            <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                            <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+
+                            <div id="Pagination" class="pagination">
+                            </div>
+                            <span class="pull-right">
+                                @objMessageKey.PageSize:
+                                <input type="text" id="txtPageSize" name="txtPageSize" maxlength="3" class="smallTextBox pagingSize" value="50" onchange="txtPageSize_OnChange('txtPageSize')"
+                                       onkeypress="return isNumeric(event,this);" onblur="setDefaultPaging('txtPageSize')">
+                            </span>
+                        </div>
+                        <div class="tab-content clearfix table-wrapper scale_table_container">
+                            <div class="scale_table_block">
+                                <div id="dvMusic_Program_List" class="deal clearfix">
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                       
+                        <div class="tab-content clearfix table-wrapper scale_table_container">
+                            <div class="scale_table_block">
+                                <div class="scrollable">
+                                    <table class="table table-bordered table-hover" id="tblConsiderExport">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:40%;">@objMessageKey.Content</th>
+                                                <th style="width:30%;">@objMessageKey.episode</th>
+                                                <th style="width:13%;">@objMessageKey.DurationInMin</th>
+                                                <th style="width:13%;">@objMessageKey.Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+
+                                </div>
+                                <div id="btnExport">
+                                    <input type="button" value="@objMessageKey.Export" id="btnExport" onclick="SaveExportData();" class="btn btn-primary" style="margin-top: 7px;margin-bottom: 3px;" />
+                                    <input type="button" value="@objMessageKey.Back" id="btnBack" onclick="BackTitleContent()" class="btn btn-primary" style="margin-top: 7px;margin-bottom: 3px;" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="hdnTitleContentCode" value="0" />
+                    <input type="hidden" id="hdnFrameLimit" value="@ViewBag.FrameLimit" />
+                </div>
+            </div>
+        </section>
+    </div>
+</body>

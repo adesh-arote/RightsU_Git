@@ -1,0 +1,1956 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Home.master.cs" Inherits="Home" %>
+
+<%
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+    string alertDays = new RightsU_BLL.System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Email_Alert_Days").Select(x => x.Parameter_Value).FirstOrDefault();
+    var dt = DateTime.Today.AddDays(Convert.ToDouble(alertDays));
+
+    var count = new RightsU_BLL.Email_Notification_Log_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Read == "N" && string.IsNullOrEmpty(x.Email_Body) == false
+  && x.User_Code == objLoginUser.Users_Code && x.Created_Time >= dt
+  && x.Email_Config.Email_Config_Detail.Select(e => e.OnScreen_Notification).FirstOrDefault() == "Y").Select(s => s.Email_Notification_Log_Code).Count();
+                 
+%>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server" id="head1">
+
+    <meta name="viewport" content="width=device-width" />
+    <title>RightsU</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+
+    <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+        <link type="text/css" rel="stylesheet" href='<%= ResolveUrl("CSS/common.css") %>' />
+        <link type="text/css" rel="stylesheet" href='<%= ResolveUrl("CSS/responsive.css") %>' media="screen and (max-width:960px) and (max-height:640px)" />
+        <link type="text/css" rel="stylesheet" href='<%= ResolveUrl("CSS/chosen.min.css") %>' />
+        <link type="text/css" rel="stylesheet" href='<%= ResolveUrl("CSS/CommonLTR.css") %>' />
+        <link type="text/css" rel="stylesheet" href='<%= ResolveUrl("CSS/slider-menu.jquery.css") %>' />
+        <link type="text/css" rel="stylesheet" href='<%= ResolveUrl("CSS/slider-menu.theme.jquery.css") %>' />
+
+        <script type="text/javascript" src='<%= ResolveUrl("Scripts/jquery-3.0.0.min.js") %>'></script>
+        <script type="text/javascript" src='<%= ResolveUrl("JS_Core/jquery-ui.min.js") %>'></script>
+        <script type="text/javascript" src='<%= ResolveUrl("JS_Core/common.concat.js") %>'></script>
+        <script type="text/javascript" src='<%= ResolveUrl("JS_Core/chosen.jquery.min.js") %>'></script>
+        <style>
+            .search_area {
+                border-bottom: 1px dotted #777;
+                margin-bottom: 5px;
+            }
+
+            ul.first > li {
+                width: 16%;
+            }
+
+                ul.first > li:nth-child(2) {
+                    width: 20%;
+                }
+
+                ul.first > li:last-child {
+                    width: 16%;
+                }
+
+            ul.second > li {
+                width: 27%;
+            }
+
+                ul.second > li:last-child {
+                    width: 19%;
+                }
+
+            #tabbable {
+                padding-left: 3px;
+                padding-top: 5px;
+                padding-bottom: 0px;
+                display: inline-block;
+            }
+
+            .leftPanel ul > li:hover {
+                background-color: rgba(0,0,0,0.1);
+            }
+
+            .leftPanel ul > li > a {
+                cursor: pointer;
+                z-index: 2;
+                color: #ffffff;
+                border-bottom: 1px solid #aaa;
+            }
+
+            .glyphicon-bell:before {
+                content: "\e123";
+                color: #ffffff;
+            }
+
+            .menu_margin {
+                margin: 0px;
+            }
+        </style>
+        <%-- Added by akshay --%>
+        <script type="text/javascript">
+            debugger;
+            var LayoutDirection_G = "";
+            $(document).ready(function () {
+                debugger;
+                LayoutDirection_G = document.getElementById('hdnDir').value;
+                // $("#triangle").css({ "top": "-13px" });
+                $('.nav-toggle').click(function () {
+                    debugger;
+                    var collapse_content_selector = $(this).attr('onclick');
+                    var toggle_switch = $("#triangle");
+                    if ($("#triangle").hasClass('glyphicon-triangle-top')) {
+                        toggle_switch.removeClass("glyphicon-triangle-top");
+                        toggle_switch.addClass("glyphicon-triangle-bottom");
+                        $(".sub_class").css({ "padding-bottom": "" });
+                    }
+                    else {
+                        toggle_switch.removeClass("glyphicon-triangle-bottom");
+                        toggle_switch.addClass("glyphicon-triangle-top");
+                        $(".sub_class").css({ "padding-bottom": "0px" });
+                    }
+                    $(collapse_content_selector).toggle(function () {
+                    });
+                    //$('#User-Head-Icon').css("float", "Right");
+                });
+
+                $("#collapse").click(function () {
+                    debugger;
+                    $(".rightPannel").slideDown("slow", function () {
+                    });
+                    $(".NotifyEmailPanel").slideDown("slow", function () {
+                    });
+                });
+
+                $("#collapse1").click(function () {
+                    $(".rightPannel:before").css("display", "block");
+                    $("#collapse2").css("display", "none");
+                    $(".sub_class").css({ "padding-bottom": "" });
+                    $("#triangle").removeClass("glyphicon-triangle-top");
+                    $("#triangle").addClass("glyphicon-triangle-bottom");
+                    $(".rightPannel").fadeToggle(300);
+                    $(".rightPanneltoggle").slideDown("slow", function () {
+                    });
+                    $(".NotifyEmailPanel").slideUp("slow", function () {
+                    });
+                });
+
+                $("#NotifyEmail").click(function () {
+                    $(".NotifyEmailPanel:before").css("display", "block");
+                    $("#sub_class").css({ "padding-bottom": "" });
+                    $("#triangle").removeClass("glyphicon-triangle-top");
+                    $("#triangle").addClass("glyphicon-triangle-bottom");
+                    $(".NotifyEmailPanel").fadeToggle(300);
+
+                    $(".rightPannel").slideUp("slow", function () {
+                    });
+                    $(".rightPanneltoggle").fadeToggle(300);
+                });
+                $(".container,.navigation,.pull-left").click(function () {
+
+                    $(".rightPannel").fadeOut("slow");
+                    $(".NotifyEmailPanel").fadeOut("slow");
+                    $(".rightPanneltoggle").fadeOut("slow");
+                    $(".NotifyEmailPanel:before").css("display", "none");
+                });
+                $(".container,.navigation,.pull-left").click(function () {
+                    $(".rightPannel").slideUp("slow", function () {
+                    });
+
+                    $(".rightPanneltoggle").slideUp("slow", function () {
+                    });
+                });
+
+            });
+            function ChangeLayoutDirection(element) {
+                debugger;
+                showLoading();
+                //var langCode = $(element).find("span.item-code").text();
+                //var LayoutDirection_G = $(element).find("span.layout-direction").text();
+
+
+                $.ajax({
+                    type: "POST",
+                    url: '<%=ResolveUrl("~/Base")%>' + '/UpdateSystemLanguage',
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    data: '{"systemLanguageCode":"' + element + '"}',
+                    dataType: "json",
+                    async: false,
+                    cache: false,
+                    success: function (result) {
+                        hideLoading();
+                        if (result == "true") {
+                            redirectToLogin();
+                        }
+                        else {
+                            if (result.Status == "S") {
+                                showLoading();
+                                window.location.href = '';
+                            }
+                            else {
+                                showAlert("E", result.Message);
+                            }
+                        }
+                    },
+                    error: function (result) {
+                        hideLoading();
+                        alert('Error: ' + result.responseText);
+                    }
+                });
+            }
+
+        </script>
+        <style>
+            .emailPNL {
+                background-color: #e2dfdf;
+                width: 236px;
+            }
+
+            .EmailCount {
+                position: relative;
+                width: 15px;
+                height: 15px;
+                font-size: 10px;
+                color: white;
+                background: #82817e;
+                border-radius: 50%;
+                text-align: center;
+                float: right;
+            }
+
+            .NotifyEmailPanel li {
+                padding: 9px;
+                border-bottom: 1px solid #dddddd;
+                font-size: 13px;
+                cursor: pointer;
+                vertical-align: middle;
+                max-width: 236px;
+                height: 36px;
+            }
+
+                .NotifyEmailPanel li span {
+                    vertical-align: middle;
+                    display: inline-block;
+                }
+
+            .NotifyEmailPanel > ul {
+                /*border-top: 1px solid #aaa;*/
+            }
+
+            .NotifyEmailPanel > li:hover {
+                background-color: rgba(0,0,0,0.1);
+            }
+
+            #DivEmailConfig > li:hover {
+                background-color: rgba(0,0,0,0.1);
+            }
+
+            .NotifyEmailPanel ul ul {
+                display: none;
+            }
+
+            .NotifyEmailPanel > li > a {
+                vertical-align: middle;
+                /*padding-left: 8px;*/
+                cursor: pointer;
+                z-index: 2;
+                font-size: 13px;
+                color: #000;
+                -webkit-transition: color .2s ease;
+                -o-transition: color .2s ease;
+                transition: color .2s ease;
+            }
+
+            .NotifyEmailPanel ul li a {
+                padding: 5px 22px;
+                z-index: 2;
+                font-size: 13px;
+                text-decoration: none;
+                color: #3a3636;
+                /*border-top: 1px solid #aaa;
+        background: rgba(0,0,0,0.2);*/
+                -webkit-transition: color .2s ease;
+                -o-transition: color .2s ease;
+                transition: color .2s ease;
+            }
+
+            /*.NotifyEmailPanel ul li:hover {
+                background-color: #ffffff;
+            }*/
+            .liEmail:hover {
+                background-color: #ffffff;
+            }
+
+            #collapse1 {
+                cursor: pointer;
+            }
+            /*.rightPannel ul {
+                    list-style-type: none;
+                }*/
+            .rightPannel {
+                border-color: #eee;
+                right: 0;
+                left: auto;
+                top: 36px;
+                position: absolute;
+                height: inherit;
+                z-index: 99;
+                border: 1px solid #dddddd;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            }
+
+                .rightPannel ul li {
+                    padding: 10px;
+                    border-bottom: 1px solid #dddddd;
+                    font-size: 14px;
+                    cursor: pointer;
+                    vertical-align: middle;
+                    padding: 0px 0px 0px 0px;
+                }
+
+                    .rightPannel ul li span {
+                        vertical-align: middle;
+                        /*display: inline-block;*/
+                    }
+
+                .rightPannel > ul {
+                    /*border-top: 1px solid #aaa;*/
+                }
+
+                    .rightPannel > ul > li:hover {
+                        background-color: rgba(0,0,0,0.1);
+                    }
+
+                    /*.rightPannel ul ul {
+                    display: none;
+                }*/
+
+                    .rightPannel > ul > li > a {
+                        vertical-align: middle;
+                        padding-left: 8px;
+                        cursor: pointer;
+                        z-index: 2;
+                        font-size: 13px;
+                        color: #000;
+                        -webkit-transition: color .2s ease;
+                        -o-transition: color .2s ease;
+                        transition: color .2s ease;
+                        /*line-height: 1;*/
+                        display: block;
+                        /*position: relative;*/
+                        height: 36px;
+                        line-height: 35px;
+                    }
+
+                .rightPannel ul ul li a {
+                    padding: 5px 22px;
+                    z-index: 2;
+                    font-size: 13px;
+                    text-decoration: none;
+                    color: #3a3636;
+                    /*border-top: 1px solid #aaa;
+	background: rgba(0,0,0,0.2);*/
+                    -webkit-transition: color .2s ease;
+                    -o-transition: color .2s ease;
+                    transition: color .2s ease;
+                    display: block;
+                    height: 36px;
+                    line-height: 35px;
+                }
+
+                .rightPannel ul ul li:hover {
+                    background-color: #ffffff;
+                }
+
+                .rightPannel ul li a {
+                    padding: 5px 22px;
+                    z-index: 2;
+                    font-size: 13px;
+                    text-decoration: none;
+                    color: #3a3636;
+                    /*border-top: 1px solid #aaa;
+                background: rgba(0,0,0,0.2);*/
+                    -webkit-transition: color .2s ease;
+                    -o-transition: color .2s ease;
+                    transition: color .2s ease;
+                    display: block;
+                    height: 36px;
+                    line-height: 35px;
+                }
+
+            .triangleToggle {
+                top: 0px;
+            }
+
+            .rightPanneltoggle ul {
+                list-style-type: none;
+            }
+
+                .rightPanneltoggle ul li {
+                    padding: 10px;
+                    border-bottom: 1px solid #dddddd;
+                    font-size: 14px;
+                    cursor: pointer;
+                    vertical-align: middle;
+                    padding: 0px 0px 0px 0px;
+                }
+
+                    .rightPanneltoggle ul li span {
+                        vertical-align: middle;
+                        display: inline-block;
+                    }
+
+            .rightPanneltoggle > ul {
+                /*border-top: 1px solid #aaa;*/
+            }
+
+                .rightPanneltoggle > ul > li:hover {
+                    background-color: rgba(0,0,0,0.1);
+                }
+
+            .rightPanneltoggle ul ul {
+                display: none;
+            }
+
+            .rightPanneltoggle > ul > li > a {
+                vertical-align: middle;
+                padding-left: 8px;
+                cursor: pointer;
+                z-index: 2;
+                font-size: 13px;
+                color: #000;
+                -webkit-transition: color .2s ease;
+                -o-transition: color .2s ease;
+                transition: color .2s ease;
+                display: block;
+                height: 36px;
+                line-height: 35px;
+            }
+
+            .rightPanneltoggle ul ul li:hover {
+                background-color: #ffffff;
+            }
+
+            .rightPanneltoggle {
+                position: fixed;
+                right: 3px;
+                top: 40px;
+                width: 217px;
+                /*height:440px;
+		max-height:440px;*/
+                height: inherit;
+                z-index: 99;
+                background-color: #f3f3f3;
+                border: 1px solid #000000;
+            }
+
+            .leftPanel ul ul li a:hover {
+                color: #ffffff;
+            }
+
+            .leftPanel ul ul > li.has-sub > a:after {
+                top: 16px;
+                right: 26px;
+                background: #dddddd;
+            }
+
+            .leftPanel ul ul > li.has-sub > a:before {
+                top: 20px;
+                background: #dddddd;
+            }
+
+            /*#ProfileName {
+                background-color: #949494;
+            }
+
+                #ProfileName a {
+                    color: #ffffff;
+                }*/
+
+            .navbar-custom-menu > .navbar-nav > li {
+                position: relative;
+                padding-top: 10px;
+                padding-bottom: 10px;
+                padding-right: 4px;
+            }
+
+            .navbar-nav > .user-menu > .dropdown-menu {
+                border-top-right-radius: 0;
+                border-top-left-radius: 0;
+                padding: 1px 0 0 0;
+                border-top-width: 0;
+                width: 280px;
+            }
+
+            .containerss {
+                max-width: 320px;
+                margin: 0px auto;
+                width: 247px;
+            }
+
+            .slider {
+                border-radius: 3px;
+                overflow: hidden;
+                background-color: #fff;
+                padding: 5px;
+            }
+
+            @media (min-width: 768px) {
+                .navbar-nav > li {
+                    float: left;
+                }
+
+                .headerDetails label {
+                    padding: 3px;
+                    display: inline-block;
+                    color: #fff;
+                }
+            }
+
+            .TotalEmailCount {
+                position: absolute;
+                top: -2px;
+                right: 0;
+                left: auto;
+                width: 15px;
+                height: 15px;
+                font-size: 10px;
+                background: red;
+                border-radius: 50%;
+                text-align: center;
+                color: white;
+            }
+
+            #DivEmailConfig {
+                max-height: 180px;
+                overflow-y: auto;
+                overflow-x: hidden;
+            }
+
+                #DivEmailConfig > li:hover {
+                    background-color: rgba(0,0,0,0.1);
+                }
+        </style>
+        <%-- ended by akshay --%>
+        <script type="text/javascript">
+            function LoadMenu(tabName, id) {
+                debugger;
+                $.ajax({
+                    type: "POST",
+                    url: '<%=ResolveUrl("~/Base")%>' + '/GetMenu',
+                    contentType: "application/json; charset=utf-8",
+                    data: '{"TabName":"' + tabName + '"}',
+                    dataType: "json",
+                    async: false,
+                    cache: false,
+                    success: function (result) {
+                        debugger;
+                        if (result == "true") {
+                            redirectToLogin();
+                        }
+                        else {
+                            $("#" + id).html(result);
+                            initializeSubMenu();
+                            togglePanelVisibility(id);
+                        }
+                    },
+                    error: function (result) { }
+                });
+            }
+            function Validate_Record(dealCode, dealType) {
+                debugger;
+                var valid = true;
+                var usersCode = 0;
+                var moduleCode = 30;
+                if (dealType == "S")
+                    moduleCode = 35;
+                $.ajax({
+                    type: "POST",
+                    url: '<%=ResolveUrl("~/Global")%>' + '/Validate_Deal_Approve_List',
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    data: '{"dealCode":' + dealCode + ',moduleCode:' + moduleCode + ',usersCode: ' + usersCode + '}',
+                    dataType: "json",
+                    async: false,
+                    success: function (result) {
+                        debugger;
+                        result = result.split('~');
+                        var Record_Locking_Code = result[1];
+                        if (Record_Locking_Code != 'undefined' && Record_Locking_Code > 0) {
+                            var New_href = $('#' + dealType + dealCode).attr('href').replace("RecordLockingCode", Record_Locking_Code);
+                            $('#' + dealType + dealCode).attr('href', New_href);
+                        }
+                        if (result == "true") {
+                            redirectToLogin();
+                        }
+                        else {
+                            if (result[0] == 'S') {
+                                valid = true;
+                                var New_Url = "";
+                                if (dealType == "A")
+                                    New_Url = '<%=ResolveUrl("~/Global")%>' + '/Deal_For_Approval?DealCode=' + dealCode + '&Mode=APRV&ModuleCode=30';
+                                else if (dealType == "S")
+                                    New_Url = '<%=ResolveUrl("~/Global")%>' + '/Deal_For_Approval?DealCode=' + dealCode + '&Mode=APRV&ModuleCode=35';
+                                else if (dealType == "M")
+                                    New_Url = '<%=ResolveUrl("~/Global")%>' + '/Deal_For_Approval?DealCode=' + dealCode + '&Mode=APRV&ModuleCode=163';
+                    }
+                    else {
+                        if (result[0].indexOf('approved') != -1) {
+                            bindApprovalList(result[0]);
+                            valid = false;
+                            showAlert("E", result[0]);
+                        }
+                        else {
+                            showAlert("E", result[0]);
+                            valid = false;
+                        }
+                    }
+                }
+                    },
+                    error: function (result) { }
+                });
+        return valid;
+    }
+    $(document).ready(function () {
+        debugger;
+        bindApprovalList('A');
+    });
+    function searchApproveList() {
+        debugger;
+        var tabName = 'A';
+        if ($("#liAcq").hasClass('active'))
+        { tabName = 'A'; }
+        if ($("#liMusic").hasClass('active'))
+        { tabName = 'M'; }
+        if ($("#liSyn").hasClass('active'))
+        { tabName = 'S'; }
+        if ($("#liBoth").hasClass('active'))
+        { tabName = 'B'; }
+        bindApprovalList(tabName);
+    }
+    function bindApprovalList(TabName) {
+        debugger;
+        var common_search = $('#srchCommonAppr').val();
+        $.ajax({
+            type: "POST",
+            url: '<%=ResolveUrl("~/Base")%>' + '/GetApprovalList',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: false,
+            data: JSON.stringify({
+                commonSearch: common_search
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    var strHTML = '', liClass = "acq", index = 0;
+                    for (var i = 0; i < result.length; i++) {
+                        if (TabName == result[i].Type || TabName == 'B') {
+                            if (result[i].Type == "A") {
+                                var url = '<%=ResolveUrl("~/Global")%>' + '/Deal_For_Approval?DealCode=' + result[i].Deal_Code + '&Mode=APRV&ModuleCode=30';
+                                liClass = "acq";
+                            }
+                            else if (result[i].Type == "S") {
+                                var url = '<%=ResolveUrl("~/Global")%>' + '/Deal_For_Approval?DealCode=' + result[i].Deal_Code + '&Mode=APRV&ModuleCode=35';
+                                liClass = "syn";
+                            }
+                            else {
+                                var url = '<%=ResolveUrl("~/Global")%>' + '/Deal_For_Approval?DealCode=' + result[i].Deal_Code + '&Mode=APRV&ModuleCode=163';
+                                liClass = "acq";
+                            }
+                        strHTML = strHTML + '<li class="' + liClass + '">'
+                        strHTML = strHTML + '<a id =' + result[i].Type + result[i].Deal_Code + ' href="' + url.replace('Deal_Code', result[i].Deal_Code)
+                            + '" onclick = "return Validate_Record(' + result[i].Deal_Code + ',\'' + result[i].Type + '\')";><ul>'
+                        strHTML = strHTML + '<li class="agreementNo">' + result[i].Agreement_No + '</li>'
+                        strHTML = strHTML + '<li class="date">' + result[i].Last_Updated_Time + '</li>'
+                        if (result[i].Vendor_Name.length > 30)
+                            strHTML = strHTML + '<li>' + result[i].Vendor_Name.substring(0, 25) + "..." + '</li>'
+                        else
+                            strHTML = strHTML + '<li>' + result[i].Vendor_Name + '</li>'
+                        if (result[i].Title_Name.length > 30)
+                            strHTML = strHTML + '<li>' + result[i].Title_Name.substring(0, 25) + "..." + '</li>'
+                        else
+                            strHTML = strHTML + '<li>' + result[i].Title_Name + '</li>'
+
+                        strHTML = strHTML + '</ul></a></li>'
+                    }
+                }
+                $('#approvalCount').text(result.length);
+                $('#review').html(strHTML);
+            }
+            },
+            error: function (result) { }
+        });
+    $('.leftPanel > ul').height($(window).height() - 120);
+}
+function MarkAllRead() {
+    debugger
+    var markCount = parseInt(document.getElementById("TotalEmailCount").innerHTML);
+    if (markCount != 0) {
+        $.ajax({
+            type: "POST",
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            url: "<%= Page.ResolveUrl("~/Base/MarkAllRead")%>",
+            async: true,
+            data: JSON.stringify({
+            }),
+            success: function (result) {
+                var outputs = document.querySelectorAll("span.EmailCount");
+                for (var i = 0; i < outputs.length; ++i) {
+                    outputs[i].textContent = 0;
+                }
+                document.getElementById("TotalEmailCount").innerHTML = parseInt(0);
+                $('#hdnTotalEmailCount').val(0);
+            },
+            error: function (x, e) {
+            }
+        });
+    }
+}
+function EmailPopup(Email_Type_Code, Email_Type, Count) {
+    debugger
+    $('#hdnSelectedEmail').val('');
+    $('#hdnCurrNoti').val(Email_Type_Code);
+    $('#hdnSeenCount').val('0')
+    var unseenCount = parseInt(Count) - 1;
+    document.getElementById('Email_Type').innerHTML = Email_Type + ' Notifications';
+    $.ajax({
+        type: "POST",
+        url: "<%= Page.ResolveUrl("~/Base/Show_Email_Popup")%>",
+        traditional: true,
+        async: false,
+        enctype: 'multipart/form-data',
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify({
+            Email_Type_Code: Email_Type_Code
+        }),
+        success: function (result) {
+            if (result == "true") {
+                redirectToLogin();
+            }
+            $("#divEmail").html(result);
+            if ($('#hdnSeen_1').val() == 'N') {
+                document.getElementById('unseenCount').innerHTML = parseInt($("#hdnCount").val()) - 1;
+                document.getElementById('TotalEmailLogCount').innerHTML = parseInt($("#FirstTotalCount").val());
+                document.getElementById('SeenEmailCount').innerHTML = 1;
+                $('#hdnSeenEmailCount').val(1);
+
+            }
+            else {
+                document.getElementById('unseenCount').innerHTML = $("#hdnCount").val();
+                document.getElementById('TotalEmailLogCount').innerHTML = parseInt($("#FirstTotalCount").val());
+                document.getElementById('SeenEmailCount').innerHTML = 1;
+                $('#hdnSeenEmailCount').val(1);
+            }
+        },
+        error: function (x, e) {
+        }
+    });
+    $('#popNotification').modal();
+    initializeChosen();
+    initializeExpander();
+}
+function updateCount() {
+    debugger
+    var TotalCounttt = 0;
+    var greaterEmailCount = 0;
+    var num = parseInt($('#hdnDiv').val().split('_')[1]);
+    var hdnSeenId = $('#hdnSeenId_' + num).val();
+    $('#hdnSelectedEmail').val($('#hdnSelectedEmail').val() + ',' + hdnSeenId);
+    var TotalECountId = 'TotalECount_' + $('#hdnCurrNoti').val()
+    var TotalECount = parseInt(document.getElementById(TotalECountId).innerHTML);
+    if ($('#hdnSeen_' + num).val() == 'N' && num == 1)
+        $('#hdnSeenCount').val('1')
+    if (!($('#hdnSeen_' + num).val() == 'Y' && num == 1)) {
+        if (TotalECount != 0)
+            document.getElementById(TotalECountId).innerHTML = TotalECount - parseInt($('#hdnSeenCount').val());
+
+        var TotalEmailCount = parseInt(document.getElementById('TotalEmailCount').innerHTML);
+        if (TotalEmailCount != 0) {
+            if ($('#hdnTotalEmailCount').val() <= 99) {
+                TotalCounttt = TotalEmailCount - parseInt($('#hdnSeenCount').val());
+            }
+            else {
+                greaterEmailCount = parseInt($('#hdnTotalEmailCount').val()) - parseInt($('#hdnSeenCount').val());
+            }
+            if (greaterEmailCount > 99) {
+                document.getElementById('TotalEmailCount').innerHTML = '99+';
+                $('#hdnTotalEmailCount').val(parseInt($('#hdnTotalEmailCount').val()) - parseInt($('#hdnSeenCount').val()))
+            }
+            else if (greaterEmailCount < 99 && greaterEmailCount != 0) {
+                document.getElementById('TotalEmailCount').innerHTML = TotalEmailCount - parseInt($('#hdnSeenCount').val());
+            }
+            else if (TotalCounttt > 0) {
+                document.getElementById('TotalEmailCount').innerHTML = TotalEmailCount - parseInt($('#hdnSeenCount').val());
+            }
+            else {
+                document.getElementById("TotalEmailCount").innerHTML = parseInt(0);
+            }
+
+        }
+    }
+    $.ajax({
+        type: "POST",
+        url: "<%= Page.ResolveUrl("~/Base/updateSeenNotification")%>",
+        traditional: true,
+        async: false,
+        enctype: 'multipart/form-data',
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify({
+            Email_Log_Codes: $('#hdnSelectedEmail').val()
+        }),
+        success: function (result) {
+
+        },
+        error: function (x, e) {
+        }
+    });
+}
+function showPrevious() {
+    var unseenCount = parseInt(document.getElementById('unseenCount').innerHTML);
+    var oldDiv = $('#hdnDiv').val();
+    var num = parseInt($('#hdnDiv').val().split('_')[1]);
+    var hdnSeenId = $('#hdnSeenId_' + num).val();
+    num -= 1;
+    var currid = 'div_' + num;
+
+    if ($('#hdnSelectedEmail').val() != "")
+        $('#hdnSelectedEmail').val($('#hdnSelectedEmail').val() + ',' + hdnSeenId);
+    else
+        $('#hdnSelectedEmail').val(hdnSeenId);
+
+    if ($('#' + currid).val() != undefined) {
+        $('#' + currid).attr('style', 'display:block')
+        $('#hdnDiv').val(currid)
+        document.getElementById('SeenEmailCount').innerHTML = parseInt($('#hdnSeenEmailCount').val()) - 1;
+        $('#hdnSeenEmailCount').val(parseInt(document.getElementById('SeenEmailCount').innerHTML))
+    }
+    else {
+        var hdnNoOfGrid = parseInt($("#hdnNoOfGrid").val());
+        $('#div_' + hdnNoOfGrid).attr('style', 'display:block')
+        $('#hdnDiv').val('div_' + hdnNoOfGrid)
+        num = $('#hdnNoOfGrid').val();
+        document.getElementById('SeenEmailCount').innerHTML = parseInt($('#FirstTotalCount').val());
+        $('#hdnSeenEmailCount').val(parseInt(document.getElementById('SeenEmailCount').innerHTML))
+    }
+    if ($('#hdnSeen_' + num).val() == 'N') {
+        $('#hdnSeen_' + num).val('Y');
+        if (unseenCount != 0) {
+            unseenCount -= 1;
+            document.getElementById('unseenCount').innerHTML = unseenCount;
+            var hdnCount = parseInt($('#hdnCount').val());
+            var unseenCount = parseInt(document.getElementById('unseenCount').innerHTML);
+            $('#hdnSeenCount').val(hdnCount - unseenCount);
+        }
+    }
+    $('#' + oldDiv).attr('style', 'display:none')
+}
+function showNext() {
+    var unseenCount = parseInt(document.getElementById('unseenCount').innerHTML);
+    var oldDiv = $('#hdnDiv').val();
+    var num = parseInt($('#hdnDiv').val().split('_')[1]);
+    var hdnSeenId = $('#hdnSeenId_' + num).val();
+    num += 1;
+    var currid = 'div_' + num;
+    if ($('#hdnSelectedEmail').val() != "")
+        $('#hdnSelectedEmail').val($('#hdnSelectedEmail').val() + ',' + hdnSeenId);
+    else
+        $('#hdnSelectedEmail').val(hdnSeenId);
+    if ($('#hdnSeen_' + num).val() == 'N') {
+        $('#hdnSeen_' + num).val('Y');
+
+        if (unseenCount != 0) {
+            unseenCount -= 1;
+            document.getElementById('unseenCount').innerHTML = unseenCount;
+            var hdnCount = parseInt($('#hdnCount').val());
+            var unseenCount = parseInt(document.getElementById('unseenCount').innerHTML);
+            $('#hdnSeenCount').val(hdnCount - unseenCount);
+        }
+    }
+    if ($('#' + currid).val() != undefined) {
+        $('#' + currid).attr('style', 'display:block')
+        $('#hdnDiv').val(currid)
+        document.getElementById('SeenEmailCount').innerHTML = parseInt($('#hdnSeenEmailCount').val()) + 1;
+        $('#hdnSeenEmailCount').val(parseInt(document.getElementById('SeenEmailCount').innerHTML))
+    }
+    else {
+        $('#div_1').attr('style', 'display:block')
+        $('#hdnDiv').val('div_1')
+        document.getElementById('SeenEmailCount').innerHTML = 1;
+        $('#hdnSeenEmailCount').val(parseInt(document.getElementById('SeenEmailCount').innerHTML))
+    }
+    $('#' + oldDiv).attr('style', 'display:none')
+}
+        </script>
+        <script type="text/javascript">
+            //function UpdateHenModuleCode(IntCode) {
+            //    debugger;
+            //    document.getElementById('hdnModuleCode').value = IntCode;
+            //}
+
+            function OpenHelpPage() {
+                //        alert('Still to Upload.');
+                //        return;
+                debugger;
+                CloseAllChildWindow();
+
+                var val = document.getElementById('hdnPageName').value
+                //children = window.open('../Help/index.html?IntCode=' + val, '_blank')
+                //children = window.open('../Help/Masters/Layout.html?' + val, '_blank')
+
+                var children;
+                function CloseAllChildWindow() {
+                    if (children != null)
+                        children.close();
+                }
+            }
+            function Schedule() {
+                var strWindowFeatures = "location=yes,toolbar=yes,scrollbars=yes,resizable=yes,top=500,left=500,width=4000,height=4000";
+                window.open('http://bv/sportsplanner/', '_blank', strWindowFeatures);
+            }
+
+        </script>
+    </asp:ContentPlaceHolder>
+
+    <script type="text/javascript">
+        function refreshLock(code, classname) {
+            IntervalCode = setInterval("refreshTime(" + code + ",'" + classname + "')", 15000);
+        }
+    </script>
+    <asp:ContentPlaceHolder ID="CphdHeader" runat="server"></asp:ContentPlaceHolder>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <asp:HiddenField ID="hdnRights" runat="server" Value="" />
+        <asp:HiddenField ID="hdnPageName" runat="server" />
+        <div class="main_section">
+            <header class="rightsU_header clearfix">
+                <div class="navigation">
+                    <ul>
+                        <%--<li class="home_button" title="Home" data-placement="right" id="Li_Home" runat="server">
+                            <a class="glyphicon glyphicon-home" href="<%= Page.ResolveUrl("~/Base/Main")%>"></a>
+                        </li>
+                        <li class="seperator"></li>--%>
+
+                        <li title="Titles" data-placement="right" id="Li_Titles" runat="server" class="menu_margin">
+                            <a class="add_movie glyphicon glyphicon-film btn btn-primary btn-lg" href="<%= Page.ResolveUrl("~/Title_List/Index")%>"></a>
+                        </li>
+
+                        <li title="Acquisition Deals" data-placement="right" id="Li_AcqDeals" runat="server" class="menu_margin">
+                            <a class="glyphicon glyphicon-log-in" href="<%= Page.ResolveUrl("~/Acq_List/Index?IsMenu=Y")%>"></a>
+                        </li>
+
+                        <li title="Syndication Deals" data-placement="right" id="Li_SynDeals" runat="server" class="menu_margin">
+                            <a class="glyphicon glyphicon-log-out btn btn-primary btn-lg" href="<%= Page.ResolveUrl("~/Syn_List/Index?IsMenu=Y")%>"></a>
+                        </li>
+                        <li title="Music Deals" data-placement="right" id="Li_MusicDeals" runat="server" class="menu_margin">
+                            <a class="glyphicon glyphicon-headphones" href="<%= Page.ResolveUrl("~/Music_Deal_List/Index")%>"></a>
+                        </li>
+
+                        <li class="check_button menu_margin" onclick="javascript: togglePanelVisibility('pnlApprovalList');" title="Approval List" data-placement="right" runat="server" id="Li_ApprovalList">
+                            <a class="glyphicon glyphicon-check" href="#"></a>
+                            <span id="approvalCount" class="count">0</span>
+                        </li>
+                        <li class="seperator" style="display:none;"></li>
+
+                        <li class="check_button menu_margin" onclick="Schedule()" title="Schedule" data-placement="right" runat="server" style="display:none;" id="Li1">
+                            <a class="glyphicon glyphicon-calendar" href="#"></a>
+                        </li>
+
+                         <li onclick="javascript: LoadMenu('N','pnlAmort');" title="Amort" data-placement="right" id="Li_Amort" runat="server" style="display:none;" class="menu_margin">
+                            <a class="glyphicon glyphicon-tent" href="#"></a>
+                        </li>
+
+                        <li class="seperator" id="firstSap" runat="server"></li>
+
+                        <%-- <li title="Music Track" data-placement="right" id="Li_MusicTitle" runat="server">
+                            <a class="glyphicon glyphicon-music btn btn-primary btn-lg" href="<%= Page.ResolveUrl("~/Music_Title/List")%>"></a>
+                        </li>--%>
+                        <li onclick="javascript: LoadMenu('M','pnlMusic');" title="Music" data-placement="right" id="Li_MusicTitle" runat="server" class="menu_margin">
+                            <a class="glyphicon glyphicon-music" href="#"></a>
+                        </li>
+
+                         <li onclick="javascript: LoadMenu('O','pnlMusicHub');" title="Music Hub" data-placement="right" id="Li_MusicHub" runat="server" class="menu_margin">
+                            <a class="glyphicon glyphicon-play-circle" href="#"></a>
+                        </li>
+                    
+
+                        <li title="Content" data-placement="right" id="Li_Content" runat="server" class="menu_margin">
+                            <a class="glyphicon glyphicon-copy btn btn-primary btn-lg" href="<%= Page.ResolveUrl("~/Title_Content/Index")%>"></a>
+                        </li>
+
+                        <li class="seperator" id="SecondSap" runat="server"></li>
+                        <li onclick="javascript:  LoadMenu('G','pnlAvail');" title="Availability" data-placement="right" id="Li_Avail" runat="server" class="menu_margin">
+                            <a class="glyphicon glyphicon-font" href="#"></a>
+                        </li>
+                        <li onclick="javascript: LoadMenu('A','pnlMasters');" title="Master" data-placement="right" id="Li_Master" runat="server" class="menu_margin">
+                            <a class="glyphicon glyphicon-book" href="#"></a>
+                        </li>
+
+                        <%-- <li onclick="javascript: LoadMenu('H','pnlGlossary');" title="Glossary" id="Li_Glossary" data-placement="right" runat="server">
+                            <a class="glyphicon glyphicon-tasks" href="#"></a>
+                        </li>--%>
+
+                        <li onclick="javascript:  LoadMenu('E','pnlReports');" title="Reports" data-placement="right" id="Li_Reports" runat="server" class="menu_margin">
+                            <a class="glyphicon glyphicon-list-alt" href="#"></a>
+                        </li>
+                        <li class="seperator" id="ThirdSap" runat="server"></li>
+                        <%--<li class="check_button" onclick="javascript:  LoadMenu('F','pnlUploads');" title="Upload" data-placement="right" id="Li_Upload" runat="server">
+                            <a class="glyphicon glyphicon-open" href="#"></a>
+                        </li>--%>
+
+
+                        <li onclick="javascript: LoadMenu('C','pnlIPR');" title="IPR" data-placement="right" id="Li_IPR" runat="server" class="menu_margin">
+                            <a class="glyphicon glyphicon-registration-mark" href="#"></a>
+                        </li>
+                        <li onclick="javascript: LoadMenu('D','pnlSettings');" title="Settings" data-placement="right" id="Li_Setting" runat="server" class="menu_margin">
+                            <a class="glyphicon glyphicon-cog" href="#"></a>
+                        </li>
+
+                        <%-- <li title="Log Out" data-placement="right" id="Li_Logout" runat="server">
+                            <a class="glyphicon glyphicon-off" href="<%= Page.ResolveUrl("~/Login/Index?isReset=Y")%>"></a>
+                        </li>--%>
+                    </ul>
+                </div>
+                <div class="header-nav">
+                    <div class="site_logo pull-left">
+                        <ul>
+                            <li runat="server">
+                                <a href="<%= Page.ResolveUrl("~/Base/Main")%>">
+                                    <img alt="Site-Logo" src="../Images/logo-rights.png" />
+                                </a>
+                            </li>
+                        </ul>
+                        <span class="tag_line">Rights Management System </span>
+                        <label id="lblPageName"></label>
+                    </div>
+                    <span id="pullCenter">&nbsp;</span>
+
+
+
+                    <%--<div class="pull-right">
+                        <img class="clientLogo" alt="Client Logo" runat="server" id="Img_ClientLogo" />
+                        <div class="headerDetails">
+                            <label class="entity" runat="server" id="lblEntityName">Viacom18 Motion Pictures</label>
+
+                           <%-- <label class="glyphicon glyphicon-user2" id="collapse1"></label>
+                        </div>
+                    </div>--%>
+
+                    <div class="navbar-custom-menu">
+                        <ul class="nav navbar-nav">
+                            <!-- Client company Name -->
+                            <li class="dropdown user user-menu">
+                                <span class="headerDetails" id="lblEntityNames">
+                                    <label runat="server" id="lblEntityName">Viacom18 Motion Pictures</label>
+                                </span>
+                            </li>
+
+                            <li data-placement="left" id="Email-Head-Icon" style="display:none;">
+                                <label class="glyphicon glyphicon-bell" id="NotifyEmail" runat="server" style="display:none;"></label>
+                                <span class="TotalEmailCount" id="TotalEmailCount" runat="server" style="display:none;"></span>
+                                <asp:HiddenField ID="hdnTotalEmailCount" runat="server" />
+                                <ul id="EmailPanel" class="NotifyEmailPanel" style="display: none;" runat="server">
+                                    <li class="emailPNL">
+                                        <span class="bold">Notifications</span>
+                                    </li>
+                                </ul>
+                                <asp:HiddenField ID="hdnSelectedEmail" runat="server" />
+                                <asp:HiddenField ID="hdnSeenCount" runat="server" />
+                                <asp:HiddenField ID="hdnCurrNoti" runat="server" />
+                                <asp:HiddenField ID="hdnSeenEmailCount" runat="server" />
+                            </li>
+                            <li data-placement="left" id="User-Head-Icon">
+                                <label class="glyphicon glyphicon-user2" id="collapse1"></label>
+                                <div class="slider containerss rightPannel" id="pannel" style="display: none;">
+                                    <ul class="my-menu">
+                                        <li style="height: 85px;" runat="server">
+                                            <a href="<%= Page.ResolveUrl("~/User/ViewUserProfiles")%>" style="display: block; height: 85px;">
+                                                <label class="username" runat="server" id="lblProfileName">
+                                                    <span style="text-align: right;" class="pull-right"></span>
+                                                </label>
+                                            </a></li>
+
+                                        <li id="Li_Glossary" runat="server" data-vertical="true">
+                                            <a href="#">
+                                                <span class="glyphicon glyphicon-tasks" style="height: 36px; line-height: 35px;"></span>&nbsp;&nbsp;Glossary</a>
+                                            <%-- <span style="text-align: right; height: 36px; line-height: 35px;" class="pull-right">
+                            <a class="glyphicon glyphicon-triangle-bottom " id="triangle" style="padding-right: 10px;"></a>
+                        </span>--%>
+                                            <ul id="collapse2" style="margin: auto;">
+                                                <li runat="server" style="border-bottom: 0px;"><a href="<%= Page.ResolveUrl("~/Glossary/ShowPlatforms?modulecode=143")%>" style="display: block;"><span class="glyphicon glyphicon-folder-open"></span>&nbsp;&nbsp;Show All Platforms</a></li>
+                                                <li runat="server" style="border-bottom: 0px;"><a href="<%= Page.ResolveUrl("~/Glossary/ReportsUsage?modulecode=145")%>" style="display: block;"><span class="glyphicon glyphicon-bullhorn"></span>&nbsp;&nbsp;Reports & Usage</a></li>
+                                            </ul>
+                                        </li>
+                                        <li>
+                                            <a href="#"><span class="glyphicon glyphicon-exclamation-sign"></span>Language</a>
+                                            <ul style="margin: auto; height: 300px;" id="ulSystemLanguage" runat="server">
+                                                <div id="slimscroll" style="overflow: hidden; width: auto; height: 250px;" runat="server">
+                                                </div>
+                                                <%--<div id="slimscroll" runat="server">
+                                
+                           </div>--%>
+                                            </ul>
+                                        </li>
+
+
+                                        <li runat="server" id="Li_FAQ"><a style="display: block;" href="<%= Page.ResolveUrl("~/Glossary/FAQ?modulecode=146")%>"><span class="glyphicon glyphicon-exclamation-sign"></span>&nbsp;&nbsp;FAQ</a></li>
+                                        <li runat="server" id="Li_ContactInfo"><a style="display: block;" href="<%= Page.ResolveUrl("~/Glossary/ContactInfo?modulecode=147")%>"><span class="glyphicon glyphicon-phone"></span>&nbsp;&nbsp;Contact Info</a></li>
+                                        <li runat="server" id="Li_AskAnExpert"><a style="display: block;" href="<%= Page.ResolveUrl("~/Glossary/AskExpert?modulecode=148")%>"><span class="glyphicon glyphicon-bullhorn"></span>&nbsp;&nbsp;Ask an Expert</a></li>
+                                        <li runat="server"><a style="display: block;" href="<%= Page.ResolveUrl("~/Login/Index?isReset=Y")%>"><span class="glyphicon glyphicon-off"></span>&nbsp;&nbsp;Logout</a></li>
+                                    </ul>
+                                    <!-- .my-menu -->
+                                </div>
+                                <!-- .slider -->
+                            </li>
+                            <li style="padding-top: 0px!important">
+                                <img class="clientLogo" alt="Client Logo" runat="server" id="Img_ClientLogo" style="padding-left: 10px;" />
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </header>
+
+            <%-- <div id="pannel" class="rightPannel" style="display: none;">
+                <ul>
+                    <li id="ProfileName">
+                        <!-- img src="../img/dheeraj.png" -->
+                        <a href="#" style="display: block;"><span class="glyphicon glyphicon-user"></span>
+                            &nbsp;&nbsp;<label class="username" runat="server" id="lblProfileName"></label>
+                        </a><span style="text-align: right;" class="pull-right"></span></li>
+
+
+                    <li class='has-sub sub_class nav-toggle' onclick="#collapse2" id="Li_Glossary" runat="server">&nbsp;&nbsp;<span class="glyphicon glyphicon-tasks" style="height: 36px; line-height: 35px;"></span> &nbsp;&nbsp;Glossary
+                        <span style="text-align: right; height: 36px; line-height: 35px;" class="pull-right">
+                            <a class="glyphicon glyphicon-triangle-bottom " id="triangle" style="padding-right: 10px;"></a>
+                        </span>
+                        <ul id="collapse2" style="display: none; width: 100%;">
+                            <li runat="server" style="border-bottom: 0px;"><a href="<%= Page.ResolveUrl("~/Glossary/ShowPlatforms?modulecode=143")%>" style="display: block;"><span class="glyphicon glyphicon-bullhorn"></span>&nbsp;&nbsp;Show All Platforms</a></li>
+                            <li runat="server" style="border-bottom: 0px;"><a href="<%= Page.ResolveUrl("~/Glossary/ReportsUsage?modulecode=145")%>" style="display: block;"><span class="glyphicon glyphicon-bullhorn"></span>&nbsp;&nbsp;Reports & Usage</a></li>
+                        </ul>
+                    </li>
+
+                    <li runat="server" id="Li_FAQ"><a style="display: block;" href="<%= Page.ResolveUrl("~/Glossary/FAQ?modulecode=146")%>"><span class="glyphicon glyphicon-exclamation-sign"></span>&nbsp;&nbsp;FAQ</a></li>
+                    <li runat="server" id="Li_ContactInfo"><a style="display: block;" href="<%= Page.ResolveUrl("~/Glossary/ContactInfo?modulecode=147")%>"><span class="glyphicon glyphicon-phone"></span>&nbsp;&nbsp;Contact Info</a></li>
+                    <li runat="server" id="Li_AskAnExpert"><a style="display: block;" href="<%= Page.ResolveUrl("~/Glossary/AskExpert?modulecode=148")%>"><span class="glyphicon glyphicon-bullhorn"></span>&nbsp;&nbsp;Ask an Expert</a></li>
+                    <li runat="server"><a style="display: block;" href="<%= Page.ResolveUrl("~/Login/Index?isReset=Y")%>"><span class="glyphicon glyphicon-off"></span>&nbsp;&nbsp;Logout</a></li>
+                </ul>
+            </div>--%>
+            <section class="rightsU_container clearfix">
+                <div class="leftPanel" id="pnlApprovalList">
+                    <h4>For Review</h4>
+                    <a class="close" href="#" onclick="javascript: panelVisible=true;togglePanelVisibility('pnlApprovalList');">
+                        <span class="Reviewclose">x</span></a>
+
+                    <div style="padding-left: 11px; padding-top: 14px;">
+                        <input type="text" name="srchCommonAppr" id="srchCommonAppr" style="width: 95%; font-size: 12px;" class="search" placeholder="Search by Title, Deal No., Licensee, Licensor" onkeyup="searchApproveList();" />
+                    </div>
+
+                    <div class="navigation_tabs">
+                        <div id="tabbable">
+                            <ul class="navLeft nav-tabsLeft nav-tabLeft pull-left">
+                                <li class="active" id="liAcq">
+                                    <a data-toggle="tab" href="#tabAcquisition" onclick="bindApprovalList('A')" role="tab">Acquisition</a>
+                                </li>
+                                <li class="" id="liMusic">
+                                    <a data-toggle="tab" href="#tabAcquisition" onclick="bindApprovalList('M')" role="tab">Music</a>
+                                </li>
+                                <li id="liSyn">
+                                    <a data-toggle="tab" href="#tabSyndication" onclick="bindApprovalList('S')" role="tab">Syndication</a>
+                                </li>
+                                <li id="liBoth">
+                                    <a data-toggle="tab" href="#tabBoth" onclick="bindApprovalList('B')" role="tab">All</a>
+                                </li>
+                            </ul>
+
+                            <div class="tab-content clearfix  scale_table_container" style="padding: 2px !important">
+                                <div class="tab-pane active" id="tabAcquisition">
+                                    <ul id="review" class="forReview"></ul>
+                                </div>
+                            </div>
+                        </div>
+                        <asp:HiddenField ID="hdnDir" runat="server" />
+                    </div>
+
+                </div>
+                <div class="leftPanel" id="pnlAvail"></div>
+                <div class="leftPanel" id="pnlMasters"></div>
+                <div class="leftPanel" id="pnlAmort"></div>
+                <div class="leftPanel" id="pnlMusic"></div>
+                <div class="leftPanel" id="pnlMusicHub"></div>
+                <div class="leftPanel" id="pnlGlossary"></div>
+                <div class="leftPanel" id="pnlReports"></div>
+                <div class="leftPanel" id="pnlUploads"></div>
+                <div class="leftPanel" id="pnlSettings"></div>
+                <div class="leftPanel" id="pnlIPR"></div>
+
+                <div class="container acq main_col" onclick="$('.leftPanel').css('left', panelHideCss);">
+                    <asp:ContentPlaceHolder ID="CphdBody" runat="server">
+                    </asp:ContentPlaceHolder>
+                </div>
+            </section>
+        </div>
+        <footer class="rightsU_footer clearfix">
+            <div class="footer_content pull-right">
+                <ul class="nav nav-pills pull-left">
+                    <li class="footer_link">
+                        <a href="http://www.uto.in/" target="_blank">Product of U-TO Solutions</a>
+                    </li>
+                    <%--<li class="footer_link">
+                        <a href="#">Contact Us</a>
+                    </li>--%>
+                    <li>&nbsp;Version No: <span>
+                        <asp:Label ID="lblVersion" runat="server"></asp:Label></span> | Last Modified On:   <span>
+                            <asp:Label ID="lblVersionDate" runat="server"></asp:Label></span></li>
+
+                </ul>
+                <div class="footer_logo pull-right">
+                </div>
+                <%--<div class="footer_logo pull-right">
+                    <img alt="Site-Logo" src="../Images/logo-rights.png" />
+                </div>--%>
+            </div>
+        </footer>
+
+    </form>
+    <div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup in" id="popNotification" role="dialog" tabindex="-1" aria-hidden="false">
+        <div class="modal-dialog">
+            <div><span class="glyphicon glyphicon-chevron-left"></span></div>
+            <div class="modal-content clearfix" id="PopEmailNotify">
+                <form class="form" id="movie_popup">
+                    <div class="form_fields acq">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#" onclick="updateCount()">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <span id="Email_Type" style="font-size: 1.7em; font-family: Oswald,Segoe; font-weight: 500; margin: inherit;"></span>
+                            &nbsp;<span style="font-size: 18px" class="openbracket">[</span><span title="UnSeen" style="font-size: 18px" id="unseenCount"></span><span class="openbracket" style="font-size: 18px">]</span>
+                        </div>
+                        <div class="modal_block" id="divEmail"></div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li class="pull-left">
+                                        <a class="btn btn-primary" href="#" id="btnPrev" onclick="showPrevious()">Previous</a>
+                                    </li>
+                                    <b>
+                                        <li style="position: relative; left: 38%!important; vertical-align: middle">
+                                            <span id="SeenEmailCount"></span>of <span id="TotalEmailLogCount"></span>
+                                        </li>
+                                    </b>
+                                    <li class="pull-right">
+                                        <a class="btn btn-primary" href="#" id="btnNext" onclick="showNext()">Next</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div>
+            <span class="glyphicon glyphicon-chevron-right"></span>
+        </div>
+    </div>
+</body>
+</html>
+<script>
+    (function ($) {
+        debugger
+        $(function () {
+            debugger;
+            $('.my-menu').sliderMenu();
+        });
+    })(jQuery);
+</script>
+<script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-36251023-1']);
+    _gaq.push(['_setDomainName', 'jqueryscript.net']);
+    _gaq.push(['_trackPageview']);
+
+    (function () {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+</script>
+<script>
+    /**
+     * jQuery Slider Menu Plugin
+     *
+     * @version 1.0.0
+     */
+    (function ($) {
+        'use strict';
+
+        $.fn.sliderMenu = function () {
+            debugger
+            $(this).each(function () {
+                var $menu = $(this).clone(),
+                    $newMenu = $('<div>').addClass('slider-menu'),
+                    $nav = $('<nav>').addClass('slider-menu__container')
+                                              .attr({
+                                                  'role': 'navigation',
+                                                  'aria-label': 'Menu'
+                                              }),
+                    currentLeft = 0;
+
+                // Build the new menu.
+                $menu.attr('class', 'slider-menu__menu');
+                $('ul', $menu).addClass('slider-menu__menu')
+                                .prepend('<li><a href="#" class="slider-menu__back"><span class="slider-menu__text">Back</span></a>')
+                                .parent().addClass('slider-menu--has-children');
+                $('li', $menu).addClass('slider-menu__item');
+                $('a', $menu).addClass('slider-menu__link');
+                $nav.html($menu);
+                $('[data-vertical="true"]', $nav).addClass('slider-menu__item--vertical');
+                $newMenu.html($nav);
+
+                // Interaction functionality.
+                $($newMenu).on('click', '.slider-menu__link', function (e) {
+                    var $clickedLink = $(this),
+                        $container = $clickedLink.closest('.slider-menu'),
+                        $parentItem = $clickedLink.parent('.slider-menu__item'),
+                        $parentMenu = $parentItem.parent('.slider-menu__menu'),
+                        $childMenu = $('> .slider-menu__menu', $parentItem);
+
+                    if ($childMenu.length || $clickedLink.hasClass('slider-menu__back')) {
+                        e.preventDefault();
+
+                        if ($parentItem.data('vertical')) {
+                            // Vertical menu.
+                            if ($childMenu.is(':visible')) {
+                                // Hide
+                                $parentMenu.addClass('slider-menu--active');
+                                $childMenu.hide();
+                                $container.css('height', $parentMenu.height());
+                                /*$childMenu.slideUp( 200, function() {
+                                  $container.css( 'height', $parentMenu.height() );
+                                });*/
+                                $clickedLink.removeClass('slider-menu__link--active-link');
+                            } else {
+                                // Show
+                                $childMenu.show();
+                                $container.css('height', $parentMenu.height());
+                                /*$childMenu.slideDown( 200, function() {
+                                  $container.css( 'height', $parentMenu.height() );
+                                });*/
+                                $clickedLink.addClass('slider-menu__link--active-link');
+                            }
+                        } else {
+                            $('.slider-menu__item--vertical .slider-menu__menu', $container).hide();
+                            $('.slider-menu__item--vertical .slider-menu__link', $container).removeClass('slider-menu__link--active-link');
+
+                            // Horizontal menu.
+                            if ($clickedLink.hasClass('slider-menu__back')) {
+                                // Go back.
+                                var $activeMenu = $parentMenu.parent().parent();
+
+                                currentLeft -= 100;
+
+                                $nav.css('left', '-' + currentLeft + '%');
+
+                                $parentMenu.removeClass('slider-menu--active');
+                                $activeMenu.addClass('slider-menu--active')
+                                           .parents('.slider-menu__menu').addClass('slider-menu--active');
+
+                                $container.css('height', $activeMenu.height());
+                            } else {
+                                currentLeft += 100;
+
+                                $nav.css('left', '-' + currentLeft + '%');
+
+                                $parentMenu.removeClass('slider-menu--active');
+                                $childMenu.addClass('slider-menu--active')
+                                          .parents('.slider-menu__menu').addClass('slider-menu--active');
+
+                                $container.css('height', $childMenu.height());
+                            }
+                        }
+                    }
+                });
+
+                // Replace the current menu.
+                $(this).replaceWith($newMenu);
+            });
+        };
+    })(jQuery);
+
+</script>
+<style>
+    .slimScrollDiv {
+        border: 1px solid #eee;
+    }
+
+    #nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        background: #fff;
+        padding: 15px;
+        border-radius: 20px;
+        width: 200px;
+    }
+
+        #nav ul {
+            list-style-type: square;
+            list-style-position: inside;
+            margin: 20px 0 0 0;
+            padding: 0;
+        }
+
+        #nav a {
+            text-decoration: none;
+            color: #000;
+        }
+
+            #nav a:hover {
+                text-decoration: underline;
+            }
+
+    #git-fork img {
+        position: fixed;
+        top: 0;
+        right: 0;
+        border: 0;
+        z-index: 999;
+    }
+</style>
+<script>
+
+    (function ($) {
+
+        $.fn.extend({
+            slimScroll: function (options) {
+                if (LayoutDirection_G == "RTL") {
+                    var defaults = {
+
+                        // width in pixels of the visible scroll area
+                        width: 'auto',
+
+                        // height in pixels of the visible scroll area
+                        height: '250px',
+
+                        // width in pixels of the scrollbar and rail
+                        size: '7px',
+
+                        // scrollbar color, accepts any hex/color value
+                        color: '#000',
+
+                        // scrollbar position - left/right
+                        position: 'left',
+
+                        // distance in pixels between the side edge and the scrollbar
+                        distance: '1px',
+
+                        // default scroll position on load - top / bottom / $('selector')
+                        start: 'top',
+
+                        // sets scrollbar opacity
+                        opacity: .4,
+
+                        // enables always-on mode for the scrollbar
+                        alwaysVisible: false,
+
+                        // check if we should hide the scrollbar when user is hovering over
+                        disableFadeOut: false,
+
+                        // sets visibility of the rail
+                        railVisible: false,
+
+                        // sets rail color
+                        railColor: '#333',
+
+                        // sets rail opacity
+                        railOpacity: .2,
+
+                        // whether  we should use jQuery UI Draggable to enable bar dragging
+                        railDraggable: true,
+
+                        // defautlt CSS class of the slimscroll rail
+                        railClass: 'slimScrollRail',
+
+                        // defautlt CSS class of the slimscroll bar
+                        barClass: 'slimScrollBar',
+
+                        // defautlt CSS class of the slimscroll wrapper
+                        wrapperClass: 'slimScrollDiv',
+
+                        // check if mousewheel should scroll the window if we reach top/bottom
+                        allowPageScroll: false,
+
+                        // scroll amount applied to each mouse wheel step
+                        wheelStep: 20,
+
+                        // scroll amount applied when user is using gestures
+                        touchScrollStep: 200,
+
+                        // sets border radius
+                        borderRadius: '7px',
+
+                        // sets border radius of the rail
+                        railBorderRadius: '7px'
+                    };
+                }
+                else {
+                    var defaults = {
+
+                        // width in pixels of the visible scroll area
+                        width: 'auto',
+
+                        // height in pixels of the visible scroll area
+                        height: '250px',
+
+                        // width in pixels of the scrollbar and rail
+                        size: '7px',
+
+                        // scrollbar color, accepts any hex/color value
+                        color: '#000',
+
+                        // scrollbar position - left/right
+                        position: 'right',
+
+                        // distance in pixels between the side edge and the scrollbar
+                        distance: '1px',
+
+                        // default scroll position on load - top / bottom / $('selector')
+                        start: 'top',
+
+                        // sets scrollbar opacity
+                        opacity: .4,
+
+                        // enables always-on mode for the scrollbar
+                        alwaysVisible: false,
+
+                        // check if we should hide the scrollbar when user is hovering over
+                        disableFadeOut: false,
+
+                        // sets visibility of the rail
+                        railVisible: false,
+
+                        // sets rail color
+                        railColor: '#333',
+
+                        // sets rail opacity
+                        railOpacity: .2,
+
+                        // whether  we should use jQuery UI Draggable to enable bar dragging
+                        railDraggable: true,
+
+                        // defautlt CSS class of the slimscroll rail
+                        railClass: 'slimScrollRail',
+
+                        // defautlt CSS class of the slimscroll bar
+                        barClass: 'slimScrollBar',
+
+                        // defautlt CSS class of the slimscroll wrapper
+                        wrapperClass: 'slimScrollDiv',
+
+                        // check if mousewheel should scroll the window if we reach top/bottom
+                        allowPageScroll: false,
+
+                        // scroll amount applied to each mouse wheel step
+                        wheelStep: 20,
+
+                        // scroll amount applied when user is using gestures
+                        touchScrollStep: 200,
+
+                        // sets border radius
+                        borderRadius: '7px',
+
+                        // sets border radius of the rail
+                        railBorderRadius: '7px'
+                    };
+                }
+
+                var o = $.extend(defaults, options);
+
+                // do it for every element that matches selector
+                this.each(function () {
+
+                    var isOverPanel, isOverBar, isDragg, queueHide, touchDif,
+                      barHeight, percentScroll, lastScroll,
+                      divS = '<div></div>',
+                      minBarHeight = 30,
+                      releaseScroll = false;
+
+                    // used in event handlers and for better minification
+                    var me = $(this);
+
+                    // ensure we are not binding it again
+                    if (me.parent().hasClass(o.wrapperClass)) {
+                        // start from last bar position
+                        var offset = me.scrollTop();
+
+                        // find bar and rail
+                        bar = me.siblings('.' + o.barClass);
+                        rail = me.siblings('.' + o.railClass);
+
+                        getBarHeight();
+
+                        // check if we should scroll existing instance
+                        if ($.isPlainObject(options)) {
+                            // Pass height: auto to an existing slimscroll object to force a resize after contents have changed
+                            if ('height' in options && options.height == 'auto') {
+                                me.parent().css('height', 'auto');
+                                me.css('height', 'auto');
+                                var height = me.parent().parent().height();
+                                me.parent().css('height', height);
+                                me.css('height', height);
+                            } else if ('height' in options) {
+                                var h = options.height;
+                                me.parent().css('height', h);
+                                me.css('height', h);
+                            }
+
+                            if ('scrollTo' in options) {
+                                // jump to a static point
+                                offset = parseInt(o.scrollTo);
+                            }
+                            else if ('scrollBy' in options) {
+                                // jump by value pixels
+                                offset += parseInt(o.scrollBy);
+                            }
+                            else if ('destroy' in options) {
+                                // remove slimscroll elements
+                                bar.remove();
+                                rail.remove();
+                                me.unwrap();
+                                return;
+                            }
+
+                            // scroll content by the given offset
+                            scrollContent(offset, false, true);
+                        }
+
+                        return;
+                    }
+                    else if ($.isPlainObject(options)) {
+                        if ('destroy' in options) {
+                            return;
+                        }
+                    }
+
+                    // optionally set height to the parent's height
+                    o.height = (o.height == 'auto') ? me.parent().height() : o.height;
+
+                    // wrap content
+                    var wrapper = $(divS)
+                      .addClass(o.wrapperClass)
+                      .css({
+                          position: 'relative',
+                          overflow: 'hidden',
+                          width: o.width,
+                          height: o.height
+                      });
+
+                    // update style for the div
+                    me.css({
+                        overflow: 'hidden',
+                        width: o.width,
+                        height: o.height
+                    });
+
+                    // create scrollbar rail
+                    var rail = $(divS)
+                      .addClass(o.railClass)
+                      .css({
+                          width: o.size,
+                          height: '100%',
+                          position: 'absolute',
+                          top: 0,
+                          display: (o.alwaysVisible && o.railVisible) ? 'block' : 'none',
+                          'border-radius': o.railBorderRadius,
+                          background: o.railColor,
+                          opacity: o.railOpacity,
+                          zIndex: 90
+                      });
+
+                    // create scrollbar
+                    var bar = $(divS)
+                      .addClass(o.barClass)
+                      .css({
+                          background: o.color,
+                          width: o.size,
+                          position: 'absolute',
+                          top: 0,
+                          opacity: o.opacity,
+                          display: o.alwaysVisible ? 'block' : 'none',
+                          'border-radius': o.borderRadius,
+                          BorderRadius: o.borderRadius,
+                          MozBorderRadius: o.borderRadius,
+                          WebkitBorderRadius: o.borderRadius,
+                          zIndex: 99
+                      });
+
+                    // set position
+                    var posCss = (o.position == 'right') ? { right: o.distance } : { left: o.distance };
+                    rail.css(posCss);
+                    bar.css(posCss);
+
+                    // wrap it
+                    me.wrap(wrapper);
+
+                    // append to parent div
+                    me.parent().append(bar);
+                    me.parent().append(rail);
+
+                    // make it draggable and no longer dependent on the jqueryUI
+                    if (o.railDraggable) {
+                        bar.bind("mousedown", function (e) {
+                            var $doc = $(document);
+                            isDragg = true;
+                            t = parseFloat(bar.css('top'));
+                            pageY = e.pageY;
+
+                            $doc.bind("mousemove.slimscroll", function (e) {
+                                currTop = t + e.pageY - pageY;
+                                bar.css('top', currTop);
+                                scrollContent(0, bar.position().top, false);// scroll content
+                            });
+
+                            $doc.bind("mouseup.slimscroll", function (e) {
+                                isDragg = false; hideBar();
+                                $doc.unbind('.slimscroll');
+                            });
+                            return false;
+                        }).bind("selectstart.slimscroll", function (e) {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            return false;
+                        });
+                    }
+
+                    // on rail over
+                    rail.hover(function () {
+                        showBar();
+                    }, function () {
+                        hideBar();
+                    });
+
+                    // on bar over
+                    bar.hover(function () {
+                        isOverBar = true;
+                    }, function () {
+                        isOverBar = false;
+                    });
+
+                    // show on parent mouseover
+                    me.hover(function () {
+                        isOverPanel = true;
+                        showBar();
+                        hideBar();
+                    }, function () {
+                        isOverPanel = false;
+                        hideBar();
+                    });
+
+                    // support for mobile
+                    me.bind('touchstart', function (e, b) {
+                        if (e.originalEvent.touches.length) {
+                            // record where touch started
+                            touchDif = e.originalEvent.touches[0].pageY;
+                        }
+                    });
+
+                    me.bind('touchmove', function (e) {
+                        // prevent scrolling the page if necessary
+                        if (!releaseScroll) {
+                            e.originalEvent.preventDefault();
+                        }
+                        if (e.originalEvent.touches.length) {
+                            // see how far user swiped
+                            var diff = (touchDif - e.originalEvent.touches[0].pageY) / o.touchScrollStep;
+                            // scroll content
+                            scrollContent(diff, true);
+                            touchDif = e.originalEvent.touches[0].pageY;
+                        }
+                    });
+
+                    // set up initial height
+                    getBarHeight();
+
+                    // check start position
+                    if (o.start === 'bottom') {
+                        // scroll content to bottom
+                        bar.css({ top: me.outerHeight() - bar.outerHeight() });
+                        scrollContent(0, true);
+                    }
+                    else if (o.start !== 'top') {
+                        // assume jQuery selector
+                        scrollContent($(o.start).position().top, null, true);
+
+                        // make sure bar stays hidden
+                        if (!o.alwaysVisible) { bar.hide(); }
+                    }
+
+                    // attach scroll events
+                    attachWheel(this);
+
+                    function _onWheel(e) {
+                        // use mouse wheel only when mouse is over
+                        if (!isOverPanel) { return; }
+
+                        var e = e || window.event;
+
+                        var delta = 0;
+                        if (e.wheelDelta) { delta = -e.wheelDelta / 120; }
+                        if (e.detail) { delta = e.detail / 3; }
+
+                        var target = e.target || e.srcTarget || e.srcElement;
+                        if ($(target).closest('.' + o.wrapperClass).is(me.parent())) {
+                            // scroll content
+                            scrollContent(delta, true);
+                        }
+
+                        // stop window scroll
+                        if (e.preventDefault && !releaseScroll) { e.preventDefault(); }
+                        if (!releaseScroll) { e.returnValue = false; }
+                    }
+
+                    function scrollContent(y, isWheel, isJump) {
+                        releaseScroll = false;
+                        var delta = y;
+                        var maxTop = me.outerHeight() - bar.outerHeight();
+
+                        if (isWheel) {
+                            // move bar with mouse wheel
+                            delta = parseInt(bar.css('top')) + y * parseInt(o.wheelStep) / 100 * bar.outerHeight();
+
+                            // move bar, make sure it doesn't go out
+                            delta = Math.min(Math.max(delta, 0), maxTop);
+
+                            // if scrolling down, make sure a fractional change to the
+                            // scroll position isn't rounded away when the scrollbar's CSS is set
+                            // this flooring of delta would happened automatically when
+                            // bar.css is set below, but we floor here for clarity
+                            delta = (y > 0) ? Math.ceil(delta) : Math.floor(delta);
+
+                            // scroll the scrollbar
+                            bar.css({ top: delta + 'px' });
+                        }
+
+                        // calculate actual scroll amount
+                        percentScroll = parseInt(bar.css('top')) / (me.outerHeight() - bar.outerHeight());
+                        delta = percentScroll * (me[0].scrollHeight - me.outerHeight());
+
+                        if (isJump) {
+                            delta = y;
+                            var offsetTop = delta / me[0].scrollHeight * me.outerHeight();
+                            offsetTop = Math.min(Math.max(offsetTop, 0), maxTop);
+                            bar.css({ top: offsetTop + 'px' });
+                        }
+
+                        // scroll content
+                        me.scrollTop(delta);
+
+                        // fire scrolling event
+                        me.trigger('slimscrolling', ~~delta);
+
+                        // ensure bar is visible
+                        showBar();
+
+                        // trigger hide when scroll is stopped
+                        hideBar();
+                    }
+
+                    function attachWheel(target) {
+                        if (window.addEventListener) {
+                            target.addEventListener('DOMMouseScroll', _onWheel, false);
+                            target.addEventListener('mousewheel', _onWheel, false);
+                        }
+                        else {
+                            document.attachEvent("onmousewheel", _onWheel)
+                        }
+                    }
+
+                    function getBarHeight() {
+                        // calculate scrollbar height and make sure it is not too small
+                        barHeight = Math.max((me.outerHeight() / me[0].scrollHeight) * me.outerHeight(), minBarHeight);
+                        bar.css({ height: barHeight + 'px' });
+
+                        // hide scrollbar if content is not long enough
+                        var display = barHeight == me.outerHeight() ? 'none' : 'block';
+                        bar.css({ display: display });
+                    }
+
+                    function showBar() {
+                        // recalculate bar height
+                        getBarHeight();
+                        clearTimeout(queueHide);
+
+                        // when bar reached top or bottom
+                        if (percentScroll == ~~percentScroll) {
+                            //release wheel
+                            releaseScroll = o.allowPageScroll;
+
+                            // publish approporiate event
+                            if (lastScroll != percentScroll) {
+                                var msg = (~~percentScroll == 0) ? 'top' : 'bottom';
+                                me.trigger('slimscroll', msg);
+                            }
+                        }
+                        else {
+                            releaseScroll = false;
+                        }
+                        lastScroll = percentScroll;
+
+                        // show only when required
+                        if (barHeight >= me.outerHeight()) {
+                            //allow window scroll
+                            releaseScroll = true;
+                            return;
+                        }
+                        bar.stop(true, true).fadeIn('fast');
+                        if (o.railVisible) { rail.stop(true, true).fadeIn('fast'); }
+                    }
+
+                    function hideBar() {
+                        // only hide when options allow it
+                        if (!o.alwaysVisible) {
+                            queueHide = setTimeout(function () {
+                                if (!(o.disableFadeOut && isOverPanel) && !isOverBar && !isDragg) {
+                                    bar.fadeOut('slow');
+                                    rail.fadeOut('slow');
+                                }
+                            }, 1000);
+                        }
+                    }
+
+                });
+
+                // maintain chainability
+                return this;
+            }
+        });
+
+        $.fn.extend({
+            slimscroll: $.fn.slimScroll
+        });
+
+    })(jQuery);
+
+</script>
+
+<script type="text/javascript">
+
+    $(function () {
+
+        $('#slimscroll').slimscroll();
+
+    });
+</script>
+<%--Email Notification Config releated script--%>

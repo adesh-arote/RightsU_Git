@@ -1,0 +1,62 @@
+﻿@model List<RightsU_Entities.Acq_Rights_Template>
+
+<table class="table table-bordered table-hover" id="tblMusicLink">
+    <thead>
+        <tr>
+            <th style="width:75%;">Template Name</th>
+            <th style="width:25%;">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Template_Name</td>
+                    <td align="center">
+
+                        @if (item.Is_Active == "Y")
+                        {
+                            var canDeactive = true;
+                            if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForEdit + "~"))
+                            {
+                                <a title="Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer;" onclick="BindPartialView('EDIT',@item.Acq_Rights_Template_Code)"></a>
+                            }
+                            if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForDeactivate + "~"))
+                            {
+                                if (canDeactive)
+                                {
+                                    <a title="Deactivate" class="glyphicon glyphicon-thumbs-down" style="cursor: pointer;" onclick="ActiveDeactiveAcq_Rights_Template(@item.Acq_Rights_Template_Code, 'N')"></a>
+
+                                }
+                                else
+                                {
+                                    <a title="" class="glyphicon glyphicon-thumbs-down disabled" onclick="return false;"></a>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForEdit + "~"))
+                            {
+                                <a title="Cannot Edit This Template As It Is Deactivated" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
+                            }
+                            if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForActivate + "~"))
+                            {
+                                <a title="Activate" class="glyphicon glyphicon-thumbs-up" style="cursor: pointer;" onclick="ActiveDeactiveAcq_Rights_Template(@item.Acq_Rights_Template_Code, 'Y')"></a>
+                            }
+                        }
+                        @*<a title="View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindPartialView('VIEW',@item.Acq_Rights_Template_Code)"></a>*@
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="2">No Record Found</td>
+            </tr>
+        }
+    </tbody>
+</table>

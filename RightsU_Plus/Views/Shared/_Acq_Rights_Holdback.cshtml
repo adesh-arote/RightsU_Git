@@ -1,0 +1,393 @@
+﻿@model RightsU_Entities.Acq_Deal_Rights_Holdback
+@using UTOFrameWork.FrameworkClasses;
+@{
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+
+    RightsU_Entities.Acq_Deal_Rights Obj_Acq_Deal_Rights = null;
+
+    if (Session["ACQ_DEAL_RIGHTS"] != null)
+    { Obj_Acq_Deal_Rights = (RightsU_Entities.Acq_Deal_Rights)Session["ACQ_DEAL_RIGHTS"]; }
+}
+
+<link rel="stylesheet" href="~/CSS/Rights_Tab.css" />
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.expandable').expander({
+            slicePoint: 40,
+            expandPrefix: '...',
+            expandText: '<span>read more</span>',
+            userCollapseText: '<span>[^]</span>',
+        });
+    });
+
+    function Holdback_Type_Change(Counter) {
+        if ($('input[name=optHBType_' + Counter + ']:radio:checked').val() == 'D') {
+            $('#divHBTypeDate_' + Counter).show();
+            $('#divHBTypeRelease_' + Counter).hide()
+        }
+        else {
+            $('#divHBTypeDate_' + Counter).hide();
+            $('#divHBTypeRelease_' + Counter).show()
+        }
+    }
+    function Cancel_Holdback(dummyPropery) {
+        Bind_Holdback();
+    }
+
+    function Delete_Holdback(dummyProperty) {
+        $('#dummyProperty').val(dummyProperty);
+        showAlert('I', "Are you sure want to delete this holdback?", 'OKCANCEL');
+        return true;
+    }
+    function Edit_Holdback(Counter) {
+        var Term = $('#Right_Type').val();
+        var Period = '';
+        var isTentative = 'No';
+        var PeriodTerm = '';
+
+        if (Term == YearBased) {
+            var txtStartDate = $('#Start_Date');
+            var txtEndDate = $('#End_Date');
+
+            if ($('#Is_Tentative').prop('checked')) {
+                isTentative = 'Yes';
+                Period = MakeDateFormate(txtStartDate.val());
+            }
+            else
+                Period = MakeDateFormate(txtStartDate.val()) + ' To ' + MakeDateFormate(txtEndDate.val());
+
+            PeriodTerm = $('#Term_YY').val() + ' Year' + $('#Term_MM').val() + ' Month';
+        }
+        else if (Term == Milestone) {
+            if ($("#txtMilestone_No_Of_Unit").val() != "")
+                PeriodTerm = $('#ddlMilestone_Type_Code option:selected').text() + ' Valid For ' + $("#txtMilestone_No_Of_Unit").val()
+                            + ' ' + $('#ddlMilestone_Unit_Type option:selected').text();
+
+            if ($('#Milestone_SD').text() != '' && $('#Milestone_ED').text() != '')
+                Period = MakeDateFormate($('#Milestone_SD').text()) + ' To ' + MakeDateFormate($('#Milestone_ED').text());
+        }
+        else if (Term == Perpetuity) {
+            if ($('#txtPerpetuity_Date').val() != "" && $('#txtPerpetuity_Date').val() != "DD/MM/YYYY") {
+                Period = MakeDateFormate($('#txtPerpetuity_Date').val());
+                PeriodTerm = 'Perpetuity';
+            }
+        }
+
+        var region_type = $("#rdoCountryHB").prop('checked') ? $("#rdoCountryHB").val() : $("#rdoTerritoryHB").val();
+        var region_Code = '';
+        region_type = region_type == "G" ? "T" : region_type;
+
+        if ($("#lbTerritory option:selected").length > 0) {
+            $("#lbTerritory option:selected").each(function () {
+                if (region_Code == '')
+                    region_Code = $(this).val();
+                else
+                    region_Code = region_Code + ',' + $(this).val();
+            });
+        }
+
+        var SL_Type = $("#rdoSubL").prop('checked') ? $("#rdoSubL").val() : $("#rdoSubLG").val();
+        var SL_Code = '';
+        if ($("#lbSub_Language option:selected").length > 0) {
+            $("#lbSub_Language option:selected").each(function () {
+                if (SL_Code == '')
+                    SL_Code = $(this).val();
+                else
+                    SL_Code = SL_Code + ',' + $(this).val();
+            });
+        }
+
+        var DL_Type = $("#rdoDubbingL").prop('checked') ? $("#rdoDubbingL").val() : $("#rdoDubbingLG").val();
+        var DL_Code = '';
+
+        if ($("#lbDub_Language option:selected").length > 0) {
+            $("#lbDub_Language option:selected").each(function () {
+                if (DL_Code == '')
+                    DL_Code = $(this).val();
+                else
+                    DL_Code = DL_Code + ',' + $(this).val();
+            });
+        }
+
+        var titles = $("#lbTitles option:selected").map(function () {
+            return $(this).text();
+        }).get().join();
+
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("Edit_Holdback", "Acq_Rights_Holdback")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                R_Type: region_type,
+                SL_Type: SL_Type,
+                DL_Type: DL_Type,
+                R_Code: region_Code,
+                SL_Code: SL_Code,
+                DL_Code: DL_Code,
+                DummyProperty: Counter,
+                Titles: titles,
+                Period: Period,
+                IsTentative: isTentative,
+                PeriodTerm: PeriodTerm,
+                strPlatform: $("#hdnTVCodes").val()
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                $('#popEditHB').html(result);
+                initializeChosen();
+                initializeDatepicker();
+                hideLoading();
+                $('#popEditHB').modal();
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    var counter = '';
+    var TmpstrPlts = '';
+    function BindPlatform_HB(dummyProperty, CallFrom, strPlts) {
+        counter = dummyProperty;
+        TmpstrPlts = strPlts;
+        showLoading();
+
+        
+        var hdnPlatform_Codes_HB = $('#hdnPlatform_Codes_HB_View').val();
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindPlatform_HB", "Acq_Rights_Holdback")',
+            data: ({
+                hdnPlatform_Codes_HB: TmpstrPlts,
+                dummyProperty: dummyProperty,
+                CallFrom: CallFrom
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                $('#tree_HB').html(result);
+                $('#popPlatformRights').modal();
+                hideLoading();
+            },
+            error: function (result) {
+                hideLoading();
+                alert('Error Validate_Save_Rights: ' + result.responseText);
+            }
+        });
+        return false;
+    }
+
+    function SavePlatform() {
+        if ($('#hdnPlatform_Codes_HB_' + counter).val() != '') {
+            var platformCodes = $('#hdnPlatform_Codes_HB_' + counter).val();
+            var length = platformCodes.replace(/0\,/g, '').split(',').length;
+            $('#lnkAddPlatform_' + counter).html(length + ' Selected');
+        }
+        else
+            $('#lnkAddPlatform_' + counter).html('Platform / Rights');
+        $('#popPlatformRights').hide();
+    }
+</script>
+<style>
+    .grid_item > ul > li.sub {width: 32%;}
+    .grid_item > ul > li.dub {width: 31%;}
+    .grid_item > ul > li.yes_no{width: 30%;}
+    .grid_item > ul > li.region {width: 40%;}
+    .grid_item > ul > li.action {width: 10%;}
+    .grid_item > ul > li.comment {width: 37%;}
+    .grid_item > ul > li.platform {width: 20%;}
+</style>
+<form id="frm_Save_Holdback" method="post">
+    <div class="deal clearfix">
+        @{
+            @Html.Hidden("Holdback_Type")
+            @Html.Hidden("hdnCounter")
+            @Html.Hidden("dummyProperty")
+            @Html.Hidden("Title_Language_Added_For_Holdback", ViewBag.Title_Language_Added_For_Holdback as string)
+
+            if (Obj_Acq_Deal_Rights.Acq_Deal_Rights_Holdback.Count() > 0)
+            {
+                string Counter = "0";
+                foreach (var objADRH in Obj_Acq_Deal_Rights.Acq_Deal_Rights_Holdback.Where(w => w.EntityState != RightsU_Entities.State.Deleted))
+                {
+                    Counter = objADRH.strDummyProp;
+            @Html.Hidden("hdnHoldback_Type_" + Counter, objADRH.Holdback_Type)
+            @Html.Hidden("hdnPlatform_Codes_HB_View", objADRH.strPlatformCodes)
+
+                    if (objADRH.EntityState != RightsU_Entities.State.Deleted)
+                    {
+            <div class="grid_item">
+                <ul>
+                    <li class="platform" title="Holdback On">
+                        <a id="lnkAddPlatform_@Counter" href="#" onclick="return BindPlatform_HB('@Counter','LIST','@objADRH.strPlatformCodes');">
+                            @objADRH.Acq_Deal_Rights_Holdback_Platform.Where(p => p.EntityState != RightsU_Entities.State.Deleted).Count().ToString() Platforms
+                        </a>
+                    </li>
+                    <li class="region" title="Region">
+                        @{RightsU_BLL.Country_Service objCTS = new RightsU_BLL.Country_Service(objLoginEntity.ConnectionStringName);
+                          string[] arr_Cname = objADRH.strCountryCodes.Split(',');
+                          string Region_Names = string.Join(", ", objCTS.SearchFor(SV => arr_Cname.Contains(SV.Country_Code.ToString())).Select(S => S.Country_Name));                                              
+                        }
+                        <div class="expandable">
+                            @Html.Label("Region_Names", Region_Names, new { @id = "lblRegion_Names" + Counter })
+                        </div>
+                    </li>
+                    <li class="yes_no">
+                        @if (objADRH.Holdback_Type == "D")
+                        {
+                            <label title="Holdback Type">Date</label>                        
+                        }
+                        else
+                        {
+                            <label title="Holdback Type">Release</label>
+                        }
+
+                        <span class="seperator">| </span>
+
+                        @if (objADRH.Holdback_Type == "D")
+                        {
+                            if (objADRH.Holdback_Release_Date != null)
+                            {
+                            @Html.Label("HoldbackReleaseDate", Convert.ToDateTime(objADRH.Holdback_Release_Date).ToString(GlobalParams.DateFormat_Display))                         
+                            }
+                        }
+                        else
+                        {
+                            <label>After</label>
+                            string str_RunAfterReleaseUnits = "";
+                            @Html.Label("lbl_HB_Run_After_Release_No", objADRH.HB_Run_After_Release_No.ToString() + ' ', new { @id = "lblHB_Run_After_Release_No_" + Counter })
+
+                            if (objADRH.HB_Run_After_Release_Units != null && objADRH.HB_Run_After_Release_Units != "")
+                            {
+                                switch (objADRH.HB_Run_After_Release_Units)
+                                {
+                                    case "1": str_RunAfterReleaseUnits = "Day";
+                                        break;
+                                    case "2": str_RunAfterReleaseUnits = "Week";
+                                        break;
+                                    case "3": str_RunAfterReleaseUnits = "Month";
+                                        break;
+                                    case "4": str_RunAfterReleaseUnits = "Year";
+                                        break;
+                                }
+
+                                if (objADRH.HB_Run_After_Release_No > 1)
+                                {
+                                    str_RunAfterReleaseUnits += "s";
+                                }
+                            }
+                            @Html.Label("str_RunAfterReleaseUnits", str_RunAfterReleaseUnits, new { @id = "lblstr_RunAfterReleaseUnits_" + Counter, @Title = "Holdback Period" })
+                            <label title="Holdback Period">On Theatrical</label>                      
+                        }
+
+                        <span class="seperator">| </span>
+
+                        @if (objADRH.Is_Title_Language_Right == null || objADRH.Is_Title_Language_Right == "Y")
+                        {
+                            <label title="Title Language">Yes</label>
+                        }
+                        else
+                        {
+                            <label title="Title Language">No</label>
+                        }
+                    </li>
+                    <li class="action">
+                        @if (ViewBag.CommandName_HB != GlobalParams.DEAL_MODE_VIEW && @ViewBag.CommandName_HB != GlobalParams.DEAL_MODE_APPROVE)
+                        {
+                            <a title="Edit" class="glyphicon glyphicon-pencil" onclick="Edit_Holdback('@Counter')"></a>
+                            <a title="Delete" class="glyphicon glyphicon-trash" onclick="return Delete_Holdback('@Counter')" ></a>
+                        }
+                        else
+                        {
+                            <label>&nbsp;</label>
+                        }
+                    </li>
+                </ul>
+                <ul>
+                    <li title="Subtitling" class="sub">
+                        @{RightsU_BLL.Language_Service objLS = new RightsU_BLL.Language_Service(objLoginEntity.ConnectionStringName);
+                          string Sub_Names = "";
+                          string Dub_Names = "";
+
+                          if (objADRH.strSubtitlingCodes != null && objADRH.strSubtitlingCodes != "")
+                          {
+                              string[] arr_SubNames = objADRH.strSubtitlingCodes.Split(',');
+                              Sub_Names = string.Join(", ", objLS.SearchFor(SV => arr_SubNames.Contains(SV.Language_Code.ToString())).Select(S => S.Language_Name));
+                          }
+
+                          if (objADRH.strDubbingCodes != null && objADRH.strDubbingCodes != "")
+                          {
+                              string[] arr_DubNames = objADRH.strDubbingCodes.Split(',');
+                              Dub_Names = string.Join(", ", objLS.SearchFor(SV => arr_DubNames.Contains(SV.Language_Code.ToString())).Select(S => S.Language_Name));
+                          }
+                        }
+
+                        <div class="expandable">
+                            @Html.Label("Sub_Names", Sub_Names, new { @id = "lblSub_Names" + Counter })
+                        </div>
+                    </li>
+                    <li title="Dubbing" class="dub">
+                        <div class="expandable">
+                            @Html.Label("Dub_Names", Dub_Names, new { @id = "lblSub_Names" + Counter })
+                        </div>
+                    </li>
+                    <li title="Holdback Comment" class="comment">
+                        <div class="expandable">
+                            @Html.Label("Holdback_Comment", Convert.ToString(objADRH.Holdback_Comment), new { @id = "lblHoldback_Comment_" + Counter })
+                        </div>
+                    </li>
+                </ul>
+            </div> 
+                    }
+                }
+            }
+        }
+    </div>
+</form>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade" id="popPlatformRights" role="dialog" tabindex="-1" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form">
+                <div class="form_wrapper">
+                    <div class="form_fields acq">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>Platform Rights</h2>
+                        </div>
+                        <div class="modal_block">
+                            <div id="tree_HB" class="treeClass">
+                            </div>
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li>
+                                        <a data-dismiss="modal" class="btn btn-primary" href="#">back</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div aria-labelledby="myModalLabel" id="popEditHB" class="form_wrapper modal fade in big_popup scroll" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+</div>
+

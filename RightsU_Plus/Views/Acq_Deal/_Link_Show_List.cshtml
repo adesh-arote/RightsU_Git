@@ -1,0 +1,184 @@
+﻿
+<style>
+    .form_wrapper
+    {
+        max-width: 630px;
+    }
+</style>
+<script type="text/javascript">
+
+    var URL_Search_Shows = '@Url.Action("Search_Shows", "Acq_Run_List")';
+    $(function () {
+        $("#txt_Channel_Program_Search").alphanum();
+        $('.rdbProgramOption').click(function () {
+            debugger;
+            $('#hdn_Check_Movie_Code').val('');
+            Search_Shows('R');
+        });
+    });
+    function Search_Shows(CallFrom) {
+        var checkedradio = "";
+        if (CallFrom == 'S' && $("#txt_Channel_Program_Search") != null && $("#txt_Channel_Program_Search") != undefined && $("#txt_Channel_Program_Search").val() == '') {
+            $("#txt_Channel_Program_Search").attr('required', true);
+            return false;
+        }
+
+        checkedradio = $('.modal_block input:radio:checked').val();
+        if (CallFrom != 'F')
+            showLoading();
+        else
+            checkedradio = "";
+
+        var Channel_Program_Search = '';
+        if ($("#txt_Channel_Program_Search") != null && $("#txt_Channel_Program_Search") != undefined && $("#txt_Channel_Program_Search").val() != undefined) {
+            Channel_Program_Search = $('#txt_Channel_Program_Search').val();
+
+        }
+        var acq_Deal_Run_Code = $('#hdn_Acq_Deal_Run_Code').val();
+        var UnCheck_Run_Shows_Code = $('#hdn_UnCheck_Run_Shows_Code').val() == undefined ? "0" : $('#hdn_UnCheck_Run_Shows_Code').val();
+        var channel_name = $('#lblChannel_Name').html();
+
+
+        $.ajax({
+            type: "POST",
+            url: URL_Search_Shows,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                selected_Acq_Deal_Run_Code: acq_Deal_Run_Code,
+                txtSearchPopup: Channel_Program_Search,
+                ChannelCode: $('#lblChannel_Name').html(),
+                UnCheck_Run_Shows_Code: $('#hdn_UnCheck_Run_Shows_Code').val(),
+                Selected_Acq_Deal_Movie_Code: $('#hdn_Check_Movie_Code').val(),
+                Selected_Title_Codes: $('#hdn_Selected_Title_Codes').val(),
+                checkedRadio: checkedradio
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger;
+                    $('#dv_Run_Link_Show').html(result);
+                    var j = $('#dv_Run_Link_Show').find('#hdn_Data_For').val();
+                    $("input[name=Data_For][value=" + j + "]").attr('checked', 'checked');
+                    if (CallFrom == "F")
+                        $("input[name=Data_For]").not(':checked').attr('disabled', 'disabled');
+                        $('#lbl_No_of_Shows').text($("#tbl_List_Link_Shows > tbody > tr").length);
+                    Count_No_Of_Selected_Rows('F', '', 0);
+                    OpenPopup('popupLinkShow');
+                    if (CallFrom != 'F')
+                        hideLoading();
+                }
+            },
+            error: function (result) {
+                alert('Error_Search_Shows');
+                hideLoading();
+            }
+        });
+    }
+    function Save_Link_Shows() {
+        var checkedradio = $('.modal_block input:radio:checked').val();
+        $('#hdn_Data_For').val(checkedradio);
+        ClosePopup('popupLinkShow');
+        hideLoading();
+        var msg = 'Shows linked successfully.';
+        showAlert("S", msg);
+        return false;
+    }
+    function OnBegin() {
+        debugger;
+        showLoading();
+    }
+</script>
+<div class="modal-dialog">
+    <div class="modal-content clearfix">
+
+        @*@Html.Hidden("hdn_Data_For", Opt)*@
+        @using (Ajax.BeginForm("Save_List_Shows", "Acq_Run_List", new AjaxOptions { OnSuccess = "Save_Link_Shows();", OnBegin = "OnBegin();" }))
+        {
+            <div class="form_wrapper acq">
+                <div class="form_fields">
+                    <div class="modal_block modal_header">
+                        <a class="close" data-dismiss="modal" href="#">
+                            <span>×</span>
+                            <span class="sr-only">Close</span>
+                        </a>
+                        @if (ViewBag.Deal_Mode == UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_EDIT)
+                        {
+                            <h2>Link Shows</h2>
+                        }
+                        else
+                        {
+                            <h2>View Linked Shows</h2>
+                        }
+                    </div>
+                    <div class="modal_block">
+                        <ul>
+                            <li style="display: inline-block;">
+                                <label class="bold">Title</label>
+                                <div class="expandable">
+                                    <span id="lblTitle_Name"></span>
+                                </div>
+                                @Html.Hidden("hdn_UnCheck_Run_Shows_Code")
+                                @Html.Hidden("hdn_Check_Movie_Code")
+                                @Html.Hidden("hdn_Acq_Deal_Run_Code")
+                                @Html.Hidden("hdn_Selected_Title_Codes")
+                            </li>
+                            <li style="float: right; display: inline-block;">
+                                <label class="bold">Channel</label>
+                                <div class="expandable">
+                                    <span id="lblChannel_Name"></span>
+                                </div>
+                            </li>
+                        </ul>
+                        <ul style="clear: both;">
+                            <li>
+                                @if (ViewBag.Deal_Mode != UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_VIEW)
+                                {
+                                    @Html.TextBox("Channel_Program_Search", "", new { @id = "txt_Channel_Program_Search", @maxlength = 30 })
+                                    <input type="button" class="button" value="Search" onclick="return Search_Shows('S');" />
+                                }
+                            </li>
+                            <li>
+                                @if (ViewBag.Deal_Mode != UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_VIEW)
+                                {
+                                    <span style="margin-right: 20px;"></span>@Html.RadioButton("Data_For", "P", true, new { id = "rdbProgram", @class = "rdbProgramOption" }) @:Programwise 
+                                    <span style="margin-right: 20px;"></span>@Html.RadioButton("Data_For", "E", new { id = "rdbProgramwithEpis", @class = "rdbProgramOption" }) @:Program with Episode
+                                }
+                            </li>
+                            <li>
+                                <label class="bold">No. of Shows:</label>
+                                <span id="lbl_No_of_Shows">NA</span>
+                                @if (ViewBag.Deal_Mode != UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_VIEW)
+                                {
+                                    <label class="bold" style="margin-left: 20px;">Selected Shows:</label>
+                                    <span id="lbl_No_of_Selected_Rows">NA</span>
+                                }
+                            </li>
+                        </ul>
+                        <div id="dv_Run_Link_Show">
+                        </div>
+                    </div>
+                    <div class="modal_block_full">
+                        <div class="form_links">
+                            @if (ViewBag.Deal_Mode != UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_VIEW)
+                            {
+                                <ul class="form_link_nav clearfix">
+                                    <li>
+                                        @*<input type="button" id="btnSave" value="Save" onclick="return Save_Link_Shows();" class="btn btn-primary" />*@
+                                        <input type="submit" id="btnSave_Link_Show" value="Save" class="btn btn-primary" onclick="return RemoveAttr();" />
+                                    </li>
+                                    <li>
+                                        <a data-dismiss="modal" class="btn btn-primary" href="#">cancel</a>
+                                    </li>
+                                </ul>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

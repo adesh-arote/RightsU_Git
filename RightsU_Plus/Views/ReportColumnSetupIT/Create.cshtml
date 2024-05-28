@@ -1,0 +1,508 @@
+﻿@model RightsU_Entities.Report_Column_Setup_IT
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<script>
+    $(document).ready(function () {
+
+        $('#IsPartofSelectOnly').change(function () {
+            $('#IsPartofSelectOnly').removeAttr("style", "border-color: red; width:50%;");
+            $('#IsPartofSelectOnly').addClass("chosen-single");
+            $('#IsPartofSelectOnly').css("width", "50%");
+        })
+
+        $('#DisplayType').change(function () {
+            $('#DisplayType').removeAttr("style", "border-color: red; width:50%;");
+            $('#DisplayType').addClass("chosen-single");
+            $('#DisplayType').css("width", "50%");
+        })
+        
+    });
+</script>
+
+<script>
+    @*var URL_SaveReportColumn = '@Url.Action("Create", "ReportColumnSetupIT")';*@
+    var URL_Index = '@Url.Action("Index", "ReportColumnSetupIT")';
+
+    function SaveReportColumn() {
+        debugger;
+        var returnVal = true;
+        var viewName = $('#ViewName').val();
+        var nameInDB = $('#NameInDB').val();
+        var displayName = $('#DisplayName').val();
+        var valuedAs = $('#ValuedAs').val();
+        var displayOrder = $('#DisplayOrder').val();
+        var isPartofSelectOnly = $('#IsPartofSelectOnly').val();
+        var listSource = $('#ListSource').val();
+        var lookupColumn = $('#LookupColumn').val();
+        var displayColumn = $('#DisplayColumn').val();
+        var rightCode = $('#RightCode').val();
+        var maxLength = $("#MaxLength").val();
+        var whCondition = $("#WhCondition").val();
+        var validOpList = $("#ValidOpList").val();
+        var alternateConfigCode = $("#AlternateConfigCode").val();
+        var displayType = $("#DisplayType").val();
+
+        if (viewName == "") {
+            $('#ViewName').val('').attr('required', true)
+            returnVal = false;
+        }
+        if (nameInDB == "") {
+            $('#NameInDB').val('').attr('required', true)
+            returnVal = false;
+        }
+        if (displayName == "") {
+            $('#DisplayName').val('').attr('required', true)
+            returnVal = false;
+        }
+        if (valuedAs == "") {
+            $('#ValuedAs').val('').attr('required', true)
+            returnVal = false;
+        }
+        if (displayOrder == "") {
+            $('#DisplayOrder').val('').attr('required', true)
+            returnVal = false;
+        }
+        if (isPartofSelectOnly == "") {
+            $('#IsPartofSelectOnly').val('').attr("style", "border-color: red; width:50%;")
+            returnVal = false;
+        }
+        if (listSource == "") {
+            $('#ListSource').val('').attr('required', true)
+            returnVal = false;
+        }
+        if (lookupColumn == "") {
+            $('#LookupColumn').val('').attr('required', true)
+            returnVal = false;
+        }
+        if (displayColumn == "") {
+            $('#DisplayColumn').val('').attr('required', true)
+            returnVal = false;
+        }
+        //if (rightCode == "") {
+        //    $('#RightCode').val('').attr('required', true)
+        //    returnVal = false;
+        //}
+        //if (maxLength == "") {
+        //    $('#MaxLength').val('').attr('required', true)
+        //    returnVal = false;
+        //}
+        //if (whCondition == "") {
+        //    $('#WhCondition').val('').attr('required', true)
+        //    returnVal = false;
+        //}
+        //if (validOpList == "") {
+        //    $('#ValidOpList').val('').attr('required', true)
+        //    returnVal = false;
+        //}
+        if (alternateConfigCode == "") {
+            $('#AlternateConfigCode').val('').attr('required', true)
+            returnVal = false;
+        }
+        if (displayType == "") {
+            $('#DisplayType').val('').attr("style", "border-color: red; width:50%;")
+            returnVal = false;
+        }
+
+        if ("@ViewBag.Title" == "Edit") {
+            var URL_SaveReportColumn = '@Url.Action("Edit", "ReportColumnSetupIT")';
+        }
+        else {
+            var URL_SaveReportColumn = '@Url.Action("Create", "ReportColumnSetupIT")';
+        }
+
+        if (returnVal) {
+            $.ajax({
+                type: "POST",
+                url: URL_SaveReportColumn,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    View_Name: viewName,
+                    Name_In_DB: nameInDB,
+                    Display_Name: displayName,
+                    Valued_As: valuedAs,
+                    Display_Order: displayOrder,
+                    IsPartofSelectOnly: isPartofSelectOnly,
+                    List_Source: listSource,
+                    Lookup_Column: lookupColumn,
+                    Display_Column: displayColumn,
+                    Right_Code: rightCode,
+                    Max_Length: maxLength,
+                    WhCondition: whCondition,
+                    ValidOpList: validOpList ,
+                    Alternate_Config_Code: alternateConfigCode,
+                    Display_Type: displayType
+
+                }),
+                async: false,
+                success: function (result) {
+                    if (result.Status == "S") {
+                        //$('#hdnAction').val("");
+                        showLoading();
+                        window.location.href = URL_Index;
+                        }
+                    else {
+                        showAlert("E", result.Message);
+                    }
+                }
+            });
+        }
+    }
+
+    function addNumeric() {
+        $(".numberOnly").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
+</script>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="main_section">
+        <section class="rightsU_container clearfix">
+            <div class="container acq main_col">
+                <div class="title_block dotted_border clearfix">
+                    @if (ViewBag.Title == "Create")
+                    {
+                        <h2>Create Report Column Setup</h2>
+                    }
+                    @if (ViewBag.Title == "Edit")
+                    {
+                        <h2>Edit Report Column Setup</h2>
+                    }
+                    @if (ViewBag.Title == "View")
+                    {
+                        <h2>Report Column Setup Details</h2>
+                    }
+                    <hr />
+                    <br />
+                    <table class="table table-hover">
+                        <tbody>
+                            <tr>
+                                <td style="width:20%">
+                                    <b>View Name</b>
+                                </td>
+                                <td style="width:25%;">
+                                    @if (ViewBag.Title == "View")
+                                    {
+                                        @Html.DisplayFor(model => model.View_Name)
+                                    }
+                                    else if (Model != null)
+                                    {
+                                        <input type="text" id="ViewName" value="@Model.View_Name" class="form-control input-sm" style="width:50%;" />
+                                        @*@Html.TextBoxFor(model => model.View_Name, new { htmlAttributes = new { @id = "ViewName", @class = "form-control input-sm", @autocomplete = "off" } })*@
+                                    }
+                                    else
+                                    {
+                                        <input type="text" id="ViewName" class="form-control input-sm" style="width:50%;" />
+                                    }
+                                </td>
+                                <td style="width:20%">
+                                    <b>Name In DB</b>
+                                </td>
+                                <td style="width:25%;">
+                                    @if (ViewBag.Title == "View")
+                                    {
+                                        @Html.DisplayFor(model => model.Name_In_DB)
+                                    }
+                                    else if (Model != null)
+                                    {
+                                        <input type="text" id="NameInDB" value="@Model.Name_In_DB" class="form-control input-sm" style="width:50%;" />
+                                        @*@Html.TextBoxFor(model => model.Name_In_DB, new { htmlAttributes = new { @id = "NameInDB", @class = "form-control input-sm", @autocomplete = "off" } })*@
+                                    }
+                                    else
+                                    {
+                                        <input type="text" id="NameInDB" class="form-control input-sm" style="width:50%;" />
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:20%">
+                                    <b>Display Name</b>
+                                </td>
+                                <td style="width:25%;">
+                                    @if (ViewBag.Title == "View")
+                                    {
+                                        @Html.DisplayFor(model => model.Display_Name)
+                                    }
+                                    else if (Model != null)
+                                    {
+                                        <input type="text" id="DisplayName" value="@Model.Display_Name" class="form-control input-sm" style="width:50%;" />
+                                        @*@Html.TextBoxFor(model => model.Display_Name, new { htmlAttributes = new { @id = "DisplayName", @class = "form-control input-sm", @autocomplete = "off" } })*@
+                                    }
+                                    else
+                                    {
+                                        <input type="text" id="DisplayName" class="form-control input-sm" style="width:50%;" />
+                                    }
+                                </td>
+                                <td style="width:20%">
+                                    <b>Valued As</b>
+                                </td>
+                                <td style="width:25%;">
+                                    @if (ViewBag.Title == "View")
+                                    {
+                                        @Html.DisplayFor(model => model.Valued_As)
+                                    }
+                                    else if (Model != null)
+                                    {
+                                        <input class="form-control input-sm numberOnly" type="text" id="ValuedAs" value="@Model.Valued_As" onclick="addNumeric()" style="width:50%;" />
+                                        @*@Html.TextBoxFor(model => model.Valued_As, new { htmlAttributes = new { @id = "ValuedAs", @class = "form-control input-sm", @autocomplete = "off" } })*@
+                                    }
+                                    else
+                                    {
+                                        <input class="form-control input-sm numberOnly" type="text" id="ValuedAs" onclick="addNumeric()" style="width:50%;" />
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:20%">
+                                    <b>Display Order</b>
+                                </td>
+                                <td style="width:25%;">
+                                    @if (ViewBag.Title == "View")
+                                    {
+                                        @Html.DisplayFor(model => model.Display_Order)
+                                    }
+                                    else if (Model != null)
+                                    {
+                                        <input class="form-control input-sm numberOnly" id="DisplayOrder" value="@Model.Display_Order" onclick="addNumeric()" style="width:50%;" type="text">
+                                        @*@Html.EditorFor(model => model.Display_Order, new { htmlAttributes = new { @id = "DisplayOrder", @class = "form-control input-sm", @autocomplete = "off" } })*@
+                                    }
+                                    else
+                                    {
+                                        <input class="form-control input-sm numberOnly" id="DisplayOrder" onclick="addNumeric()" style="width:50%;" type="text">
+                                    }
+                                </td>
+                                <td style="width:20%">
+                                    <b>Is Part of Select Only?</b>
+                                </td>
+                                <td style="width:25%;">
+                                    @if (ViewBag.Title == "View")
+                                    {
+                                        if (Model.IsPartofSelectOnly == "Y")
+                                        {
+                                            <span>Yes</span>
+                                        }
+                                        else
+                                        {
+                                            <span>No</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        @Html.DropDownListFor(model => model.IsPartofSelectOnly, new List<SelectListItem>
+                                        {
+                                            new SelectListItem{Text = "Yes", Value = "Y"},
+                                            new SelectListItem{Text = "No", Value = "N"},
+                                        }, "--Please Select--", htmlAttributes: new { @id = "IsPartofSelectOnly", @class = "chosen-single", @style = "width:50%; text-align:center;" })
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:20%">
+                                    <b>List Source</b>
+                                </td>
+                                <td style="width:25%;">
+                                    @if (ViewBag.Title == "View")
+                                    {
+                                        @Html.DisplayFor(model => model.List_Source)
+                                    }
+                                    else if (Model != null)
+                                    {
+                                        <input type="text" id="ListSource" value="@Model.List_Source" class="form-control input-sm" style="width:50%;" />
+                                        @*@Html.TextBoxFor(model => model.List_Source, new { htmlAttributes = new { @id = "ListSource", @class = "form-control input-sm", @autocomplete = "off" } })*@
+                                    }
+                                    else
+                                    {
+                                        <input type="text" id="ListSource" class="form-control input-sm" style="width:50%;" />
+                                    }
+                                </td>
+                                <td style="width:20%">
+                                    <b>Lookup Column</b>
+                                </td>
+                                <td style="width:25%;">
+                                    @if (ViewBag.Title == "View")
+                                    {
+                                        @Html.DisplayFor(model => model.Lookup_Column)
+                                    }
+                                    else if (Model != null)
+                                    {
+                                        <input type="text" id="LookupColumn" value="@Model.Lookup_Column" class="form-control input-sm" style="width:50%;" />
+                                        @*@Html.TextBoxFor(model => model.Lookup_Column, new { htmlAttributes = new { @id = "LookupColumn", @class = "form-control input-sm", @autocomplete = "off" } })*@
+                                    }
+                                    else
+                                    {
+                                        <input type="text" id="LookupColumn" class="form-control input-sm" style="width:50%;" />
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:20%">
+                                    <b>Display Column</b>
+                                </td>
+                                <td style="width:25%;">
+                                    @if (ViewBag.Title == "View")
+                                    {
+                                        @Html.DisplayFor(model => model.Display_Column)
+                                    }
+                                    else if (Model != null)
+                                    {
+                                        <input type="text" id="DisplayColumn" value="@Model.Display_Column" class="form-control input-sm" style="width:50%;" />
+                                        @*@Html.TextBoxFor(model => model.Display_Column, new { htmlAttributes = new { @id = "DisplayColumn", @class = "form-control input-sm" } })*@
+                                    }
+                                    else
+                                    {
+                                        <input type="text" id="DisplayColumn" class="form-control input-sm" style="width:50%;" />
+                                    }
+                                </td>
+                                <td style="width:20%">
+                                    <b>Right Code</b>
+                                </td>
+                                <td style="width:25%;">
+                                    @if (ViewBag.Title == "View")
+                                    {
+                                        @Html.DisplayFor(model => model.Right_Code)
+                                    }
+                                    else if (Model != null)
+                                    {
+                                        <input class="form-control input-sm numberOnly" id="RightCode" value="@Model.Right_Code" onclick="addNumeric()" style="width:50%;" type="text">
+                                        @*@Html.EditorFor(model => model.Right_Code, new { htmlAttributes = new { @id = "RightCode", @class = "form-control input-sm", @autocomplete = "off" } })*@
+                                    }
+                                    else
+                                    {
+                                        <input class="form-control input-sm numberOnly" id="RightCode" onclick="addNumeric()" style="width:50%;" type="text">
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:20%">
+                                    <b>Max Length</b>
+                                </td>
+                                <td style="width:25%;">
+                                    @if (ViewBag.Title == "View")
+                                    {
+                                        @Html.DisplayFor(model => model.Max_Length)
+                                    }
+                                    else if (Model != null)
+                                    {
+                                        <input type="text" id="MaxLength" value="@Model.Max_Length" class="form-control input-sm" style="width:50%;" />
+                                        @*@Html.TextBoxFor(model => model.Max_Length, new { htmlAttributes = new { @id = "MaxLength", @class = "form-control input-sm", @autocomplete = "off" } })*@
+                                    }
+                                    else
+                                    {
+                                        <input type="text" id="MaxLength" class="form-control input-sm" style="width:50%;" />
+                                    }
+                                </td>
+                                <td style="width:20%">
+                                    <b>Wh Condition</b>
+                                </td>
+                                <td style="width:25%;">
+                                    @if (ViewBag.Title == "View")
+                                    {
+                                        @Html.DisplayFor(model => model.WhCondition)
+                                    }
+                                    else if (Model != null)
+                                    {
+                                        <input type="text" id="WhCondition" value="@Model.WhCondition" class="form-control input-sm" style="width:50%;" />
+                                        @*@Html.TextBoxFor(model => model.WhCondition, new { htmlAttributes = new { @id = "WhCondition", @class = "form-control input-sm", @autocomplete = "off" } })*@
+                                    }
+                                    else
+                                    {
+                                        <input type="text" id="WhCondition" class="form-control input-sm" style="width:50%;" />
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:20%">
+                                    <b>Valid OpList</b>
+                                </td>
+                                <td style="width:25%;">
+                                    @if (ViewBag.Title == "View")
+                                    {
+                                        @Html.DisplayFor(model => model.ValidOpList)
+                                    }
+                                    else if (Model != null)
+                                    {
+                                        <input type="text" id="ValidOpList" value="@Model.ValidOpList" class="form-control input-sm" style="width:50%;" />
+                                        @*@Html.TextBoxFor(model => model.ValidOpList, new { htmlAttributes = new { @id = "ValidOpList", @class = "form-control input-sm", @autocomplete = "off" } })*@
+                                    }
+                                    else
+                                    {
+                                        <input type="text" id="ValidOpList" class="form-control input-sm" style="width:50%;" />
+                                    }
+                                </td>
+                                <td style="width:20%">
+                                    <b>Alternate Config Code</b>
+                                </td>
+                                <td style="width:25%;">
+                                    @if (ViewBag.Title == "View")
+                                    {
+                                        @Html.DisplayFor(model => model.Alternate_Config_Code)
+                                    }
+                                    else if (Model != null)
+                                    {
+                                        <input type="text" id="AlternateConfigCode" value="@Model.Alternate_Config_Code" class="form-control input-sm" style="width:50%;" />
+                                        @*@Html.TextBoxFor(model => model.Alternate_Config_Code, new { htmlAttributes = new { @id = "AlternateConfigCode", @class = "form-control input-sm", @autocomplete = "off" } })*@
+                                    }
+                                    else
+                                    {
+                                        <input type="text" id="AlternateConfigCode" class="form-control input-sm" style="width:50%;" />
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:20%">
+                                    <b>Display Type</b>
+                                </td>
+                                <td style="width:25%;">
+                                    @if (ViewBag.Title == "View")
+                                    {
+                                        @Html.DisplayFor(model => model.Display_Type)
+                                    }
+                                    else
+                                    {
+                                        @Html.DropDownListFor(m => m.Display_Type, new List<SelectListItem>
+                                        {
+                                            new SelectListItem{Text = "PR", Value = "PR"},
+                                            new SelectListItem{Text = "RP", Value = "RP"},
+                                            new SelectListItem{Text = "AR", Value = "AR"}
+                                        }, "---Please Select---", htmlAttributes: new { @id = "DisplayType", @class = "chosen-single", @style = "width:50%; text-align:center;" })
+                                    }
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div>
+                        <div style="margin-top:20px; margin-bottom:20px;">
+                            @if (ViewBag.Title == "Create")
+                            {
+                                <input type="button" value="Save" class="btn btn-primary" style="width:100px;" onclick="SaveReportColumn()" />
+                            }
+                            @if (ViewBag.Title == "Edit")
+                            {
+                                <input type="button" value="Update" class="btn btn-primary" style="width:100px;" onclick="SaveReportColumn()" />
+                            }
+                            @Html.ActionLink("Cancel", "Index", "", new { @class = "btn btn-primary", style = "width:100px;" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+}
+

@@ -1,0 +1,86 @@
+﻿@model IEnumerable<RightsU_Entities.Notifications>
+@using UTOFrameWork.FrameworkClasses
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+    int i = 0;
+}
+
+<div class="tab-content clearfix table-wrapper scale_table_container">
+    <div class="scale_table_block">
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>
+                        Sr.No
+                    </th>
+                    <th>
+                        Event
+                    </th>
+                    <th>
+                        Platform
+                    </th>
+                    <th>
+                        Message Type
+                    </th>
+                    <th style="width: 20%">
+                        Message To
+                    </th>
+
+                    <th style="width: 20%">
+                        Sent Date
+                    </th>
+                    <th style="width: 20%">
+                        Message/Status
+                    </th>
+                </tr>
+            </thead>
+
+            @foreach (var item in Model)
+            {
+                i++;
+                <tr style="text-align:center">
+                    <td>@i </td>
+                    <td>
+                        @if (item.Email_Config != null)
+                        {
+                            if (item.Email_Config.Email_Type != null)
+                            {
+                                @Html.DisplayFor(modelItem => item.Email_Config.Email_Type)
+                            }
+                        }
+                    </td>
+                    <td>
+                        @if (item.Event_Platform != null)
+                        {
+                            if (item.Event_Platform.Short_Code != null)
+                            {
+                                @Html.DisplayFor(modelItem => item.Event_Platform.Short_Code)
+                            }
+                        }
+                    </td>
+                    <td>
+                        @Session["MessageType"]
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Email)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CreatedOn)
+                    </td>
+                    <td>
+                        <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="MessagePopup(@item.NotificationsCode, '@Session["MessageType"]')"></a>
+                        <a title="Status" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="StatusPopup(@item.NotificationsCode, '@item.Event_Platform.Short_Code')"></a>
+                    </td>
+                </tr>
+            }
+
+        </table>
+    </div>
+</div>
+
+
+

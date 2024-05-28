@@ -1,0 +1,147 @@
+﻿
+@model IEnumerable<RightsU_Entities.USP_Insert_Music_Title_Import_UDT>
+@using UTOFrameWork.FrameworkClasses;
+
+<script>
+    $(document).ready(function () {
+        var v = '@ViewBag.Message';
+        if (v != '') {
+            showAlert("a", v);
+        }
+        $('.divImport').show();
+        $('#lblRecordCount').text('@ViewBag.RecordCount');
+        initializeTooltip();
+    });
+    $('.expandable').expander({
+        slicePoint: 75,
+        expandPrefix: '',
+        expandText: ' read more',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+    var IsCall = 'Y';
+    function SetPaging() {
+        debugger;
+        var txtPageSize = $('#txtPageSize').val();
+        IsCall = 'N';
+        var PageNo, recordCnt;
+
+        if ('@ViewBag.PageNo' != null)
+            PageNo = '@ViewBag.PageNo';
+
+        if ('@ViewBag.RecordCount' != null)
+            recordCnt = '@ViewBag.RecordCount';
+
+        PageNo = PageNo - 1;
+
+        var opt = { callback: pageselectCallback };
+        opt["items_per_page"] = parseInt(txtPageSize);
+        opt["num_display_entries"] = 5;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = PageNo;
+        $("#Pagination").pagination(recordCnt, opt);
+    }
+
+    function pageselectCallback(page_index, jq) {
+        $('#hdnPageNo').val(page_index);
+        debugger;
+        if (IsCall == 'Y') {
+            PopulateErrorGrid(page_index);
+        }
+        else
+            IsCall = 'Y';
+    }
+   
+</script>
+<style>
+    /*#content {
+        margin-top: 100px;
+    }*/
+    .hd {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 320px;
+        height: 60px;
+    }
+
+    .scroll {
+        border: 0;
+        border-collapse: collapse;
+    }
+
+        .scroll tr {
+            display: flex;
+        }
+
+        .scroll td {
+            padding: 3px;
+            /*flex: 1 auto;*/
+            border: 1px solid #c4c2c2;
+            width: 1px;
+            word-wrap: break;
+        }
+
+        .scroll thead tr:after {
+            content: '';
+            overflow-y: scroll;
+            visibility: visible;
+            width: 0%;
+            height: 0;
+        }
+
+        .scroll thead th {
+            /*flex: 1 auto;*/
+            display: block;
+            border: 1px solid #c4c2c2;
+        }
+
+        .scroll tbody {
+            display: block;
+            width: 100%;
+            overflow-y: scroll;
+            max-height: 550px;
+        }
+</style>
+
+<div class="tab-content clearfix table-wrapper scale_table_container">
+    <div class="scale_table_block">
+        <table class="table table-bordered table-hover" id="tblImport">
+            <thead>
+                <tr>
+                    <th style="width:10%;">Excel Line No.</th>
+                    <th style="width:15%;">Music Track</th>
+                    <th style="width:10%;">Movie/Album</th>
+                    <th style="width:12%;">Music Language</th>
+                    <th style="width:10%;">Music Label</th>
+                    <th style="width:12%;">Movie Star Cast</th>
+                    <th style="width:13%;">Movie/Album Type</th>
+                    <th style="width:18%;">Error Messages</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Count() != 0)
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td align="center">@item.Line_Number</td>
+                            <td>@item.Music_Title_Name</td>
+                            <td>@item.Movie_Album</td>
+                            <td>@item.Title_Language</td>
+                            <td>@item.Music_Label</td>
+                            <td>@item.Movie_Star_Cast</td>
+                            <td>@item.Music_Album_Type</td>
+                            <td>
+                                <div class="expandable">@Html.Raw(Convert.ToString(@item.Error_Messages == null ? "" : @item.Error_Messages).Replace("~", "").Replace("\r\n", "<br/>").Replace("\n", "<br/>"))</div>
+
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

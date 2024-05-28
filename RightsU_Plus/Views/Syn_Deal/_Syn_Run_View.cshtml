@@ -1,0 +1,304 @@
+﻿@model RightsU_Entities.Syn_Deal_Run
+@using UTOFrameWork.FrameworkClasses;
+@{
+    RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
+    if (Session[RightsU_Entities.RightsU_Session.Syn_DEAL_SCHEMA] != null)
+    {
+        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.Syn_DEAL_SCHEMA];
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>RightsU</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <script>
+        $(document).ready(function () {
+            var dealmode = '@objSchema.Mode';
+            if (dealmode == 'APRV') {
+                if (@ViewBag.Record_Locking_Code > 0)
+                {
+                    var fullUrl = '@Url.Action("Refresh_Lock", "Global", null, Request.Url.Scheme)'
+                    Call_RefreshRecordReleaseTime(@ViewBag.Record_Locking_Code,fullUrl);
+                }
+            }
+            @if (Model.Syn_Deal_Run_Code > 0)
+            {
+                <text>
+
+            var runType = '@(Model.Run_Type)';
+            $('input[name=Run_Type][value=' + runType + ']').prop('checked', true);
+            if (runType == "U") {
+                document.getElementById("addrunsDef2").style.display = 'none';
+            }
+
+            var isYearWise = '@(Model.Is_Yearwise_Definition)'
+            $('input[name=Is_Yearwise_Definition][value=' + isYearWise + ']').prop('checked', true)
+            if (isYearWise == "Y") {
+                document.getElementById("addrunsDef2").style.display = '';
+                var strHTML = ''
+                var index = 0;
+                strHTML = strHTML + '<td></td><td colspan="3"><table id="tblYearWiseRun" class="table table-bordered table-hover"><thead><tr><th width="60%">Period</th><th width="40%">Run</th></tr></thead><tbody>'
+                @for (int i = 0; i < Model.Syn_Deal_Run_Yearwise_Run.Count; i++)
+                {
+                           <text>
+                var noOfRuns = '@(Model.Syn_Deal_Run_Yearwise_Run.ElementAt(i).No_Of_Runs.ToString())';
+                strHTML = strHTML + '<tr><td>' + '@Model.Syn_Deal_Run_Yearwise_Run.ElementAt(i).Run_Period' + '</td>'
+                strHTML = strHTML + '<td>'
+                strHTML = strHTML + $.trim(noOfRuns)
+                strHTML = strHTML + '</td></tr>'
+                </text>
+                }
+                strHTML = strHTML + '</tbody></table></td>'
+
+                $('#addrunsDef2').html(strHTML);
+            }
+            else
+                document.getElementById("addrunsDef2").style.display = 'none';
+
+            var isRuleRight = '@(Model.Is_Rule_Right)'
+            if (isRuleRight == "Y") {
+                var repeatWithinDaysHrs = '@(Model.Repeat_Within_Days_Hrs)'
+
+                for (var i = 1; i < 8; i++) {
+                    document.getElementById("RuleEdit_" + i).style.display = '';
+                }
+                if (repeatWithinDaysHrs == 'D')
+                    document.getElementById("RuleEdit_7").style.display = '';
+                else
+                    document.getElementById("RuleEdit_7").style.display = 'none';
+            }
+            </text>
+            }
+        });
+        function getFormattedDate(input) {
+            var pattern = /(.*?)\/(.*?)\/(.*?)$/;
+            var result = input.replace(pattern, function (match, p1, p2, p3) {
+                var months = ['@objMessageKey.Jan', '@objMessageKey.Feb', '@objMessageKey.Mar', '@objMessageKey.Apr', '@objMessageKey.May', '@objMessageKey.Jun', '@objMessageKey.Jul', '@objMessageKey.Aug', '@objMessageKey.Sep', '@objMessageKey.Oct', '@objMessageKey.Nov', '@objMessageKey.Dec'];
+                return (p2 < 10 ? "0" + p2 : p2) + " " + months[(p1 - 1)] + " " + p3;
+            });
+            return result;
+        }
+
+        function ValidateSave() {
+            showLoading();
+            var Isvalid = true;
+            // Code for Maintaining approval remarks in session
+            var Mode = '@objSchema.Mode';
+            if (Mode == 'APRV') {
+                var approvalremarks = $('#approvalremarks').val();
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("SetSynApprovalRemarks", "Global")',
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    async: true,
+                    data: JSON.stringify({
+                        approvalremarks: $('#approvalremarks').val()
+                    }),
+                    success: function (result) {
+                        if (result == "true") {
+                            redirectToLogin();
+                        }
+                        Isvalid = true;
+                    },
+                    error: function (result) {
+                        Isvalid = false;
+                    }
+                });
+            }
+            else
+                Isvalid = true;
+            //Code end for approval
+            if (Isvalid) {
+                hideLoading();
+                var tabName = $('#hdnTabName').val();
+                BindPartialTabs(tabName);
+            }
+            hideLoading();
+            return Isvalid;
+        }
+        function ClearHidden() {
+            $('#hdnTabName').val('');
+        }
+    </script>
+</head>
+<body>
+    <div class="grid_area">
+        <div class="navigation_tabs">
+            <div class="tabbable">
+                <div class="tab-content clearfix table-wrapper scale_table_container">
+                    <div class="tab-pane active" id="tabRunDef">
+                        <div class="scale_table_block">
+                            <table class="table">
+                                <tr>
+                                    <td class='bold' width="20%">@objMessageKey.Title </td>
+                                    @if (objSchema.Deal_Type_Code == GlobalParams.Deal_Type_Movie || objSchema.Deal_Type_Code == GlobalParams.Deal_Type_Drama_Play || objSchema.Deal_Type_Code == GlobalParams.Deal_Type_Tele_Film)
+                                    {
+                                        <td id="tdTitleCodes" colspan="3">
+                                            @(
+string.Join(",", Model.Title.Title_Name)
+                                            )
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        if (objSchema.Deal_Type_Code == GlobalParams.Deal_Type_Music)
+                                        {
+                                            <td colspan="3">
+                                                @(
+string.Join(",", Model.Title.Title_Name + " (" + ((Model.Episode_From == 0) ? objMessageKey.Unlimited : Model.Episode_From.ToString()) + " ) ")
+
+                                                )
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td colspan="3">
+                                                @(
+string.Join(",", Model.Title.Title_Name + " ( " + Model.Episode_From + " - " + Model.Episode_To + " ) ")
+
+
+                                                )
+                                            </td>
+                                        }
+                                    }
+                                </tr>
+                                <tr>
+                                    <td class='bold'>@objMessageKey.Platform</td>
+                                    <td colspan="3">
+                                        @(
+string.Join(",", Model.Syn_Deal_Run_Platform.Select(t => t.Platform.Platform_Hiearachy))
+                                        )
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class='bold'>@objMessageKey.NoofExhibition</td>
+                                    @if (Model.Run_Type == "C")
+                                    {
+                                        <td>
+                                            Limited @Model.No_Of_Runs Runs
+                                            <label>@objMessageKey.EntireLicensePeriod</label>
+
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td>
+                                            @objMessageKey.UnlimitedRuns
+                                            <label>@objMessageKey.EntireLicensePeriod</label>
+                                        </td>
+                                    }
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td class='bold'>@objMessageKey.YearWiseRunDefinition</td>
+                                    <td colspan="3">
+                                        @((Model.Is_Yearwise_Definition == "Y") ? objMessageKey.Yes : objMessageKey.NA)
+                                    </td>
+                                </tr>
+                                <tr id="addrunsDef2" style="display: none;"></tr>
+                                <tr>
+                                    <td class='bold'>@objMessageKey.PerExhibitionDayRuleRight</td>
+                                    <td colspan="3">
+                                        @((Model.Is_Rule_Right == "Y") ? objMessageKey.Yes : objMessageKey.NA)
+                                    </td>
+                                </tr>
+                                <tr id="RuleEdit_1" style="display: none;">
+                                    <td class='search'>@objMessageKey.Rule </td>
+                                    <td>
+                                        @((Model.Right_Rule != null) ? Model.Right_Rule.Right_Rule_Name : objMessageKey.NA)
+                                    </td>
+                                    <td colspan="2">
+                                </tr>
+                                <tr id="RuleEdit_2" style="display: none;">
+                                    <td class='search'>@objMessageKey.DayStartTime  </td>
+                                    <td colspan="3">
+                                        @((Model.Right_Rule != null) ? Model.Right_Rule.Start_Time : "")
+                                    </td>
+                                </tr>
+                                <tr id="RuleEdit_3" style="display: none;">
+                                    <td class='search'>@objMessageKey.Playsperday </td>
+                                    <td colspan="3">
+                                        @((Model.Right_Rule != null) ? Model.Right_Rule.Play_Per_Day : 0)
+                                    </td>
+                                </tr>
+                                <tr id="RuleEdit_4" style="display: none;">
+                                    <td class='search'>@objMessageKey.Durationofdayinhrs</td>
+                                    <td colspan="3">
+                                        @((Model.Right_Rule != null) ? Model.Right_Rule.Duration_Of_Day : 0)
+                                    </td>
+                                </tr>
+                                <tr id="RuleEdit_5" style="display: none;">
+                                    <td class='search'>@objMessageKey.NoofRepeat  </td>
+                                    <td colspan="3">
+                                        @((Model.Right_Rule != null) ? Model.Right_Rule.No_Of_Repeat : 0)
+                                    </td>
+                                </tr>
+                                <tr id="RuleEdit_6" style="display: none;">
+                                    <td class='search'>@objMessageKey.RepeatWithinDuration  </td>
+                                    <td colspan="3">
+                                        @(Model.No_Of_Days_Hrs) @((Model.Repeat_Within_Days_Hrs == "D") ? objMessageKey.Days : objMessageKey.hrs)
+                                    </td>
+                                </tr>
+                                <tr id="RuleEdit_7" style="display: none;">
+                                    <td class='search'>@objMessageKey.OnlyOn </td>
+                                    <td>
+                                        @ViewBag.RepearOnDays
+                                    </td>
+                                    <td colspan="2">&nbsp;</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    @if (objSchema.Mode == GlobalParams.DEAL_MODE_APPROVE)
+                    {
+                        @Html.Partial("_Syn_Approved_List")
+                        <br />
+                    }
+                    <div class="bottom_action">
+                        <ul class="form_link_nav clearfix">
+                            <li>
+                                <input type="hidden" id="hdnTabName" name="hdnTabName" />
+                                <input type="button" class="btn-primary" value="@objMessageKey.Cancel" onclick="ClearHidden();BindPartialTabs(pageRun);" />
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div aria-labelledby="myModalLabel" class="form_wrapper modal fade in" id="popRunDefn" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content clearfix">
+                <form class="form" id="Form1">
+                    <div>
+                        <div class="form_fields acq">
+                            <div class="modal_block modal_header">
+                                <a class="close" data-dismiss="modal" href="#">
+                                    <span>
+                                        ×
+                                    </span>
+                                    <span class="sr-only">@objMessageKey.Close</span>
+                                </a>
+                                <h2>@objMessageKey.Combinationconflictswithotherrundefinition</h2>
+                            </div>
+                            <div id="conflictRun" class="modal_block">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

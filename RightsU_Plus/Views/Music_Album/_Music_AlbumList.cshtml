@@ -1,0 +1,181 @@
+﻿@model List<RightsU_Entities.Music_Album>
+@using UTOFrameWork.FrameworkClasses;
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script>
+
+    $(document).ready(function () {
+        $('#ddlTalent_0').SumoSelect();
+        $('.ddlTalentEdit').SumoSelect();
+
+    });
+    $('.expand_Music_Album_Name').expander({
+        slicePoint: 65,
+        expandPrefix: '',
+        expandText: '...@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+    $('.expand_TalentName').expander({
+        slicePoint: 65,
+        expandPrefix: '',
+        expandText: '...@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+
+</script>
+
+<table class="table table-bordered table-hover" id="tblMusic_Album">
+    <thead>
+        <tr>
+            <th style="width:30%;">@objMessageKey.MusicAlbum</th>
+            <th style="width:15%;">@objMessageKey.AlbumType</th>
+            <th style="width:30%;">@objMessageKey.Talent</th>
+            <th style="width:10%;">@objMessageKey.Status</th>
+            <th style="width:10%;">@objMessageKey.Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (ViewBag.CommandName == "ADD")
+        {
+            <tr>
+                <td>
+                    <input id="txtMusicAlbumName_0" type="text" value="" maxlength="100" name="Music_Album_Name" />
+                </td>
+                <td style="text-align:center;">
+                    <input type="radio" onmouseover="" style="cursor: pointer;" value="M" id="rbMovieType_0" name="Music_Album_Type" checked="checked" /><text>@objMessageKey.Movie</text>
+                    <input type="radio" onmouseover="" style="cursor: pointer;" value="A" id="rbAlbumTyep_0" name="Music_Album_Type" /><text>@objMessageKey.Album</text>
+                </td>
+                <td>
+                    @Html.DropDownList("ddlTalent", ViewBag.TalentList as MultiSelectList, new { @id = "ddlTalent_0", @multiple = "multiple" })
+                </td>
+                <td align="center">
+                    <span>@objMessageKey.Active</span>
+                </td>
+                <td align="center">
+                    <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" onclick="SaveMusic_Album(0)"></a>
+                    <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" onclick="Cancel()"></a>
+                </td>
+            </tr>
+        }
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                string TalentName = "";
+                TalentName = string.Join(",", item.Music_Album_Talent.Where(w => w.Talent.Talent_Role.Any(a=>a.Role_Code == GlobalParams.Role_code_StarCast)).Select(s => s.Talent.Talent_Name));
+                string strActive = objMessageKey.Active;
+                if (item.Is_Active == "N")
+                {
+                    strActive = objMessageKey.Deactive;
+                }
+                <tr>
+                    @if (ViewBag.CommandName == "EDIT" && ViewBag.Music_Album_Code == item.Music_Album_Code)
+                    {
+                        <td>
+                            <input id="txtMusicAlbumName_@item.Music_Album_Code" type="text" value='@item.Music_Album_Name' maxlength="100" name="Music_Album_Name" />
+                        </td>
+                        <td style="text-align:center;">
+                            @if (item.Album_Type == "M")
+                            {
+                                <input type="radio" style="cursor: pointer;" value="M" id="rbMovieType_@item.Music_Album_Code" name="Music_Album_Type" checked="checked" /><text>@objMessageKey.Movie</text>
+                                <input type="radio" style="cursor: pointer;" value="A" id="rbAlbumTyep_@item.Music_Album_Code" name="Music_Album_Type" /><text>@objMessageKey.Album</text>
+                            }
+                            else
+                            {
+                                <input type="radio" style="cursor: pointer;" value="M" id="rbMovieType_@item.Music_Album_Code" name="Music_Album_Type" /><text>@objMessageKey.Movie</text>
+                                <input type="radio" style="cursor: pointer;" value="A" id="rbAlbumTyep_@item.Music_Album_Code" name="Music_Album_Type" checked="checked" /><text>@objMessageKey.Album</text>
+                            }
+                        </td>
+                        <td>
+
+                            @Html.DropDownList("ddlTalentEdit", ViewBag.TalentListEdit as MultiSelectList, new { @id = "ddlTalent_" + item.Music_Album_Code, @class="ddlTalentEdit", @multiple = "multiple" })
+
+                        </td>
+                        <td align="center">
+                            <span>@objMessageKey.Active</span>
+                        </td>
+                        <td align="center">
+                            <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" onclick="SaveMusic_Album(@item.Music_Album_Code)"></a>
+                            <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" onclick="Cancel()"></a>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            <div class="expand_Music_Album_Name">@item.Music_Album_Name</div>
+                        </td>
+                        <td align="center">
+                            @if (item.Album_Type == "M")
+                            {
+                                <span>@objMessageKey.Movie</span>
+                            }
+                            else
+                            {
+                                <span>@objMessageKey.Album</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="expand_TalentName">@TalentName</div>
+                        </td>
+                        <td align="center">
+                            <span>@strActive</span>
+                        </td>
+                        <td align="center">
+                            @if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForEdit + "~"))
+                            {
+                                if (item.Is_Active == "Y")
+                                {
+                                    <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor:pointer;" onclick="CheckRecordLock(@item.Music_Album_Code, 'EDIT')"></a>
+                                }
+                                else
+                                {
+                                    <a title="@objMessageKey.CannoteditthisMusicAlbumasitisdeactivated" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
+                                }
+                            }
+                            @if (item.Is_Active == "Y")
+                            {
+                                bool canDeactivate = true;
+
+
+                                if (canDeactivate)
+                                {
+                                    if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForDeactivate + "~"))
+                                    {
+                                        if (item.Music_Title.Count > 0)
+                                        {
+                                            <a title="@objMessageKey.CannotDeactiveasitisbeingusedinMusicTitle" class="glyphicon glyphicon-thumbs-down disabled" onclick="return false;"></a>
+                                        }
+                                        else
+                                        {
+                                            <a title="@objMessageKey.Deactivate" class="glyphicon glyphicon-thumbs-down" style="cursor:pointer" onclick="ActiveDeactiveMusic_Album(@item.Music_Album_Code, 'N')"></a>
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForActivate + "~"))
+                                {
+                                    <a title="@objMessageKey.Activate" class="glyphicon glyphicon-thumbs-up" style="cursor: pointer;" onclick="ActiveDeactiveMusic_Album(@item.Music_Album_Code, 'Y')"></a>
+                                }
+                            }
+                        </td>
+                    }
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="5">@objMessageKey.Norecordfound</td>
+            </tr>
+        }
+    </tbody>
+</table>

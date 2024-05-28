@@ -1,0 +1,160 @@
+﻿@model IEnumerable<RightsU_Entities.Acq_Deal_Rights_Error_Details>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('#txtPageSize1').val('@ViewBag.PageSize');
+        $('#txtPageSize1').numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            maxPreDecimalPlaces: 3,
+            maxDecimalPlaces: 0
+        });
+        $('.expandable').expander({
+            slicePoint: 20,
+            expandPrefix: '',
+            expandText: '...read more',
+            collapseTimer: 0,
+            userCollapseText: '<span>[^]</span>'
+        });
+        //if ($('#Pagination1'))
+        SetPaging();
+        if ($("#lbSearchTitles").val() != null)
+            $("#hdnSearchTitles").val($("#lbSearchTitles").val().join(','));
+    });
+
+    var IsCall1 = 'Y';
+    function SetPaging() {
+        debugger;
+        IsCall1 = 'N';
+        var PageNo, recordCnt;
+
+        if ('@ViewBag.PageNo' != null)
+            PageNo = '@ViewBag.PageNo';
+
+        if ('@ViewBag.RecordCount' != null)
+            recordCnt = '@ViewBag.RecordCount';
+
+        PageNo = PageNo - 1;
+
+        var opt = { callback: pageselectCallback };
+        opt["items_per_page"] = $('#txtPageSize1').val();
+        opt["num_display_entries"] = 5;
+        opt["num"] = 5;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = PageNo;
+        $("#Pagination1").pagination(recordCnt, opt);
+    }
+
+    function pageselectCallback(page_index, jq) {
+        $("#hdnPageIndex1").val(page_index);
+        if (IsCall1 == 'Y') {
+            if ($("#lbTitle_ErrorPopup").val() != null)
+                Show_Validation_Popup($("#lbTitle_ErrorPopup").val().join(','), $('#txtPageSize1').val(), page_index, '@ViewBag.RightCode' );
+            else
+                Show_Validation_Popup('', $('#txtPageSize1').val(), page_index, '@ViewBag.RightCode' );
+        }
+        else
+            IsCall1 = 'Y';
+    }
+
+    function SearchResult() {
+        debugger;
+        $("#hdnSearchTitles").val('');
+        if ($("#lbTitle_ErrorPopup").val() != null)
+            $("#hdnSearchTitles").val($("#lbTitle_ErrorPopup").val().join(','));
+        Show_Validation_Popup($("#hdnSearchTitles").val(), $('#txtPageSize1').val(), 0, '@ViewBag.RightCode' )
+    }
+
+    function applyPaging() {
+        if ($('#txtPageSize1').val() == '' || parseInt($('#txtPageSize1').val()) == 0)
+            //showAlert('E', 'Please enter valid page size');
+        {
+            $('#txtPageSize1').addClass('required');
+            return false;
+        }
+        else {
+            Show_Validation_Popup($("#hdnSearchTitles").val(), $('#txtPageSize1').val(), 0,'@ViewBag.RightCode')
+        }
+    }
+
+    function OnErrorTypeChanged() {
+        $("#hdnSearchTitles").val('');
+        Show_Validation_Popup($("#hdnSearchTitles").val(), $('#txtPageSize1').val(), 0,'@ViewBag.RightCode');
+    }
+</script>
+@Html.DropDownList("ddlErrorType", ViewBag.ErrorRecord as SelectList, new { @class = "form_input chosen-select", @onchange = "OnErrorTypeChanged()" })
+<br />
+<br />
+<span>Title: </span>
+@Html.Hidden("hdnSearchTitles")
+@Html.Hidden("hdnPageIndex1")
+@Html.ListBox("lbTitle_ErrorPopup", ViewBag.SearchTitles as MultiSelectList, new { @class = "form_input chosen-select" })
+<input type="button" id="btnSearch" class="button" value="Search" onclick="return SearchResult();">
+
+<br /><br />
+<div class="paging_area clearfix">
+    <span class="pull-left">Total Records:  @ViewBag.RecordCount</span>
+    <div id="Pagination1" class="pagination"></div>
+    <span class="pull-right">Page Size : @Html.TextBox("txtPageSize1", 5, new { @onchange = "applyPaging()", @style = "width:35px", @id = "txtPageSize1" })</span>
+</div>
+
+<div style="max-height: 200px; overflow-y: auto;">
+    <table class="table table-bordered table-hover" style="display: table;" id="tblMileStone">
+        <tr>
+            <th class="movie">Title Name</th>
+            <th>Platform</th>
+            <th>Agreement No</th>
+            <th>Period</th>
+            <th>Region</th>
+            <th>Title Language</th>
+            <th>Subtitling</th>
+            <th>Dubbing</th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            if (item.Is_Updated == "N")
+            {
+                <tr>
+                    <td width="15%"><div class="expandable">@item.Title_Name</div></td>
+                    <td width="15%">
+                        <div class="expandable">
+                            @item.Platform_Name
+                        </div>
+                    </td>
+                    <td width="12%">
+                        <div class="expandable">@item.Agreement_No</div>
+                    </td>
+                    <td width="8%">
+                        @*<span>@item.Right_Start_Date</span>*@
+                        @if (item.Right_Start_Date != null)
+                        {
+                            @Html.Label(item.Right_Start_Date.Value.ToString("dd MMM yyyy"))
+                        }
+                        @if (item.Right_End_Date != null)
+                        {
+                            @: To
+                            @*@item.Right_End_Date*@
+                            @Html.Label(item.Right_End_Date.Value.ToString("dd MMM yyyy"))
+                        }
+                    </td>
+                    <td width="15%">
+                        <div class="expandable">@item.Country_Name.TrimEnd(',')</div>
+                    </td>
+                    <td width="5%">@item.Is_Title_Language_Right</td>
+                    <td width="15%">
+                        <div class="expandable">@item.Subtitling_Language.TrimEnd(',')</div>
+                    </td>
+                    <td width="15%">
+                        <div class="expandable">@item.Dubbing_Language.TrimEnd(',')</div>
+                    </td>
+                </tr>
+            }
+        }
+
+
+    </table>
+</div>

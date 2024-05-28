@@ -1,0 +1,122 @@
+﻿@model RightsU_Entities.Title_Content
+@using UTOFrameWork.FrameworkClasses
+@using RightsU_BLL;
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    RightsU_Entities.System_Parameter_New Show_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "AL_DealType_Show").FirstOrDefault();
+    List<string> lstOfShowCode = Show_system_Parameter.Parameter_Value.Split(',').ToList();
+    string IsEpisodeNoUpdateAllowed = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "AllowEpisodeNoUpdate").FirstOrDefault().Parameter_Value;
+    string TitleTypeCode = Convert.ToString(Model.Title.Deal_Type_Code);
+    string TypeExists = lstOfShowCode.Where(w => w == TitleTypeCode).DefaultIfEmpty("N").FirstOrDefault();
+}
+
+
+<script>
+    $('.expand_Content_Name').expander({
+        slicePoint: 90,
+        expandPrefix: '',
+        expandText: '...read more',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+    $(document).ready(function () {
+        $(".numeric_Duration").numeric({
+            allowMinus: false,
+            allowThouSep: true,
+            allowDecSep: true,
+            maxDecimalPlaces: 2,
+            maxPreDecimalPlaces: 3
+        });
+        $(".NumericEpisodeNum").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 9999,
+            min: 1
+        })
+        var code = $('#hdnTitleContentCode').val();
+        var txtRemark = document.getElementById('txtSynopsis_' + code);
+        if (txtRemark != null)
+            countChar(txtRemark);
+    });
+</script>
+<table class="table table-bordered table-hover" id="tblTitleMetadata">
+    <thead>
+        <tr>
+            <th style="width:30%;">@objMessageKey.Content</th>
+            <th style="width:10%;">@objMessageKey.episode</th>
+            <th style="width:10%;">@objMessageKey.Duration</th>
+            <th style="width:30%;">@objMessageKey.Synopsis</th>
+            <th style="width:20%;">@objMessageKey.Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            @if (ViewBag.ContentCodeForEdit == Model.Title_Content_Code && ViewBag.CommandName == "EDIT")
+            {
+                <td>
+                    <input id="txtEpisodeName_@Model.Title_Content_Code" type="text" style="width:100%" value="@Model.Episode_Title" maxlength="100" />
+                </td>
+                <td align="right">
+                    @if (IsEpisodeNoUpdateAllowed == "Y" && TypeExists != "N")
+                    {
+                        <input type="text" value="@Model.Episode_No" id="txtEpisodeNum_@Model.Title_Content_Code" class="NumericEpisodeNum" />
+                    }
+                    else
+                    {
+                        <span>@Model.Episode_No</span>
+                        <input type="hidden" value="@Model.Episode_No" id="txtEpisodeNum_@Model.Title_Content_Code" />
+                    }
+                    @*@Model.Episode_No*@
+                </td>
+                <td align="right">
+                    <input type="text" id="txtDuration_@Model.Title_Content_Code" class="numeric_Duration" value="@Model.Duration" style="width:80px" maxlength="6" />
+                </td>
+                <td align="center">
+                    @Html.TextAreaFor(m => Model.Synopsis, new { @name = "txtsynopsis", @id = "txtSynopsis_" + Model.Title_Content_Code, @class = "textarea", @row = "2", @cols = "20", @onkeyup = "countChar(this)" })
+                    <div class="divBlock">
+                        <div style="">&nbsp;&nbsp;@objMessageKey.charactersleft.. </div>
+                        <div class="charNum">4000</div>
+                    </div>
+                </td>
+                <td align="center">
+                    <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" onclick="SaveTitleContent(@Model.Title_Content_Code)"></a>
+                    <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" onclick="CancelContent_OnClick(@Model.Title_Content_Code)"></a>
+                </td>
+
+            }
+            else
+            {
+                <td>
+                    <div class="expand_Content_Name">@Model.Episode_Title</div>
+                </td>
+                <td align="right">
+                    @Model.Episode_No
+                </td>
+                <td align="right">
+                    @Model.Duration
+                </td>
+                <td>
+                    <div class="expandable">@Model.Synopsis </div>
+                </td>
+                <td class="action" align="center">
+                    @if (ViewBag.RightCode.Contains("~" + Convert.ToString(GlobalParams.RightCodeForEdit) + "~"))
+                    {
+                        <a alt title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer;" onclick="EditContent_OnClick(@Model.Title_Content_Code,'EDIT')"></a>
+                        <text>&nbsp;</text>
+                    }
+                </td>
+            }
+        </tr>
+    </tbody>
+</table>

@@ -1,0 +1,138 @@
+﻿@model List<RightsU_Entities.USP_Acq_Termination_UDT>
+@{ List<RightsU_Entities.USP_Acq_Termination_UDT> objList = Model.ToList();}
+@{
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+}
+<style>
+    .divNote
+    {
+        height: 30px;
+    }
+
+    .show
+    {
+        display: block;
+    }
+
+    .hide
+    {
+        display: none;
+    }
+</style>
+<div>
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form">
+                <div>
+                    <div class="form_fields acq">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>Termination Error</h2>
+                        </div>
+                        <div class="scale_table_block">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th rowspan="3">Title</th>
+                                        <th rowspan="3">Error Message</th>
+                                        <th colspan="@(objList.FirstOrDefault().Title_Code == 0 ? "1" : "2")">Termination Details
+                                        </th>
+                                        <th colspan="@(objList.FirstOrDefault().Title_Code == 0 ? "3" : "4")">Syndication Details</th>
+                                    </tr>
+                                    <tr>
+                                        <th></th>
+                                        <th class="@(objList.FirstOrDefault().Title_Code == 0 ? "hide" : "show")">Episode Number</th>
+                                        <th>Date</th>
+                                        <th>Agreement #</th>
+                                        <th>Licensor</th>
+                                        <th>Episode Range</th>
+                                        <th>Period</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (objList != null)
+                                    {
+                                        foreach (var item in objList)
+                                        {
+                                            string titleName = "All Titles";
+                                            if (item.Title_Code > 0)
+                                            {
+                                                titleName = new RightsU_BLL.Title_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(item.Title_Code)).Title_Name;
+                                            }
+                                            else if (objList.Count == 1)
+                                            {
+                                                titleName = item.Title_Name;
+                                            }
+                                        <tr>
+                                            <td><b>@titleName</b></td>
+                                            <td colspan="@(item.Agreement_No == "0" || item.Agreement_No == null ? "7" : "1")">@item.Error_Details</td>
+                                            <th rowspan="2" class="@(objList.FirstOrDefault().Title_Code == 0 ? "hide" : "show")">Episode Number</th>
+                                            <th rowspan="2" colspan="@(objList.FirstOrDefault().Title_Code == 0 ? "2" : "1")">Date</th>
+                                            <td class="@(item.Title_Code == 0 ? "hide" : "show")">@item.Episode_To</td>
+                                            <td>
+                                                @item.Termination_Date
+                                                @*<table class="table table-bordered">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="@(item.Title_Code == 0 ? "hide" : "show")">Episode Number</th>
+                                                            <th colspan="@(item.Title_Code == 0 ? "2" : "1")">Date</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="@(item.Title_Code == 0 ? "hide" : "show")">@item.Episode_No</td>
+                                                            <td>@item.Termination_Date</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>*@
+                                            </td>
+                                            <td>
+                                                @item.Agreement_No
+                                                @*<table class="table table-bordered">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Agreement #</th>
+                                                            <th>Licensor</th>
+                                                            <th class="@(item.Title_Code == 0 ? "hide" : "show")">Episode Range</th>
+                                                            <th>Period</th>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>@item.Agreement_No</td>
+                                                            <td>@item.Vendor_Name</td>
+                                                            <td class="@(item.Title_Code == 0 ? "hide" : "show")">@(item.Episode_From + " - " + item.Episode_To)</td>
+                                                            <td>@(item.Right_Start_Date + " - " + item.Right_End_Date)</td>
+                                                        </tr>
+                                                    </thead>
+                                                </table>*@
+                                            </td>
+                                            <td>@item.Vendor_Name</td>
+                                            <td class="@(item.Title_Code == 0 ? "hide" : "show")">@(item.Episode_From + " - " + item.Episode_To)</td>
+                                            <td>@(item.Right_Start_Date + " - " + item.Right_End_Date)</td>
+                                        </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li>
+                                        <a data-dismiss="modal" class="btn-primary" href="#">Cancel</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,88 @@
+﻿@using RightsU_BLL;
+@using UTOFrameWork.FrameworkClasses;
+@model List<RightsU_Entities.USPMHRequisitionList_Result>
+@{
+
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    var UserList = new User_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").ToList();
+    var lstMHReqDetails = new MHRequestDetails_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
+}
+<script>
+    $(document).ready(function () {
+        initializeChosen();
+        $("#lblRecordCount").text(@ViewBag.RecordCount);
+        $("#hdnPageNo").val(@((ViewBag.PageNo ?? 1)));
+        $("#hdnRecordCount").val(@ViewBag.RecordCount);
+        $("#txtPageSize").val(@ViewBag.PageSize);
+        SetPaging();
+    });
+</script>
+<table class="table table-bordered table-hover table-striped">
+    <thead>
+        <tr>
+            <th>Request ID</th>
+            @if (ViewBag.currentTabName == "CM")
+            {
+                <th>Show Name</th>
+                <th>Episode No</th>
+                <th>Channel Name</th>
+            }
+            <th>No. of songs</th>
+            @if (ViewBag.currentTabName == "CM")
+            {
+                <th>Music Label</th>
+            }
+            <th>Requested By</th>
+            <th>Requested Date</th>
+            <th>Status</th>
+            <th>Pending Since</th>
+            <th>Action</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count > 0)
+        {
+
+            foreach (var item in Model)
+            {
+
+                var lstDetails = lstMHReqDetails.Where(x => x.MHRequestCode == item.MHRequestCode).ToList();
+                var TotalCountYN = lstDetails.Where(x => x.IsApprove == "Y" || x.IsApprove == "N").ToList().Count();
+                var TotalCount = lstDetails.ToList().Count();
+                bool showPS = TotalCountYN == TotalCount ? false : true;
+
+                <tr>
+                    <td>@item.RequestID</td>
+                    @if (ViewBag.currentTabName == "CM")
+                    {
+                        <td>@item.ShowName</td>
+                        <td align="center">@item.EpisodeNo</td>
+                        <td>@((item.ChannelName ?? "-"))</td>
+                    }
+                    <td align="center">@item.Songs</td>
+                    @if (ViewBag.currentTabName == "CM")
+                    {
+                        <td>@item.MusicLabel</td>
+                    }
+
+                    <td>@item.RequestedBy</td>
+                    <td align="center">@string.Format("{0:" + GlobalParams.DateFormat_Display + "}", item.RequestedDate)</td>
+                    <td>@item.Status</td>
+                    <td align="center">@((showPS == false ? "-" : item.PendingSince))</td>
+                    <td align="center">
+                        <a title="" class="glyphicon glyphicon-eye-open" data-original-title="View" onclick="BindPartialView('VIEW',@item.MHRequestCode)"></a>
+                        @if (item.PendingCount > 0)
+                        {
+                            <a title="" class="glyphicon glyphicon-log-in" data-original-title="Approve" onclick="BindPartialView('CHILD',@item.MHRequestCode)"></a>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

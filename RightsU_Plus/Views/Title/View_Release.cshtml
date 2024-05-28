@@ -1,0 +1,975 @@
+﻿@model RightsU_Entities.Title
+@using System.Configuration;
+@using RightsU_BLL;
+
+@using UTOFrameWork.FrameworkClasses
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+}
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
+<style>
+    #tdsynopsis .details {
+        width: 100px;
+        word-break: break-all;
+    }
+
+    #popupFade .modal_header {
+        background: #c3c3c3;
+    }
+
+    #popupFade {
+        width: 300px !important;
+    }
+</style>
+<script type="text/javascript">
+</script>
+<script type="text/javascript">
+    var URL_BindViewAlternateTab = '@Url.Action("BindViewAlternateTab", "Title")';
+    var URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")';
+    var URL_Release_Lock = '@Url.Action("Release_Lock", "Global")';
+    URL_Reload_Current_Page = '@Url.Action("View", "Title")';
+    var TitleTypeCode = '@ViewBag.TitleTypeEpisodeTab';
+    var IsView = '@ViewBag.IsView';
+    var VarTitleCodeModel = '@Model.Title_Code';
+    $(document).ready(function () {
+        debugger;
+        BindTitleMetadataHeader();
+        if ('RTL' == '@objMessageKey.LayoutDirection'){
+            $('.divRelease').css("float", "left");
+            $('.poptalent').css("float", "Right");
+            $('.close').css("float", "left");
+            $('.PopGender').css("float", "Right");
+            $('.inline-radio').css("float", "Right");
+            $('#lblReleaseType').css("float", "right")
+        }
+        else {
+            $('.divRelease').css("float", "Right");
+            $('.poptalent').css("float", "Left");
+            $('.close').css("float", "Right");
+            $('.PopGender').css("float", "Left");
+            $('#lblReleaseType').css("float", "left")
+        }
+        showLoading();
+        BindExtended('@ViewBag.Mode');
+        var Synopsis = document.getElementById("Synopsis");
+        if (Synopsis != null)
+            countChar(Synopsis);
+        hideLoading();
+        var page_index = 0;
+        var recordLockingCode = 0;
+        if ('@ViewBag.Mode' == 'V') {
+            if ('@ViewBag.DealListPageNo' != '')
+                $('#txtPageSize').val('@ViewBag.DealListPageSize');
+            if ('@ViewBag.DealListPageNo' != '')
+                Bind_Deal_List('@ViewBag.DealListPageNo', 'N');
+            else
+                Bind_Deal_List(page_index, 'N');
+        }
+        else if ('@ViewBag.Mode' == 'R') {
+           recordLockingCode = @ViewBag.RecordLockingCode_View;
+            $('#hdnRecordLockingCode').val(recordLockingCode)
+            if(recordLockingCode > 0)
+                Call_RefreshRecordReleaseTime(recordLockingCode, URL_Refresh_Lock);
+        }
+
+
+        BindTitleList(@ViewBag.TitleReleasePageNo);
+        initializeExpander();
+        if ('@ViewBag.IsCalculatePublicDomain' == "Y") {
+            calculatePublicDomain()
+        }
+    });
+
+    function BindTitleList(pageNo) {
+        $.ajax({
+            url: '@Url.Action("GetTitle_Release_List", "Title")',
+            type: 'POST',
+            data: ({ Title_Code: '@Model.Title_Code', PageNo: pageNo }),
+            async: false,
+            success: function (data) {
+                if (data == "true") {
+                    redirectToLogin();
+                }
+                $('#title_Release_List').html(data);
+                $('.five_td').hide();
+                initializeExpander();
+                $('#lblTitleReleaseCount').text($('.rights_table_block').length)
+                if ($('.rights_table_block').length > 0) {
+                    $('#is_Ex_Date').text("Yes");
+                }
+                else {
+                    $('#is_Ex_Date').text("No");
+                }
+            }
+        });
+    }
+
+    function CheckHoldBack() {
+        var retVal = '';
+        $.ajax({
+            url: '@Url.Action("CheckIfHoldBack","Title")',
+            type: 'POST',
+            data: ({ Title_Code: '@Model.Title_Code' }),
+            async: false,
+            success: function (data) {
+                if (data == "true") {
+                    redirectToLogin();
+                }
+                retVal = data;
+            }
+        });
+        return retVal;
+    }
+
+    function calculatePublicDomain() {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("onSaveChange", "Title")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                titleCode: @Model.Title_Code,
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                $('#PDomain').html("");
+
+                if (result.PDOMAIN == true) {
+                    $('#PDomain').append("Yes")
+                }
+                else {
+                    $('#PDomain').append("No")
+                }
+            },
+            error: function (result) { }
+        });
+    }
+
+    function Bind_Deal_List(page_index, IsCallFromPaging) {
+        showLoading();
+        var txtpageSize = $("#txtPageSize").val();
+        //var txtpageSize = 10;
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("Bind_Deal_List", "Title")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                //txtpageSize: $("#txtPageSize").val(),
+                txtpageSize: txtpageSize,
+                page_index: page_index,
+                IsCallFromPaging: IsCallFromPaging,
+                Page_No: '@ViewBag.PageNo',
+                id: '@Model.Title_Code',
+                DealTypeCode: '@ViewBag.DealTypeCode',
+                SearchedTitle: '@ViewBag.SearchedTitle',
+                TitlePageSize: '@ViewBag.PageSize'
+            }),
+            success: function (result) {
+                debugger;
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                $('#dv_Deal_List').html(result);
+                //SetPaging(txtpageSize);
+                setNumericForPagingSize();
+                initializeExpander();
+                initializeTooltip();
+                if ($('#lblTotal_Records_Count').text() == 'Total Records : 0') {
+                    $('#dv_Deal_List').hide();
+                    $('#div_Paging').hide();
+                }
+                hideLoading();
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+
+    function fileCheck(obj) {
+        var fileExtension = ['jpeg', 'jpg', 'png', 'gif', 'bmp'];
+        if ($.inArray($(obj).val().split('.').pop().toLowerCase(), fileExtension) == -1) {
+            alert("Only '.jpeg','.jpg', '.png', '.gif', '.bmp' formats are allowed.");
+            return false;
+        }
+        return true;
+    }
+
+
+    function btnCancel() {
+        debugger;
+        if ('@ViewBag.Mode' == 'R') {
+            var code = $('#hdnRecordLockingCode').val();
+            var URL = '@Url.Action("List", "Title_List", new { CallFrom = "T", Page_No = "Code", Record_Locking_Code = "_RLCode_" })';
+            URL = URL.replace("Title_Name", '@ViewBag.SearchedTitle');
+            URL = URL.replace("Code", '@ViewBag.PageNo');
+            URL = URL.replace("_RLCode_", code);
+            URL = URL.replace(/amp;/g, "");
+        }
+        else {
+            var URL = '@Url.Action("List", "Title_List", new { CallFrom = "T", Page_No = "Code", Record_Locking_Code = 0 })';
+            URL = URL.replace("Title_Name", '@ViewBag.SearchedTitle');
+            URL = URL.replace("Code", '@ViewBag.PageNo');
+            URL = URL.replace(/amp;/g, "");
+        }
+
+        window.location.href = URL;
+
+    }
+    function BindExtended() {
+
+        if ($("#hdnTabCode").val() == 0 || $("#hdnTabCode").val() == "undefined") {
+            var hdnActiveTabValue = $('ul.ulTabs').find('li.active').data('configitem');
+            $("#hdnTabCode").val(hdnActiveTabValue);
+            var hdnTabAddEditType = $('ul.ulTabs').find('li.active').data('content');
+            $("#hdnTabAddEditType").val(hdnTabAddEditType);
+            var hdnTabwiseName = $('ul.ulTabs').find('li.active').data('tabname');
+            $("#hdnTabwiseName").val(hdnTabwiseName);
+            if ($("#hdnTabAddEditType").val() == 'row') {
+                $('.divgvAdditionalFieldGrid').hide();
+                $('.divgvAdditionalField').show();
+            }
+            else if ($("#hdnTabAddEditType").val() == 'grid') {
+                $('.divgvAdditionalField').hide();
+                $('.divgvAdditionalFieldGrid').show();
+            }
+        }   
+        showLoading();
+        var TitleCode = '@Model.Title_Code.ToString()';
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindFieldNameddl", "Title")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                TitleCode: TitleCode
+            }),
+            success: function (result) {
+                $('.divgvAdditionalField').html(result);
+                $("#tbl_Additional_Fileds tr td:last-child").hide();
+                $("#tbl_Additional_Fileds tr th:last-child").hide();
+                initializeChosen();
+                hideLoading();
+            },
+            error: function (result) {
+            }
+        });
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindFieldGrid", "Title")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                TitleCode: TitleCode,
+                operation: "V"
+            }),
+            success: function (result) {
+                //ddl_first_col = result;
+                $('.divgvAdditionalFieldGrid').html(result);
+                initializeChosen();
+                initializeTooltip();
+                //hideLoading();
+            },
+            error: function (result) {
+                //alert('Error: '+ result.responseText);
+            }
+        });
+    }
+
+
+    function isNumber(evt) {
+        evt = (evt) ? evt : window.event;
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        return true;
+    }
+
+    function AddTalent(Type) {
+        $("#talent_name").val('');
+        SelectRole(Type);
+        $("#popAddTalent").modal();
+    }
+    function SelectRole(roleType) {
+        $('input[type=checkbox]').each(function () {
+            this.checked = false;
+        });
+        //$('input[type=checkbox].' + roleType).attr('checked', 'true');
+        $('input[type=checkbox].' + roleType).prop("checked", true);
+        $('input[type=checkbox].' + roleType).prop("disabled", true);
+    }
+    function ValidateSave() {
+        var Error = "";
+        var ArrRoles = '@ViewBag.RolesList';
+        var sList = "";
+        var TalentName = "";
+        var Gender = "";
+
+
+        if ($("#talent_name").val() != "")
+            TalentName = $("#talent_name").val();
+        else {
+            showAlert("E", '@objMessageKey.PleaseEnterTalentName', "");
+            Error = "E";
+        }
+
+        if ($('input[type=checkbox]:checked').length <= 0 && Error == "") {
+            showAlert("E", '@objMessageKey.PleaseSelectAtleastOneRole', "");
+            Error = "E";
+        }
+
+        $('input[type=checkbox]').each(function () {
+            if (this.checked)
+                sList += $(this).val() + ",";
+        });
+
+        Gender = $('input[name=sex]:checked', '#talent_popup').val();
+
+
+
+        if (Error == "") {
+            if (parseInt(Gender) == 1)
+                Gender = "F";
+            else if (parseInt(Gender) == 0)
+                Gender = "M";
+            else if (parseInt(Gender) == 2)
+                Gender = "N";
+
+            showLoading();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("SaveTalent", "Title")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    Roles: sList,
+                    TalentName: TalentName,
+                    Gender: Gender
+                }),
+                success: function (result) {
+                    if (typeof result.TalentError !== "undefined" && result.TalentError != "") {
+                        showAlert('E', result.TalentError, '');
+                        $("#popAddTalent").modal();
+                    }
+                    else {
+                        var SelectedRoles = "";
+                        $('input[type=checkbox]:checked').each(function () {
+                            SelectedRoles = SelectedRoles + $(this).attr('class') + ',';
+                        });
+
+                        var ddlProducer = "#ddlProducer";
+                        var ddlDirector = "#ddlDirector";
+                        var ddlStarCast = "#ddlStarCast";
+                        var Arr = SelectedRoles.toString().trim(',').split(',');
+
+                        for (var i = 0; i < Arr.length; i++) {
+                            var currentVal = Arr[i];
+                            if (currentVal != "") {
+                                if (currentVal == "Producer") {
+                                    AppendTalent(ddlProducer, result);
+                                }
+                                if (currentVal == "Director") {
+                                    AppendTalent(ddlDirector, result);
+                                }
+                                if (currentVal == "StarCast") {
+                                    AppendTalent(ddlStarCast, result);
+                                }
+                            }
+                        }
+                        $("#popAddTalent").modal('hide');
+                    }
+                    hideLoading();
+                },
+                error: function (result) {
+
+                }
+
+            });
+        }
+        else $("#popAddTalent").modal();
+    }
+
+    function AppendTalent(ddl, result) {
+        $(ddl).append("<option value=" + result.Value + ">" + result.Text + "</option>");
+        $(ddl).trigger("chosen:updated");
+    }
+
+    var Command_Name = "";
+    var TitleReleaseCode = 0;
+    function handleOk() {
+        if (Command_Name == "TITLE_RELEASE_DELETE") {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("DeleteTitleRelease", "Title")',
+                data: { Title_Release_Code: TitleReleaseCode },
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        if (result.Status == "S") {
+                            showAlert('I', result.Message);
+                            var pageNo = $('#hdnPageNo').val();
+                            BindTitleList(pageNo);
+                            calculatePublicDomain();
+                        }
+                        else {
+                            showAlert('E', result.Message);
+                        }
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+        else if ($("#hdnConfirmationtype").val() == 'talent') {
+            ValidateSave('validate');
+        }
+        else {
+            var obj = $('#hdnCurrentID').val();
+            var imgDelete = document.getElementById("imgDelete_" + obj);
+            SaveExtended(imgDelete);
+        }
+    }
+    function handleCancel() {
+        Command_Name = "";
+        TitleReleaseCode = 0;
+    }
+    function TabChange(tabName,configCode) {
+
+        if(tabName == "AL")
+        {
+            $('#hdnAlternateTabName').val(tabName);
+            $('#tabGeneral').hide();
+            $('#divAlternateLanguage').show();
+        }
+        else{
+            $('#divAlternateLanguage').hide();
+            $('#tabGeneral').show();
+        }
+
+        $('#hdnTabName').val(tabName);
+        BindAlternateTab(tabName,configCode);
+    }
+    function BindAlternateTab(tabName,configCode) {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        var titleCode = @Model.Title_Code;
+        var mode = '@ViewBag.CommandName';
+
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: URL_BindViewAlternateTab,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            async: false,
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                configCode: configCode,
+                titleCode: titleCode,
+                tabName:tabName,
+                mode : mode
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $("#divAlternateLanguage").empty();
+                    $("#divAlternateLanguage").append(result);
+                    initializeTooltip();
+                    hideLoading();
+                }
+            },
+            error: function (result) {
+                alert(result);
+            }
+        });
+    }
+
+    function BindTitleMetadataHeader() {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindTitleMetadataHeader", "Title")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: false,
+            success: function (result) {
+
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divTitleMetadataHeader').empty();
+                    $('#divTitleMetadataHeader').html(result);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function hideaddPopup() {
+        debugger;
+        //$('#inputValidation').val("false");
+        var shortName = $('#hdnTabShortName').val();
+        var tabValues = $('#TabValues').val();
+        let tabArray = tabValues.split(',');
+        for (let i = 0; i < tabArray.length; i++) {
+            var IS_Input_Name = "#tblMain" + tabArray[i];
+            if (tabArray[i] == shortName) {
+                $(IS_Input_Name).addClass("active");
+                $(IS_Input_Name).show();
+            }
+            else {
+                $(IS_Input_Name).removeClass("active");
+                $(IS_Input_Name).hide();
+            }
+        }
+    }
+
+</script>
+<style>
+    #divRelease {
+        text-align: right;
+        border-bottom: 1.5px dotted #CCC;
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+    }
+
+    .chosen-drop {
+        bottom: inherit !important;
+    }
+
+
+
+    .TN {
+        float: right !important;
+    }
+</style>
+
+@{
+    RightsU_BLL.Language_Service objLS = new RightsU_BLL.Language_Service(objLoginEntity.ConnectionStringName);
+    RightsU_BLL.Talent_Service objT = new RightsU_BLL.Talent_Service(objLoginEntity.ConnectionStringName);
+    RightsU_BLL.Program_Service objP = new RightsU_BLL.Program_Service(objLoginEntity.ConnectionStringName);
+    var lstTalent = new RightsU_BLL.USP_Service(objLoginEntity.ConnectionStringName).USP_Get_Talent_Name().ToList();
+    string textalignlast = "";
+    if (objMessageKey.LayoutDirection == "RTL")
+    {
+        textalignlast = "right";
+    }
+}
+@using (Html.BeginForm("Save", "Title", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+{
+    <div class="container acq main_col title_edit" onclick="$('.leftPanel').css('left', panelHideCss);">
+        <div class="top_area">
+            <div class="title_block dotted_border clearfix">
+                <h2 class="pull-left">
+                    @*@objMessageKey.ViewTitle -*@
+                    <span class="TN">@Model.Title_Name</span>
+                </h2>
+                <div class="right_nav pull-right">
+                    <ul></ul>
+                </div>
+            </div>
+            @if (ViewBag.IsFirstTime == "Y")
+            {
+                <div class="grid_area">
+                    <div class="navigation_tabs" dir="@objMessageKey.LayoutDirection">
+                        <div class="tabbable">
+                            <ul class="nav nav-tabs nav-tab pull-left">
+                                <li class="active">
+                                    <a data-toggle="tab" href="#" role="tab" onclick="TabChange('TA',0);">@objMessageKey.Title</a>
+                                </li>
+
+
+                                @if (ViewBag.PartialTabList != null)
+                                {
+                                    int?[] alternateCode = ViewBag.PartialTabList;
+                                    foreach (var item in alternateCode)
+                                    {
+                                        string config_Name = new Alternate_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Alternate_Config_Code == item).Select(x => x.Alternate_Name).FirstOrDefault();
+                                        <li class="" id="tabAlternate">
+                                            <a data-toggle="tab" href="#" id="tab12" role="tab" onclick="TabChange('AL',@item);">@config_Name</a>
+                                        </li>
+                                    }
+                                }
+                            </ul>
+                            <div class="tab-content clearfix table-wrapper scale_table_container" dir="@objMessageKey.LayoutDirection">
+                                <div class="tab-pane active" id="tabGeneral">
+                                    <div class="scale_table_block">
+                                        <table class="table_brif table">
+                                            <tbody>
+                                                <tr>
+                                                    <td class="intro_pic">
+                                                        <div>
+                                                            @if (Model.Title_Image != null)
+                                                            {<img src="@Url.Content(ConfigurationManager.AppSettings["TitleImagePath"] + @Model.Title_Image)" alt="Image" />}
+                                                            else
+                                                            {
+                                                                if (Model.Deal_Type_Code == GlobalParams.Deal_Type_Music)
+                                                                { <a href="javascript:void(0)"><img src="~/Images/musicIcon.png" alt="Image" /></a> }
+                                                                else if (Model.Deal_Type_Code == GlobalParams.Deal_Type_Content)
+                                                                {<a href="javascript:void(0)"><img src="~/Images/program.png" alt="Image" /></a> }
+                                                                else if (Model.Deal_Type_Code == GlobalParams.Deal_Type_Format_Program)
+                                                                {<a href="javascript:void(0)"><img src="~/Images/formatShow.png" alt="Image" /></a> }
+                                                                else if (Model.Deal_Type_Code == GlobalParams.Deal_Type_Event)
+                                                                {<a href="javascript:void(0)"><img src="~/Images/Event.png" alt="Image" /></a> }
+                                                                else
+                                                                {<a href="javascript:void(0)"><img src="~/Images/movieIcon.png" alt="Image" /></a>}
+                                                            }
+                                                        </div>
+                                                    </td>
+                                                    <td class="intro">
+                                                        <table class="four_column table">
+                                                            <tr>
+                                                                <td>@objMessageKey.TitleType</td>
+                                                                <td>
+                                                                    @Model.Deal_Type.Deal_Type_Name
+                                                                </td>
+                                                                <td>
+                                                                    @objMessageKey.Program
+                                                                </td>
+                                                                <td>
+                                                                    @{
+                                                                        string Program_Name = objMessageKey.Noprogram;
+                                                                        if (@Model.Program_Code > 0 && @Model.Program_Code != null && @Model.Program_Code.ToString() != "")
+                                                                        {
+                                                                            Program_Name = objP.GetById(Model.Program_Code ?? 0).Program_Name;
+                                                                        }
+                                                                    }
+                                                                    @Html.Label("ProgramName", Program_Name)
+                                                                </td>
+
+                                                            </tr>
+                                                            <tr>
+                                                                <td>@objMessageKey.Title</td>
+                                                                <td>
+                                                                    @Model.Title_Name
+                                                                </td>
+                                                                <td>@objMessageKey.OriginalTitle</td>
+                                                                @{
+                                                                    string originaltitle = objMessageKey.NA;
+                                                                    if (@Model.Original_Title != null && @Model.Original_Title != "")
+                                                                    {
+                                                                        originaltitle = Model.Original_Title;
+                                                                    }
+                                                                }
+                                                                <td>
+                                                                    @originaltitle
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>@objMessageKey.DurationInMin &#x200E;</td>
+                                                                @{
+                                                                    string durationInMin = objMessageKey.NA;
+                                                                    if (@Model.Duration_In_Min != null && @Model.Duration_In_Min.ToString() != "")
+                                                                    {
+                                                                        durationInMin = Model.Duration_In_Min.ToString();
+                                                                    }
+                                                                }
+                                                                <td>
+                                                                    @durationInMin
+                                                                </td>
+                                                                <td>@objMessageKey.YearOfRelease</td>
+                                                                @{
+                                                                    string YOR = objMessageKey.NA;
+                                                                    if (@Model.Year_Of_Production != null && @Model.Year_Of_Production.ToString() != "")
+                                                                    {
+                                                                        YOR = Model.Year_Of_Production.ToString();
+                                                                    }
+                                                                }
+                                                                <td>
+                                                                    @YOR
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>@objMessageKey.TitleLanguage</td>
+                                                                <td>
+                                                                    @{
+                                                                        string Language_Name = "";
+                                                                        if (@Model.Title_Language_Code > 0)
+                                                                        {
+                                                                            Language_Name = objLS.GetById(Model.Title_Language_Code ?? 0).Language_Name;
+                                                                        }
+                                                                    }
+                                                                    @Html.Label(@objMessageKey.TitleLanguage, Language_Name)
+                                                                </td>
+                                                                <td>@objMessageKey.OriginalLanguage</td>
+                                                                <td>
+                                                                    @{
+                                                                        string Original_language = objMessageKey.NA;
+                                                                        if (@Model.Original_Language_Code > 0 && @Model.Original_Language_Code != null && @Model.Original_Language_Code.ToString() != "")
+                                                                        {
+                                                                            Original_language = objLS.GetById(Model.Original_Language_Code ?? 0).Language_Name;
+                                                                        }
+                                                                    }
+                                                                    @Html.Label("Original_language", Original_language)
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>@objMessageKey.ProducerName</td>
+                                                                @{
+                                                                    string producername = objMessageKey.NA;
+                                                                    if (@ViewBag.ProduceList != null && @ViewBag.ProduceList != "")
+                                                                    {
+                                                                        producername = @ViewBag.ProduceList;
+                                                                    }
+                                                                }
+                                                                <td class="expandable">
+                                                                    @producername
+                                                                </td>
+                                                                <td>@objMessageKey.DirectorName</td>
+                                                                @{
+                                                                    string directorname = objMessageKey.Nodirector;
+                                                                    if (@ViewBag.DirectorList != null && @ViewBag.DirectorList != "")
+                                                                    {
+                                                                        directorname = @ViewBag.DirectorList;
+                                                                    }
+                                                                }
+                                                                <td class="expandable">
+                                                                    @directorname
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>@objMessageKey.CountryOfOrigin</td>
+                                                                <td class="expandable">
+                                                                    @ViewBag.CountryList
+                                                                </td>
+                                                                <td>@objMessageKey.TitleGenres</td>
+                                                                @{
+                                                                    string genresname = objMessageKey.Nogenres;
+                                                                    if (@ViewBag.GenresList != null && @ViewBag.GenresList != "")
+                                                                    {
+                                                                        genresname = @ViewBag.GenresList;
+                                                                    }
+                                                                }
+                                                                <td class="expandable">
+                                                                    @genresname
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                @if (Model.Deal_Type_Code == GlobalParams.CodeForEmbeddedMusic)
+                                                                {
+                                                                    <td>@objMessageKey.MusicLabel</td>
+                                                                    <td>@ViewBag.MusicLabelList</td>
+                                                                }
+                                                            </tr>
+                                                            <tr>
+                                                                <td>@objMessageKey.KeyStarCast</td>
+                                                                @{
+                                                                    string talent = objMessageKey.Notalent;
+                                                                    if (@ViewBag.StarCastList != null && @ViewBag.StarCastList != "")
+                                                                    {
+                                                                        talent = @ViewBag.StarCastList;
+                                                                    }
+                                                                }
+                                                                <td colspan="1" class="expandable">
+                                                                    @talent
+                                                                </td>
+
+                                                                <td>First Exhibition Date</td>
+                                                                <td>
+                                                                    <span id="is_Ex_Date"> No </span>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>@objMessageKey.Synopsis</td>
+                                                                @{
+                                                                    string synopsis = objMessageKey.NA;
+                                                                    if (@Model.Synopsis != null && @Model.Synopsis != "")
+                                                                    {
+                                                                        synopsis = Model.Synopsis;
+                                                                    }
+                                                                }
+                                                                <td class="expandable" id="tdsynopsis">
+                                                                    @synopsis
+                                                                </td>
+                                                                @if (ViewBag.IsCalculatePublicDomain == "Y")
+                                                                {
+                                                                    <td>
+                                                                        Public Domain
+                                                                    </td>
+                                                                    <td><div id="PDomain"></div></td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td></td>
+                                                                    <td></td>
+                                                                }
+
+                                                            </tr>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="padding" id="Release_Block" style="margin: 1px;">
+                                        @Html.Hidden("hdnRecordLockingCode", ViewBag.RecordLockingCode as string, new { @id = "hdnRecordLockingCode" })
+                                        <div class="paging_area clearfix">
+                                            <span class="pull-left">@objMessageKey.TotalRecords: </span>
+                                            <span class="pull-left" id="lblTitleReleaseCount"></span>
+                                            <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                                            <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                                            <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+
+                                            <div id="Pagination" class="pagination_Rel">
+                                            </div>
+                                        </div>
+                                        <div class="deal clearfix" id="title_Release_List">
+                                        </div>
+                                    </div>
+                                    <div class="padding">
+                                        @*<div class="divgvAdditionalField" style="text-align-last:@(textalignlast);">
+                                        </div>*@
+                                    </div>
+
+                                    <div class="navigation_tabs" style="padding: 10px; background-color: white;">
+                                        <div id="divTitleMetadataHeader">
+                                        </div>
+                                    </div>
+                                    @*<div class="divAdditionalField">
+                                        </div>*@
+                                    <br />
+                                    @if (ViewBag.Mode == "V")
+                                    {
+                                        <div class="paging_area clearfix" id="div_Paging">
+                                            <span class="pull-left" id="lblTotal_Records_Count">@objMessageKey.TotalRecords:  </span>
+                                            <div class="pagination" id="Pagination"></div>
+                                            <span class="pull-right">
+                                                @objMessageKey.PageSize:
+                                                <input type="text" class="smallTextBox" value="10" id="txtPageSize" onchange="txtPageSize_OnChange();" maxlength="3" />
+                                            </span>
+                                        </div>
+
+                                        <div id="dv_Deal_List" class="scale_table_block"></div>
+                                    }
+
+
+
+                                    <div class="bottom_action">
+                                        <ul class="form_link_nav clearfix">
+                                            <li class="poptalent">
+                                                <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="return btnCancel();" />
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div id="divAlternateLanguage"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+}
+
+
+
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade in" id="popAddTalent" role="dialog" tabindex="-1" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form" id="talent_popup">
+                <div class="form_wrapper">
+                    <div class="form_fields" style="text-align-last:@textalignlast">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>@objMessageKey.AddTalent</h2>
+                        </div>
+                        <div class="modal_block">
+                            <ul class="form_fields_wrapper add_title_popup">
+                                <li>
+                                    <label><b>@objMessageKey.Talent</b></label>
+                                    <input class="form_input" id="talent_name" name="title" type="text" value="" maxlength="100" ondrop="return false;" />
+                                </li>
+                                <li>
+                                    <label><b>@objMessageKey.Role</b></label><br />
+                                    <div style="overflow-y: auto; height: 165px">
+                                        @{
+                                            int Count = 0;
+                                            foreach (SelectListItem attr in ViewBag.RolesList)
+                                            {
+                                                Count += 1;
+                                                <label class="inline-checkbox">
+                                                    <input type='checkbox' class="@attr.Text.ToString().Replace(" ", "")" name='chkDays' id='@Count' +"_chkrole" value='@attr.Value' style='cursor: hand;' />
+
+                                                    @attr.Text
+                                                </label>
+                                                <br />
+                                            }
+                                        }
+                                        @Html.Hidden("hdnRoles")
+                                    </div>
+                                </li>
+                                <li>
+                                    <label><b>Gender</b></label>
+                                    <label class="inline-radio">
+                                        <input type="radio" name="sex" value="0" checked>@objMessageKey.Male &nbsp;
+                                    </label>
+                                    <label class="inline-radio">
+                                        <input type="radio" name="sex" value="1">@objMessageKey.Female
+                                    </label>
+                                    <label class="inline-radio">
+                                        <input type="radio" name="sex" value="2">@objMessageKey.NA
+                                    </label>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li>
+                                        <a class="btn btn-primary" href="#" onclick="ValidateSave()">@objMessageKey.Save</a>
+                                    </li>
+                                    <li>
+                                        <a data-dismiss="modal" class="btn btn-primary" href="#">@objMessageKey.Cancel</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

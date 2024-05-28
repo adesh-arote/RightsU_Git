@@ -1,0 +1,136 @@
+﻿/* Style for Dashboard */
+
+
+.searchDIV {
+    height: 20%;
+    padding: 10px 10px 20px 10px;
+    padding-left: 10%;
+}
+
+.searchDIV a {
+    padding: 2px;
+    margin-left: 3px;
+}
+
+input#txtSearch {
+    width: 85%;
+    height: 40px;
+    padding: 0 5px;
+    text-indent: 6px;
+    font-size: 16px;
+    color: #555;
+    border: 2px solid #ccc;
+    border-radius: 6px;
+    margin: 0 10px 0 0;
+}
+
+.dashboard {
+    width: 48%;
+    height: 251px;
+    border: 1px solid #bbb;
+    border-radius: 3px;
+    margin: 8px 1.0%;
+    float: left;
+    background-color: #f7f7f7;
+}
+
+.dashboard:hover {
+    box-shadow: 0 0 10px #888;
+}
+
+.dashboard.acq {border-color: #2b64a5;}
+.dashboard.syn {border-color: #d0021b;}
+.dashboard.acq > span {background-color: #2b64a5;}
+.dashboard.syn > span {background-color: #d0021b;}
+
+.dashboard ul {
+    float: left;
+    width: 100%;
+    padding: 0 0 5px 0;
+    margin: 1px 0;
+    border-bottom: 1px dotted #bbb;
+}
+
+.dashboard li {
+    float: left;
+    list-style: none;
+    padding: 3px 5px;
+    width: 20%;
+    height: 37px;
+    text-align: center;
+    font-size: 0.9em;
+}
+
+.dashboard > span {
+    display: block;
+    padding: 2px 5px;
+    border-bottom: 1px solid #aaa;
+    font-size: 1.1em;
+    text-align: center;
+    color: #fff;
+}
+
+.dashboard .seperator {
+    font-size: 1.1em;
+    color: #888;
+}
+
+.dashboard h1 {
+    text-align: center;
+    text-shadow: 0 2px 3px #fff;
+    font-weight: 700;
+    letter-spacing: -2px;
+    margin-top: 40px;
+    color: #aaa;
+}
+
+.dashboard h5 {
+    margin-top: 2px;
+    line-height: 1;
+    font-size: 1em; /*text-shadow: 0 1px 2px #bbb;*/
+}
+
+.dashboard tr:hover td {background-color: rgba(220,220,220,0.14);}
+.dashboard tr:nth-child(6) td {border-bottom: 0;}
+.dashboard tr td:last-child {min-width: 75px;}
+.dashboard tr:first-child:hover {background-color: initial;}
+
+.dashboard th {
+    font-size: 0.85em;
+    font-weight: 100;
+    background-color: rgba(0,0,0,0.1);
+    border-bottom: 1px solid #ccc;
+    cursor: default;
+    height: 20px;
+}
+
+.dashboard > table td {
+    padding: 3px 3px;
+    /*width: 16%;*/
+    height: 37px;
+    text-align: center;
+    overflow: hidden;
+    vertical-align: top;
+    font-size: 0.9em;
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+}
+
+/*.dashboard td:last-child {width: 11%;}*/
+
+.dashboard > span > input {
+    background-color: transparent;
+    border: 0;
+    font-size: 1.1em;
+    padding: 0 8px;
+    cursor: pointer;
+    color: #eee;
+    margin-top: -2px;
+}
+
+@media (max-width:979px) and (max-height:719px) {
+    .dashboard {
+        width: 85%;
+        margin: 8px 7.0%;
+    }
+}

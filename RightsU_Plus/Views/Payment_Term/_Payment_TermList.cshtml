@@ -1,0 +1,121 @@
+﻿@model List<RightsU_Entities.Payment_Terms>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<table class="table table-bordered table-hover" id="tblPaymentTerm">
+    <thead>
+        <tr>
+            <th style="width:80%;">@objMessageKey.PaymentTerm</th>
+            <th style="width:10%;">@objMessageKey.Status</th>
+            <th style="width:10%;">@objMessageKey.Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (ViewBag.CommandName == "ADD")
+        {
+            <tr>
+                <td>
+                    <input id="txtPaymentTermName_0" type="text" value="" maxlength="100" style="width:80%;" />
+                </td>
+                <td align="center">
+                    <span>@objMessageKey.Active</span>
+                </td>
+                <td align="center">
+                    <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" onclick="SavePayment_Term(0)"></a>
+                    <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" onclick="Cancel()"></a>
+                </td>
+            </tr>
+        }
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                string strActive = objMessageKey.Active;
+                if (item.Is_Active == "N")
+                {
+                    strActive = objMessageKey.Deactive;
+                }
+                <tr>
+                    @if (ViewBag.CommandName == "EDIT" && ViewBag.PaymentTermcode == item.Payment_Terms_Code)
+                    {
+                        <td>
+                            <input id="txtPaymentTermName_@item.Payment_Terms_Code" type="text" value="@item.Payment_Terms1" maxlength="100" style="width:80%;" />
+                        </td>
+                        <td align="center">
+                            <span>@strActive</span>
+                        </td>
+                        <td align="center">
+                            <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" onclick="SavePayment_Term(@item.Payment_Terms_Code)"></a>
+                            <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" onclick="Cancel()"></a>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            <div>@item.Payment_Terms1</div>
+                        </td>
+                        <td align="center">
+                            <span>@strActive</span>
+                        </td>
+                        <td align="center">
+                            @if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForEdit + "~"))
+                            {
+                                if (item.Is_Active == "Y")
+                                {
+                                    <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor:pointer;" onclick="CheckRecordLock(@item.Payment_Terms_Code, 'EDIT')"></a>
+                                }
+                                else
+                                {
+                                    <a title="@objMessageKey.CannoteditthisPaymentTermasitisdeactivated" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
+                                }
+                            }
+                            @if (item.Is_Active == "Y")
+                            {
+                                if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForDeactivate + "~"))
+                                {
+                                    bool canDeactivate = true;
+                                    string strToolTip = "";
+                                    if (item.Acq_Deal_Payment_Terms.Count > 0)
+                                    {
+                                        canDeactivate = false;
+                                        strToolTip = objMessageKey.CannotdeactivatethisPaymentTermasitisusedinAcquisitionDeal;
+                                    }
+                                    else if (item.Syn_Deal_Payment_Terms.Count > 0)
+                                    {
+                                        canDeactivate = false;
+                                        strToolTip = objMessageKey.CannotdeactivatethisPaymentTermasitisusedinSyndicationDeal;
+                                    }
+                                    if (canDeactivate)
+                                    {
+                                        <a title="@objMessageKey.Deactivate" class="glyphicon glyphicon-thumbs-down" style="cursor:pointer" onclick="ActiveDeactivePayment_Term(@item.Payment_Terms_Code, 'N')"></a>
+                                    }
+                                    else
+                                    {
+                                        <a title="@strToolTip" class="glyphicon glyphicon-thumbs-down disabled" onclick="return false;"></a>
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForActivate + "~"))
+                                {
+                                    <a title="Activate" class="glyphicon glyphicon-thumbs-up" style="cursor: pointer;" onclick="ActiveDeactivePayment_Term(@item.Payment_Terms_Code, 'Y')"></a>
+                                }
+                            }
+                        </td>
+                    }
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="3">@objMessageKey.Norecordfound</td>
+            </tr>
+        }
+    </tbody>
+</table>

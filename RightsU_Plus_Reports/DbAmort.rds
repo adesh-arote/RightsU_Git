@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RptDataSource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="DbAmort">
+  <ConnectionProperties>
+    <Extension>SQL</Extension>
+    <ConnectString>Data Source=192.168.0.115;Initial Catalog=Amort</ConnectString>
+    <Prompt>Specify a user name and password for data source DbAmort</Prompt>
+  </ConnectionProperties>
+  <DataSourceID>45e42b61-fb17-4ce7-bdab-cc5c6b8436f2</DataSourceID>
+</RptDataSource>

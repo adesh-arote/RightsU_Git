@@ -1,0 +1,429 @@
+﻿@model RightsU_Entities.User
+@{
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+
+    }
+}
+@using (Ajax.BeginForm("SaveUser", "User", new AjaxOptions() { OnSuccess = "SaveSuccess" }))
+{
+    <div class="tab-pane active" id="divGeneral">
+        <div class="scale_table_block">
+            <div class="modal_block">
+                <table class="add_title_popup">
+                    <tr>
+                        <td style="width:20%"><b>@objMessageKey.LoginName</b></td>
+                        <td>
+                            <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
+                            <input type="text" id="txtLoginName" value="@Model.Login_Name" name="Login_Name" placeholder="@objMessageKey.LoginName" class="form-control input-sm" style="width:50%" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>@objMessageKey.FirstName</b>
+                            <input type="hidden" name="hdnUsers_Code" id="hdnUsers_Code" value="@Model.Users_Code" />
+                        </td>
+                        <td>
+                            <input type="text" id="txtFirstName" value="@Model.First_Name" name="First_Name" placeholder="@objMessageKey.FirstName" class="form-control input-sm" style="width:50%" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>@objMessageKey.MiddleName</b>
+                        </td>
+                        <td>
+                            <input type="text" id="txtMiddleName" value="@Model.Middle_Name" name="Middle_Name" placeholder="@objMessageKey.MiddleName" class="form-control input-sm" style="width:50%" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>@objMessageKey.LastName</b>
+                        </td>
+                        <td>
+                            <input type="text" id="txtLastName" value="@Model.Last_Name" name="Last_Name" placeholder="@objMessageKey.LastName" class="form-control input-sm" style="width:50%" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>@objMessageKey.EmailId</b>
+                        </td>
+                        <td>
+                            <input type="text" id="txtEmailId" value="@Model.Email_Id" name="Email_Id" placeholder="@objMessageKey.EmailId" class="form-control input-sm" style="width:50%" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>@objMessageKey.SecurityGroup</b>
+                        </td>
+                        <td>
+                            @*@Html.DropDownList("ddlSecurityGroup", ViewBag.SecurityGroup as SelectList, new { @id = "ddlSecurityGroup", @class = "form_input chosen-select" })*@
+
+                            @Html.DropDownListFor(m => Model.Security_Group_Code, ViewBag.SecurityGroup as SelectList, "Select", new { @id = "ddlSecurityGroup", @class = "form_input chosen-select", @onchange = "BindSecurityGroup();" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>@objMessageKey.BusinessUnit</b>
+                        </td>
+                        <td>
+                            <div id="divddlBusinessUnit">
+                                @Html.DropDownList("ddlBusinessUnit", ViewBag.BusinessUnitList as MultiSelectList, new { @id = "ddlBusinessUnit", @multiple = "multiple" })
+                            </div>
+                        </td>
+                    </tr>
+                    @if (ViewBag.parmValue == "Y")
+                    {
+                        <tr>
+                            <td>
+                                <b>@objMessageKey.Language</b>
+                            </td>
+                            <td>
+                                @*@Html.DropDownList("ddlLanguage", ViewBag.Language as SelectList, new { @id = "ddlLanguage", @class = "form_input chosen-select" })*@
+
+                                @Html.DropDownListFor(m => Model.System_Language_Code, ViewBag.Language as SelectList, "Select", new { @id = "ddlLanguage", @class = "form_input chosen-select" })
+                            </td>
+                        </tr>
+                    }
+
+                    @if (ViewBag.Is_ROP_Accessible == "Y")
+                    {
+                        <tr>
+                            <td>
+                                <b>Department</b>
+                            </td>
+                            <td>
+                                <div id="divddlDepartment">
+                                    @Html.DropDownList("ddlDepartment", ViewBag.DepartmentList as MultiSelectList, new { @id = "ddlDepartment", @multiple = "multiple" })
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <b>Business Layer</b>
+                            </td>
+                            <td>
+                                <div id="divddlBusinessLayer">
+                                    @Html.DropDownList("ddlBusinessLayer", ViewBag.BusinessLayerList as MultiSelectList, new { @id = "ddlBusinessLayer", @multiple = "multiple" })
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <b>Business Vertical</b>
+                            </td>
+                            <td>
+                                <div id="divddlBusinessVertical">
+                                    @Html.DropDownList("ddlBusinessVertical", ViewBag.BusinessVerticalList as MultiSelectList, new { @id = "ddlBusinessVertical", @multiple = "multiple" })
+                                </div>
+                            </td>
+                        </tr>
+                    }
+
+                    @if (ViewBag.AllowUSer == "Y")
+                    {
+                        <tr>
+                            <td></td>
+                            <td>
+                                @if (Model.Users_Code > 0)
+                                {
+                                    @Html.RadioButton("IsLDAPUser", "Y", Model.IsLDAPUser == "Y") <span> @objMessageKey.Domain&nbsp;</span>
+                                    @Html.RadioButton("IsLDAPUser", "N", Model.IsLDAPUser == "N") <span> @objMessageKey.NonDomain</span>
+                                }
+                                else
+                                {
+                                    <label><input type="radio" name="IsLDAPUser" value="Y" checked />@objMessageKey.Domain&nbsp;</label>
+                                    <label><input type="radio" name="IsLDAPUser" value="N" />@objMessageKey.NonDomain</label>
+                                }
+
+                            </td>
+                        </tr>
+                    }
+                    @if (ViewBag.isProdHouse)
+                    {
+                        <tr>
+                            <td></td>
+                            <td>
+                                @Html.CheckBox("ProductionHouseUser", Convert.ToInt32(ViewBag.Vendor_Code) > 0 && Convert.ToInt32(ViewBag.Vendor_Code) != null ? true : false, new { @onclick = "OnChecked()" })@objMessageKey.ProductionHouseUser
+                            </td>
+                        </tr>
+                        <tr id="divddlVendor">
+                            <td></td>
+                            <td>
+                                @{
+                                    var VendorCode = Convert.ToInt32(ViewBag.Vendor_Code);
+                                }
+
+                                @if (VendorCode > 0)
+                                {
+                                    @Html.DropDownList("ddlVendors", ViewBag.Vendor as SelectList, "Select", new { @id = "ddlVendors", @class = "form_input chosen-select" })
+                                }
+                                else
+                                {
+                                    @Html.DropDownList("ddlVendors", ViewBag.Vendor as SelectList, "Select", new { @id = "ddlVendors", @disabled = true, @class = "form_input chosen-select" })
+                                }
+                            </td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="tab-content clearfix table-wrapper scale_table_container" id="divSecurityGroup">
+        <div class="scale_table_block">
+            <div id="divTree" class="platform_wrapper">
+                <div id="tree" class="treeClass">
+                </div>
+                <span id="lblTheatrical" style="display: none;">@objMessageKey.Theatrical</span>
+                <input type="hidden" id="hdnTVCodes" name="hdnTVCodes" />
+            </div>
+        </div>
+    </div>
+    <div class="tab-content clearfix table-wrapper scale_table_container" id="divUsersConfiguration">
+        <div class="scale_table_block">
+            <div id="divUsersConfigurationList" class="deal clearfix">
+                <table class="table table-bordered table-hover" id="tblSystemParameter" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th style="width:30%;">Dashboard Configuration</th>
+                            <th style="width:30%;">Days</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Users_Configuration.Count > 0)
+                        {
+                            int count = 0;
+                            foreach (var item in Model.Users_Configuration.OrderBy(o => o.Dashboard_Key))
+                            {
+                                count = count + 1;
+                                <tr>
+                                    @{
+                                        string dashboard = new RightsU_BLL.System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == item.Dashboard_Key).Select(s => s.Description).FirstOrDefault();                                        
+                                    }
+                                    <td><input type="hidden" name="hdnDashboardConfigKey_@count" value="@item.Dashboard_Key" /> @dashboard</td>
+                                    <td align="center">
+                                        <input id="txtDashboardValue_@count" name="txtDashboardValue_@count" type="text" class="smallTextBox" value="@item.Dashboard_Value" maxlength="99" />
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else if (ViewBag.SystemParamList.Count > 0)
+                        {
+                            int configcount = 0;
+                            foreach (var item in ViewBag.SystemParamList)
+                            {
+                                configcount = configcount + 1;
+                                <tr>
+                                    <td>
+                                        <input type="hidden" name="hdnDashboardConfigKey_@configcount" value="@item.Parameter_Name" /> <span>@item.Description</span>
+                                    </td>
+                                    <td align="center">
+                                        <input id="txtDashboardValue_@configcount" name="txtDashboardValue_@configcount" type="text" value="@item.Parameter_Value" class="smallTextBox" maxlength="99" />
+                                    </td>
+
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="tab-content clearfix table-wrapper scale_table_container" id="divEmailNotification">
+        <div class="scale_table_block">
+            <div id="divEmailNotificationList" class="deal clearfix" style="margin-left: 2%;">
+                <ul>
+                    @if (ViewBag.EmailConfigList.Count > 0)
+                    {
+                        foreach (var item in ViewBag.EmailConfigList)
+                        {
+                            if (@item != null)
+                            {
+                                <li>@item.Email_Type</li>
+                            }
+                        }
+                    }
+                    else
+                    {
+                        <span>No Records Found</span>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="bottom_action">
+        <ul class="form_link_nav clearfix" style="padding-left:10; padding-top: 10px;">
+            <li>
+                <input type="submit" class="btn btn-primary" value="@objMessageKey.Save" onclick="return Validate_Save();" />
+                <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="ClosePopup()" />
+            </li>
+        </ul>
+    </div>
+    @*<div class="modal_block_full">
+            <div class="form_links">
+                <ul class="modal_block clearfix" style="padding-left:10; padding-top: 10px;">
+                    <li>
+                        <input type="submit" class="btn btn-primary" value="@objMessageKey.Save" onclick="return Validate_Save();" />
+                        <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="ClosePopup()" />
+                    </li>
+                </ul>
+            </div>
+        </div>*@
+}
+<script>
+    $(function () {
+        debugger;
+         @*if ('@ViewBag.TabName' == "GI") {
+             $('#ddlBusinessUnit').SumoSelect();
+             $('#ddlBusinessUnit')[0].sumo.reload();
+        }
+
+        if ('@ViewBag.TabName' == "SG") {
+            BindSecurityGroup();
+        }*@
+        BindSecurityGroup();
+        $(".smallTextBox").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 999,
+            min: 1
+        });
+    });
+
+    if ("@ViewBag.Is_ROP_Accessible" == "Y") {
+        $('#ddlBusinessLayer').SumoSelect();
+        $('#ddlBusinessLayer')[0].sumo.reload();
+        $('#ddlBusinessVertical').SumoSelect();
+        $('#ddlBusinessVertical')[0].sumo.reload();
+        $('#ddlDepartment').SumoSelect();
+        $('#ddlDepartment')[0].sumo.reload();
+    }
+
+    function Validate_Save() {
+
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var loginName = $.trim($('#txtLoginName').val());
+        var firstName = $.trim($('#txtFirstName').val());
+        var lastName = $.trim($('#txtLastName').val());
+        var emailId = $.trim($('#txtEmailId').val());
+
+        var returnVal = true;
+        if (loginName == '') {
+            $('#txtLoginName').val('');
+            $('#txtLoginName').attr('required', true)
+            returnVal = false;
+        }
+        if (firstName == '') {
+            $('#txtFirstName').val('');
+            $('#txtFirstName').attr('required', true)
+            returnVal = false;
+        }
+        if (lastName == '') {
+            $('#txtLastName').val('');
+            $('#txtLastName').attr('required', true)
+            returnVal = false;
+        }
+        if (emailId == '') {
+            $('#txtEmailId').val('');
+            $('#txtEmailId').attr('required', true)
+            returnVal = false;
+        }
+        if (emailId != '') {
+            if (!ValidateEmail(emailId)) {
+                showAlert("E","@objMessageKey.InvalidEmailId");
+                returnVal = false;
+            }
+        }
+        if ($('#ddlSecurityGroup').val() == "") {
+            $('#ddlSecurityGroup').addClass('required');
+            returnVal = false;
+        }
+        if ($('#ddlBusinessUnit').val() == null)
+        {
+            $('#divddlBusinessUnit').addClass('required');
+            returnVal = false;
+        }
+        if($('#ddlLanguage').val() == ""){
+            $('#ddlLanguage').addClass('required');
+            returnVal = false;
+        }
+
+        if ("@ViewBag.Is_ROP_Accessible" == "Y") {
+            if ($('#ddlDepartment').val() == null) {
+                $('#divddlDepartment').addClass('required');
+                returnVal = false;
+            }
+            if ($('#ddlBusinessLayer').val() == null) {
+                $('#divddlBusinessLayer').addClass('required');
+                returnVal = false;
+            }
+            if ($('#ddlBusinessVertical').val() == null) {
+                $('#divddlBusinessVertical').addClass('required');
+                returnVal = false;
+            }
+        }
+        
+        if ($("#ddlVendor").val() != undefined) {
+            if (document.getElementById("ProductionHouseUser").checked) {
+                if ($('#ddlVendors').val() == "") {
+                    $('#ddlVendors').addClass('required');
+                    returnVal = false;
+                }
+            }
+        }
+        return returnVal;
+    }
+    function BindSecurityGroup() {
+        debugger
+        var UsersCode = $('#hdnUsers_Code').val();
+        var SecurityGroupCode = $('#ddlSecurityGroup').val();
+        //$("#hdnTVCodes").val('@ViewBag.strModule_right_Code');
+        $.ajax({
+            type: "POST",
+            url: URL_BindSecurityGroup,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                key: "",
+                SecurityGroupCode: SecurityGroupCode,
+                UsersCode: UsersCode
+            }),
+            success: function (result) {
+                debugger
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $("#tree").empty();
+                    $("#tree").append(result);
+                    initializeChosen();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+  
+</script>
+<style>
+    #Tree_Filter_Rights_Security {
+        width: 1000px;
+        position: relative !important;
+    }
+
+    #Rights_Security {
+        margin: 0px 0px 0px 0px !important;
+    }
+</style>

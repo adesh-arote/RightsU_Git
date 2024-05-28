@@ -1,0 +1,63 @@
+﻿@model List<RightsU_Entities.Upload_Files>
+@using UTOFrameWork.FrameworkClasses
+<table class="table table-bordered table-hover" id="divSAP_WBS_Export_List">
+    <thead>
+        <tr>
+            <th style="width:5%;">Sr.No</th>
+            <th style="width:35%;">File Name</th>
+            <th style="width:15%;">Upload Date</th>
+            <th style="width:10%;">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @*@foreach (var item in Model.Select((x, i) => new { Data = x, Index = i }))
+            {
+                <tr>
+                    <td>
+                        @item.Index
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Data.File_Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Data.Upload_Date)
+                    </td>
+                    <td>
+                        <input type="button" id="btnDetails" class="button" value="Details" onclick="btnSearch_OnClick()">
+                    </td>
+                </tr>
+            }*@
+
+        @if (Model.Count > 0)
+        {
+            int counter = 0;
+
+            foreach (var item in Model)
+            {
+                counter = counter + 1;
+
+                <tr>
+                    <td align="center">
+                        @counter
+                    </td>
+                    <td>
+                        @item.File_Name
+                    </td>
+                    <td align="center">
+                        @item.Upload_Date
+                    </td>
+                    <td align="center">
+                        <input type="button" id="btnDetails" class="button" value="Details" onclick="BindPartialView('VIEW',@item.File_Code)">
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4">No record found</td>
+            </tr>
+        }
+    </tbody>
+
+</table>

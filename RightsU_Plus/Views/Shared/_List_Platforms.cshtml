@@ -1,0 +1,49 @@
+﻿@model List<RightsU_Entities.Glossary>
+
+<div class="pagination" style="margin-top: 4px; text-align: right;float:none;"></div>
+<div class="grid_area deal" style="margin-right:10px;margin-top:20px;overflow: hidden;width: 56%;float: left;">
+    @foreach (var item in Model)
+    {
+        <div class="grid_item">
+            <ul>
+                <li><b>@item.Name</b></li>
+                <li><p>@item.Description</p></li>
+                <li><b>Example : </b><span>@item.Example</span></li>
+            </ul>
+        </div>
+    }
+</div>
+
+<script>
+    $(function(){
+
+        if ($('.pagination'))
+            SetPaging();
+    });
+    function SetPaging() {
+        debugger;
+        var PageNo = @ViewBag.PageNo, recordCnt = @ViewBag.RecordCount;
+        IsCall = 'N';
+        //if (PageNo_PVG != null)
+        //    PageNo = PageNo_PVG;
+        //if (RecordCount_PVG != null)
+        //    recordCnt = RecordCount_PVG;
+        PageNo = PageNo - 1;
+        var opt = { callback: pageselectCallback};
+        opt["items_per_page"] = 10;
+        opt["num_display_entries"] = 5;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = PageNo;
+        $(".pagination").pagination(recordCnt, opt);
+    }
+    function pageselectCallback(page_index, jq) {
+        debugger;
+        if (IsCall == 'Y')
+            LoadPlatforms(page_index, chosenSelected);
+        else
+            IsCall = 'Y';
+    }
+
+</script>

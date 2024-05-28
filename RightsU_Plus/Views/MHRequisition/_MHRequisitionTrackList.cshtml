@@ -1,0 +1,239 @@
+﻿@model List<RightsU_Entities.USPMHRequistionTrackList_Result>
+
+<input type="hidden" id="hdnType" value="Music" />
+<table class="table table-bordered table-hover table-striped" id="tblTrack">
+    <thead>
+        <tr>
+            @if (ViewBag.Key != "VIEW")
+            {
+                if (@Model.FirstOrDefault().MHRequestStatusCode == 4)
+            {
+                <th style="width:3% !important;text-align:left"><input id="chkAll" type="checkbox" onclick="checkAll()" disabled /></th>
+            }
+            else
+            {
+                <th style="width:3% !important"><input id="chkAll" type="checkbox" onchange="checkAll()" /></th>
+            }
+                
+            }
+            <th style="width:15%;">Music Track</th>
+            <th style="width:12%;">Music Label</th>
+            <th style="width:15%;">Movie/Album Name</th>
+            <th style="width:13%;">Singer</th>
+            <th style="width:13%;">StarCast</th>
+            @if (ViewBag.Key != "VIEW")
+            {
+                <th style="width:17%;">Map To Existing</th>
+                <th style="width:17%;">Create New</th>
+            }
+            else
+            {
+                <th style="width:17%;">Approved Track</th>
+                <th style="width:17%;">Create / Map</th>
+            }
+            <th style="width:10%;">Status</th>
+            <th style="width:15%;">Remarks</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+        <tr id="tr_@item.MHRequestDetailsCode">
+            @if (ViewBag.Key != "VIEW")
+            {
+                <td style="text-align:center">
+                    @{string Cssstyle = "";
+                        if (item.IsApprove == "N")
+                        {
+                            Cssstyle = "outline-color: red !important; outline-style: solid; outline-width: 2px; outline-offset: -2px; background-color: #e1e3e8;";
+                        }
+                        else if (item.IsApprove == "Y")
+                        {
+                            Cssstyle = "outline-color: green !important; outline-style: solid; outline-width: 2px; outline-offset: -2px; background-color: #e1e3e8;";
+                        }
+                        if ((item.MusicTitleCode != 0 || item.IsApprove == "N") && item.IsApprove != "P")
+                        {
+
+                            <input id="chk_@item.MHRequestDetailsCode" type="checkbox" name="chkType" class="checkboxAll" onchange="selectCurrent(this);"
+                                   value="@item.MHRequestDetailsCode" style="@Cssstyle" disabled checked />
+                        }
+                        else
+                        {
+                            <input id="chk_@item.MHRequestDetailsCode" type="checkbox" name="chkType" class="checkboxAll" onchange="selectCurrent(this);"
+                                   value="@item.MHRequestDetailsCode" />
+                        }
+                    }
+                </td>
+            }
+            <td>
+                @item.RequestedMusicTitleName
+            </td>
+            <td>
+                @if (item.MusicLabelCode != 0)
+                {
+                    @item.MusicLabelName
+                }
+            </td>
+            <td>
+                @if (item.MusicAlbumCode != 0)
+                {
+                    @item.MusicMovieAlbumName
+                }
+            </td>
+            <td>
+
+                @if (item.Singers != "")
+                {
+                    <div class="expand_Remark">
+                        @item.Singers
+                    </div>
+                }
+
+                @* <label>Singers</label>*@
+            </td>
+            <td>
+                <div class="expand_Remark">
+                @if (item.StarCasts != "")
+                {
+                    @item.StarCasts
+                }
+                </div>
+               @* <label>StarCasts</label>*@
+            </td>
+
+
+
+
+            @if (ViewBag.Key != "VIEW")
+            {
+                <td>
+
+                    @if (item.MusicTitleCode != 0)
+                    {
+                        if (item.CreateMap== "M")
+                        {
+                            <input type="text" class="text" id="MapToExsisting_@item.MHRequestDetailsCode"
+                                   value="@item.ApprovedMusicTitleName" disabled />
+                        }
+                        else
+                        {
+                            <input type="text" class="text" id="MapToExsisting_@item.MHRequestDetailsCode" disabled />
+                        }
+                    }
+                    else if (item.IsApprove == "N")
+                    { <input type="text" class="text" id="MapToExsisting_@item.MHRequestDetailsCode" disabled />}
+                    else
+                    {
+                        <input type="text" class="text" autocomplete="on" id="MapToExsisting_@item.MHRequestDetailsCode" onkeyup="PopulateTitleForMapping(this,'Music')" />
+                    }
+                    <input type="hidden" id="hdnMusicTitleCode_@item.MHRequestDetailsCode" value="@item.MusicTitleCode" />
+                    <input type="hidden" id="hdnCreateMap_@item.MHRequestDetailsCode" value="@item.CreateMap" />
+
+                </td>
+                <td>
+                    @if (item.CreateMap == "M" || item.IsApprove == "N")
+                    {
+                        <span id="spnMusicTitle_@item.MHRequestDetailsCode"> </span>
+                    }
+                    else if ((item.MusicTitleCode != 0) || item.IsApprove != "P")
+                    {
+                        <span id="spnMusicTitle_@item.MHRequestDetailsCode">
+                            @if ((item.MusicTitleCode != 0))
+                            {@item.ApprovedMusicTitleName}
+                        </span>
+                    }
+                    else
+                    {
+                        if (ViewBag.Key != "VIEW")
+                        {
+                                <a title="" href="#" class="glyphicon glyphicon-music" data-original-title="New Music" id="CreateNewTitle_@item.MHRequestDetailsCode"
+                                   data-target="#popAddMovie" data-toggle="modal"
+                                   onclick="AddTitle('@item.MHRequestDetailsCode',@item.MusicAlbumCode,'@item.MusicMovieAlbumName',@item.MusicLabelCode,'@item.MusicLabelName','Music')"></a>
+                                <span id="spnMusicTitle_@item.MHRequestDetailsCode" style="display:none">
+                                </span>
+                        }
+                    }
+                </td>
+            }
+            else
+            {
+                <td>
+                    @if ((item.MusicTitleCode != 0))
+                    {
+                        <span>@item.ApprovedMusicTitleName</span>
+                    }
+                </td>
+                <td>
+                    @if (item.CreateMap == "M")
+                    {
+                        <span>Map</span>
+                    }
+                    else if (item.CreateMap == "C")
+                    {
+                        <span>Create</span>
+                    }
+                </td>
+            }
+            <td>
+                @if (item.IsApprove == "Y")
+                {
+                    <span>Approve</span>
+                }
+                else if (item.IsApprove == "N")
+                {
+                    <span>Rejected</span>
+                }
+                else
+                {
+                    <span>Pending</span>
+                }
+            </td>
+            <td>
+                @if (ViewBag.Key != "VIEW")
+                {
+                    <input type="text" name="txtRemark" class="text" id="txtRemark_@item.MHRequestDetailsCode" onkeyup="SpacesNotAllowed(this)" value="@item.Remarks" />
+                }
+                else
+                {
+                    <div class="expand_Remark">
+                        @item.Remarks
+                    </div>
+                    @*@item.Remarks*@
+                }
+            </td>
+        </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="8">No Record Found</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<script>
+    $(document).ready(function () {
+        $('.expand_Remark').expander({
+            slicePoint: 10,
+            expandPrefix: '',
+            expandText: '...read more',
+            collapseTimer: 0,
+            userCollapseText: '<span>[^]</span>'
+        });
+        initializeExpander();
+        initializeExpander();
+        if ($('.checkboxAll:checked').length == $('.checkboxAll').length) {
+            $("#chkAll").prop("indeterminate", false);
+            $('#chkAll').prop('checked', true);
+        } else {
+            if ($('.checkboxAll:checked').length > 0) {
+                $("#chkAll").prop("indeterminate", true);
+            }
+            else { $("#chkAll").prop("indeterminate", false); }
+            $('#chkAll').prop('checked', false);
+        }
+    });
+</script>

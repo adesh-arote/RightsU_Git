@@ -1,0 +1,148 @@
+﻿@model RightsU_Entities.Platform_Group
+@{
+    var j = (string)ViewBag.strPlatformCode;
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }     
+}
+@*<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+    <script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>*@
+<script>
+    var URL_BindPlatformTreeView = '@Url.Action("BindPlatformTreeView", "Platform_Group")';
+    BindPlatform();
+    function BindPlatform() {
+
+        $("#hdnTVCodes").val('@j');
+        $.ajax({
+            type: "POST",
+            url: URL_BindPlatformTreeView,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                strPlatform: $("#hdnTVCodes").val()
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                $('#tree').html(result);
+            },
+            error: function (result) { }
+        });
+    }
+</script>
+<style>
+  
+     #Tree_Filter_Rights_Platform {   
+        width:597px;
+        margin-left:1px;
+        position:relative!important;
+    }
+    #Rights_Platform{
+        margin:0px 0px 0px 0px!important;
+    }
+</style>
+<script>
+    function SavePlatformGroup() {
+
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        var IsValid = true;
+
+        if (!checkCurrentAction())
+            return false;
+
+        var platformGroupName = $.trim($('#txtPlatformGroupName').val());
+
+        if (platformGroupName == '') {
+            $('#txtPlatformGroupName').val('').attr('required', true);
+            IsValid = false;
+        }
+        if ($('#hdnTVCodes').val() == "") {
+            showAlert("E", "@objMessageKey.PleaseSelectatleastonePlatformRight");
+            return false;
+        }
+    }
+    function checkCurrentAction() {
+        return true;
+    }
+    function SaveSuccess(result) {
+        if (result.Status == "S") {
+            $('#lblRecordCount').text(result.Record_Count);
+            showAlert("S", result.Message);
+            $('#hdnRecodLockingCode').val(0);
+            //  SearchPlatform_Group("");
+            // $('#searchCommon').val('');
+            $('#popup').modal('hide');
+            $('#pupupHtml').empty();
+            if ($("#searchCommon").val() != "") {
+                SearchPlatform_Group($("#searchCommon").val())
+            }
+            else {
+                BindPlatform_GroupList(0, "");
+            }
+
+        }
+        else {
+            showAlert("E", result.Message);
+        }
+
+    }
+</script>
+<style>
+    #Rights_Platform {
+        height: 404px;
+    }
+</style>
+
+<div class="modal_block modal_header">
+    <a class="close" onclick="ClosePopup()">
+        <span>X</span>
+        <span class="sr-only">Close</span>
+    </a>
+    <label class="bold" for="platform">
+        <h2>@objMessageKey.Platform / @objMessageKey.Rights</h2>
+    </label>
+
+</div>
+
+@using (Ajax.BeginForm("SavePlatform_Group", "Platform_Group", new AjaxOptions() { OnSuccess = "SaveSuccess" }))
+{
+    <div class="search_area" style="padding:5px;">
+
+        <table class="table">
+            <tr>
+                <td style="width:35% !important;">
+                    @objMessageKey.PlatformGroup: &nbsp;&nbsp;
+                    <input id="txtPlatformGroupName" placeholder="@objMessageKey.PlatformGroup" name="txtPlatformGroupName" type="text" maxlength="100" value="@Model.Platform_Group_Name" style="width:200px;" />
+                    <input type="hidden" id="hdnPlatformCode" name="hdnPlatformCode" value="@Model.Platform_Group_Code" />
+                    <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="divTree" class="platform_wrapper" dir="@objMessageKey.LayoutDirection">
+        <div id="tree" class="treeClass">
+        </div>
+        <span id="lblTheatrical" style="display: none;">@objMessageKey.Theatrical</span>
+        <input type="hidden" id="hdnTVCodes" name="hdnTVCodes" />
+        <div class="modal_block_full" style="margin-top: 10px;">
+            <div class="form_links">
+                <ul class="modal_block clearfix" style="padding-left:10px; padding-top: 10px;">
+                    <li>
+                        <input type="submit" class="btn btn-primary" value="@objMessageKey.Save" onclick="return SavePlatformGroup()" />
+                        <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="ClosePopup()" />
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+}
+
+
+

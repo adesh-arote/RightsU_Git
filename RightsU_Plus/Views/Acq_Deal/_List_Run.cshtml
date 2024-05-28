@@ -1,0 +1,414 @@
+﻿@model List<RightsU_Entities.USP_Acq_List_Runs_Result>
+@using RightsU_BLL;
+@using RightsU_Entities;
+@using UTOFrameWork.FrameworkClasses;
+@{
+    RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
+    if (Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA] != null)
+    {
+        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA];
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+}
+
+<script type="text/javascript">
+
+    var URL_GetAcq_Deal_Shows_Count = '@Url.Action("GetAcq_Deal_Shows_Count", "Acq_Run_List")';
+    var URL_Delete_Link_Show = '@Url.Action("Delete_Link_Show", "Acq_Run_List")';
+    var URL_Save_List_Shows = '@Url.Action("Save_List_Shows", "Acq_Run_List")';
+    var URL_Link_Show = '@Url.Action("Link_Show", "Acq_Run_List")'
+
+    $(document).ready(function () {
+        initializeTooltip();
+        $('#spanRecordCount').html('@objMessageKey.TotalRecords: @ViewBag.RecordCount');
+        $('#spanRecordCount').css("float", "right");
+        $('.chkAllShow').click(function () {
+            debugger;
+            var checkedVal = $(this).is(':checked');
+            var Acq_Deal_Run_Code = $(this).val();
+            var checked = $(this);
+            $.ajax({
+                type: "POST",
+                url: URL_GetAcq_Deal_Shows_Count,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    Acq_Deal_Run_Code: Acq_Deal_Run_Code
+                }),
+                success: function (result) {
+                    var lst = {
+                    };
+                    if (result > 0) {
+                        if (checkedVal) {
+                            showAlert("I", '@objMessageKey.ThereareshowsthatarealreadylinkeDoyoustillwanttocontinue', "OKCANCEL");
+                            j = [];
+                            j[1] = $(checked).attr('id');
+                            j[0] = 'SaveShow';
+                            $('#hdnCommandNameAllShow').val($.makeArray(j));
+                            return false;
+                        }
+                        else {
+                            var selectRunShowsList = {};
+                            $.ajax({
+                                type: "POST",
+                                url: URL_Delete_Link_Show,
+                                traditional: true,
+                                enctype: 'multipart/form-data',
+                                contentType: "application/json; charset=utf-8",
+                                data: JSON.stringify({
+                                    Acq_Deal_Run_Code: Acq_Deal_Run_Code
+                                }),
+                                success: function (result) {
+                                    debugger;
+                                }
+                            });
+                        }
+                    }
+                    else {
+                        $.ajax({
+                            type: "POST",
+                            url: URL_Save_List_Shows,
+                            traditional: true,
+                            enctype: 'multipart/form-data',
+                            contentType: "application/json; charset=utf-8",
+                            data: JSON.stringify({
+                                lst: lst,
+                                hdn_Acq_Deal_Run_Code: Acq_Deal_Run_Code,
+                                hdn_Data_For: 'A'
+                            }),
+                            success: function (result) {
+                                debugger;
+                            }
+                        });
+                    }
+
+                },
+                complete: function () {
+                    hideLoading();
+                },
+                error: function (result) {
+                    alert('Error');
+                }
+            });
+        });
+
+    });
+
+    function SaveShow() {
+        lst = {};
+        var Acq_Deal_Run_Code = $('#Acq_Deal_Run_Code').val();
+        $.ajax({
+            type: "POST",
+            url: URL_Save_List_Shows,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                lst: lst,
+                hdn_Acq_Deal_Run_Code: Acq_Deal_Run_Code,
+                hdn_Data_For: 'A'
+            }),
+            success: function (result) {
+                debugger;
+            }
+        });
+    }
+    function OpenPopup(id) {
+        $('#' + id).modal('show');
+    }
+    function ClosePopup(id) {
+        $('#' + id).modal('hide');
+    }
+    function Link_Show(acq_Deal_Run_Code, title_Name, channel_Name, control) {
+        $('#Acq_Deal_Run_Code').val(acq_Deal_Run_Code);
+        $('#hdnTitleName').val(title_Name);
+        $('#hdnChannelName').val(channel_Name);
+        var controlID = $(control).siblings().filter('.chkAllShow').attr('id');
+        var isCheckedAllShow = $('#' + controlID).is(':checked');
+        var isYes = false;
+
+        if (isCheckedAllShow) {
+            j = [];
+            j[1] = controlID;
+            j[0] = 'AllShow';
+            $('#hdnCommandNameAllShow').val($.makeArray(j));
+
+            showAlert("I", '@objMessageKey.AllshowsarealreadylinkedDoyoustillwanttocontinue', "OKCANCEL");
+            return false;
+        }
+        else
+            isYes = true;
+
+        if (isYes) {
+            ShowPopupShow(acq_Deal_Run_Code);
+
+        }
+
+    }
+    function ShowPopupShow(acq_Deal_Run_Code) {
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: URL_Link_Show,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                selected_Acq_Deal_Run_Code: acq_Deal_Run_Code
+            }),
+            success: function (result) {
+                debugger;
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#popupLinkShow').html(result);
+                    $('#lblTitle_Name').text($('#hdnTitleName').val());
+                    $('#lblChannel_Name').text($('#hdnChannelName').val());
+                    $('#hdn_Acq_Deal_Run_Code').val(acq_Deal_Run_Code);
+                    Search_Shows('F');
+                    OpenPopup('popupLinkShow');
+                }
+
+            },
+            complete: function () {
+                hideLoading();
+            },
+            error: function (result) {
+                alert('Error');
+            }
+        });
+    }
+    function DeleteData(control) {
+        var acq_Deal_Run_Code = $('#Acq_Deal_Run_Code').val();
+        $.ajax({
+            type: "POST",
+            url: URL_Delete_Link_Show,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Acq_Deal_Run_Code: acq_Deal_Run_Code
+            }),
+            success: function (result) {
+                debugger;
+            }
+        });
+        $('#' + control).prop('checked', false);
+        ShowPopupShow($('#Acq_Deal_Run_Code').val());
+    }
+    var IsCall = 'Y';
+    function SetPaging() {
+        var txtPageSize = $('#txtPageSize').val();
+        IsCall = 'N';
+        var PageNo, recordCnt;
+
+        if ('@ViewBag.PageNo' != null)
+            PageNo = '@ViewBag.PageNo';
+
+        if ('@ViewBag.RecordCount' != null)
+            recordCnt = '@ViewBag.RecordCount';
+
+        PageNo = PageNo - 1;
+
+        var opt = { callback: pageselectCallback };
+        opt["items_per_page"] = parseInt(txtPageSize);
+        opt["num_display_entries"] = 5;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = PageNo;
+        $("#Pagination").pagination(recordCnt, opt);
+    }
+
+    function pageselectCallback(page_index, jq) {
+        debugger;
+        if (IsCall == 'Y') {
+            LoadGrid(page_index);
+        }
+        else
+            IsCall = 'Y';
+    }
+
+</script>
+<table class="table table-bordered table-hover" id="tblMain">
+    <thead>
+        <tr>
+            <th style="width: 20%;" rowspan="2">@objMessageKey.Title</th>
+            <th style="width: 35%;" rowspan="2">@objMessageKey.Channels</th>
+            @if (ViewBag.AllowPeriodInRunDefinition == "Y")
+            {
+                <th style="width: 15%;" rowspan="2">@objMessageKey.Period</th>
+            }
+            <th style="width: 15%;" rowspan="2">@objMessageKey.RunDefinitionType</th>
+            <th style="width: 10%;" colspan="3">@objMessageKey.Runs</th>
+            <th style="width: 10%;" rowspan="2">@objMessageKey.IsRuleRight</th>
+            <th style="width: 10%;" rowspan="2">@objMessageKey.Action</th>
+        </tr>
+        <tr>
+
+            <th style="width: 5%;"><span title="@objMessageKey.TotalRuns">@objMessageKey.Runs</span></th>
+            <th style="width: 5%;"><span title="@objMessageKey.SyndicationRuns">@objMessageKey.Syn</span></th>
+            <th style="width: 5%;"><span title="@objMessageKey.RunsSelf">@objMessageKey.Self</span></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count() != 0)
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @item.Title_Name&#x200E;
+                    </td>
+                    <td>
+                        @if (item.ChannelNames != null)
+                        {
+                            <div class="expandable">@Html.Label(Convert.ToString(item.ChannelNames))<a href="#"><span></span></a></div>
+                        }
+                    </td>
+                    @if (ViewBag.AllowPeriodInRunDefinition == "Y")
+                    {
+                        <td>
+                            @{
+                                string Period = ""; int AcqDealRunCode = 0; DateTime SDATE, EDATE;
+                                List<Acq_Deal_Run_LP> objADRL = new List<Acq_Deal_Run_LP>();
+                                Acq_Deal_Run objRunList = new Acq_Deal_Run();
+
+                                AcqDealRunCode = Convert.ToInt32(item.Acq_Deal_Run_Code);
+                                objRunList = new Acq_Deal_Run_Service(objLoginEntity.ConnectionStringName).GetById(AcqDealRunCode);
+
+                                SDATE = Convert.ToDateTime(objRunList.Start_Date);
+                                EDATE = Convert.ToDateTime(objRunList.End_Date);
+
+                                Period = SDATE.ToString("dd-MMM-yyyy") + " - " + EDATE.ToString("dd-MMM-yyyy");
+                            }
+                            @Period
+                        </td>
+                    }
+
+                    @if (item.Run_Definition_Type.TrimEnd() == "C")
+                    {
+                        <td>
+                            @objMessageKey.ChannelWise
+                        </td>
+                    }
+                    else
+                        if (item.Run_Definition_Type.TrimEnd() == "CS")
+                    {
+                        <td>@objMessageKey.ChannelWiseShared</td>
+                    }
+                    else
+                            if (item.Run_Definition_Type.TrimEnd() == "A")
+                    {
+                        <td>@objMessageKey.AllChannelOneRun</td>
+                    }
+                    else
+                                if (item.Run_Definition_Type.TrimEnd() == "S")
+                    {
+                        <td>@objMessageKey.Shared</td>
+                    }
+                    else
+                                    if (item.Run_Definition_Type.TrimEnd() == "N")
+                    {
+                        <td>@objMessageKey.NotApplied</td>
+                    }
+                    @*</td>*@
+                    @if (item.Run_Type == "U")
+                    {
+                        <td colspan="3">
+                            @objMessageKey.Unlimited
+                        </td>
+                    }
+                    else
+                    {
+                        @*<td>
+                                @if (item.Is_SubLicense == "Y")
+                                {
+                                    @item.No_Of_Runs.ToString()<span>+</span>@item.Syndication_Runs.ToString()<span>=</span>@((item.No_Of_Runs + item.Syndication_Runs).ToString())
+                                }
+                                else
+                                {
+                                    @Html.Label((item.No_Of_Runs).ToString())
+                                }
+
+                            </td>*@
+
+                        <td>
+                            @if (item.Syndication_Runs == null)
+                            {
+                                item.Syndication_Runs = 0;
+                            }
+                            @if (item.No_Of_Runs == null)
+                            {
+                                item.No_Of_Runs = 0;
+                            }
+                            @((item.No_Of_Runs + item.Syndication_Runs).ToString())
+                        </td>
+                        <td>@item.Syndication_Runs.ToString()</td>
+                        <td>@item.No_Of_Runs.ToString()</td>
+                    }
+                    @if (item.Is_Rule_Right.TrimEnd() == "Y")
+                    {
+                        <td>@objMessageKey.Yes</td>
+                    }
+                    else
+                    {
+                        <td>@objMessageKey.NO</td>
+                    }
+                    @if (objSchema.Mode == GlobalParams.DEAL_MODE_APPROVE || objSchema.Mode == GlobalParams.DEAL_MODE_VIEW)
+                    {
+                        <td>
+                            @*@Html.ActionLink(" ", "ButtonEvents", "Acq_Run_List", new { id = item.Acq_Deal_Run_Code }, new { @class = "glyphicon glyphicon-eye-open", @onclick = "return ValidateSave();" })*@
+                            <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" onclick="ButtonEvents(@item.Acq_Deal_Run_Code)"></a>
+                            @if (objSchema.Deal_Type_Code == GlobalParams.Deal_Type_Music)
+                            {
+                                <a title="@objMessageKey.LinkShow" href="#" class="glyphicon glyphicon-link" onclick="Link_Show(@item.Acq_Deal_Run_Code,'@item.Title_Name','@item.ChannelNames',this);"></a>
+                                @*<input type="checkbox" name="chkAllShow" id="chkAllShow" value="A" />@Html.Raw("All Shows")*@
+                            }
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            @*@Html.ActionLink(" ", "ButtonEvents", "Acq_Run_List", new { id = item.Acq_Deal_Run_Code }, new { @class = "glyphicon glyphicon-pencil", @title = "Edit", @onclick = "return ValidateSave();" })*@
+                            <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" onclick="ButtonEvents(@item.Acq_Deal_Run_Code)"></a>
+                            &nbsp;<a class="glyphicon glyphicon-trash" title="@objMessageKey.Delete" onclick="return ValidateDelete('@item.No_Of_Runs_Sched','@item.Acq_Deal_Run_Code')" />
+                            @if (objSchema.Deal_Type_Code == GlobalParams.Deal_Type_Music)
+                            {
+                                <a title="@objMessageKey.LinkShow" href="#" class="glyphicon glyphicon-link" onclick="Link_Show(@item.Acq_Deal_Run_Code,'@item.Title_Name','@item.ChannelNames',this);"></a>
+                                if (item.Data_For == "A")
+                                {
+                                    <input type="checkbox" name="chkAllShow" id="chkAllShow_@item.Acq_Deal_Run_Code" class="chkAllShow" value="@item.Acq_Deal_Run_Code" checked />@Html.Raw("All Shows")
+                                }
+                                else
+                                {
+                                    <input type="checkbox" name="chkAllShow" id="chkAllShow_@item.Acq_Deal_Run_Code" class="chkAllShow" value="@item.Acq_Deal_Run_Code" />@Html.Raw("All Shows")
+                                }
+                            }
+                        </td>
+                    }
+
+
+
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="8">@objMessageKey.ResultNotFound!</td>
+            </tr>
+        }
+    </tbody>
+</table>

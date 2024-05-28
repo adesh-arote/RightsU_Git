@@ -1,0 +1,72 @@
+﻿@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    } 
+}
+
+<div class="modal-dialog">
+    <div class="modal-content clearfix">
+        <form class="form" id="new_syndication_bundle_form">
+            <div class="form_wrapper">
+                <div class="form_fields acq">
+                    <div class="modal_block modal_header">
+                        <a class="close" data-dismiss="modal" >
+                            <span>×</span>
+                            <span class="sr-only">Close</span>
+                        </a>
+                        <h2>@objMessageKey.Approve</h2>
+                    </div>
+                    <div class="modal_block">
+                        <ul>
+                            <li>
+                                @Html.Hidden("hdnIgnoreOverride", new { @id = "hdnIgnoreOverride" })
+                                <label class="radio-inline">
+                                    <input type="radio" name="optAuthorize" id="optAuthorize1" onclick="showAuthorize(this);" value="1" checked />@objMessageKey.Ignore
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" name="optAuthorize" id="optAuthorize2" onclick="showAuthorize(this);" value="2" />@objMessageKey.Override
+                                </label>
+                            </li>
+                            <li id="ShowReason" style="display:none;">
+                                <label>@objMessageKey.Reason</label>
+                                @*<select name="" id="" class="form_input chosen-select" multiple>
+                                        <option value="1">Mutually Agreed	                                    </option>
+                                        <option value="2">Adjusted against music library                        </option>
+                                        <option value="3">Settled with concerned party over email               </option>
+                                        <option value="4">Settled with concerned party over phone / person      </option>
+                                        <option value="5">Not a violation                                                   </option>
+                                        <option value="6">Internal Business Decision                                    </option>
+                                        <option value="7">Approved by business head                                 </option>
+                                    </select>*@
+                                @Html.DropDownList("ddlReason", (List<SelectListItem>)ViewBag.lstMORS, "Please select",
+                                                new { @id = "ddlReason", @class = "form_input chosen-select" })
+
+                            </li>
+                            <li id="ShowRemarks">
+                                <label>@objMessageKey.Remarks</label>
+                                <textarea name="txtRemarks" id="txtRemarks" class="textarea"></textarea>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="modal_block_full">
+                        <div class="form_links">
+                            <ul class="modal_block clearfix">
+                                <li>
+                                    <input type="button" id="btnApprove" class="btn btn-primary" value="@objMessageKey.Approve" onclick="ApproveOrReject('@ViewBag.Music_Schedule_Transaction_Code','A')" />
+                                </li>
+                                <li>
+                                    <input type="button" id="btnReject" class="btn btn-primary" value="@objMessageKey.Reject" onclick="ApproveOrReject('@ViewBag.Music_Schedule_Transaction_Code','R')" />
+                                </li>
+                                <li>
+                                    <a data-dismiss="modal" class="btn-primary">@objMessageKey.Cancel</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

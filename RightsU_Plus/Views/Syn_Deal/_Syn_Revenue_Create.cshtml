@@ -1,0 +1,532 @@
+﻿@model RightsU_Entities.Syn_Deal_Revenue
+@using UTOFrameWork.FrameworkClasses;
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script type="text/javascript" src="~/JS_Core/jquery.alphanum.min.js"></script>
+<script type="text/javascript" src="~/JS_Core/autoNumeric-1.8.1.js"></script>
+<style>
+    .SumoSelect {
+    width: 840px !important;
+}
+</style>
+<script type="text/javascript">
+    function CheckAddEditMode() {
+        if ('@ViewBag.IsAddEditMode' == 'Y') {
+            message = '@objMessageKey.PleasecompletetheAddEditfirst';
+            showAlert('E', message);
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    $(document).ready(function () {
+        $('#txtAgreementValue').autoNumeric('init', {
+            vMax: '99999999999.99',
+            dGroup: 2
+        });
+        $('#ddlSrchTitle').SumoSelect();
+        var Recoupment_Code = '0';
+        debugger;
+        if ('@Model.Royalty_Recoupment_Code' != '')
+            Recoupment_Code = '@Model.Royalty_Recoupment_Code';
+        BindRoyaltyRecoupment(Recoupment_Code);
+        initializeExpander();
+        BindTitle();
+        callextras();
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("Load_Cost_Type", "Syn_Revenue")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            success: function (result) {
+                $('#tabCostHead').empty();
+                $('#tabCostHead').html(result);
+            },
+            error: function (result) { }
+        });
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("Load_Additional_Exp", "Syn_Revenue")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            success: function (result) {
+                $('#tabAdditionalExp').empty();
+                $('#tabAdditionalExp').html(result);
+            },
+            error: function (result) { }
+        });
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("Load_Standard_Returns", "Syn_Revenue")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            success: function (result) {
+                $('#tabStdReturns').empty();
+                $('#tabStdReturns').html(result);
+            },
+            error: function (result) { }
+        });
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("Load_Overflow", "Syn_Revenue")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            success: function (result) {
+                $('#tabOverflow').empty();
+                $('#tabOverflow').html(result);
+            },
+            error: function (result) { }
+        });
+    });
+
+    function LoadStandardReturns() {
+        showLoading();
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindGridStandardReturns", "Syn_Revenue")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                } else {
+                    $('#tabStdReturns').html(result);
+                    hideLoading();
+                    initializeTooltip();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function BindTitle() {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindTitle", "Syn_Revenue")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: true,
+            success: function (result) {
+                $("#ddlSrchTitle").empty();
+                debugger;
+                $.each(result, function () {
+                    if (this.Selected == true)
+                        $("#ddlSrchTitle").append($("<option />").val(this.Value).text(this.Text).attr("selected", "selected"));
+                    else
+                        $("#ddlSrchTitle").append($("<option />").val(this.Value).text(this.Text));
+                });
+                $("#ddlSrchTitle")[0].sumo.reload();
+                initializeChosen();
+            },
+            error: function (result) { }
+        });
+    }
+    function callextras() {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindHeaderData", "Acq_Cost")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            async: true
+        });
+    }
+    var rowCT = 0, diffCostTypeAmt = 0;;
+    function FinalSaveDealCost() {
+        if (CheckAddEditMode()) {
+            debugger;
+            rowCT = 0;
+
+            $('#ddlSrchTitle').attr('required', false);
+            $(".ddlSrchTitle").removeClass('required');
+
+            var txtAgreementValue = RemoveComa($('#txtAgreementValue').val());
+            if ($('#ddlSrchTitle').val() == null) {
+                $('#ddlSrchTitle').attr('required', true);
+                $(".ddlSrchTitle").addClass('required');
+                return false;   
+            }
+            else if ($('#ddlSrchTitle').val().join(',') == "") {
+                $('#ddlSrchTitle').attr('required', true);
+                $(".ddlSrchTitle").addClass('required');
+                return false;
+            }
+             else if (txtAgreementValue == "") {
+                $('#txtAgreementValue').attr('required', true);
+                return false;
+            } else if (txtAgreementValue != "" && parseFloat(txtAgreementValue) == 0) {
+                $('#txtAgreementValue').addClass('required', true);
+                return false;
+            } else if (!CostTypeDetails()) {
+
+                var message = "";
+                if (rowCT == 0) {
+                    showAlert('E', '@objMessageKey.PleaseaddatleastonerecordforFixedFees');
+                    return false;
+                } else if (rowCT != 0 && diffCostTypeAmt == 1) {
+                    showAlert('E', '@objMessageKey.FixedCostandsumoffixedfeesmustbeequal');
+                    return false;
+                }
+            } else {
+                $('#txtAgreementValue').removeClass('required');
+                var tmpTitle = $('#ddlSrchTitle').val().join(',');
+                var Variable_Type = $("input[name='Variable_Cost_Type']:radio:checked").val();
+                var tmpAmount = $('#txtAgreementValue').val();
+                var tmpRecoupmentCode = $('#ddlRoyaltyRecoupment').val();
+                if (tmpRecoupmentCode == null) {
+                    $('#ddlRoyaltyRecoupment').attr('required', true);
+                    return false;
+                }
+                /*---Collect Variable Cost Details---*/
+                var VarTypeList = new Array();
+                var RevenueSharing = $("#RevenueSharing tr:not(:has(th),.hide)");
+                var i = 0;
+                var TotalAmt = 0;
+                RevenueSharing.each(function (rowId_outer) {
+                    var _entityCode = 0,
+                        _Percentage = 0,
+                        _variableCostCode = 0,
+                        _vendorCode = 0,
+                        _licensorType = "";
+
+                    _Percentage = $("#txtPercentage_" + i).val();
+                    _variableCostCode = $("#VariableCost_Code_" + i).val();
+                    _licensorType = $("#Licensor_Type_" + i).val();
+                    if (_licensorType == "O")
+                        _entityCode = parseInt($("#Entity_Code_" + i).val());
+                    else
+                        _vendorCode = parseInt($("#Entity_Code_" + i).val());
+                    if (_Percentage == "") {
+                        _Percentage = 0;
+                    }
+                    VarTypeList.push({
+                        Vendor_Code: _vendorCode,
+                        Entity_Code: _entityCode,
+                        Percentage: _Percentage,
+                        Syn_Deal_Revenue_Variable_Cost_Code: _variableCostCode
+                    });
+
+                    TotalAmt = parseFloat(TotalAmt) + parseFloat(_Percentage);
+                    i = i + 1;
+                });
+                /*------------------------------------*/
+
+                if ((parseFloat(TotalAmt) - 100) != 0 && (Variable_Type == "R" || Variable_Type == "P")) {
+                    showAlert('E', '@objMessageKey.TotalpercentageshouldsumuptoHundred');
+                    return false;
+                } else {
+                    showLoading();
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("SaveDealCost", "Syn_Revenue")',
+                        traditional: true,
+                        enctype: 'multipart/form-data',
+                        contentType: "application/json; charset=utf-8",
+                        data: JSON.stringify({
+                            TitleCodes: tmpTitle,
+                            DealCost: tmpAmount,
+                            recoupmentCode: tmpRecoupmentCode,
+                            VariableCostType: Variable_Type,
+                            VariableCostRows: VarTypeList
+                        }),
+                        success: function (result) {
+                            if (result == "true") {
+                                redirectToLogin();
+                            } else {
+                                hideLoading();
+
+                                var PageNo = 0;
+
+                                LoadSynDealRevenue(tmp_pageNo, 'N');
+
+                                $('#popAddEditRevenue').modal('hide');
+                                $('#lblTotalFixedDealCost').text(result.TotalFixedDealCost);
+                                if (result.Message != '') {
+                                    showAlert('S', result.Message);
+                                }
+                            }
+                        },
+                        error: function (result) {
+                            alert('Error: ' + result.responseText);
+                        }
+                    });
+                }
+            }
+        }
+    }
+
+    function CostTypeDetails() {
+        /*---Collect Variable Cost Details---*/
+        var CostTypeList = new Array();
+        var CostType = $("#tblCostType tr:not(:has(th),.hideCT)");
+        var costTypeAmt = 0;
+        var tmpRowId = 0;
+
+        CostType.each(function (rowId_outer) {
+            rowCT = rowCT + 1;
+            var _tmpCostAmt = 0
+            _tmpCostAmt = parseFloat($("#hdn_BudgetedAmt_" + rowCT).val());
+
+            costTypeAmt = parseFloat(costTypeAmt) + parseFloat(_tmpCostAmt);
+        });
+        var txtAgreementValue = RemoveComa($('#txtAgreementValue').val());
+        if (rowCT == 0) {
+            return false;
+        } else if ((parseFloat(txtAgreementValue) - parseFloat(costTypeAmt).toFixed(2)) != 0) {
+            diffCostTypeAmt = 1;
+            return false;
+        } else
+            return true;
+
+    }
+
+    function CancelFinalSave() { }
+
+    function RemoveComa(s) {
+        var s1 = '';
+
+        while (s.indexOf(',') != -1) {
+            s = s.replace(',', '');
+        }
+
+        return s;
+    }
+
+    function RemoveReqClass() {
+      //  $(".ddlSrchTitle").removeClass('required');
+        $('.required').removeClass('required');
+    }
+
+    function CheckAddEditMode() {
+        if ('@ViewBag.IsAddEditMode' == 'Y') {
+            message = '@objMessageKey.PleasecompletetheAddEditfirst';
+            showAlert('E', message);
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    function EnableDisableTabs(isDisable, currTab) {
+
+        if (currTab == 1) {
+            $('#tabValidity a[href="#tabAdditionalExp"]').prop("disabled", isDisable);
+            $('#tabValidity a[href="#tabStdReturns"]').prop("disabled", isDisable);
+            $('#tabValidity a[href="#tabOverflow"]').prop("disabled", isDisable);
+        } else if (currTab == 2) {
+            $('#tabValidity a[href="#tabCostHead"]').prop("disabled", isDisable);
+            $('#tabValidity a[href="#tabStdReturns"]').prop("disabled", isDisable);
+            $('#tabValidity a[href="#tabOverflow"]').prop("disabled", isDisable);
+        } else if (currTab == 3) {
+            $('#tabValidity a[href="#tabAdditionalExp"]').prop("disabled", isDisable);
+            $('#tabValidity a[href="#tabCostHead"]').prop("disabled", isDisable);
+            $('#tabValidity a[href="#tabOverflow"]').prop("disabled", isDisable);
+        } else if (currTab == 4) {
+            $('#tabValidity a[href="#tabAdditionalExp"]').prop("disabled", isDisable);
+            $('#tabValidity a[href="#tabStdReturns"]').prop("disabled", isDisable);
+            $('#tabValidity a[href="#tabCostHead"]').prop("disabled", isDisable);
+        }
+    }
+    function BindRoyaltyRecoupment(RoyaltyRecoupmentCode) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindRoyaltyRecoupment", "Syn_Revenue")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Royalty_Recoupment_Code: parseInt(RoyaltyRecoupmentCode)
+            }),
+            success: function (result) {
+                $("#ddlRoyaltyRecoupment").empty();
+                $.each(result, function () {
+                    if (this.Selected == true)
+                        $("#ddlRoyaltyRecoupment").append($("<option />").val(this.Value).text(this.Text).attr("selected", "selected"));
+                    else
+                        $("#ddlRoyaltyRecoupment").append($("<option />").val(this.Value).text(this.Text));
+                });
+                $("#ddlRoyaltyRecoupment").trigger("chosen:updated");
+                initializeChosen();
+            },
+            error: function (result) { }
+        });
+    }
+</script>
+
+<form class="form" id="Form3">
+    <div class="syn">
+        <div class="form_fields">
+            <div class="modal_block modal_header">
+                <a class="close" data-dismiss="modal" href="#">
+                    <span>×</span>
+                    <span class="sr-only">@objMessageKey.Close</span>
+                </a>
+                <h2>
+                    @if (Model.HeaderLabel != null)
+                    {
+                        @Model.HeaderLabel
+                    }
+                </h2>
+            </div>
+            <ul class="form_fields_wrapper">
+                <li class="form_field modal_block">
+                    <ul>
+                        <li>
+
+                            <label class="bold">@objMessageKey.Titles</label><br />
+                            @*@if (ViewBag.Title_List != null)
+                                {
+                                    @Html.ListBox("ddlSrchTitle", ViewBag.Title_List as MultiSelectList, new { @class = "form_input chosen-select" })
+                                }*@
+                            @if (ViewBag.Mode == GlobalParams.DEAL_MODE_ADD || ViewBag.Mode == GlobalParams.DEAL_MODE_EDIT || ViewBag.Mode == GlobalParams.DEAL_MODE_REOPEN)
+                            {
+                                <div class="ddlSrchTitle" style="width: 842px;">
+                                    <select name="ddlSrchTitle" id="ddlSrchTitle" class="" multiple="multiple"></select>
+                                </div>
+                            }
+                            else if (ViewBag.Mode == GlobalParams.DEAL_MODE_VIEW || @ViewBag.Mode == GlobalParams.DEAL_MODE_APPROVE)
+                            {
+
+                                string movieName = "";
+                                if (ViewBag.Deal_Type_Condition == GlobalParams.Deal_Program)
+                                {
+                                    movieName = string.Join(", ", (Model.Syn_Deal_Revenue_Title.Select(s => s.Title.Title_Name + " ( " + s.Episode_From + " - " + s.Episode_To + " )").ToArray()));
+                                }
+                                else if (ViewBag.Deal_Type_Condition == GlobalParams.Deal_Music)
+                                {
+                                    movieName = string.Join(", ", (Model.Syn_Deal_Revenue_Title.Select(s => s.Title.Title_Name + " ( " + (Convert.ToString(s.Episode_From) == "0" ? "Unlimited" : Convert.ToString(s.Episode_From)) + " )").ToArray()));
+                                }
+                                else
+                                {
+                                    movieName = string.Join(", ", (Model.Syn_Deal_Revenue_Title.Select(s => s.Title.Title_Name).ToArray()));
+                                }
+
+                                    <div class="expandable">
+                                        <span> @movieName </span>
+                                        <a href="#"><span></span></a>
+                                    </div>
+
+                                }
+                        </li>
+                        <li class="specialLI clearfix">
+                            <div>
+                                <label class="bold">@objMessageKey.RoyaltyRecoupmentType</label></br>
+                                @* @if (ViewBag.RoyaltyRecoupment != null)
+                                    {
+                                        @Html.DropDownList("ddlRoyaltyRecoupment", (List<SelectListItem>)ViewBag.RoyaltyRecoupment, new { @onchange = "showOverflow('Y')" });
+                                *@
+                                @if (ViewBag.Mode == GlobalParams.DEAL_MODE_ADD || ViewBag.Mode == GlobalParams.DEAL_MODE_EDIT || ViewBag.Mode == GlobalParams.DEAL_MODE_REOPEN)
+                            {
+                                    <select name="ddlSrchTitle" id="ddlRoyaltyRecoupment" class="form_input chosen-select" onchange="showOverflow('Y')"></select>
+                            }
+                            else if (ViewBag.Mode == GlobalParams.DEAL_MODE_VIEW || @ViewBag.Mode == GlobalParams.DEAL_MODE_APPROVE)
+                            {
+                                @ViewBag.Royalty_Recoupment_Name
+                            }
+                            </div>
+
+                            <div>
+                                <label class="bold">@objMessageKey.FixedCost </label></br>
+                                @{if (ViewBag.Mode == GlobalParams.DEAL_MODE_VIEW || @ViewBag.Mode == GlobalParams.DEAL_MODE_APPROVE)
+                            {
+
+                                string strDealCost = Convert.ToDecimal(String.Format("{0:0.00}", Convert.ToDecimal(Model.Deal_Cost))).ToString();
+                                    @strDealCost
+                            }
+                            else
+                            {@Html.TextBox("txtAgreementValue", @Model.Deal_Cost, new { style = "width:100px;", @class = "text-right", @onkeyup = "RemoveReqClass()" })}}
+                            </div>
+                        </li>
+                        <li class="specialLI clearfix">
+                            <div>
+                                <label class="bold">@objMessageKey.CostInCurrency</label>
+                                <label class="small_title" id="lblCurrency">
+                                    @if (@Model.Currency != null)
+                                { @Model.Currency.Currency_Name}
+                                else
+                                {@ViewBag.Currency}
+                                </label>
+                            </div>
+                            <div>
+                                <label class="bold">@objMessageKey.ExchangeRate </label>
+                                <label class="small_title" id="lblCurrExRate">
+                                    @if (@Model.Currency_Exchange_Rate != null)
+                                { @Model.Currency_Exchange_Rate}
+                                else
+                                {@ViewBag.CurrencyExchangeRate}
+                                </label>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+                <li class="modal_block">
+                    <label class="bold" for="platform">@objMessageKey.SpecialDetails</label>
+                    <div class="tabbable" id="tabValidity">
+                        <ul class="nav nav-tabs nav-tab pull-left">
+                            <li class="active">
+                                <a data-toggle="tab" href="#tabCostHead" role="tab" onclick="CheckAddEditMode();">@objMessageKey.FixedFees</a>
+                            </li>
+                            <li class="">
+                                <a data-toggle="tab" href="#tabAdditionalExp" role="tab" onclick="CheckAddEditMode();">@objMessageKey.AdditionalExpense</a>
+                            </li>
+                            <li class="">
+                                <a data-toggle="tab" href="#tabStdReturns" role="tab" onclick="CheckAddEditMode();">@objMessageKey.StandardReturns</a>
+                            </li>
+                            <li class="">
+                                <a data-toggle="tab" href="#tabOverflow" role="tab" onclick="CheckAddEditMode();">@objMessageKey.Overflow</a>
+                            </li>
+
+                        </ul>
+                        <div class="tab-content clearfix table-wrapper scale_table_container">
+                            <div class="tab-pane active scale_table_block" id="tabCostHead">
+                                @*@Html.Partial("_Cost_Type", Model)*@
+                            </div>
+                            <div class="tab-pane scale_table_block" id="tabAdditionalExp">
+                                @*@Html.Partial("_Additional_Exp", Model)*@
+                            </div>
+                            <div class="tab-pane scale_table_block" id="tabStdReturns">
+                                @*@Html.Partial("_Standard_Returns", Model)*@
+                            </div>
+                            <div class="tab-pane scale_table_block" id="tabOverflow">
+                                @*@Html.Partial("_Overflow", Model)*@
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="modal_block_full">
+            <div class="form_links">
+                <ul class="form_link_nav clearfix">
+                    @{if (ViewBag.Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Mode != GlobalParams.DEAL_MODE_APPROVE)
+                {
+                        <li>
+                            <a class="btn btn-primary" href="#" onclick="FinalSaveDealCost()">@objMessageKey.Save</a>
+
+                        </li>
+                }}
+                    <li>
+                        <a data-dismiss="modal" class="btn btn-primary" href="#" onclick="CancelFinalSave()">@objMessageKey.Cancel</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</form>

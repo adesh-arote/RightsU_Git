@@ -1,0 +1,1134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="2b9f04053a414fc59a54a65a2fa7d55a" Name="Diagram1" ZoomLevel="23">
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal" Width="1.5" PointX="12" PointY="76.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Ancillary" Width="1.5" PointX="9" PointY="73.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Ancillary_Platform" Width="1.5" PointX="23.25" PointY="53" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Ancillary_Platform_Medium" Width="1.5" PointX="25.5" PointY="45.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Ancillary_Title" Width="1.5" PointX="11.25" PointY="67.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Attachment" Width="1.5" PointX="31.5" PointY="74.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Licensor" Width="1.5" PointX="15" PointY="81.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Movie" Width="1.5" PointX="14.25" PointY="65" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Movie_Cost" Width="1.5" PointX="22.5" PointY="64.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Movie_Cost_Additional_Exp" Width="1.5" PointX="27.75" PointY="71.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Movie_Cost_Commission" Width="1.5" PointX="30.75" PointY="66.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Movie_Cost_Costtype" Width="1.5" PointX="3" PointY="65.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Movie_Cost_Costtype_Episode" Width="1.5" PointX="5.25" PointY="72.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Movie_Cost_Payment_Terms" Width="1.5" PointX="30.75" PointY="61.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Movie_Cost_Variable_Cost" Width="1.5" PointX="6" PointY="66" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Rights" Width="1.5" PointX="9" PointY="48.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Rights_Blackout" Width="1.5" PointX="2.75" PointY="24.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Rights_Blackout_Platform" Width="1.5" PointX="27" PointY="17.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Rights_Blackout_Territory" Width="1.5" PointX="26.25" PointY="50.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Rights_Dubbing" Width="1.5" PointX="15.25" PointY="34.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Rights_Holdback" Width="1.5" PointX="2.75" PointY="14.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Rights_Holdback_Platform" Width="1.5" PointX="27" PointY="12.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Rights_Holdback_Territory" Width="1.5" PointX="23.25" PointY="49.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Rights_Platform" Width="1.5" PointX="27" PointY="31.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Rights_Subtitling" Width="1.5" PointX="15.25" PointY="30.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Rights_Territory" Width="1.5" PointX="17.25" PointY="81" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Rights_Title" Width="1.5" PointX="11.25" PointY="64.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Run" Width="1.5" PointX="9" PointY="86.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Run_Channel" Width="1.5" PointX="11.25" PointY="94.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Run_Repeat_On_Day" Width="1.5" PointX="11.25" PointY="107.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Run_Title" Width="1.5" PointX="11.25" PointY="70.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Run_Yearwise_Run" Width="1.5" PointX="11.25" PointY="110.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Run_Yearwise_Run_Week" Width="1.5" PointX="13.5" PointY="110.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Additional_Expense" Width="1.5" PointX="25.5" PointY="87.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Aired" Width="1.5" PointX="16.5" PointY="84.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Aired_Details" Width="1.5" PointX="18.75" PointY="84.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Amort_Rule" Width="1.5" PointX="25.5" PointY="54.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Amort_Rule_Details" Width="1.5" PointX="27.75" PointY="42.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Ancillary_Medium" Width="1.5" PointX="15" PointY="27.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Ancillary_Platform" Width="1.5" PointX="9" PointY="45.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Ancillary_Platform_Medium" Width="1.5" PointX="17.25" PointY="38.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Ancillary_Type" Width="1.5" PointX="6.75" PointY="58.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AsRun_FileStatus" Width="1.5" PointX="0.75" PointY="7.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.ASRUN_Transaction" Width="1.5" PointX="2.75" PointY="7.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.ASRUN_Transaction_Shows" Width="1.5" PointX="7.75" PointY="6.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Business_Unit" Width="1.5" PointX="9.75" PointY="81.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.BV_House_ID_Temp" Width="1.5" PointX="4.75" PointY="7.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.BV_HouseId_Data_Shows" Width="1.5" PointX="9.75" PointY="5.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.BV_HouseId_Data_Temp" Width="1.5" PointX="9.75" PointY="9.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.BV_Schedule_Transaction_Show" Width="1.5" PointX="16.75" PointY="7.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.BVException" Width="1.5" PointX="20" PointY="12.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.BVException_Channel" Width="1.5" PointX="30.75" PointY="48.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.BVException_Users" Width="1.5" PointX="22.25" PointY="20.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Channel" Width="1.5" PointX="25.5" PointY="79.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Channel_Entity" Width="1.5" PointX="27.75" PointY="82.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Channel_Territory" Width="1.5" PointX="27.75" PointY="86.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.ChannelWiseConsumption_Report" Width="1.5" PointX="13.75" PointY="17.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Cost_Center" Width="1.5" PointX="23.25" PointY="56.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Cost_Type" Width="1.5" PointX="0.75" PointY="41.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Country" Width="1.5" PointX="15" PointY="88.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Country_Language" Width="1.5" PointX="17.25" PointY="50.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Currency" Width="1.5" PointX="12.75" PointY="30.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Currency_Exchange_Rate" Width="1.5" PointX="15" PointY="101" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Deal_Tag" Width="1.5" PointX="9.75" PointY="83.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Deal_Type" Width="1.5" PointX="12.75" PointY="36.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.DM_AQDeal" Width="1.5" PointX="30.75" PointY="1.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Document_Type" Width="1.5" PointX="20.25" PointY="53.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Email_Notification_AsRun" Width="1.5" PointX="10.75" PointY="18.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Email_Notification_AsRun_Shows" Width="1.5" PointX="18.75" PointY="1.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Email_Notification_Msg" Width="1.5" PointX="11.75" PointY="1.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Email_Notification_Schedule" Width="1.5" PointX="20.75" PointY="1.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Email_Notification_Schedule_Show" Width="1.5" PointX="22.75" PointY="1.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Email_Template" Width="1.5" PointX="7.75" PointY="13.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Entity" Width="1.5" PointX="12.75" PointY="41.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Error_Code_Master" Width="1.5" PointX="20.75" PointY="9.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.ErrorOn_AsRun_Schedule" Width="1.5" PointX="12.75" PointY="22.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.ErrorOn_SendMail_For_Workflow" Width="1.5" PointX="7.75" PointY="23.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Extended_Columns" Width="1.5" PointX="0.75" PointY="2.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Extended_Columns_Value" Width="1.5" PointX="3" PointY="3.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Format_Show_Data" Width="1.5" PointX="22.75" PointY="15.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Genre" Width="1.5" PointX="15" PointY="76.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Grade_Master" Width="1.5" PointX="0.75" PointY="66.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.HouseID_Type" Width="1.5" PointX="21.75" PointY="23.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Language" Width="1.5" PointX="2.75" PointY="19" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Language_Group" Width="1.5" PointX="2.75" PointY="29.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Language_Group_Details" Width="1.5" PointX="5" PointY="23.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Map_Extended_Columns" Width="1.5" PointX="5.25" PointY="3.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Map_Extended_Columns_Details" Width="1.5" PointX="7.5" PointY="3.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Material_Medium" Width="1.5" PointX="17.25" PointY="76.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Material_Order" Width="1.5" PointX="17.25" PointY="88.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Material_Order_Details" Width="1.5" PointX="19.5" PointY="72.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Material_Receipt" Width="1.5" PointX="22.5" PointY="81.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Material_Receipt_Order" Width="1.5" PointX="24.75" PointY="76.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Material_Type" Width="1.5" PointX="23.75" PointY="23.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Milestone_Type" Width="1.5" PointX="6.75" PointY="49.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Module_Status_History" Width="1.5" PointX="14.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Module_Workflow_Detail" Width="1.5" PointX="19.25" PointY="16.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Paf" Width="1.5" PointX="24.75" PointY="1.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Paf_Cost_Type" Width="1.5" PointX="24.75" PointY="5.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Paf_Cost_Type_Mapping" Width="1.5" PointX="9.75" PointY="26.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.PAF_Detail_Import_Temp" Width="1.5" PointX="25.75" PointY="23.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Paf_Details" Width="1.5" PointX="26.75" PointY="1.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Payment_Terms" Width="1.5" PointX="28.5" PointY="52.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Platform" Width="1.5" PointX="24.75" PointY="8.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Report_Column" Width="1.5" PointX="21.75" PointY="27.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Report_Column_Setup" Width="1.5" PointX="27.75" PointY="23.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Report_Condition" Width="1.5" PointX="27.75" PointY="28.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Revenue_Heads" Width="1.5" PointX="9.75" PointY="29.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Right_Rule" Width="1.5" PointX="6.75" PointY="87.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Role" Width="1.5" PointX="15" PointY="56.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Royalty_Commission" Width="1.5" PointX="28.5" PointY="76.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Royalty_Commission_Details" Width="1.5" PointX="30.75" PointY="78.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Royalty_Recoupment" Width="1.5" PointX="20.25" PointY="57.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Royalty_Recoupment_Details" Width="1.5" PointX="22.5" PointY="34.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.RunData" Width="1.5" PointX="27.75" PointY="89.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Security_Group" Width="1.5" PointX="14.75" PointY="12.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Security_Group_Rel" Width="1.5" PointX="17" PointY="13.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Sql_Job_Parameters" Width="1.5" PointX="23.75" PointY="29.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Sub_License" Width="1.5" PointX="6.75" PointY="52.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Acq_Mapping" Width="1.5" PointX="4.75" PointY="31.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Cost_Payment" Width="1.5" PointX="25.5" PointY="66.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal" Width="1.5" PointX="15" PointY="38.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Ancillary" Width="1.5" PointX="9" PointY="57.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Ancillary_Platform" Width="1.5" PointX="20.25" PointY="43" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Ancillary_Platform_Medium" Width="1.5" PointX="22.5" PointY="41.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Ancillary_Title" Width="1.5" PointX="11.25" PointY="61.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Movie" Width="1.5" PointX="17.25" PointY="66.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Movie_Cost" Width="1.5" PointX="25.5" PointY="59.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Movie_Cost_Additional_Exp" Width="1.5" PointX="27.75" PointY="56.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Movie_Cost_Commission" Width="1.5" PointX="33.75" PointY="62.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Movie_Cost_Costtype" Width="1.5" PointX="3" PointY="60.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Movie_Cost_Variable_Cost" Width="1.5" PointX="3" PointY="72" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Payment_Terms" Width="1.5" PointX="25.25" PointY="40.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Rights" Width="1.5" PointX="9" PointY="93.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Rights_Blackout" Width="1.5" PointX="5.75" PointY="26.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Rights_Blackout_Platform" Width="1.5" PointX="27" PointY="20.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Rights_Blackout_Territory" Width="1.5" PointX="30.25" PointY="71.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Rights_Dubbing" Width="1.5" PointX="20.25" PointY="49.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Rights_Holdback" Width="1.5" PointX="5.75" PointY="12.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Rights_Holdback_Platform" Width="1.5" PointX="27" PointY="9.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Rights_Holdback_Territory" Width="1.5" PointX="23.25" PointY="45.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Rights_Platform" Width="1.5" PointX="30" PointY="57" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Rights_Subtitling" Width="1.5" PointX="17.25" PointY="46.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Rights_Territory" Width="1.5" PointX="17.25" PointY="93.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Rights_Title" Width="1.5" PointX="11.25" PointY="73.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.sysdiagram" Width="1.5" PointX="6.75" PointY="32.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.System_Module" Width="1.5" PointX="12.5" PointY="5.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.System_Module_Right" Width="1.5" PointX="14.75" PointY="7.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.System_Parameter_New" Width="1.5" PointX="8.75" PointY="32.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.System_Right" Width="1.5" PointX="12.5" PointY="9.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.System_Versions" Width="1.5" PointX="32.75" PointY="4.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Talent" Width="1.5" PointX="15" PointY="52.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Talent_Role" Width="1.5" PointX="28.25" PointY="47.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.TblHouseIdMap" Width="1.5" PointX="32.75" PointY="7.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.TblHouseIdRange" Width="1.5" PointX="32.75" PointY="11.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Territory" Width="1.5" PointX="15" PointY="95.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Territory_Details" Width="1.5" PointX="20.25" PointY="93.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Title" Width="1.5" PointX="9" PointY="64.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Title_Audio_Details" Width="1.5" PointX="11.25" PointY="90.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Title_Audio_Details_Singers" Width="1.5" PointX="14.25" PointY="61.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Title_Country" Width="1.5" PointX="14.25" PointY="73.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Title_Geners" Width="1.5" PointX="17.25" PointY="63.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Title_Promotion" Width="1.5" PointX="32.75" PointY="14.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Title_Talent" Width="1.5" PointX="17.25" PointY="60.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Title_Type" Width="1.5" PointX="17.75" PointY="31.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.TitleType_HouseId_Prefix" Width="1.5" PointX="32.75" PointY="18.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Upload_Err_Detail" Width="1.5" PointX="32.75" PointY="21.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Upload_Files" Width="1.5" PointX="32.75" PointY="25.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.User" Width="1.5" PointX="17" PointY="18.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Users_Business_Unit" Width="1.5" PointX="20.25" PointY="46.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Users_Channel" Width="1.5" PointX="19.25" PointY="23" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Users_Entity" Width="1.5" PointX="19.25" PointY="25.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Users_Password_Detail" Width="1.5" PointX="19.25" PointY="28.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Vendor" Width="1.5" PointX="12.75" PointY="49.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Vendor_Contacts" Width="1.5" PointX="12.75" PointY="45.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Vendor_Country" Width="1.5" PointX="20.25" PointY="81.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Vendor_Role" Width="1.5" PointX="15" PointY="49.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Workflow" Width="1.5" PointX="12.75" PointY="56.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Workflow_Module" Width="1.5" PointX="18" PointY="41.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Workflow_Module_Role" Width="1.5" PointX="20.25" PointY="33.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Workflow_Role" Width="1.5" PointX="18" PointY="33.875" IsExpanded="true" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Acq_Deal_Tag" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Acq_Deal_Type" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Ancillary_Acq_Deal" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Attachment_Acq_Deal" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Business_Unit" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Cost_Center" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Currency" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Entity" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Licensor_Acq_Deal" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Movie_Acq_Deal" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Rights_Acq_Deal" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Run_Acq_Deal_Run" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Vendor" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Vendor_Contacts" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Workflow" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Material_Order_Details_Deal" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Ancillary_Ancillary_Type" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Ancillary_Platform_Acq_Deal_Ancillary" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Ancillary_Title_Acq_Deal_Ancillary" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Ancillary_Platform_Ancillary_Platform" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Ancillary_Platform_Medium_Acq_Deal_Ancillary_Platform" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Ancillary_Platform_Medium_Ancillary_Platform_Medium" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Ancillary_Title_Title" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Attachment_Document_Type" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Licensor_Vendor" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Movie_Contents_Acq_Deal_Movie" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Movie_Cost_Acq_Deal_Movie" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Movie_Cost_Additional_Exp_Acq_Deal_Movie" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Movie_Cost_Commission_Acq_Deal_Movie" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Movie_Cost_Payment_Terms_Acq_Deal_Movie" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Movie_Cost_Variable_Cost_Acq_Deal_Movie" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Movie_Costtype_Acq_Deal_Movie" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Movie_Title" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Aired_Deal_Movie" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Material_Order_Details_Deal_Movie" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Movie_Contents_CostType_Acq_Deal_Movie_Cost_Costtype" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Movie_Cost_Additional_Exp_Acq_Deal_Movie_Cost" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Movie_Cost_Commission_Acq_Deal_Movie_Cost" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Movie_Cost_Cost_Center" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Movie_Cost_Costtype_Acq_Deal_Movie_Cost" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Movie_Cost_Currency" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Movie_Cost_Payment_Terms_Acq_Deal_Movie_Cost" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Movie_Cost_Royalty_Recoupment" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Movie_Cost_Variable_Cost_Acq_Deal_Movie_Cost" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Movie_Cost_Additional_Exp_Additional_Expense" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Movie_Cost_Additional_Exp_Currency" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Movie_Cost_Commission_Cost_Type" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Movie_Cost_Commission_Royalty_Commission" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Movie_Cost_Commission_Vendor" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Movie_Cost_Costtype_Episode_Acq_Deal_Movie_Cost_Costtype" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Movie_Cost_Costtype_Grade_Master" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Movie_Cost_Costtype_Title" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Movie_Costtype_Cost_Type" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Movie_Cost_Payment_Terms_Payment_Terms" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Movie_Cost_Variable_Cost_Grade_Master" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Right_Blackout_Acq_Deal_Rights" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Rights_Dubbing_Acq_Deal_Rights" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Rights_Holdback_Acq_Deal_Rights" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Rights_Milestone_Type" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Rights_Platform_Acq_Deal_Rights" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Rights_Sub_License" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Rights_Subtitling_Acq_Deal_Rights" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Rights_Territory_Acq_Deal_Rights" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_rights_title_Acq_Deal_rights" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Rights_Blackout_Platform_Acq_Deal_Rights" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Rights_Blackout_Territory_Acq_Deal_Rights_Blackout" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Rights_Blackout_Platform_Platform" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Rights_Blackout_Territory_Country" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Rights_Blackout_Territory_Territory" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Rights_Dubbing_Language" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Rights_Dubbing_Language_Group" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Rights_Holdback_Platform_Acq_Deal_Rights" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Rights_HoldBack_Territory_Acq_Deal_Rights_HoldBack" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Rights_Holdback_Platform_Platform" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Rights_Holdback_Territory_Country" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Rights_Holdback_Territory_Territory" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Rights_Platform_Platform" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Rights_Subtitling_Language" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Rights_Subtitling_Language_Group" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Rights_Territory_Country" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Rights_Territory_Territory" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Rights_Title_Title" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Run_Channel" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Run_Channel_Acq_Deal_Run" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Run_Repeat_On_Day_Acq_Deal_Run" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Run_Right_Rule" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Run_Title_Acq_Deal_Run" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Run_Yearwise_Run_Acq_Deal_Run" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Run_Title_Title" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Run_Yearwise_Run_Week_Acq_Deal_Run_Yearwise_Run" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Movie_Cost_Additional_Exp_Additional_Expense" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Aired_Details_Aired" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Amort_Rule_Details_Amort_Rule" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Ancillary_Platform_Medium_Ancillary_Medium_Code" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Ancillary_Platform_Ancillary_Type" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Ancillary_Platform_Medium_Ancillary_Platform_Code" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Ancillary_Platform_Ancillary_Platform" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Ancillary_Platform_Medium_Ancillary_Platform_Medium" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Ancillary_Ancillary_Type" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Business_Unit_Users_Business_Unit" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_BVException_Channel_BVException" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_BVException_Users_BVException" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_BVException_Channel_Channel" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_BVException_Users_Users" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Channel_Entity_Channel" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Channel_Territory_Channel1" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_RunData_Channel" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Channel_Territory_Channel" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Movie_Cost_Cost_Center" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Movie_Cost_Commission_Cost_Type" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Movie_Cost_Costtype_Cost_Type" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Payment_Terms_Cost_Type" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Country_Language_Country" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Rights_Blackout_Territory_Country" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Rights_Holdback_Territory_Country" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Rights_Territory_Country" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Territory_Details_Country" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Country_Country" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Vendor_Country_Country" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Country_Language_Language" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Currency_Exchange_Rate_Currency" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Material_Order_Details_Currency" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Currency" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Movie_Cost_Additional_Exp_Currency" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Movie_Cost_Currency" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Role_Deal_Type" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Deal_Type" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Deal_Type" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Entity" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Extended_Columns_Value_Extended_Columns" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Map_Extended_Columns_Extended_Columns" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Map_Extended_Columns_Details_Extended_Columns_Value" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Map_Extended_Columns_Extended_Columns_Value" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Geners_Genres" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Movie_Cost_Costtype_Grade_Master" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Movie_Cost_Variable_Cost_Grade_Master" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Grade_Master" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Language_Group_Details_Language" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Rights_Dubbing_Language" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Rights_Subtitling_Language" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Language_Group_Details_Language_Group" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Rights_Dubbing_Language_Group_Code" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Rights_Subtitling_Language_Group_Code" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Map_Extended_Columns_Details_Map_Extended_Columns" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Material_Order_Details_Material_Medium" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Material_Order_Details_Material_Order" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Material_Order_Vendor" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Material_Receipt_Order_Material_Order_Details" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Material_Receipt_Order_Material_Receipt" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Rights_Milestone_Type" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Module_Status_History_System_Module" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Module_Workflow_Detail_Security_Group" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Module_Workflow_Detail_Security_Group1" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Module_Workflow_Detail_System_Module" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Module_Workflow_Detail_User_Master" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Cost_Payment_Payment_Terms" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Rights_Blackout_Platform_Platform" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Rights_Holdback_Platform_Platform" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Rights_Platform_Platform" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Talent_Role_Role" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Star_Talent" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Royalty_Commission_Details_Royalty_Commission" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Movie_Cost_Commission_Royalty_Commission" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Royalty_Recoupment_Details_Royalty_Recoupment" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Security_Group_Rel_Security_Group" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Users_Security_Group" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Workflow_Role_Security_Group" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Security_Group_Rel_System_Module_Right" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Rights_Sub_License" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Cost_Payment_Syn_Deal_Movie" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Cost_Payment_Syn_Deal_Movie_Cost" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Ancillary_Syn_Deal" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Movie_Syn_Deal" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Payment_Terms_Syn_Deal" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Rights_Syn_Deal" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Vendor" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Vendor_Contacts" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Workflow" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Ancillary_Platform_Syn_Deal_Ancillary" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Ancillary_Title_Syn_Deal_Ancillary" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Ancillary_Platform_Medium_Syn_Deal_Ancillary_Platform" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Ancillary_Title_Title" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Cost_Syn_Deal_Movie" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Movie_Cost_Additional_Exp_Syn_Deal_Movie" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Movie_Cost_Commission_Syn_Deal_Movie" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Movie_Cost_Costtype_Syn_Deal_Movie" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Movie_Cost_Variable_Cost_Syn_Deal_Movie" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Movie_Title" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Movie_Cost_Additional_Exp_Syn_Deal_Movie_Cost" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Movie_Cost_Commission_Syn_Deal_Movie_Cost" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Movie_Cost_Costtype_Syn_Deal_Movie_Cost" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Movie_Cost_Variable_Cost_Syn_Deal_Movie_Cost" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Movie_Cost_Commission_Vendor" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Right_Blackout_Syn_Deal_Rights" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Rights_Dubbing_Syn_Deal_Rights" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Rights_Holdback_Syn_Deal_Rights" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Rights_Platform_Syn_Deal_Rights" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Rights_Subtitling_Syn_Deal_Rights" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Rights_Territory_Syn_Deal_Rights" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_rights_title_Syn_Deal_rights" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Rights_Blackout_Platform_Syn_Deal_Rights" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Rights_Blackout_Territory_Syn_Deal_Rights_Blackout" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Rights_Blackout_Territory_Territory" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Rights_Holdback_Platform_Syn_Deal_Rights" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Rights_HoldBack_Territory_Syn_Deal_Rights_HoldBack" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Rights_Holdback_Territory_Territory" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Rights_Territory_Territory" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Rights_Title_Title" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_System_Module_Right_System_Module" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Workflow_Module_System_Module" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_System_Module_Right_System_Right" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Talent_Role_Talent" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Audio_Details_Singers_Talent" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Talent_Talent" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Territory_Details_Territory" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Audio_Details_Singers_Title" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Audio_Details_Title1" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Country_Title" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Geners_Title" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Talent_Title" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Users_Channel_Users" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Users_Entity_Users" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Users_Password_Detail_Users" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Users_Users_Business_Unit" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Vender_Contacts_Vendor" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Vendor_Country_Vendor" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Vendor_Role_Vendor" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Workflow_Module_Workflow" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Workflow_Role_Workflow" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Workflow_Module_Role_Workflow_Module" ManuallyRouted="false" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Workflow_Module_Role_Workflow_Role" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Cost" Width="1.5" PointX="8.3473333457239587" PointY="28.127790970787309" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Cost_Additional_Exp" Width="1.5" PointX="4.4226249048591706" PointY="9.1218340886392788" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Cost_Commission" Width="1.5" PointX="6.3765728168080438" PointY="19.507195124173162" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Cost_Costtype" Width="1.5" PointX="5.0821955078664214" PointY="19.199755305051688" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Cost_Costtype_Episode" Width="1.5" PointX="10.411248977487556" PointY="12.60422856202546" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Cost_Variable_Cost" Width="1.5" PointX="1.0982372542369352" PointY="31.173874467226618" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Payment_Terms" Width="1.5" PointX="3.65944887123045" PointY="16.471053414266116" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Revenue" Width="1.5" PointX="0.76674813254119267" PointY="15.821010045623877" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Revenue_Additional_Exp" Width="1.5" PointX="10.03611682822747" PointY="31.515435024870296" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Revenue_Commission" Width="1.5" PointX="2.9678091178498276" PointY="26.81553745028355" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Revenue_Costtype" Width="1.5" PointX="10.311482363525537" PointY="29.43213769673935" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Revenue_Costtype_Episode" Width="1.5" PointX="1.408185879424301" PointY="19.039013871475596" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Revenue_Variable_Cost" Width="1.5" PointX="5.5696442041404746" PointY="13.107002860450653" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Workflow_BU" Width="1.5" PointX="6.9415191481548923" PointY="17.871692174054537" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Workflow_BU_Role" Width="1.5" PointX="5.5121194317527671" PointY="29.127120821330287" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Workflow_Module_BU" Width="1.5" PointX="1.0107831307737079" PointY="12.660787558490776" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Workflow_Module_BU_Role" Width="1.5" PointX="0.392646024186465" PointY="8.2389749177913068" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Cost_Acq_Deal" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Payment_Terms_Acq_Deal" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Revenue_Acq_Deal" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Cost_Additional_Exp_Acq_Deal_Cost" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Cost_Commission_Acq_Deal_Cost" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Cost_Cost_Center" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Cost_Costtype_Acq_Deal_Cost" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Cost_Currency" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Cost_Royalty_Recoupment" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Cost_Variable_Cost_Acq_Deal_Cost" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Cost_Additional_Exp_Additional_Expense" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Cost_Commission_Cost_Type" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Cost_Commission_Royalty_Commission" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Cost_Commission_Vendor" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Cost_Costtype_Episode_Acq_Deal_Cost_Costtype" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Costtype_Cost_Type" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Cost_Variable_Cost_Entity" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Cost_Variable_Cost_Vendor" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Payment_Terms_Cost_Type" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Payment_Terms_Payment_Terms" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Revenue_Additional_Exp_Additional_Expense" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Workflow_BU_Business_Unit" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Workflow_Module_BU_Business_Unit" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Revenue_Cost_Center" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Revenue_Commission_Cost_Type" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Revenuetype_Cost_Type" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Revenue_Currency" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Revenue_Variable_Cost_Entity" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Payment_Terms_Payment_Terms" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Revenue_Commission_Royalty_Commission" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Revenue_Royalty_Recoupment" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Workflow_BU_Role_Security_Group" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Workflow_Module_BU_Role_Security_Group" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Revenue_Additional_Exp_Syn_Deal_Revenue" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Revenue_Commission_Syn_Deal_Revenue" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Revenue_Costtype_Syn_Deal_Revenue" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Revenue_Variable_Cost_Syn_Deal_Revenue" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Revenue_Commission_Vendor" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Revenue_Costtype_Episode_Syn_Deal_Revenue_Costtype" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Revenue_Variable_Cost_Vendor" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Workflow_BU_Workflow" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Workflow_BU_Role_Workflow_BU" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Workflow_Module_BU_Workflow_BU" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Workflow_Module_BU_Role_Workflow_BU_Role" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Workflow_Module_BU_Workflow_Module" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Workflow_Module_BU_Role_Workflow_Module_BU" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Cost_Title" Width="1.5" PointX="1.5066571261299107" PointY="5.7700898972200649" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Revenue_Title" Width="1.5" PointX="7.125" PointY="0.875" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Cost_Title_Acq_Deal_Cost" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Cost_Title_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Deal_Tag" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Revenue_Title_Syn_Deal_Revenue" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Revenue_Title_Title" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Pushback" Width="1.5" PointX="0.50857830071289944" PointY="18.989430823824105" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Pushback_Dubbing" Width="1.5" PointX="1.5618578482241641" PointY="30.644793360794331" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Pushback_Platform" Width="1.5" PointX="9.5979462739070627" PointY="11.806399932041019" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Pushback_Subtitling" Width="1.5" PointX="2.1850759136421027" PointY="15.657228879470951" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Pushback_Territory" Width="1.5" PointX="6.8191309901043446" PointY="7.1032001111205672" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Pushback_Title" Width="1.5" PointX="10.301060852734867" PointY="14.568737141121522" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Rights_Blackout_Dubbing" Width="1.5" PointX="1.6861164447321169" PointY="21.822542066603219" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Rights_Blackout_Subtitling" Width="1.5" PointX="7.3277576320468256" PointY="15.821609027600665" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Rights_Holdback_Dubbing" Width="1.5" PointX="9.4897384687744726" PointY="11.299853464262492" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Rights_Holdback_Subtitling" Width="1.5" PointX="10.795779212748528" PointY="27.171353159086479" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Rights_Blackout_Dubbing" Width="1.5" PointX="7.1977961059649456" PointY="14.283898747658309" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Rights_Blackout_Subtitling" Width="1.5" PointX="4.90351618682198" PointY="12.386037459776754" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Rights_Holdback_Dubbing" Width="1.5" PointX="8.2476194259932356" PointY="25.260743465861651" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Rights_Holdback_Subtitling" Width="1.5" PointX="5.92803528994696" PointY="5.7232759323545155" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Pushback_Acq_Deal" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Pushback_Title_Acq_Deal_Movie" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Pushback_Dubbing_Acq_Deal_Pushback" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Pushback_Milestone_Type" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Pushback_Platform_Acq_Deal_Pushback" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Pushback_Subtitling_Acq_Deal_Pushback" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Pushback_Territory_Acq_Deal_Pushback" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Pushback_Title_Acq_Deal_Pushback" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Pushback_Dubbing_Language" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Pushback_Dubbing_Language_Group" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Pushback_Platform_Platform" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Pushback_Subtitling_Language" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Pushback_Subtitling_Language_Group" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Pushback_Territory_Country" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Pushback_Territory_Territory" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Pushback_Title_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Rights_Blackout_Dubbing_Acq_Deal_Rights_Blackout" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Rights_Blackout_Subtitling_Acq_Deal_Rights_Blackout" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Rights_Blackout_Dubbing_Language" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Rights_Blackout_Subtitling_Language" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Rights_HoldBack_Dubbing_Acq_Deal_Rights_HoldBack" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Rights_HoldBack_Subtitling_Acq_Deal_Rights_HoldBack" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Rights_Holdback_Dubbing_Language" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Rights_Holdback_Subtitling_Language" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Rights_Blackout_Dubbing_Language" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Rights_Blackout_Subtitling_Language" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Rights_Holdback_Dubbing_Language" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Rights_Holdback_Subtitling_Language" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Revenue_Syn_Deal" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Rights_Blackout_Dubbing_Syn_Deal_Rights_Blackout" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Rights_Blackout_Subtitling_Syn_Deal_Rights_Blackout" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Rights_HoldBack_Dubbing_Syn_Deal_Rights_HoldBack" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Rights_HoldBack_Subtitling_Syn_Deal_Rights_HoldBack" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Workflow_Business_Unit" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Workflow_Module_Business_Unit" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Material" Width="1.5" PointX="3.417056541618452" PointY="22.283599625473656" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Attachment" Width="1.5" PointX="4.1610137150441355" PointY="14.051587215648771" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Material" Width="1.5" PointX="2.5328879256420249" PointY="22.519329096432465" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Material_Acq_Deal" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Material_Acq_Deal_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Material_Material_Medium" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Material_Material_Type" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Attachment_Document_Type" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Material_Material_Medium" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Material_Material_Type" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Attachment_Syn_Deal_Movie" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Material_Syn_Deal" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Material_Syn_Deal_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Cost_Commission_Entity" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Revenue_Commission_Entity" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Attachment_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Attachment_Title" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Mass_Territory_Update" Width="1.5" PointX="0.32641375638843223" PointY="19.937819877610458" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Mass_Territory_Update_Details" Width="1.5" PointX="3.9529895521481473" PointY="2.1475061635242336" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Mass_Update_ErrorLog" Width="1.5" PointX="6.1786247464728659" PointY="13.079336276780506" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Mass_Territory_Update_Acq_Deal" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Mass_Territory_Update_Details_Acq_Deal_Mass_Territory_Update" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Mass_Update_ErrorLog_Acq_Deal_Mass_Territory_Update" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Mass_Territory_Update_Details_Territory" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Business_Unit" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Vendor_Role_Role" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Language" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Original_Language" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Revenue_Platform" Width="1.5" PointX="9.060194915654229" PointY="30.189515962353681" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Revenue_Platform_Platform" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Revenue_Platform_Syn_Deal_Revenue" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Sport" Width="1.5" PointX="9.033313610140846" PointY="5.2010885501285493" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Sport_Broadcast" Width="1.5" PointX="9.8498464142204476" PointY="23.067497740996767" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Sport_Platform" Width="1.5" PointX="6.26662613557029" PointY="20.338545302086764" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Sport_Title" Width="1.5" PointX="6.8074231980403059" PointY="0.7620393041344542" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Sport_Acq_Deal" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Sport_Broadcast_Acq_Deal_Sport" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Sport_Platform_Acq_Deal_Sport" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Sport_Title_Acq_Deal_Sport_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Sport_Platform_Platform" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Sport_Title_Title" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Broadcast_Mode" Width="1.5" PointX="8.15189252055804" PointY="8.619469646652913" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Sport_Broadcast_Broadcast_Mode" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Avail_Acq" Width="1.5" PointX="3.7432407288547793" PointY="28.277309624607355" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Avail_Acq_Details" Width="1.5" PointX="3.9194096810740464" PointY="31.288792431023342" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Avail_Acq_Language" Width="1.5" PointX="2.8266389699776839" PointY="18.825554752175488" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Avail_Acq_Details" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Avail_Acq_Language" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Country_Avail_Acq" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Platform_Avail_Acq" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Avail_Acq" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Sport_Language" Width="1.5" PointX="2.0116511350551858" PointY="1.4311434484231953" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Sport_Language_Acq_Deal_Sport" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Sport_Language_Language" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Sport_Language_Language_Group" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Sport_Ancillary" Width="1.5" PointX="11.594618115385352" PointY="25.573267471777864" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Sport_Ancillary_Broadcast" Width="1.5" PointX="1.0093231038233839" PointY="0.11711059516161243" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Sport_Ancillary_Source" Width="1.5" PointX="10.878339617922128" PointY="12.452055176930529" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Sport_Ancillary_Title" Width="1.5" PointX="2.859939343696432" PointY="16.32443436250297" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Sport_Monetisation_Ancillary" Width="1.5" PointX="1.1862402135442198" PointY="24.309695299859015" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Sport_Monetisation_Ancillary_Title" Width="1.5" PointX="10.287680960394294" PointY="16.958428495078547" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Sport_Sales_Ancillary" Width="1.5" PointX="7.317951872627229" PointY="15.144095055360392" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Sport_Sales_Ancillary_Sponsor" Width="1.5" PointX="7.5308345889350559" PointY="17.989115127357241" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Sport_Sales_Ancillary_Title" Width="1.5" PointX="7.6583205813813588" PointY="5.677428114077741" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Monetisation_Type" Width="1.5" PointX="5.9780301572652679" PointY="14.751320309355538" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Sponsor" Width="1.5" PointX="3.4690786839784491" PointY="19.284911835233174" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Sport_Ancillary_Broadcast" Width="1.5" PointX="6.58819843762936" PointY="23.191964860629273" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Sport_Ancillary_Config" Width="1.5" PointX="10.629300841423358" PointY="29.5344489354335" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Sport_Ancillary_Periodicity" Width="1.5" PointX="11.48670242516636" PointY="29.939202009671927" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Sport_Ancillary_Source" Width="1.5" PointX="6.5370766569567271" PointY="14.79124838802556" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Sport_Ancillary_Type" Width="1.5" PointX="11.576635736774948" PointY="18.365911492316943" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Sport_Ancillary_Acq_Deal_Sport_Ancillary" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Sport_Monetisation_Ancillary_Acq_Deal" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Sport_Sales_Ancillary_Acq_Deal" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Sport_Ancillary_Broadcast_Acq_Deal_Sport_Ancillary" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Sport_Ancillary_Source_Acq_Deal_Sport_Ancillary" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Sport_Ancillary_Sport_Ancillary_Periodicity" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Sport_Ancillary_Sport_Ancillary_Periodicity1" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Sport_Ancillary_Sport_Ancillary_Type" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Sport_Ancillary_Title_Acq_Deal_Sport_Ancillary" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Sport_Ancillary_Broadcast_Sport_Ancillary_Broadcast" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Sport_Ancillary_Source_Sport_Ancillary_Source" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Sport_Ancillary_Title_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Sport_Monetisation_Ancillary_Title_Acq_Deal_Sport_Monetisation_Ancillary" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Sport_Monetisation_Ancillary_Title_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Sport_Sales_Ancillary_Sponsor_Acq_Deal_Sport_Sales_Ancillary" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Sport_Sales_Ancillary_Title_Acq_Deal_Sport_Sales_Ancillary" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Sport_Sales_Ancillary_Sponsor_Sponsor" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Sport_Sales_Ancillary_Title_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Sport_Ancillary_Config_Sport_Ancillary_Broadcast" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Sport_Ancillary_Config_Sport_Ancillary_Periodicity" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Sport_Ancillary_Config_Sport_Ancillary_Source" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Sport_Ancillary_Config_Sport_Ancillary_Type" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Sport_Monetisation_Ancillary_Type" Width="1.5" PointX="11.349247466469766" PointY="28.361933542584037" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Sport_Monetisation_Ancillary_Type_Acq_Deal_Sport_Monetisation_Ancillary" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Sport_Monetisation_Ancillary_Type_Monetisation_Type" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Run_Shows" Width="1.5" PointX="10.099640366667714" PointY="7.9789926595888065" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Run_Shows_Acq_Deal_Run" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Run_Shows_Title" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Run" Width="1.5" PointX="3.79118180078975" PointY="9.2976980401657983" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Run_Platform" Width="1.5" PointX="9.3315885687859677" PointY="8.2794449963976842" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Run_Repeat_On_Day" Width="1.5" PointX="11.662084529019001" PointY="7.9312921650387773" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Run_Yearwise_Run" Width="1.5" PointX="4.5084230939431222" PointY="30.814837157174402" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Run_Platform_Platform" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Run_Right_Rule" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Run_Syn_Deal" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Run_Platform_Syn_Deal_Run" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Run_Repeat_On_Day_Syn_Deal_Run" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Run_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Run_Yearwise_Run_Syn_Deal_Run" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Role" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.IPR_APP_STATUS" Width="1.5" PointX="9.8313231737498779" PointY="27.779757110299428" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.IPR_CLASS" Width="1.5" PointX="6.5677036226576675" PointY="18.899110624054032" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.IPR_ENTITY" Width="1.5" PointX="8.1986209602088778" PointY="18.102606871213116" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.IPR_REP" Width="1.5" PointX="10.250513075967557" PointY="23.08764895381762" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.IPR_REP_ATTACHMENTS" Width="1.5" PointX="7.070757377460021" PointY="15.11841358948425" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.IPR_REP_CLASS" Width="1.5" PointX="1.665167040035672" PointY="13.009719213941004" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.IPR_REP_EMAIL_FREQ" Width="1.5" PointX="8.2764339615946785" PointY="15.860524959797283" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.IPR_REP_STATUS_HISTORY" Width="1.5" PointX="7.7289067226131021" PointY="1.3406935787483554" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.IPR_TYPE" Width="1.5" PointX="5.5738926779357216" PointY="23.491185869784648" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Login_Details" Width="1.5" PointX="5.75" PointY="2.625" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_IPR_REP_Country" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_IPR_REP_IPR_APP_STATUS" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_IPR_REP_CLASS_IPR_CLASS" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_IPR_REP_IPR_ENTITY" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_IPR_ATTACHMENTS_IPR_REP" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_IPR_EMAIL_FREQ_IPR_REP" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_IPR_REP_CLASS_IPR_REP" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_IPR_REP_IPR_TYPE" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_IPR_STATUS_HISTORY_IPR_REP" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Budget" Width="1.5" PointX="9.44912610270508" PointY="0.78484861589262667" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Budget_Acq_Deal" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Budget_Title" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.SAP_WBS" Width="1.5" PointX="0.68229717793050093" PointY="3.7382800447467157" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Budget_SAP_WBS" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Language_Deal_Log" Width="1.5" PointX="11.215012807033496" PointY="10.987685193767625" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Territory_Deal_Log" Width="1.5" PointX="1.7094408952209359" PointY="6.166808682571542" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.ROFR" Width="1.5" PointX="4.2738524713897386" PointY="25.329234656565465" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Rights_ROFR" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Rights_ROFR" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Channel_Cluster" Width="1.5" PointX="3.4343483799297125" PointY="7.5407211815662318" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Channel_Cluster" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.WBS_Type" Width="1.5" PointX="9.3677964682540846" PointY="13.144893801372914" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.IPR_Country" Width="1.5" PointX="2.76804752776774" PointY="22.066799904250914" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Platform_Group" Width="1.5" PointX="7.1898038886440006" PointY="30.118739767986693" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Platform_Group_Details" Width="1.5" PointX="8.4279409462716153" PointY="23.8895560763262" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_IPR_REP_IPR_Country" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Platform_Group_Details_Platform" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Platform_Group_Details_Platform_Group" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.SAP_Export" Width="1.5" PointX="4.9028810453148939" PointY="25.003044199665563" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Channel_Region" Width="1.5" PointX="1.1128275828030088" PointY="7.4541318302294854" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Channel_Region_Mapping" Width="1.5" PointX="0.42642569748052661" PointY="6.7599684180505424" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Channel_Region_Mapping_Channel" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Channel_Region_Mapping_Channel_Region" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.IPR_Opp" Width="1.5" PointX="6.5438272517844229" PointY="10.09375896029815" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.IPR_Opp_Attachment" Width="1.5" PointX="5.8929848977797592" PointY="4.4584336301583951" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.IPR_Opp_Email_Freq" Width="1.5" PointX="11.519075235127973" PointY="19.578320512351731" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.IPR_Opp_Status" Width="1.5" PointX="1.7226975847607002" PointY="17.0956680705285" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.IPR_Opp_Status_History" Width="1.5" PointX="4.439823497291572" PointY="17.436178200615654" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_IPR_Opp_IPR_APP_STATUS" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_IPR_Opp_IPR_CLASS" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_IPR_Opp_Attachment_IPR_Opp" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_IPR_Opp_Email_Freq_IPR_Opp" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_IPR_Opp_IPR_Opp_Status" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_IPR_Opp_IPR_REP" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Music_Label" Width="1.5" PointX="9.5106196280152631" PointY="0.15237039334716759" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Music_Title_Label" Width="1.5" PointX="0.11564764944633825" PointY="15.119777805693344" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Music_Title_Talent" Width="1.5" PointX="11.982941916204496" PointY="21.228634054413362" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Music_Type" Width="1.5" PointX="4.2369070594370868" PointY="24.924037810845316" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Title_Label_Music_Label" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Title_Talent_Role" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Title_Talent_Talent" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Movie_Music" Width="1.5" PointX="6.7403390885984233" PointY="25.027873468132629" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Movie_Music_Link" Width="1.5" PointX="1.6434707574748764" PointY="28.491913898145739" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Movie_Music_Link_Acq_Deal_Movie_Music" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Movie_Music_Link_Title" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Glossary" Width="1.5" PointX="33.625" PointY="30.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Glossary_AskExpert" Width="1.5" PointX="33.625" PointY="33.75" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Glossary_AskExpert_Users" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Title_Release" Width="1.5" PointX="11.625" PointY="115.875" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Title_Release_Platforms" Width="1.5" PointX="27.375" PointY="59.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Title_Release_Region" Width="1.5" PointX="13.875" PointY="118.875" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Release_Platforms_Platform" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Released_On_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Release_Platforms_Title_Release" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Release_Region_Title_Release" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Content_Music_Link" Width="1.5" PointX="31.375" PointY="52.375" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Program_Link_Acq_Deal_Movie" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Tab_Version" Width="1.5" PointX="26" PointY="34.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Content_Status_History" Width="1.5" PointX="22.5" PointY="67.375" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.IPR_Opp_Business_Unit" Width="1.5" PointX="18.125" PointY="54.25" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.IPR_Rep_Business_Unit" Width="1.5" PointX="19.625" PointY="61.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.IPR_Rep_Channel" Width="1.5" PointX="27.875" PointY="56.75" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_IPR_Opp_Business_Unit_Business_Unit" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_IPR_Rep_Business_Unit_Business_Unit" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_IPR_Rep_Channel_Channel" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_IPR_Opp_Business_Unit_IPR_Opp" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_IPR_Rep_Business_Unit_IPR_REP" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_IPR_Rep_Channel_IPR_REP" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.IPR_Opp_Channel" Width="1.5" PointX="33.75" PointY="48.25" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_IPR_Opp_Channel_Channel" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_IPR_Opp_Channel_IPR_Opp" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Music_Language" Width="1.5" PointX="7.875" PointY="36.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Music_Theme" Width="1.5" PointX="17.875" PointY="97.875" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Music_Title_Language" Width="1.5" PointX="10.125" PointY="37.125" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Music_Title_Theme" Width="1.5" PointX="20.125" PointY="37.125" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Title_Language_Music_Language" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Title_Theme_Music_Theme" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Music_Album" Width="1.5" PointX="21.5" PointY="86.25" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Music_Album_Talent" Width="1.5" PointX="23.75" PointY="61.5" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Music_Override_Reason" Width="1.5" PointX="15.875" PointY="4.75" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Album_Talent_Music_Album" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Album_Talent_Role" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Album_Talent_Talent" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Music_Schedule_Transaction" Width="1.5" PointX="1" PointY="35.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Content_Category" Width="1.5" PointX="3.75" PointY="35.875" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Content_Category" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Deal_Workflow_Status" Width="1.5" PointX="27.625" PointY="6.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.BV_WBS" Width="1.5" PointX="2.875" PointY="46.625" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_BV_WBS_SAP_WBS" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Channel_Genres" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Category" Width="1.5" PointX="3.375" PointY="36" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Category" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Category" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.DM_Master_Import" Width="1.5" PointX="36" PointY="5" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.DM_Music_Title" Width="1.5" PointX="36.25" PointY="9.5" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.BMS_Log" Width="1.5" PointX="36.125" PointY="14.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.BMS_All_Masters" Width="1.5" PointX="35.5" PointY="18.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.DM_Title" Width="1.5" PointX="35.375" PointY="21.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Title_Content" Width="1.5" PointX="11.25" PointY="121.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Title_Content_Version" Width="1.5" PointX="13.5" PointY="122.875" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Content_Music_Link_Title_Content_Version" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Program_Link_Acq_Deal_Movie_Contents1" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Content_Status_History_Acq_Deal_Movie_Contents1" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Content_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Content_Version_Title_Content" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Music_Schedule_Exception" Width="1.5" PointX="34" PointY="1" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.BV_HouseId_Data" Width="1.5" PointX="36.625" PointY="29.125" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Program" Width="1.5" PointX="37.375" PointY="21.75" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Program" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Music_Deal" Width="1.5" PointX="30.5" PointY="60" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Music_Deal_Channel" Width="1.5" PointX="33.75" PointY="71" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Music_Deal_Country" Width="1.5" PointX="34.75" PointY="76.625" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Music_Deal_Language" Width="1.5" PointX="34.75" PointY="51.875" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Music_Deal_LinkShow" Width="1.5" PointX="32.75" PointY="67.125" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Music_Deal_Vendor" Width="1.5" PointX="32.75" PointY="58.125" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Deal_Business_Unit" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Deal_Channel_Channel" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Deal_Country_Country" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Deal_Deal_Type" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Deal_Entity" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Deal_Channel_Music_Deal" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Deal_Country_Music_Deal" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Deal_Language_Music_Deal" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Deal_LinkShow_Music_Deal" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Deal_Music_Label" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Deal_Right_Rule" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Deal_Vendor" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Deal_Vendor_Music_Deal" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Deal_Language_Music_Language" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Deal_LinkShow_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Deal_Vendor_Vendor" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Deal_Deal_Tag" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Version" Width="1.5" PointX="33.375" PointY="38" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Content_Version_Version" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Program_Deal_Type" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Program_Genres" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.DM_Master_Log" Width="1.5" PointX="22.375" PointY="37.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Report_Territory" Width="1.5" PointX="37.375" PointY="26.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Report_Territory_Country" Width="1.5" PointX="38.375" PointY="0.75" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Report_Territory_Country_Country" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Report_Territory_Country_Report_Territory" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Email_Config" Width="1.5" PointX="38.375" PointY="5.125" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Email_Config_Detail" Width="1.5" PointX="40.625" PointY="5.375" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Email_Config_Detail_Alert" Width="1.5" PointX="42.875" PointY="4.125" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Email_Config_Detail_User" Width="1.5" PointX="42.875" PointY="6.875" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Email_Config_Detail_Email_Config" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Email_Config_Detail_Alert_Email_Config_Detail" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Email_Config_Detail_User_Email_Config_Detail" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Channel_Category" Width="1.5" PointX="38.375" PointY="10" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Channel_Channel_Category" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Deal_Channel_Category" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Alternate_Config" Width="1.5" PointX="23.75" PointY="71.375" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Title_Alternate" Width="1.5" PointX="26" PointY="62.625" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Title_Alternate_Content" Width="1.5" PointX="33.25" PointY="61.5" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Title_Alternate_Country" Width="1.5" PointX="30.25" PointY="82.125" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Title_Alternate_Genres" Width="1.5" PointX="28.25" PointY="68.375" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Title_Alternate_Talent" Width="1.5" PointX="28.25" PointY="62.5" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Alternate_Alternate_Config" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Alternate_Content_Alternate_Config" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Alternate_Country_Country" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Alternate_Deal_Type" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Alternate_Genres_Genres" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Alternate_Language" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Alternate_Language1" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Alternate_Talent_Role" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Alternate_Talent_Talent" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Alternate_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Alternate_Content_Title_Alternate" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Alternate_Country_Title_Alternate" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Alternate_Genres_Title_Alternate" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Alternate_Talent_Title_Alternate" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Report_Format" Width="1.5" PointX="38.375" PointY="13.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.System_Language" Width="1.5" PointX="17.875" PointY="104.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.System_Language_Message" Width="1.5" PointX="20.125" PointY="0.875" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.System_Message" Width="1.5" PointX="15.625" PointY="107.125" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.System_Module_Message" Width="1.5" PointX="17.875" PointY="0.75" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_System_Message_Language_System_Language" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Users_System_Language" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_System_Message_Language_System_Message_Type" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_System_Module_Message_System_Message" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_System_Module_Message_System_Module" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Report_Query" Width="1.5" PointX="27.375" PointY="37.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Email_Notification_Log" Width="1.5" PointX="40.875" PointY="9.375" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Email_Notification_Log_Email_Config" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Rights_Promoter" Width="1.5" PointX="11.5" PointY="99.5" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Rights_Promoter_Group" Width="1.5" PointX="17.75" PointY="101.875" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Rights_Promoter_Remarks" Width="1.5" PointX="20.75" PointY="99.875" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Promoter_Group" Width="1.5" PointX="15.5" PointY="114.625" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Promoter_Remarks" Width="1.5" PointX="18.5" PointY="109.625" />
+        <AssociationConnector Association="RightsU_NeoModel.FK__Acq_Deal___Acq_D__4DE0370C" />
+        <AssociationConnector Association="RightsU_NeoModel.FK__Acq_Deal___Acq_D__50BCA3B7" />
+        <AssociationConnector Association="RightsU_NeoModel.FK__Acq_Deal___Acq_D__548D349B" />
+        <AssociationConnector Association="RightsU_NeoModel.FK__Acq_Deal___Promo__51B0C7F0" />
+        <AssociationConnector Association="RightsU_NeoModel.FK__Acq_Deal___Promo__558158D4" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Provisional_Deal" Width="1.5" PointX="34.5" PointY="82" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Provisional_Deal_Licensor" Width="1.5" PointX="35.5" PointY="67" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Provisional_Deal_Run" Width="1.5" PointX="38.75" PointY="80.5" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Provisional_Deal_Title" Width="1.5" PointX="36.5" PointY="71.5" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Provisional_Deal_Type" Width="1.5" PointX="31" PointY="85.625" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Provisional_Deal_Acq_Deal" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Provisional_Deal_Business_Unit" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Provisional_Deal_Deal_Type" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Provisional_Deal_Licensor_Provisional_Deal" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Provisional_Deal_Provisional_Deal_Type" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Provisional_Deal_Title_Provisional_Deal" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Provisional_Deal_Licensor_Vendor" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Provisional_Deal_Run_Provisional_Deal_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Provisional_Deal_Run_Right_Rule" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Provisional_Deal_Title_Title" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Provisional_Deal_Run_Channel" Width="1.5" PointX="41.875" PointY="83.125" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Provisional_Deal_Run_Channel_Channel" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Provisional_Deal_Run_Channel_Provisional_Deal_Run" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Provisional_Deal_Vendor" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Title_Content_Mapping" Width="1.5" PointX="39" PointY="94.375" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Content_Mapping_Acq_Deal_Movie" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Content_Mapping_Provisional_Deal_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Content_Mapping_Title_Content" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Channel_Category_Details" Width="1.5" PointX="40.75" PointY="48.5" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Channel_Category_Details_Channel" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Channel_Category_Details_Channel_Category" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.DM_Content_Music" Width="1.5" PointX="39.375" PointY="16.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Rights_Promoter" Width="1.5" PointX="12.125" PointY="104" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Rights_Promoter_Group" Width="1.5" PointX="21.625" PointY="110.25" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Rights_Promoter_Remarks" Width="1.5" PointX="21.625" PointY="107.375" />
+        <AssociationConnector Association="RightsU_NeoModel.FK__Syn_Deal___Promo__0C9C8394" />
+        <AssociationConnector Association="RightsU_NeoModel.FK__Syn_Deal___Promo__106D1478" />
+        <AssociationConnector Association="RightsU_NeoModel.FK__Syn_Deal___Syn_D__08CBF2B0" />
+        <AssociationConnector Association="RightsU_NeoModel.FK__Syn_Deal___Syn_D__0BA85F5B" />
+        <AssociationConnector Association="RightsU_NeoModel.FK__Syn_Deal___Syn_D__0F78F03F" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Music_Deal_DealType" Width="1.5" PointX="33.75" PointY="55.25" />
+        <AssociationConnector Association="RightsU_NeoModel.FK__Music_Dea__Deal___1BDEC724" />
+        <AssociationConnector Association="RightsU_NeoModel.FK__Music_Dea__Music__1CD2EB5D" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.MQ_Log" Width="1.5" PointX="39.375" PointY="22.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Music_Deal_Platform" Width="1.5" PointX="35.75" PointY="64.5" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Music_Platform" Width="1.5" PointX="33.5" PointY="43.875" />
+        <AssociationConnector Association="RightsU_NeoModel.FK__Music_Dea__Music__24740D25" />
+        <AssociationConnector Association="RightsU_NeoModel.FK__Music_Dea__Music__2568315E" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Title_Content_Version_Details" Width="1.5" PointX="16.375" PointY="123.25" />
+        <AssociationConnector Association="RightsU_NeoModel.FK__Title_Con__Title__5146B39C" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Ancillary_Platform_Platform" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.MHPlayList" Width="1.5" PointX="17.5" PointY="70.875" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.MHPlayListSong" Width="1.5" PointX="28.75" PointY="34.875" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.MHRequest" Width="1.5" PointX="20.5" PointY="64.625" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.MHRequestDetail" Width="1.5" PointX="36.25" PointY="58" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.MHRequestStatu" Width="1.5" PointX="18.25" PointY="113.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.MHRequestType" Width="1.5" PointX="18.25" PointY="116.625" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.MHUser" Width="1.5" PointX="19.75" PointY="120.125" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_MHRequestDetails_Language" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_MHPlayList_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_MHPlayList_Vendor" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_MHPlayListSong_MHPlayList" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_MHRequest_MHRequestStatus" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_MHRequest_MHRequestType" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_MHRequest_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_MHRequest_Vendor" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_MHRequestDetails_MHRequest" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_MHRequestDetails_Music_Album" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_MHRequestDetails_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_MHRequestStatus_System_Module" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_MHUsers_Users" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.MHCueSheet" Width="1.5" PointX="15.25" PointY="127" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.MHCueSheetSong" Width="1.5" PointX="17.5" PointY="126.625" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_MHCueSheet_Vendor" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_MHCueSheetSong_MHCueSheet" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_MHCueSheetSong_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_MHCueSheetSong_Title_Content" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_MHRequestDetails_Music_Label" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_MHRequest_Channel" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.BMS_Asset" Width="1.5" PointX="39.625" PointY="36" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.BMS_Deal" Width="1.5" PointX="39.625" PointY="28.375" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.BMS_Deal_Content" Width="1.5" PointX="41.875" PointY="29.5" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.BMS_Deal_Content_Rights" Width="1.5" PointX="44.125" PointY="27.5" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_BV_Deal_Content_BV_Deal" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_BMS_Deal_Content_Rights_BMS_Deal_Content" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Milestone_Nature" Width="1.5" PointX="20.125" PointY="77.625" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Title_Milestone" Width="1.5" PointX="22.375" PointY="74.75" />
+        <AssociationConnector Association="RightsU_NeoModel.FK__Title_Mil__Miles__353484D3" />
+        <AssociationConnector Association="RightsU_NeoModel.FK__Title_Mil__Talen__3440609A" />
+        <AssociationConnector Association="RightsU_NeoModel.FK__Title_Mil__Title__334C3C61" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.TATSLAStatus" Width="1.5" PointX="40.375" PointY="0.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.TAT" Width="1.5" PointX="3.375" PointY="40.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.TATSLA" Width="1.5" PointX="41.375" PointY="14.125" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.TATSLAMatrix" Width="1.5" PointX="43.625" PointY="14" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.TATSLAMatrixDetail" Width="1.5" PointX="45.875" PointY="14.375" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_TATSLA" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_TATSLAMatrix" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.TATStatusLog" Width="1.5" PointX="5.375" PointY="40.75" />
+        <AssociationConnector Association="RightsU_NeoModel.TATStatusLog_Fk" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.ProjectMilestone" Width="1.5" PointX="38" PointY="52" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.ProjectMilestoneDetail" Width="1.5" PointX="40.25" PointY="51.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.ProjectMilestoneTitle" Width="1.5" PointX="40.25" PointY="54.75" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_MileStone_Nature" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_MileStone_Type" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_MileStone_Talent" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_ProjectMilestoneDetail" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_ProjectMilestoneTitle" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Party_Category" Width="1.5" PointX="11" PointY="40.875" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Vendor_Party_Category" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Rights_Bulk_Update" Width="1.5" PointX="41.625" PointY="18.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Deal_Rights_Process" Width="1.5" PointX="8" PointY="40.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Rights_Error_Details" Width="1.5" PointX="37" PointY="41.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Rights_Template" Width="1.5" PointX="43" PointY="36.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Users_Configuration" Width="1.5" PointX="19.625" PointY="123" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Users_Exclusion_Rights" Width="1.5" PointX="22.625" PointY="12.625" />
+        <AssociationConnector Association="RightsU_NeoModel.FK__Users_Exc__Modul__556C4A3B" />
+        <AssociationConnector Association="RightsU_NeoModel.FK__Users_Con__Users__528FDD90" />
+        <AssociationConnector Association="RightsU_NeoModel.FK__Users_Exc__Users__56606E74" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Party_Group" Width="1.5" PointX="43" PointY="1.125" />
+        <AssociationConnector Association="RightsU_NeoModel.FK__Vendor__Party_Gr__1EDB2F60" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Deal_Description" Width="1.5" PointX="41.625" PointY="24.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Deal_Segment" Width="1.5" PointX="39.625" PointY="42.875" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Deal_Segment" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Deal_Segment" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Revenue_Vertical" Width="1.5" PointX="44.375" PointY="18.875" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Revenue_Vertical" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Revenue_Vertical" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Attrib_Group" Width="1.5" PointX="21" PointY="105.625" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Users_Detail" Width="1.5" PointX="23.25" PointY="0.75" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Users_Detail_Attrib_Group" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Users_Detail_Users" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.DM_Title_Import_Utility" Width="1.5" PointX="44.625" PointY="22.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.DM_Title_Import_Utility_Data" Width="1.5" PointX="43.5" PointY="44.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Adv_Ancillary_Report" Width="1.5" PointX="45.875" PointY="0.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.DM_Title_Resolve_Conflict" Width="1.5" PointX="5.75" PointY="45.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Music_Title" Width="1.5" PointX="38.75" PointY="58.625" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Movie_Music_Music_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Program_Link_Music_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Title_Language" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_MHCueSheetSong_Music_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_MHPlayListSong_Music_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_MHRequestDetails_Music_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Title_Music_Album" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Title_Label_Music_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Title_Language_Music_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Title_Music_Type" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Title_Music_Type1" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Title_Talent_Music_Title_Talent" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Title_Theme_Music_Title" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Platform_Broadcast" Width="1.5" PointX="46.25" PointY="7.5" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Title_Objection" Width="1.5" PointX="30.25" PointY="88.5" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Title_Objection_Platform" Width="1.5" PointX="32.5" PointY="95.875" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Title_Objection_Rights_Period" Width="1.5" PointX="32.5" PointY="93.125" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Title_Objection_Status" Width="1.5" PointX="28" PointY="93.375" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Title_Objection_Territory" Width="1.5" PointX="32.5" PointY="90.25" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Title_Objection_Type" Width="1.5" PointX="28" PointY="96" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Objection_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Objection_Platform_Title_Objection" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Objection_Rights_Period_Title_Objection" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Objection_Territory_Title_Objection" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Objection_Title_Objection_Status" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Objection_Title_Objection_Type" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Supplementary" Width="1.5" PointX="45.375" PointY="37" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Supplementary_Detail" Width="1.5" PointX="47.625" PointY="37" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Supplementary_Detail_Syn_Deal_Supplementary" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Amendement_History" Width="1.5" PointX="46" PointY="11.125" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Supplementary_Syn_Deal" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Supplementary_Title" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.ImgPathData" Width="1.5" PointX="39.625" PointY="45.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Digital" Width="1.5" PointX="46.625" PointY="18" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Digital_detail" Width="1.5" PointX="48.875" PointY="18" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AT_Acq_Deal_Digital" Width="1.5" PointX="45.625" PointY="41" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AT_Acq_Deal_Digital_detail" Width="1.5" PointX="47.875" PointY="41" />
+		<EntityTypeShape EntityType="RightsU_NeoModel.Attrib_Report_Column" Width="1.5" PointX="24.25" PointY="105" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Report_Column_Setup_IT" Width="1.5" PointX="22" PointY="113.875" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Attrib_Report_Column_Attrib_Group" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Attrib_Report_Column_Attrib_Group1" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Attrib_Report_Column_Report_Column_Setup" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Digital" Width="1.5" PointX="46.625" PointY="29.375" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Digital_Config" Width="1.5" PointX="48.875" PointY="28" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Digital_Data" Width="1.5" PointX="46.625" PointY="44.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Digital_Tab" Width="1.5" PointX="46.625" PointY="32" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Digital_detail_Acq_Deal_Digital" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AT_Acq_Deal_Digital_detail_AT_Acq_Deal_Digital" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Digital_Config_Digital" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Digital_Config_Digital_Tab" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Supplementary_Config" Width="1.5" PointX="47.375" PointY="21.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Banner" Width="1.5" PointX="36.375" PointY="50.875" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Extended_Group" Width="1.5" PointX="1.75" PointY="54.875" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Extended_Group_Config" Width="1.5" PointX="4" PointY="0.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Title_Episode_Details" Width="1.5" PointX="11.25" PointY="131" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Title_Episode_Details_TC" Width="1.5" PointX="16.5" PointY="123.25" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Extended_Group_Config_Extended_Columns" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Extended_Group_Config_Extended_Group" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Episode_Details_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Episode_Details_TC_Title_Content" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Episode_Details_TC_Title_Episode_Details" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_OEM" Width="1.5" PointX="15.75" PointY="110.625" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Vendor_Details" Width="1.5" PointX="15" PointY="131.5" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Vendor_OEM" Width="1.5" PointX="18" PointY="57.25" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Vendor_Rule" Width="1.5" PointX="15" PointY="145.375" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Vendor_Rule_Criteria" Width="1.5" PointX="26.25" PointY="72.5" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Vendor_TnC" Width="1.5" PointX="15" PointY="142.875" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Vendor_OEM_AL_OEM" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Vendor_Details_Vendor" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Vendor_OEM_Vendor" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Vendor_Rule_Criteria_AL_Vendor_Rule" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Vendor_Rule_Vendor" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Vendor_Rule_Criteria_Extended_Columns" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Vendor_TnC_Vendor" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Vendor_Details_Extended_Group" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Lab" Width="1.5" PointX="47.375" PointY="21.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Booking_Sheet" Width="1.5" PointX="35.5" PointY="89.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Booking_Sheet_Details" Width="1.5" PointX="37.75" PointY="84.5" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_AL_Booking_Sheet" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Booking_Sheet_Vendor" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_Extended_Columns" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_Extended_Group" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_Title_Content" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Recommendation" Width="1.5" PointX="30.875" PointY="95" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Recommendation_Content" Width="1.5" PointX="33.125" PointY="104.5" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Booking_Sheet_AL_Recommendation" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Recommendation_Content_AL_Recommendation" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Recommendation_Content_AL_Vendor_Rule" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Recommendation_Content_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Recommendation_Content_Title_Content" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.DM_Booking_Sheet_Data" Width="1.5" PointX="46.75" PointY="47.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Load_Sheet" Width="1.5" PointX="35.875" PointY="95.5" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Load_Sheet_Details" Width="1.5" PointX="38.125" PointY="91.25" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Purchase_Order" Width="1.5" PointX="21.125" PointY="113.375" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Load_Sheet_Details_AL_Booking_Sheet" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Purchase_Order_AL_Booking_Sheet" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Load_Sheet_Details_AL_Load_Sheet" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Material_Tracking" Width="1.5" PointX="49.625" PointY="71.625" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Material_Tracking_OEM" Width="1.5" PointX="51.875" PointY="91.125" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Material_Tracking_AL_Booking_Sheet" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Material_Tracking_AL_Lab" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Material_Tracking_AL_Load_Sheet" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Material_Tracking_OEM_AL_Material_Tracking" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Material_Tracking_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Material_Tracking_Title_Content" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Material_Tracking_Vendor" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Material_Tracking_OEM_AL_OEM" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Material_Tracking_AL_OEM" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Purchase_Order_Rel" Width="1.5" PointX="26.25" PointY="103" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Purchase_Order_Rel_AL_Purchase_Order" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Purchase_Order_Details" Width="1.5" PointX="23" PointY="90.125" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Purchase_Order_Details_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Purchase_Order_Details_Title_Content" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Purchase_Order_Details_Vendor" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Purchase_Order_Rel_AL_Purchase_Order_Details" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Title_Title" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Digital" Width="1.5" PointX="37.875" PointY="77.125" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Digital_Detail" Width="1.5" PointX="40.125" PointY="77.25" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Digital_Syn_Deal" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Digital_Detail_Syn_Deal_Digital" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Digital_Title" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Master_Log" Width="1.5" PointX="37" PointY="47.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Run_LP" Width="1.5" PointX="11.5" PointY="134.625" />
+        <AssociationConnector Association="RightsU_NeoModel.FK__Acq_Deal___Acq_D__5888AE08" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.BV_Schedule_Transaction" Width="1.5" PointX="48.375" PointY="0.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Email_Config_Template" Width="1.5" PointX="36.625" PointY="35.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Event_Platform" Width="1.5" PointX="48.625" PointY="11.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Event_Template_Keys" Width="1.5" PointX="49.625" PointY="21.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Event_Template" Width="1.5" PointX="49.625" PointY="44.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Notifications" Width="1.5" PointX="49.625" PointY="48.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Email_Config_Keys" Width="1.5" PointX="52.125" PointY="13.375" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Email_Config_Keys_Email_Config" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Email_Config_Keys_Event_Template_Keys" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Notifications_Email_Config" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Notifications_Event_Platform" />
+        </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

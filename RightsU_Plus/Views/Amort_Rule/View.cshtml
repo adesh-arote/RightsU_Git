@@ -1,0 +1,341 @@
+﻿@model RightsU_Entities.Amort_Rule
+@using System.Configuration;
+@using UTOFrameWork.FrameworkClasses
+@{
+    ViewBag.Title = "View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<head>
+    <meta charset="utf-8">
+    <title>RightsU</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <link rel="icon" type="image/ico" href="~/img/u-to.ico">
+
+    <link type="text/css" rel="stylesheet" href="~/CSS/chosen.min.css">
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            showLoading();
+            hideLoading();
+        });
+
+        function OnCancelClick() {
+            location.href = '@Url.Action("CancelData", "Amort_Rule")'
+        }
+    </script>
+</head>
+<body>
+    
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+   
+           
+
+    <div class="main_section">
+        <section class="rightsU_container clearfix">
+            <div class="container acq main_col">
+                 <div class="top_area">
+                <h2>View Amort Rule</h2></div>
+                @using (Html.BeginForm("Save", "Title", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+                {
+                    <div class="grid_area">
+                        <div>
+                            <div>
+                                <div class="tab-content clearfix table-wrapper scale_table_container">
+                                    <div class="tab-pane active" id="tabGeneral">
+                                        <div class="scale_table_block">
+                                            <table class="four_column table style_table">
+                                                <tr>
+                                                    <td>Amort Rule Type
+                                                    </td>
+                                                    <td>
+                                                        @if (Model.Rule_Type == "R")
+                                                        {
+                                                            <label>Run</label>
+                                                  }
+                                                        else if (Model.Rule_Type == "P")
+                                                        {
+                                                            <label>Period</label>
+                                                  }
+                                                        else if (Model.Rule_Type == "O")
+                                                        {
+                                                            <label>Others</label>
+                                                  }
+                                                        else if (Model.Rule_Type == "C")
+                                                        {
+                                                            <label>Premier/Show Premier</label>
+                                                  }
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Rule#
+                                                    </td>
+                                                    <td>
+                                                        @if (Model.Rule_No != null)
+                                                        {
+                                                             <label> @Model.Rule_No </label> 
+                                                    }
+                                                        else
+                                                        {
+                                                            <label>NA </label> 
+                                                    }
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Rule Description
+                                                    </td>
+                                                    <td>
+                                                        @if (Model.Rule_Desc != null)
+                                                        {
+                                                          <label> @Model.Rule_Desc </label> 
+                                                        }
+                                                        else
+                                                        {
+                                                            <label>NA</label>
+                                                      }
+                                                    </td>
+                                                </tr>
+                                                @if (Model.Rule_Type == "P" || Model.Rule_Type == "R")
+                                                        {
+                                                <tr>
+                                                    <td>
+                                                     @if(Model.Rule_Type == "P")
+                                                     {
+                                                    <label>Type</label>
+                                                    
+                                                     }
+                                                    else
+                                                     {
+                                                         <Label>Run</Label>
+                                                    }
+                                                        </td>
+                                                    <td>
+                                                        @if (Model.Distribution_Type != null && Model.Distribution_Type == "E")
+                                                        {
+                                                            <label>Equally Distribute</label>
+                                                        }
+                                                        else if (Model.Distribution_Type != null && Model.Distribution_Type == "D")
+                                                        {
+                                                            <label>Defined Manually</label>
+                                                        }
+                                                        else
+                                                        {
+                                                            <label>NA</label>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                                        }
+                                                @if (Model.Rule_Type == "P")
+                                                {
+                                                <tr>
+                                                    <td>Period
+                                                    </td>
+                                                    <td>
+                                                        @if (Model.Period_For == "A")
+                                                        {
+                                                            <label>Amongst the Rights Period</label>
+                                                        }
+                                                        else if (Model.Period_For == "M")
+                                                        {
+                                                            <label>Defined Manually</label>
+                                                        }
+                                                        else
+                                                        {
+                                                            <label>NA</label>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                                }
+                                                <tr>
+                                                    @if (Model.Rule_Type == "P" || Model.Rule_Type == "R")
+                                                    {
+                                                        if (Model.Rule_Type == "P")
+                                                        {
+                                                            <td> No. Of Month</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>No. Of Runs</td>
+                                                        }
+                                                        <td>
+                                                        @if (Model.Nos != null)
+                                                        {
+                                                           <label>@Model.Nos</label>
+                                                        }
+                                                        else
+                                                        {
+                                                            <label>NA</label>
+                                                        }
+                                                    </td>
+                                                    }
+                                                </tr>
+                                                @if (Model.Rule_Type == "C")
+                                                {
+                                                <tr>
+                                                    <td>Year Type
+                                                    </td>
+                                                    <td>
+                                                        @if (Model.Year_Type == "D")
+                                                        {
+                                                            <label>Deal Year</label>
+                                                        }
+                                                        else if (Model.Year_Type == "F")
+                                                        {
+                                                            <label>Financial Year</label>
+                                                        }
+                                                        else
+                                                        {
+                                                            <label>NA</label>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                                }
+                                            </table>
+                                            <div>
+                                                @if (Model != null && Model.Amort_Rule_Details != null && Model.Rule_Type == "R")
+                                                {
+                                                    <table class="table table-bordered table-hover" style="text-align:center">
+                                                        <tr>
+                                                            <th>From Run </th>
+                                                            <th>To Run </th>
+                                                            <th>Percentage (%) </th>
+                                                        </tr>
+                                                        @foreach (var item in Model.Amort_Rule_Details)
+                                                        {
+                                                            <tr>
+                                                                <td><label>@item.From_Range</label></td>
+                                                                <td><label>  @item.To_Range </label></td>
+                                                                <td><label>@item.Per_Cent</label></td>
+                                                            </tr>
+                                                        }
+                                                    </table>
+                                                }
+                                                else if (Model != null && Model.Amort_Rule_Details != null && Model.Rule_Type == "P" && Model.Period_For != "A")
+                                                {
+                                                    <table class="table table-bordered table-hover" style="text-align:center">
+                                                        <tr>
+                                                            <th>From Effective Month </th>
+                                                            <th>To Effective Month </th>
+                                                            <th>Percentage (%) </th>
+                                                        </tr>
+                                                        @foreach (var item in Model.Amort_Rule_Details)
+                                                        {
+                                                            <tr>
+                                                                <td><label>@item.From_Range</label></td>
+                                                                <td><label>  @item.To_Range </label></td>
+                                                                <td><label>@item.Per_Cent</label></td>
+                                                            </tr>
+                                                        }
+                                                    </table>
+                                                }
+                                                else if (Model != null && Model.Amort_Rule_Details != null && Model.Rule_Type == "O")
+                                                {
+                                                    <table class="table table-bordered table-hover" style="text-align:center">
+                                                        <tr>
+                                                            <th>Month Year </th>
+                                                            <th>Percentage (%) </th>
+                                                        </tr>
+                                                        @foreach (var item in Model.Amort_Rule_Details)
+                                                        {
+                                                            <tr>
+                                                                <td>
+                                                                    @if (item.Month != 0)
+                                                                    {
+                                                                        string Month = string.Empty;
+                                                                        bool flag = true;
+                                                                        switch (item.Month)
+                                                                        {
+                                                                            case 1: Month = "January";
+                                                                                break;
+                                                                            case 2: Month = "February";
+                                                                                break;
+                                                                            case 3: Month = "March";
+                                                                                break;
+                                                                            case 4: Month = "April";
+                                                                                break;
+                                                                            case 5: Month = "May";
+                                                                                break;
+                                                                            case 6: Month = "June";
+                                                                                break;
+                                                                            case 7: Month = "July";
+                                                                                break;
+                                                                            case 8: Month = "Augest";
+                                                                                break;
+                                                                            case 9: Month = "September";
+                                                                                break;
+                                                                            case 10: Month = "October";
+                                                                                break;
+                                                                            case 11: Month = "November";
+                                                                                break;
+                                                                            case 12: Month = "December";
+                                                                                break;
+                                                                        }
+                                                                    
+                                                                  <label>  @Month </label> 
+                                                                    }
+                                                                 <label> @item.Year </label></td>
+                                                                <td>
+                                                                    <label>@item.Per_Cent</label>
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    </table>
+                                                }
+                                                else if (Model != null && Model.Amort_Rule_Details != null && Model.Rule_Type == "C")
+                                                {
+                                                    <table class="table table-bordered table-hover">
+                                                        <tr>
+                                                            <th>Run/Year</th>
+                                                            <th>Percent</th>
+                                                        </tr>
+
+                                                        @for (int i = 0; i < Model.Amort_Rule_Details.Count; i++)
+                                                        {
+                                                            RightsU_Entities.Amort_Rule_Details objARD = Model.Amort_Rule_Details.ElementAt(i);
+                                                            if (i == 0)
+                                                            {
+                                                            <tr>
+                                                                <td>
+                                                                    @if (Model.Nos != null)
+                                                                    {
+                                                                       <label>@Model.Nos&nbsp;</label> 
+                                                                       
+                                                                        <span style="font-weight:bold">Run</span>
+                                                                    }
+                                                                </td>
+                                                                   <td> <label> @objARD.Per_Cent</label></td>
+                                                            </tr>
+                                                            }
+                                                            else
+                                                            {
+                                                            <tr>
+                                                                <td>
+                                                                 <label> @objARD.Year&nbsp;&nbsp;</label><span style="font-weight:bold">Year</span> </td>
+                                                                <td> <label> @objARD.Per_Cent</label>
+                                                                    <label >
+                                                                        @if (objARD.Period_Type == "R")
+                                                                        { <span style="font-weight:bold"> Till Right End</span>}
+                                                                        else
+                                                                        { <span style="font-weight:bold"> Till Year End</span>}
+                                                            </label>
+                                                                </td>
+                                                            </tr>
+                                                            }
+                                                        }
+                                                    </table> 
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                            
+                        <input value="Cancel" class="btn btn-primary" type="button" onclick="return OnCancelClick();" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            }
+            </div>
+        </section>
+    </div>
+
+</body>

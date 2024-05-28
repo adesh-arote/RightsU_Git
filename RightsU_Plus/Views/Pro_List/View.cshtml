@@ -1,0 +1,229 @@
+﻿@model RightsU_Entities.Provisional_Deal
+@using UTOFrameWork.FrameworkClasses;
+@{
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    RightsU_BLL.Business_Unit_Service objBusiness_Unit_Service = new RightsU_BLL.Business_Unit_Service(objLoginEntity.ConnectionStringName);
+    RightsU_Entities.Business_Unit objBusiness_Unit = new RightsU_Entities.Business_Unit();
+    objBusiness_Unit = objBusiness_Unit_Service.GetById((int)Model.Business_Unit_Code);
+
+    RightsU_BLL.Entity_Service objEntity_Service = new RightsU_BLL.Entity_Service(objLoginEntity.ConnectionStringName);
+    RightsU_Entities.Entity objEntity = new RightsU_Entities.Entity();
+    objEntity = objEntity_Service.GetById((int)Model.Entity_Code);
+
+    RightsU_Entities.Role objRole = new RightsU_Entities.Role();
+    RightsU_BLL.Role_Service objRole_service = new RightsU_BLL.Role_Service(objLoginEntity.ConnectionStringName);
+    objRole = objRole_service.GetById(Convert.ToInt32(Model.Content_Type));
+
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+
+}
+
+
+<script>
+    $(document).ready(function () {
+        $(".divLoading").remove();
+        initializeExpander();
+    });
+
+</script>
+
+
+
+<div class="container acq main_col" onclick="$('.leftPanel').css('left', panelHideCss);">
+    <h2 class="pull-left">
+        @objMessageKey.ViewProvisionalDeal
+        <span></span>
+    </h2>
+    <div style="margin-top:38px;float:right;">
+        <ul>
+            <li style="list-style-type: none;" id="liVersion">
+                <span class="pull-Right">Agreement No.@ViewBag.AgreementNo Version #: VN @ViewBag.VersionNo </span>
+            </li>
+        </ul>
+    </div>
+    <div class="top_area"></div>
+    <div class="title_block clearfix">
+    </div>
+    <div class="scale_table_block">
+        <table class="four_column table" id="tblGeneral">
+            <tbody>
+                <tr>
+                    <td>@objMessageKey.BusinessUnit</td>
+                    <td>
+                        @Html.Label(objBusiness_Unit.Business_Unit_Name)
+                    </td>
+                    <td>@objMessageKey.ModeofAcquisition</td>
+                    <td>
+                        @Html.Label(objRole.Role_Name)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td_label">@objMessageKey.Licensee</td>
+                    <td>
+                        <span class="required">
+                            @Html.Label(objEntity.Entity_Name)
+                        </span>
+                    </td>
+                    <td class="td_label">@objMessageKey.Licensor</td>
+                    <td>
+                        @*@string.Join(", ", Model.Provisional_Deal_Licensor.Select(x => x.Vendor.Vendor_Name).ToArray())*@
+                        @string.Join(", ", Model.Provisional_Deal_Licensor.Select(x => x.Vendor.Vendor_Name).Distinct().ToArray())
+                        <input type="hidden" id="hdnVendorCode" value="0" name="Vendor_Code" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td_label">@objMessageKey.AgreementDate</td>
+                    <td>
+                        @*@Html.Label(string.Format("{0:" + GlobalParams.DateFormat_Display + "}", Model.Agreement_Date.Value.ToShortDateString(), new { @style = "width:65%!important;" }))*@
+                        <span>@string.Format("{0:" + GlobalParams.DateFormat_Display + "}", Model.Agreement_Date).Replace("/", "-")</span>
+                    </td>
+                    <td class="td_label">@objMessageKey.Description</td>
+                    <td>
+                        @*@Html.Label(Model.Deal_Desc, htmlAttributes: new { @style = "margin-left: 0px; width: 65%" })*@
+                        <span style="margin-left: 0px; width: 65%">@string.Format(Model.Deal_Desc)</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="four_column table">
+            <tbody>
+                <tr>
+                    <td class="td_label" style="width: 6%;">
+                        @objMessageKey.DealFor
+                    </td>
+                    <td>
+                        @Html.Label(Model.Deal_Type.Deal_Type_Name, htmlAttributes: new { @style = "margin-left: 40px; width: 65%" })
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="scale_table_block" id="movieSearchBand">
+            <table class="table style_table" style="margin-left:-4px;">
+                <tbody>
+                    <tr>
+                        <td style="width:14%;"><b>@objMessageKey.RightsPeriod</b></td>
+                        <td>
+                            @{
+                                string[] arr = Model.Term.Split('.');
+                                string termText = "";
+                                int year = 0, month = 0;
+                                if (arr.Length > 1)
+                                {
+                                    if (!string.IsNullOrEmpty(arr[1].Trim()))
+                                    {
+                                        month = Convert.ToInt32(arr[1].Trim());
+                                    }
+                                }
+
+                                if (arr.Length > 0)
+                                {
+                                    if (!string.IsNullOrEmpty(arr[0].Trim()))
+                                    {
+                                        year = Convert.ToInt32(arr[0].Trim());
+                                    }
+                                }
+
+                                if (year > 0)
+                                {
+                                    termText = year + " Year" + ((year > 1) ? "s " : " ");
+                                }
+                                if (month > 0)
+                                {
+                                    termText += month + " Month" + ((month > 1) ? "s " : " ");
+                                }
+                                if (termText == "")
+                                {
+                                    termText = year + " Year " + month + " Month";
+                                }
+
+                            }
+                            <label style="margin-left: 35px">Start Date :</label>
+                            @*@Html.Label(Model.Right_Start_Date.Value.ToShortDateString())*@
+                            <label>@string.Format("{0:" + GlobalParams.DateFormat_Display + "}", Model.Right_Start_Date).Replace("/", "-")</label>
+                            @Html.Label(termText, new { @style = "margin-left: 30px" })
+                            <label style="margin-left:15px">End Date :</label>
+                            <label>@string.Format("{0:" + GlobalParams.DateFormat_Display + "}", Model.Right_End_Date).Replace("/", "-")</label>
+                            @*@Html.Label(Model.Right_End_Date.Value.ToShortDateString())*@
+
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="grid_area">
+            <div class="navigation_tabs">
+                <div class="tabbable">
+                    <ul class="nav nav-tabs nav-tab pull-left">
+                        <li class="active">
+                            @if (ViewBag.DealTypeCode == GlobalParams.Deal_Type_Movie)
+                            {
+                                <a data-toggle="tab" href="#tabrights" role="tab">Movie</a>
+                            }
+                            else if (ViewBag.DealTypeCode == GlobalParams.Deal_Type_Content)
+                            {
+                                <a data-toggle="tab" href="#tabrights" role="tab">Program</a>
+                            }
+                            else if (ViewBag.DealTypeCode == GlobalParams.Deal_Type_Event)
+                            {
+                                <a data-toggle="tab" href="#tabrights" role="tab">Event</a>
+                            }
+
+                        </li>
+                    </ul>
+                    <div class="tab-content clearfix table-wrapper scale_table_container">
+                        <div class="tab-pane active" id="tabrights">
+                            <div class="scale_table_block" id="tblDealFor">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--REMARKS-->
+    <div class="grid_area">
+        <div class="navigation_tabs">
+            <div class="tabbable">
+                <ul class="nav nav-tabs nav-tab pull-left">
+                    <li class="active">
+                        <a data-toggle="tab" href="#tabrights" role="tab">@objMessageKey.Remarks</a>
+                    </li>
+                </ul>
+                <div class="tab-content clearfix table-wrapper scale_table_container">
+                    <div class="tab-pane active" id="tabrights">
+                        <div class="scale_table_block">
+                            <span class="expandable">
+                                @{
+                                    if (!string.IsNullOrEmpty(Model.Remarks))
+                                    {
+                                        @Html.Raw(Model.Remarks.Replace("\n", "<br />"))
+                                    }
+                                }
+                            </span>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom_action" style="padding-top:10px;">
+        <ul class="form_link_nav clearfix">
+            <li>
+                <a class="btn btn-primary" onclick="CancelSaveDeal('VIEW')">@objMessageKey.Cancel</a>
+            </li>
+        </ul>
+    </div>
+
+</div>

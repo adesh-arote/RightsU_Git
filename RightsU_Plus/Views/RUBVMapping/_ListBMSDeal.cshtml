@@ -1,0 +1,58 @@
+﻿@model List<RightsU_Entities.USPRUBVMappingList_Result>
+@using UTOFrameWork.FrameworkClasses;
+<script>
+    $(document).ready(function () {
+        debugger;
+        $("#hdnRecordCount").val(@(ViewBag.RecordCount));
+        SetPaging();
+    });
+</script>
+<table class="table table-bordered table-hover" id="dealtable">
+    @if ((string)Session["SelectedValue2"] == "E"){
+          <tr>
+            <th width="18%">Agreement No</th>
+            <th width="12%">RU ID</th>
+            <th width="12%">BV ID</th>
+            <th width="20%">Request Time</th>
+            <th width="20%">Error Description</th>
+            <th width="18%">Record Status</th>
+        </tr>
+   foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.LicenseRefNo</td>
+                <td><span> RUBMSBVD</span>@item.RUID</td>
+                <td>@item.BVID</td>
+                <td>@Convert.ToDateTime(item.RequestTime).ToString(GlobalParams.DateFormat_Display).Trim()</td>
+                <td>@item.ErrorDescription</td>
+                <td>@item.RecordStatus</td>
+            </tr>
+        }
+    }
+    else if ((string)Session["SelectedValue2"] == "P")
+    {
+        <tr>
+            <th width="20%">Agreement No</th>
+            <th width="15%">RU ID</th>
+            <th width="15%">BV ID</th>
+            <th width="20%">Request Time</th>
+            <th width="20%">Record Status</th>
+        </tr>
+        foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.LicenseRefNo</td>
+                <td><span> RUBMSBVD</span>@item.RUID</td>
+                <td>@item.BVID</td>
+                @if (item.RecordStatus == "Waiting")
+                {
+                    <td>@item.RequestTime</td>
+                }
+                else
+                {
+                    <td></td>}
+                <td>@item.RecordStatus</td>
+            </tr>
+        }
+    }
+     </table>

@@ -1,0 +1,411 @@
+  <!-- <nav class="navbar header-div">
+          <div class="col-md-8">
+              <span  data-toggle="collapse" id="sidebarCollapse"  aria-expanded="false" style="margin-right:10px">
+                  <i class="fa fa-bars"></i>
+              </span>
+              <span class="navbar-text">
+                 <h5> <p class="font-weight-normal"> Balaji Telefilms</p></h5>
+                </span>
+           
+          </div>
+          <div class="col-md-2">
+           <div class="row ">
+              <div class="col-4 col-md-4">
+                  <i class="fa fa-bell-o"></i>
+                  
+                </div>
+                <div class="col-4 col-md-4">
+                    <i class="fa fa-flag-o"></i>
+                  </div>
+                  <div class="col-4 col-md-4">
+                    <i class="fa fa-user-circle"></i>
+                  </div>
+             </div>
+          </div>
+          <div class="col-md-2">
+            <img src="../../../assets/viacom18.png" width="100%" height="100%">
+          </div>
+       
+    </nav> -->
+    <!-- <div class="hold-transition skin-black sidebar-mini"> -->
+    <!-- Site wrapper -->
+    <!-- <div class="wrapper"> -->
+      <header class="main-header" >
+        <!-- Logo -->
+        <a  class="logo" routerLink="/app/dashboard">
+          <span class="logo-mini"><img src="../../../assets/Images/m_page2.png" alt="" title="Music Hub" data-placement="right" data-original-title="Music Hub"></span>
+          <span class="logo-lg"><img src="../../../assets/Images/musicHub2_small2.png" alt=""></span>
+        </a>
+        <!-- span class="logo"></span -->
+        <!-- Header Navbar: style can be found in header.less -->
+        <nav class="navbar navbar-static-top">
+            <!-- Sidebar toggle button-->
+            <a href="#" class="sidebar-toggle" *ngIf="ChangePSW=='N'" data-toggle="push-menu" role="button" (click)="Toggleclick()" >
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            </a>
+           <span class="pms" style="line-height: 51px !important;margin-left: -8px !important;">&nbsp;&nbsp;{{productionHouseName}}</span>
+            <div class="navbar-custom-menu">
+            <ul class="nav navbar-nav" id="notificationList">        
+              <!-- Notifications: style can be found in dropdown.less -->
+              <!-- Remove Below Notification Link -->
+              <li class="dropdown notifications-menu" *ngIf="ChangePSW=='N'"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-bell-o"></i> <span class="label label-success">{{unreadCount}}</span></a>
+              <ul class="dropdown-menu">
+                <!-- <li class="header">Notifications (Quarter 1- Apr'18 - Jun'18)</li> -->
+                <li>
+                <ul class="menu" *ngFor="let item of notificationList">
+                  <li class="text-success"><a (click)="notificationDetails(item.MHNotificationLogCode,item.MHRequestTypeCode,item.MHRequestCode)"><i class="fa fa-music text-navy"></i>{{item.Subject}}</a></li>
+                  <!-- <li class="text-danger"><a (click)="notificationDetails()"><i class="fa fa-music text-danger"></i> Request ID# BT-00002 rejected</a></li>
+                  <li><a (click)="notificationDetails()"><i class="fa fa-music text-aqua"></i> Request ID# BT-00006 sent for approval</a></li>
+                  <li class="text-success"><a (click)="notificationDetails()"><i class="fa fa-music text-success"></i> New music track request ID# BT-00001 approved</a></li>
+                  <li><a (click)="notificationDetails()"><i class="fa fa-music text-aqua"></i> New Show Name Chandrakanta added.</a></li> -->
+                </ul>
+                </li>
+                <li class="footer"><a (click)="viewAllClick()">View all</a></li>
+              </ul>
+              </li>
+              <!-- Tasks: style can be found in dropdown.less --> 
+              <!-- Remove Below nav Falg Link -->
+              <!-- <li class="dropdown tasks-menu">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-flag-o"></i><span class="label label-warning">5</span></a>
+               <ul class="dropdown-menu">
+                                <li>
+                                    <div class="slider">
+                                        <ul class="my-menu">
+                                            <li><a href="#">Request Status <span> (Quarter 1- Apr'18 - Jun'18)</span></a>
+                                            <li>
+                                                <a href="#">Assignments</a>
+                             <ul class="menu" >
+                              <li><a href="#"><h3>Approved (60) <small class="pull-right">60%</small></h3>
+                                <div class="progress xs">
+                                <div class="progress-bar progress-bar-green" style="width:60%" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
+                                  <span class="sr-only">60% Complete</span>
+                                </div>
+                                </div></a>
+                              </li>
+                              <li><a href="#"><h3>Rejected  (20)<small class="pull-right">20%</small></h3>
+                                <div class="progress xs">
+                                <div class="progress-bar progress-bar-red" style="width:20%" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
+                                  <span class="sr-only">20% Complete</span>
+                                </div>
+                                </div></a>
+                              </li>
+                              <li><a href="#"><h3>Pending (35) <small class="pull-right">35%</small></h3>
+                                <div class="progress xs">
+                                <div class="progress-bar progress-bar-yellow" style="width: 35%" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
+                                  <span class="sr-only">35% Complete</span>
+                                </div>
+                                </div></a>
+                              </li>
+                             								  
+                          </ul>
+                        </li>
+                                            <li>
+                        
+                                                <a href="#">New Music Tracks</a>
+                                                  <ul class="menu" >
+                              <li><a href="#"><h3>Approved (70) <small class="pull-right">70%</small></h3>
+                                <div class="progress xs">
+                                <div class="progress-bar progress-bar-green" style="width:70%" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
+                                  <span class="sr-only">70% Complete</span>
+                                </div>
+                                </div></a>
+                              </li>
+                              <li><a href="#"><h3>Rejected  (30)<small class="pull-right">30%</small></h3>
+                                <div class="progress xs">
+                                <div class="progress-bar progress-bar-red" style="width:30%" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
+                                  <span class="sr-only">30% Complete</span>
+                                </div>
+                                </div></a>
+                              </li>
+                              <li><a href="#"><h3>Pending (45) <small class="pull-right">45%</small></h3>
+                                <div class="progress xs">
+                                <div class="progress-bar progress-bar-yellow" style="width: 45%" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
+                                  <span class="sr-only">45% Complete</span>
+                                </div>
+                                </div></a>
+                              </li>
+                             									  
+                          </ul>
+                        </li>
+                                            <li class="footer">
+                          <a href="all_request.htm">View all Requests</a>
+                          </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                            </ul>
+              </li> -->
+              <!-- User Account: style can be found in dropdown.less -->
+              <li class="dropdown user user-menu" *ngIf="ChangePSW=='N'">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+               <i class="fa fa-user-circle" aria-hidden="true"></i>
+                
+              </a>
+              <ul class="dropdown-menu">
+                <!-- User image -->
+                <li class="user-header" (click)="fileInput.click()">
+                  <input style="display: none" #fileInput type="file" id="uploadFile" name="uploadFile"
+                (change)="fileCheck($event)" />
+                <img [src]="ImageUrl" alt="" onerror="this.onerror=null;this.src='../../assets/Images/User_Img.png'">
+                <!-- i class="fa fa-user-circle fa-3x" aria-hidden="true"></i -->
+                <p>
+                  {{userName}}
+                  <small>{{productionHouseName}}</small>
+                </p>
+                </li>
+                <!-- Menu Body -->
+                <!-- li class="user-body">
+                <div class="row">
+                  <div class="col-xs-4 text-center">
+                  <a href="#">Followers</a>
+                  </div>
+                  <div class="col-xs-4 text-center">
+                  <a href="#">Sales</a>
+                  </div>
+                  <div class="col-xs-4 text-center">
+                  <a href="#">Friends</a>
+                  </div>
+                </div>
+                </li -->
+                <!-- Menu Footer-->
+                <li class="user-footer">
+                <div class="pull-left">
+                   <a routerLink="/app/changepswd" class="btn btn-default btn-flat">Change Password</a>
+                </div>
+                <div class="pull-right">
+                  <a routerLink="/login" class="btn btn-default btn-flat" (click)="unsetCredentials()">Logout</a>
+                </div>
+                </li>
+              </ul>
+              </li>
+              <!-- Control Sidebar Toggle Button -->
+              <!-- li>
+              <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+              </li -->
+              <!-- Client Logo -->
+              <li class="dropdown user user-menu" title="" data-placement="left" data-original-title="">
+                <img class="clientLogo" data-placement="left" src="../../../assets/Images/viacom18_small.png" alt="" >
+              </li>
+            </ul>
+            </div>
+        </nav>
+      </header>
+      <!-- =============================================== -->
+    
+      <!-- Left side column. contains the sidebar -->
+      <aside class="main-sidebar" >
+        <!-- sidebar: style can be found in sidebar.less -->
+        <section class="sidebar">
+          <!-- sidebar menu: : style can be found in sidebar.less -->
+          <ul class="sidebar-menu" data-widget="tree" *ngIf="ChangePSW=='N'">
+        <!--li class="active"><a href="home.htm"><i class="fa fa-home" aria-hidden="true"></i><span>Home</span></a></li -->
+        <li [class.active]="router.isActive('/app/dashboard/Home')" id="dashboard">
+            <!-- <li [ngClass]="Request==='/app/dashboard' ? 'active' :''" id="dashboard"> -->
+          <a routerLink="/app/dashboard/Home" ><i class="fa fa-dashboard"></i><span>Dashboard</span></a>			
+        </li>
+        <li class="treeview"  [class.active]="router.isActive('/app/requisition')" id="Requsition">
+        <!-- <li ng-class="$Request==='/app/requisition/new-request' ? 'treeview active' :$Request==='/app/requisition/new-music-track'?'treeview active': 'treeview'" id="Requsition">           -->
+          <a href="#"><i class="fa fa-fax" ></i><span>Music Requisition</span><i class="fa fa-angle-left pull-right"></i></a>
+          <ul class="treeview-menu">
+            <li><a (click)="getUsageroutelink('/app/requisition/new-request')"><i class="fa fa-circle-o text-aqua"></i> Usage Request </a></li>
+            <li><a routerLink="/app/requisition/new-music-track" ><i class="fa fa-circle-o text-aqua"></i> New Music Tracks</a></li>            
+          </ul>
+        </li>	
+        <li [class.active]="router.isActive('/app/music-assignment/cuesheet')">
+          <a routerLink="/app/music-assignment/cuesheet"><i class="fa fa-table"></i><span>Music Assignment</span></a>			
+        </li>
+       <li class="treeview" [class.active]="router.isActive('/app/reports/authorized-report')">
+         <!-- <li ng-class="$Request==='/app/reports' ? 'treeview active' :'treeview'"> -->
+          <a href="#"><i class="fa fa-files-o"></i><span>Reports</span><i class="fa fa-angle-left pull-right"></i></a>
+          <ul class="treeview-menu">
+            <li><a routerLink="/app/reports/authorized-report"><i class="fa fa-circle-o text-aqua"></i>Authorised Music</a></li>
+          </ul>
+        </li>
+        <!-- <li class="treeview">
+          <a href="#"><i class="fa fa-music"></i><span>Music Assignment</span><i class="fa fa-angle-left pull-right"></i></a>
+          <ul class="treeview-menu">
+            <li><a href="MusicAssignment_Import.htm"><i class="fa fa-circle-o text-aqua"></i> Import</a></li>
+            <li><a href="MusicAssignment_export.htm"><i class="fa fa-circle-o text-aqua"></i> Export</a></li>
+          </ul>
+            </li> -->
+            <!-- <li class="treeview">
+          <a href="#"><i class="fa fa-files-o"></i><span>Reports</span><i class="fa fa-angle-left pull-right"></i></a>
+          <ul class="treeview-menu">
+            <li><a href="Report_AuthorisedMusic.htm"><i class="fa fa-circle-o text-aqua"></i>Authorised Music</a></li>
+            <li><a href="Report_StatusHistory.htm"><i class="fa fa-circle-o text-aqua"></i>Status History</a></li>				
+          </ul>
+            </li> -->
+           <!--li class="treeview">
+         <a href="#">
+         <i class="fa fa-cog" aria-hidden="true"></i><span>System Setting</span>
+         <i class="fa fa-angle-left pull-right"></i>
+         </a>
+         <ul class="treeview-menu">
+          <li><a href="UserRole.htm"><i class="fa fa-circle-o text-aqua"></i> User Roles</a></li>
+          <li><a href="userList.htm"><i class="fa fa-circle-o text-aqua"></i> Users</a></li>
+         </ul>
+        </li -->	 
+        <li [class.active]="router.isActive('/app/changepswd')">
+          <a routerLink="/app/changepswd"><i class="fa fa-key" aria-hidden="true"></i><span>Change Password</span></a>
+        </li>	 
+        <li><a (click)="unsetCredentials()"><i class="fa fa-power-off" aria-hidden="true"></i><span>Logout</span></a></li>	 
+          </ul>
+        </section>
+        <!-- /.sidebar -->
+      </aside>
+      <div *ngIf="load" id="loadingDiv"></div>
+      <!-- =============================================== -->
+      <!--  -->
+    <!-- </div> -->
+    <!-- <div *ngIf="displayalertMessage"> -->
+      <!-- <app-message-box  [messageData]="messageData"></app-message-box> -->
+      <p-dialog [(visible)]="displayMessage" [draggable]="false" [blockScroll]="true"  [modal]="true"  [positionTop]="60" [width]="900"  [responsive]="false">
+        <p-header>
+          <span style="cursor: pointer;color:mediumblue" (click)="showRequsetDetails()">{{requestID}}</span> - <span>{{requestdetails}}</span>
+        </p-header>
+        <div id="NotifyMessage" style="height:200px;">
+            <!-- [height]="300" -->
+            <!-- {{alertMessage}} -->
+            <!-- <table class="tblFormat"><tr>
+              <th align="center" width="20%" class="tblHead">Request Date</th>
+              <th align="center" width="40%" class="tblHead">Request Description</th>
+              <th align="center" width="20%" class="tblHead">Authorised By</th>
+              <th align="center" width="20%" class="tblHead">Authorised Date</th></tr>
+              <tr><td align="center" class="tblData" rowspan=6 >08 Aug 2018 </td>	
+              <td class="tblData">Channel Name: - Colors India</td>
+              <td align="center" class="tblData" rowspan=6 >ralph </td>
+              <td align="center" class="tblData" rowspan=6 >08 Aug 2018 </td></tr><tr><td class="tblData">Show Name: - Sacred games</td></tr><tr><td class="tblData">Episode No.: - 1 - 4</td></tr><tr><td class="tblData">Telecast Date: - 09 Aug 2018 - 31 May 2019</td></tr><tr><td class="tblData">Music Label: - Eros Music, Saregama, T-Series</td></tr><tr><td class="tblData">Number of Songs: - 9</td></tr></table> -->
+        </div>
+        <p-footer>
+          <button type="button" pButton (click)="alertClose()" label="Close"></button>
+          
+        </p-footer>
+      </p-dialog>
+  
+    <!-- </div> -->
+    
+    
+
+    <p-dialog [(visible)]="showRequestCountDetails" [blockScroll]="true" [modal]="true" [responsive]="false" [width]="1200" [positionTop]="60"  [contentStyle]="{'overflow':'visible'}" [draggable]="false">
+      <p-header>
+        <span style="font-family: serif;
+        font-size: medium;">
+          {{HeaderContent}} 
+        </span>
+      </p-header>
+      <div class="Row">
+        <div>
+          <label>Search</label>&nbsp;
+          <input id="input" class="SearchTextBox" #reqCountSearch type="text"  autocomplete="off" size="30" placeholder="Music Title, Movie/ Album, Status" [(ngModel)]="requestCountSearch" 
+                 pInputText>
+        </div>
+      </div>
+      <br>
+  
+      <p-dataTable [value]="requestCountFilteredList" [rowsPerPageOptions]="[5,10,15,20]" [globalFilter]="reqCountSearch" [paginator]="true"
+                   rows="5" [responsive]="true" [alwaysShowPaginator]="true" [scrollable]="true" scrollHeight="300px">
+        <p-column field="RequestedMusicTitle" header="Music Title" [sortable]="true" [style]="{'width':'300px'}"></p-column>
+        <p-column field="MusicMovieAlbum" header="Movie / Album" [sortable]="true" width="10" styleClass="text-center"></p-column>
+        <p-column field="LabelName" header="Music Label" [sortable]="true" width="10" styleClass="text-center"></p-column>
+        <p-column field="IsApprove" header="Status" [sortable]="true" width="10" styleClass="text-center"></p-column>
+        <p-column field="Remarks" header="Remarks" [sortable]="true" [style]="{'width':'300px'}"></p-column>
+        <p-footer>
+          Total Records: {{totalCountOfNoOfSongsDetails}}
+        </p-footer>
+      </p-dataTable><br>
+      <div style="margin-left: 15px;">
+        <table style="margin-left: -14px;">
+          <tbody>
+            <tr>
+              <td>
+                <div class="divRemarks">Production House Remarks: </div>
+              </td>
+              <td class="vl"></td>
+              <td>
+                <div class="divRemarks">Special Instructions to Production House: </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div class="remarksDetails">
+                  <div class="expand_Remark">
+                    <span>{{remarksLabel}}</span>
+                  </div>
+                </div>
+              </td>
+              <td class="vl"></td>
+              <td>
+                <div class="remarksDetails">
+                  <div class="expand_Remark">
+                    <span>{{specialRemarks}}</span>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p-footer>
+        <button type="button" pButton (click)="closeConsumption()" label="Close"></button>
+      </p-footer>
+    </p-dialog>
+  
+    <p-dialog header="{{HeaderContent}}" [blockScroll]="true" [(visible)]="dialogRequestDetail" [positionTop]="60" [modal]="true"  [responsive]="false" [width]="1200"[contentStyle]="{'overflow':'visible'}" [draggable]="false">
+      <!-- <span> -->
+
+        <div   *ngIf="isMusicDetail">
+            <div class="Row">
+                <div >
+                  
+                  <label>Search :</label>&nbsp;
+                  <input type="text" class="SearchTextBox" [(ngModel)]="searchMusicDetail"   autocomplete="off" id="movieAlbum" placeholder="Req. Music, App. Music, Music Label, Music Album, Status" (keyup)="filter(searchMusicDetail,'musicDetail')" pInputText size="50" >
+                  </div>
+                  
+                  </div>
+                  <br>
+          <p-dataTable [value]="musicDetailFilterList"  [rowsPerPageOptions]="[10,25,50,100]" [globalFilter]="gb3"   [paginator]="true" [rows]="10" [scrollable]="true" scrollHeight="300px"
+          [responsive]="true" [alwaysShowPaginator]="true" >
+          <p-column field="RequestedMusicTitleName" header="Req. Music"  [style]=" {'width':'150px' }"></p-column>
+          <p-column field="ApprovedMusicTitleName" header="App. Music"    [style]=" {'width':'150px' }"></p-column>
+          <p-column field="MusicLabelName" header="Music Label"   [editable]="true" [style]=" {'overflow':'visible','width':'100px' }" styleClass="text-center"></p-column>
+          <p-column field="MusicMovieAlbumName" header="Music Album"   [editable]="true" [style]=" {'overflow':'visible','width':'100px' }" styleClass="text-center"></p-column>          
+          <p-column field="Singers" header="Singers"   [editable]="true" [style]=" {'overflow':'visible','width':'100px' }" styleClass="text-center"></p-column>          
+          <p-column field="StarCasts" header="Star Casts"   [editable]="true" [style]=" {'overflow':'visible','width':'100px' }" styleClass="text-center"></p-column>          
+          <p-column  field="CreateMap" header="Create-Map"   styleClass="text-center" [style]=" {'width':'50px' }"></p-column>
+          <p-column  field="IsApprove" header="Status"   styleClass="text-center" [style]=" {'width':'50px' }"></p-column>
+          <p-column  field="Remarks" header="Remarks"   styleClass="text-center" [style]=" {'width':'100px' }"></p-column>
+          <p-footer>
+            Total Records: {{totalMusicDetailCount}}
+          </p-footer>
+        </p-dataTable>
+        </div>
+        <div class="row "  *ngIf="isAlbumDetail">
+            <div class="Row">
+                <div >
+                  
+                  <label>Search :</label>&nbsp;
+                  <input  type="text" class="SearchTextBox"  autocomplete="off" id="movieAlbum"  autocomplete="off" placeholder="Req. Movie / album, App. Movie / Album, Movie / Album, Status" [(ngModel)]="searchAlbumDetail" (keyup)="filter(searchAlbumDetail,'albumDetail')" pInputText size="50" >
+                  </div>
+                  </div>
+                  <br>
+          <p-dataTable [value]="albumDetailFilterList" [rowsPerPageOptions]="[10,25,50,100]" [globalFilter]="gb4" [paginator]="true" [rows]="10" [scrollable]="true" scrollHeight="300px"
+          [responsive]="true" [alwaysShowPaginator]="true">
+          <p-column field="RequestedMovieAlbumName" header="Req. Movie / Album"  [style]=" {'width':'150px' }"></p-column>
+          <p-column field="ApprovedMovieAlbumName" header="App. Movie / Album"    [style]=" {'width':'150px' }"></p-column>
+          <p-column field="MovieAlbum" header="Movie / Album"   [editable]="true" [style]=" {'overflow':'visible','width':'100px' }" styleClass="text-center"></p-column>
+          <p-column  field="CreateMap" header="Create-Map"   styleClass="text-center" [style]=" {'width':'100px' }"></p-column>
+          <p-column  field="IsApprove" header="Status"   styleClass="text-center" [style]=" {'width':'50px' }"></p-column>
+          <p-column  field="Remarks" header="Remarks"   styleClass="text-center" [style]=" {'width':'150px' }"></p-column>
+          <p-footer>
+            Total Records: {{totalAlbumDetailCount}}
+          </p-footer>
+        </p-dataTable>
+        </div>
+      <p-footer>
+        <button type="button" pButton (click)="closeMusicDetails()" label="Close"></button>
+      </p-footer>
+
+    </p-dialog>

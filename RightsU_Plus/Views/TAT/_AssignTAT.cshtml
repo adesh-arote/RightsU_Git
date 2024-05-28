@@ -1,0 +1,140 @@
+﻿@model RightsU_Entities.TAT
+
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<div class="top_area">
+    <h2 class="pull-left">Assign TAT</h2>
+</div>
+
+<div class="scale_table_block">
+    <table class="TAT table">
+        <tr>
+            <td style="width:200px !important">Draft Name</td>
+            <td>@Model.DraftName</td>
+        </tr>
+        <tr>
+            <td>Business Unit</td>
+            <td>
+                @Html.DropDownList("ddlBusinessUnit", (List<SelectListItem>)ViewBag.BusinessUnit, new { @id = "ddlBusinessUnit", @class = "form_input chosen-select", style = "width:200px !important" })
+            </td>
+        </tr>
+        <tr>
+            <td>User</td>
+            <td>
+                @Html.DropDownList("ddlUser", (List<SelectListItem>)ViewBag.User, new { @id = "ddlUser", @class = "form_input chosen-select", style = "width:200px !important" })
+
+            </td>
+        </tr>
+        <tr>
+            <td>Type</td>
+            <td>
+                <label class="radio-inline"> @Html.RadioButton("Type", "Acq", new { id = "TypeAcq" })<span>Acq</span></label>
+                <label class="radio-inline"> @Html.RadioButton("Type", "Syn", new { id = "TypeSyn" })<span>Syn</span></label>
+            </td>
+        </tr>
+        <tr>
+            <td>Is Amend</td>
+            <td>
+                <label class="radio-inline"> @Html.RadioButton("IsAmend", "Y", new { id = "IsAmendYes" })<span>Yes</span></label>
+                <label class="radio-inline"> @Html.RadioButton("IsAmend", "N", new { id = "IsAmendNo" })<span>No</span></label>
+
+            </td>
+        </tr>
+        <tr>
+            <td>Deal Format</td>
+            <td>
+                @Html.DropDownList("ddlDealFormat", (List<SelectListItem>)ViewBag.DealFormat, new { @id = "ddlDealFormat", @class = "form_input chosen-select", style = "width:200px !important" })
+            </td>
+        </tr>
+        <tr>
+            <td>Deal No</td>
+            <td>
+                <input type="text" id="txtAgreementNo" value="@ViewBag.AgreementNo" class="text" />
+            </td>
+        </tr>
+        <tr>
+            <td>SLA</td>
+            <td>
+                @Html.DropDownList("ddlSLA", (List<SelectListItem>)ViewBag.SLA, new { @id = "ddlSLA", @class = "form_input chosen-select", style = "width:200px !important" })
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="bottom_action">
+    <ul class="form_link_nav clearfix">
+        <li><input class="btn btn-primary" onclick="ButtonEvent(this.value,'@Model.TATCode')" type="button" id="btnAssign" value="Assign" style="display:none" /></li>
+        <li><input class="btn btn-primary" onclick="ButtonEvent(this.value,'@Model.TATCode')" type="button" id="btnSendForQC" value="Send For QC" style="display:none" /></li>
+        <li><input class="btn btn-primary" onclick="ButtonEvent(this.value,'@Model.TATCode')" type="button" id="btnQCCompleted" value="QC Completed" style="display:none" /></li>
+        <li><input class="btn btn-primary" onclick="ButtonEvent(this.value,'@Model.TATCode')" type="button" id="btnSeekClarification" value="Seek Clarification" /></li>
+        <li><input class="btn btn-primary" onclick="ButtonEvent(this.value,'@Model.TATCode')" type="button" id="btnComClarification" value="Complete Clarification" style="display:none" /></li>
+        <li><input class="btn btn-primary" onclick="return BindGrid()" type="button" id="btnBack" value="Back" /></li>
+    </ul>
+</div>
+<script>
+    $(document).ready(function () {
+        initializeChosen();
+        if ('@Model.Type' == 'Syn') {
+            $('#TypeAcq').prop('checked',false);
+            $('#TypeSyn').prop('checked',true);
+        }
+        else
+        {
+            $('#TypeAcq').prop('checked',true);
+            $('#TypeSyn').prop('checked',false);
+        }
+        if ('@Model.IsAmend' == 'Y') {
+            $('#IsAmendYes').prop('checked', true);
+            $('#IsAmendNo').prop('checked', false);
+        }
+        else
+        {
+            $('#IsAmendYes').prop('checked', false);
+            $('#IsAmendNo').prop('checked', true);
+        }
+
+        if ('@ViewBag.Status' == 'Pending Assignment') {
+            $('#btnAssign').prop('style', 'display:block');
+        }
+        if ('@ViewBag.Status' == 'Pending FLR') {
+            $('#btnSendForQC').prop('style', 'display:block');
+        }
+        if ('@ViewBag.Status' == 'Pending QC') {
+            $('#btnQCCompleted').prop('style', 'display:block');
+        }
+        if ('@ViewBag.Status' == 'Pending External Clarification') {
+            $('#btnSeekClarification').prop('style', 'display:none');
+            $('#btnComClarification').prop('style', 'display:block');
+        }
+    })
+    function showhidetextbox() {
+        if ($('#IsAmendYes').prop('checked')) {
+            $('#txtAgreementNo').prop('style', 'display:block');
+        }
+        else {
+            $('#txtAgreementNo').prop('style', 'display:none');
+        }
+    }
+
+</script>
+<style>
+    #ddlBusinessUnit_chosen {
+        width: 200px !important
+    }
+
+    #ddlUser_chosen {
+        width: 200px !important
+    }
+
+    #ddlDealFormat_chosen {
+        width: 200px !important
+    }
+
+    #ddlSLA_chosen {
+        width: 200px !important
+    }
+
+    .TAT td:nth-child(2n+1) {
+        font-weight: 700 !important;
+    }
+</style>

@@ -1,0 +1,353 @@
+﻿@using UTOFrameWork.FrameworkClasses
+@{
+    RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
+
+    if (Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA] != null)
+    {
+        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA];
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<script type="text/javascript">
+
+    var IsRecordToBeDelete = 'N';
+    var dealMode_G = '@objSchema.Mode';
+    var recordLockingCode_G = @ViewBag.Record_Locking_Code;
+
+    var URL_Global_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global", null, Request.Url.Scheme)'
+    var URL_BindBudget = '@Url.Action("BindBudget", "Acq_Budget")';
+    var URL_AddBudget = '@Url.Action("AddBudget", "Acq_Budget")';
+    var URL_EditBudget = '@Url.Action("EditBudget", "Acq_Budget")';
+    var URL_DeleteBudget = '@Url.Action("DeleteBudget", "Acq_Budget")';
+    var URL_Global_SetApprovalRemarks = '@Url.Action("SetApprovalRemarks", "Global")'
+
+    $(document).ready(function () {
+        $('.modal').modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: false
+        })
+        addNumeric();
+        $('#ddlTitleCode').SumoSelect();
+        $('#ddlTitleCode').each(function () {
+            $(this)[0].sumo.reload();
+        });
+        BindGrid(0,true);
+        $('#hdnPageNo').val(0);
+
+        if (recordLockingCode_G > 0)
+            Call_RefreshRecordReleaseTime(recordLockingCode_G ,URL_Global_Refresh_Lock);
+    });
+    function ValidatePageSize() {
+        var recordPerPage = $('#txtPageSize').val();
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize').addClass("required");
+        return false;
+    }
+    function PageSize_OnChange() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        var IsValid = ValidatePageSize();
+        if (IsValid) {
+            BindGrid(0,false);
+        }
+        else
+            return false;
+    }
+    function pageBinding() {
+        BindGrid(0, false);
+    }
+    function BindGrid(page_index, isOnLoad) {
+        debugger;
+        showLoading();
+        var txtpageSize = $("#txtPageSize").val();
+        //var  TitleFilter = $("select#ddlTitleCode.form_input.chosen-select").val();
+        var TitleFilter = $("#ddlTitleCode").val();
+        if(TitleFilter == null)
+            TitleFilter = "0";
+        else
+            TitleFilter = $("#ddlTitleCode").val().join(',');
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindBudget,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                txtpageSize: txtpageSize,
+                TitleFilter : TitleFilter,
+                PageNo: page_index,
+                isOnLoad: isOnLoad
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                $('.div_BindGrid').html(result);
+                SetPaging();
+                hideLoading();
+            },
+            error: function (result) {
+            }
+        });
+    }
+    function searchClick() {
+        debugger;
+        if ($("#ddlTitleCode").val() == null)
+            showAlert('E', '@objMessageKey.Selecttitletosearch');
+        else
+            BindGrid(0,false);
+    }
+    function showAllClick() {
+        $("#ddlTitleCode")[0].sumo.unSelectAll();
+        BindGrid(0,false);
+    }
+    function AddBudget()
+    {
+        $.ajax({
+            type: "POST",
+            url: URL_AddBudget,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+
+                $('#popEditBudget').html(result);
+                initializeChosen();
+                $('#popEditBudget').modal();
+                //hideLoading();
+            },
+            error: function (result) {
+                //alert('Error');
+            }
+        });
+    }
+    function EditBudget(Acq_Deal_Budget_Code)
+    {
+        $.ajax({
+            type: "POST",
+            url: URL_EditBudget,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data : JSON.stringify({ Acq_Deal_Budget_Code : Acq_Deal_Budget_Code }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+
+                $('#popEditBudget').html(result);
+                initializeChosen();
+                $('#popEditBudget').modal();
+            },
+            error: function (result) {
+            }
+        });
+    }
+    function DeleteBudget(Acq_Deal_Budget_Code)
+    {
+        IsRecordToBeDelete = 'Y';
+        $('#Acq_Deal_Budget_Code').val(Acq_Deal_Budget_Code);
+        showAlert('I','@objMessageKey.Areyousureyouwanttodeletethisbudget?','OKCANCEL');
+    }
+    function handleOk()
+    {
+        if(IsRecordToBeDelete == 'Y')
+        {
+            $.ajax({
+                type: "POST",
+                url: URL_DeleteBudget,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data : JSON.stringify({ Acq_Deal_Budget_Code : $('#Acq_Deal_Budget_Code').val() }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    IsRecordToBeDelete = 'N';
+                    showAlert('S','@objMessageKey.AcquisitionTitleBudgetdeletedsuccessfully','OK');
+
+                },
+                error: function (result) {
+                }
+            });
+        }
+        else
+        {
+           // $('#popEditBudget').hide();
+            BindGrid($('#hdnPageNo').val(),false);
+        }
+    }
+    function ValidateSave() {
+        showLoading();
+        var Isvalid = true;
+        // Code for Maintaining approval remarks in session
+        if (dealMode_G == 'APRV') {
+            var approvalremarks = $('#approvalremarks').val();
+            $.ajax({
+                type: "POST",
+                url: URL_Global_SetApprovalRemarks,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                async: true,
+                data: JSON.stringify({
+                    approvalremarks: $('#approvalremarks').val()
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    Isvalid = true;
+                    hideLoading();
+                },
+                error: function (result) {
+                    Isvalid = false;
+                    hideLoading();
+                }
+            });
+        }
+        if(Isvalid)
+        {
+            hideLoading();
+            var tabName = $('#hdnTabName').val();
+            BindPartialTabs(tabName);
+        }
+        hideLoading();
+
+        //Code end for approval
+        return Isvalid;
+    }
+    function addNumeric() {
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 999,
+            min: 1
+        });
+    }
+</script>
+<style>
+    .SumoSelect {
+        width: 95% !important;
+    }
+
+    .chosen-container .chosen-drop {
+        position: fixed;
+        top: 38%;
+        left: -9999px;
+        z-index: 1010;
+        width: 94%;
+        border: 1px solid #aaa;
+        border-top: 0;
+        background: #fff;
+        box-shadow: 0 4px 5px rgba(0,0,0,.15)
+    }
+
+    .chosen-drop-new {
+        left: 58px;
+    }
+</style>
+<div class="grid_area">
+    <div class="navigation_tabs">
+        <div class="tabbable">
+            <div class="tab-content clearfix table-wrapper scale_table_container">
+                <div class="tab-pane active" id="tabBudget">
+                    <div class="scale_table_block">
+                        <table class="table">
+                            <tr>
+                                <td class="bold" style="width: 10%;">
+                                    @objMessageKey.Titles
+                                </td>
+                                <td class="bold" style="width: 40%;">
+                                    @Html.ListBox("ddlTitleCode", ViewBag.TitleList as MultiSelectList, new { @id = "ddlTitleCode" })
+                                </td>
+                                <td style="width: 30%;">
+                                    <input type="button" class="button" value="@objMessageKey.Search" id="btnSearch" onclick="searchClick();">
+                                    <input type="button" class="button" value="@objMessageKey.ShowAll" id="btnShowAll" onclick="showAllClick();">
+                                </td>
+                                @if (objSchema.Module_Rights_List.Contains(GlobalParams.RightCodeForBulkAssignment))
+                                {
+                                    <td style="width: 20%;">
+                                        <input type="button" class="button pull-right" value="Bulk Assignment" id="btnBulkAssignment" onclick="AddBudget();">
+                                    </td>
+                                }
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="paging_area clearfix">
+                        <span class="pull-left" id="lblTotal"></span>
+                        <div id="Pagination" class="pagination">
+                        </div>
+                        <span class="pull-right">
+                            @objMessageKey.PageSize:
+                            <input type="text" id="txtPageSize" class="smallTextBox pagingSize" maxlength="2" value="10" onchange="return PageSize_OnChange();" onblur="setDefaultPaging('txtPageSize')" />
+                        </span>
+                        @Html.Hidden("hdnPageNo")
+                    </div>
+                    <div class="scale_table_block">
+                        <div class="div_BindGrid">
+                        </div>
+                    </div>
+                </div>
+                @if (objSchema.Mode == GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                {
+                    @Html.Partial("_Edit_Without_Approval")
+                }
+                @if (objSchema.Mode == GlobalParams.DEAL_MODE_APPROVE)
+                {
+                    @Html.Partial("_Approved_List")
+                }
+                else if (objSchema.Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                {
+                    <div class="bottom_action">
+                        <ul class="form_link_nav clearfix">
+                            <li>
+
+                                @if (TempData["TitleData"] != null)
+                                {
+                                    <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                           onclick="location.href='@Url.Action("View", "Title")    '">
+                                }
+                                else if (Convert.ToInt32(ViewBag.prevAcq_Deal) > 0)
+                                {
+                                    <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                           onclick="location.href='@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = ViewBag.prevAcq_Deal })'">
+                                }
+                                else
+                                {
+                                    <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                           onclick="location.href='@Url.Action("Index", "Acq_List")    '">
+                                }
+                            </li>
+                        </ul>
+                    </div>
+                }
+                <input type="hidden" id="hdnTabName" name="hdnTabName" />
+            </div>
+        </div>
+    </div>
+</div>
+
+@*<div aria-labelledby="myModalLabel" id="popEditBudget" class="form_wrapper modal fade big_popup scroll" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+
+    </div>*@
+
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popEditBudget" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;max-height:450px;">
+
+</div>

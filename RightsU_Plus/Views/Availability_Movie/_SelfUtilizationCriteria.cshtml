@@ -1,0 +1,392 @@
+﻿@model RightsU_Entities.Platform_Group
+@{
+    var j = (string)ViewBag.strPlatformCode;
+
+}
+<script src="~/JS_Core/jquery-ui.js"></script>
+
+
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script src="~/JS_Core/jquery.sumoselect.js"></script>
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+
+<script>
+    var URL_BindPromoterTreeView = '@Url.Action("BindPromoterTreeView", "Availability_Movie")';
+
+    function BindPromoter(PlatformCodes) {
+        debugger;
+        if (PlatformCodes != null) {
+            //$("#hdnTVCodes").val(PlatformCodes);
+            $("#hdnTVCodes_Promoter_G").val(PlatformCodes);
+        }
+        else {
+            $("#hdnTVCodes_Promoter").val('@j');
+        }
+
+
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindPromoterTreeView,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                strPlatform: $("#hdnTVCodes_Promoter").val()
+            }),
+            async: false,
+            success: function (result) {
+                debugger;
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                $('#treeDown').empty();
+                $('#treeDown').html(result);
+            },
+            error: function (result) { }
+        });
+    }
+
+    function BindPromoterMustHaveTree(bindType,MustHaveCodes) {
+
+        debugger
+        var pt = $('#hdnPromoterType').val();
+        var platformCodes = "";
+        if (pt == "P")
+            platformCodes = $("#hdnTVCodes_Promoter").val();
+        if (pt == "PG")
+            platformCodes = $("#hdnTVCodes_Promoter_G").val();
+
+        if (MustHaveCodes != null) {
+            platformCodes = MustHaveCodes;
+        }
+
+        if (platformCodes == null || platformCodes == "") {
+            showAlert('E', 'Please Select atleast one Platform');
+            $('#chkMustHave_Promoter').prop('checked', false);
+            $('#chkExactMatch_Promoter').prop('checked', false);
+            return false
+        }
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindPromoterTreeView,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                strPlatform: platformCodes,
+                bindType: bindType
+
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+
+                $('#divSelfUtilizationMustHave').html(result);
+            },
+            error: function (result) { }
+        });
+    }
+
+
+</script>
+
+<script>
+
+    $(document).ready(function () {
+        debugger
+        initializeTooltip();
+        $('#show_hide_SelfUtilization').click(function () {
+            $('.MoreOptionSelfUtilizationDiv').slideUp();
+            $(this).parent().find('.MoreOptionSelfUtilizationDiv').slideToggle('fast');
+            return false;
+        });
+        $(".plusminus").text('-');
+        
+        $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("font-weight", 100)
+        $('.SumoSelect .select-all.partial > span i').css("display", "none");
+        $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("font-size", 12)
+
+        $('#SelfUtilizationTab').click(function () {
+            debugger;
+            $('.MoreOptionDubbingDiv').hide('slow');
+            $('.MoreOptionSubtitleDiv').hide('slow');
+            $('.MoreOptionRegionDiv').hide('slow');
+
+            $("#divSelfUtilization").click();
+            //$('#divPlatform').click();
+            $('#hdnPromoterType').val('PG');
+            var IsFlag_Promoter = $('#hdnIsFlag_Promoter').val();
+
+            if (IsFlag_Promoter == "N") {
+                var selectedCodes = $("#hdnTVCodes_Promoter_G").val();
+                AddEditPromoter_Group("accordian", selectedCodes);
+                $('#hdnIsFlag_Promoter').val('Y');
+            }
+            else {
+
+            }
+
+        });
+
+        $("input:checkbox").on('click', function () {
+            debugger;
+            // in the handler, 'this' refers to the box clicked on
+            var $box = $(this);
+            if ($box.is(":checked")) {
+
+                // the name of the box is retrieved using the .attr() method
+                // as it is assumed and expected to be immutable
+                var group = "input:checkbox[name='" + $box.attr("name") + "']";
+                // the checked state of the group/box on the other hand will change
+                // and the current value is retrieved using .prop() method
+                $(group).prop("checked", false);
+                $box.prop("checked", true);
+            } else {
+                $box.prop("checked", false);
+
+            }
+        });
+
+        $('input[type=checkbox][name=CheckPromoter]').change(function () {
+            debugger
+            //if (this.value == 'EM') {
+            //    alert($('#hdnTVCodes').val())
+
+            //}
+            //else if (this.value == 'MH') {
+            //    alert($('#hdnTVCodes').val())
+            //    BindPromoterMustHaveTree();
+
+            //}
+            if ($("#chkMustHave_Promoter").prop('checked') == true) {
+                BindPromoterMustHaveTree("MH");
+            }
+
+            else if ($("#chkExactMatch_Promoter").prop('checked') == true) {
+                BindPromoterMustHaveTree("EM");
+            }
+
+
+        });
+
+        $('#spanTemp').on('click', function (event) {
+            debugger;
+            event.stopImmediatePropagation();
+        });
+
+
+    });
+    function CloseSelfUtilizationPopup() {
+        $('.MoreOptionSelfUtilizationDiv').hide('slow');
+    }
+    function LoadMoreOptionPromoterPopup() {
+        $('#chkExactMatch_Promoter').prop('checked', false);
+        $('#chkMustHave_Promoter').prop('checked', false);
+        $('#divSelfUtilizationMustHave').empty();
+    }
+</script>
+
+<style>
+    #Tree_Filter_Rights_Promoter_G {
+        width: 429px;
+    }
+
+    #Rights_Promoter_G {
+        max-height: 300px !important;
+        overflow-y: auto;
+    }
+
+    #Tree_Filter_Rights_Promoter_E {
+        width: 385px;
+    }
+
+    #Tree_Filter_Rights_Promoter_M {
+        width: 385px;
+    }
+
+    #ddlPlatformGroup_chosen {
+        width: 70% !important;
+    }
+
+    .ui-fancytree fancytree-container {
+        border: 0 !important;
+    }
+
+    #pupupHtml, #pupupHtmlPromoter, #divSelfUtilizationMustHave {
+        text-align: left !important;
+    }
+
+    select#ddlLanguageGroupNew_Dub {
+        width: 100%;
+        max-width: 400px;
+        top: 167px;
+        left: 656px;
+        max-height: 180px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        z-index: 2147483647;
+    }
+
+    .accordion_head_SelfUtilization {
+        background-color: #DEDEDE;
+        color: black;
+        cursor: pointer;
+        font-family: arial;
+        font-size: 14px;
+        margin: 0 0 1px 0;
+        padding: 7px 11px;
+        font-weight: bold;
+        width: 429px;
+        text-align: left;
+    }
+
+    .accordion_body {
+        width: 429px;
+        padding: 5px;
+        border: 1px dotted black;
+        border-top: 0px;
+    }
+
+        .accordion_body p {
+            padding: 15px 5px;
+            margin: 0px;
+        }
+
+    .plusminus {
+        float: right;
+    }
+
+    #pupupHtml {
+        word-wrap: break-word;
+        overflow: hidden;
+        overflow-y: auto;
+    }
+
+    #pupupHtmlPromoter {
+        word-wrap: break-word;
+        overflow: hidden;
+    }
+
+    #divSelfUtilizationMustHave {
+        word-wrap: break-word;
+        overflow: hidden;
+    }
+    .morecontent span {
+        display: none;
+    }
+
+    .morelink {
+        display: block;
+    }
+
+    .sumo_ddlPlatformGroup {
+        width: 300px !important;
+    }
+
+    .SumoSelect > .CaptionCont > span {
+        margin-top: 4px;
+        padding-left: 5px;
+    }
+
+    .MoreOptionSelfUtilizationDiv {
+        padding: 2px;
+        background: #ffffff; /*#2B5F8E;*/
+        width: 400px;
+        /*height: 400px;*/
+        max-height: 400px;
+        box-shadow: 0 0 5px #aaa;
+        font-size: 12px;
+        color: #000;
+        text-align: left;
+        position: absolute;
+        z-index: 99;
+        right: auto;
+        /*overflow-y: auto;*/
+        display: none;
+        /*line-height: 30px !important;*/
+        /*overflow-x: hidden;*/
+        border: #a0a0a0 4px solid;
+    }
+
+        .MoreOptionSelfUtilizationDiv:before {
+            content: '';
+            display: block;
+            position: absolute;
+            width: 0;
+            height: 0;
+            color: transparent;
+            border: 10px solid black;
+            border-color: transparent transparent #a0a0a0;
+            margin-top: -25px;
+            /*margin-left: 210px;*/
+        }
+
+    .SumoSelect .select-all > span i {
+        display: none;
+    }
+
+    #divSelfUtilizationMustHave {
+        width: 380px;
+        max-height: 320px;
+        overflow: auto;
+    }
+</style>
+<div class="scale_table_block">
+    <div class="accordion_container">
+
+        <div class="accordion_head_SelfUtilization" id="divSelfUtilization">
+            Self Utilization
+            <div style="float:right;">
+                <span class="glyphicon glyphicon-filter" title="More options" id="show_hide_SelfUtilization"></span>
+                <div id="extent" class="MoreOptionSelfUtilizationDiv" style="display:none;">
+                    <a class="glyphicon glyphicon-remove-circle" style="float:right;" title="Close" onclick="CloseSelfUtilizationPopup()">
+                    </a>
+                    <table class="table-wrapper scale_table_container">
+                        <tr>
+                            <td style="text-align:center;">
+                                <label class="checkbox-inline">
+                                    <input type="checkbox" name="CheckPromoter" id="chkExactMatch_Promoter" value="EM" text="Exact Match" />
+                                    <b>Exact Match</b>
+                                </label>
+                                &nbsp;
+                                <label class="checkbox-inline">
+                                    <input type="checkbox" name="CheckPromoter" id="chkMustHave_Promoter" value="MH" text="Must Have">
+                                    <b>Must Have</b>
+                                </label>
+                                <br />
+                                <div id="divSelfUtilizationMustHave">
+
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            @*<span id="spanTemp">
+                @Html.ListBox("ddlSelfUtilizationGroup", (IEnumerable<SelectListItem>)Session["ddlSelfUtilizationGroup"], new { @id = "ddlSelfUtilizationGroup", @onchange = "AddEditSelfUtilization_Group()", @class = "" })
+            </span>*@
+        </div>
+        <div>
+
+            <div id="pupupHtmlPromoter">
+                <div id="divTree" class="platform_wrapper">
+                    <div id="treeDown" class="treeClass">
+                    </div>
+                    <span id="lblTheatrical" style="display: none;">Theatrical</span>
+                    <input type="hidden" id="hdnTVCodes" name="hdnTVCodes" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

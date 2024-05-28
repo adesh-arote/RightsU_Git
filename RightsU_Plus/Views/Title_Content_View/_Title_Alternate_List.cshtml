@@ -1,0 +1,121 @@
+﻿@model RightsU_Entities.Title_Alternate_Content
+@using UTOFrameWork.FrameworkClasses
+@{
+     MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<script>
+    $('.expand_Content_Name').expander({
+        slicePoint: 90,
+        expandPrefix: '',
+        expandText: '...@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+    $(document).ready(function () {
+        $(".numeric_Duration").numeric({
+            allowMinus: false,
+            allowThouSep: true,
+            allowDecSep: true,
+            maxDecimalPlaces: 2,
+            maxPreDecimalPlaces: 3
+        });
+        var code = $('#hdnTitleContentCode').val();
+        var txtRemark = document.getElementById('txtSynopsis_' + code);
+        if (txtRemark != null)
+            countChar(txtRemark);
+    });
+</script>
+<table class="table table-bordered table-hover" id="tblGenres">
+    <thead>
+        <tr>
+            <th style="width:30%;">@objMessageKey.Content</th>
+            <th style="width:10%;">@objMessageKey.episode</th>
+            <th style="width:10%;">@objMessageKey.Duration</th>
+            <th style="width:30%;">@objMessageKey.Synopsis</th>
+            <th style="width:20%;">@objMessageKey.Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            @if (ViewBag.FirstTime == "Y" && ViewBag.TitleAlternateContentcode == 0)
+            {
+                <td>
+                    <input id="txtEpisodeName_@Model.Title_Alternate_Content_Code" type="text" value="@ViewBag.ContentName" maxlength="100" />
+                </td>
+                <td>
+                    @ViewBag.EpisodeNo
+                    <input type="hidden" id="EpisodeNo" value="@ViewBag.EpisodeNo" />
+                </td>
+                <td>
+                    <input type="text" id="txtDuration_@Model.Title_Alternate_Content_Code" class="numeric_Duration" value="@ViewBag.Duration" style="width:80px" maxlength="6" />
+                </td>
+                <td align="center">
+                    @{
+                        string synopsis = ViewBag.Synopsis;
+                    }
+                    @Html.TextAreaFor(m => synopsis, new { @name = "txtsynopsis", @id = "txtSynopsis_" + Model.Title_Alternate_Content_Code, @class = "textarea", @row = "2", @cols = "20", @onkeyup = "countChar(this)" })
+                    <div class="divBlock">
+                        <div style="">&nbsp;&nbsp;characters left.. </div>
+                        <div class="charNum">4000</div>
+                    </div>
+                </td>
+                <td align="center">
+                    <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" onclick="SaveTitleAlternateContent(@Model.Title_Alternate_Content_Code)"></a>
+                </td>
+
+            }
+                        else if (ViewBag.TitleAlternateContnetCode == Model.Title_Alternate_Content_Code && ViewBag.CommandName == "EDIT")
+                        {
+                            <td>
+                                <input id="txtEpisodeName_@Model.Title_Alternate_Content_Code" type="text" value="@Model.Content_Name" maxlength="100" />
+                            </td>
+                                    <td>
+                                        @Model.Episode_No
+                                        <input type="hidden" id="EpisodeNo" value="@Model.Episode_No" />
+                                    </td>
+                                    <td>
+                                        <input type="text" id="txtDuration_@Model.Title_Alternate_Content_Code" class="numeric_Duration" value="@Model.Duration" style="width:80px" maxlength="6" />
+                                    </td>
+                                    <td align="center">
+                                        @Html.TextAreaFor(m => Model.Synopsis, new { @name = "txtsynopsis", @id = "txtSynopsis_" + Model.Title_Alternate_Content_Code, @class = "textarea", @row = "2", @cols = "20", @onkeyup = "countChar(this)" })
+                                        <div class="divBlock">
+                                            <div style="">&nbsp;&nbsp;characters left.. </div>
+                                            <div class="charNum">4000</div>
+                                        </div>
+                                        @*<input id="txtSynopsis_@Model.Title_Alternate_Content_Code" type="text" value="@Model.Synopsis" maxlength="100" />*@
+                                    </td>
+                                    <td align="center">
+                                        <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" onclick="SaveTitleAlternateContent(@Model.Title_Alternate_Content_Code)"></a>
+                                        <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" onclick="CancelContent_OnClick(@Model.Title_Alternate_Content_Code)"></a>
+                                    </td>
+                        }
+                        else
+                        {
+                            <td>
+                                <div class="expand_Content_Name">@Model.Content_Name</div>
+                            </td>
+                                    <td>
+                                        @Model.Episode_No
+                                    </td>
+                                    <td>
+                                        @Model.Duration
+                                    </td>
+                                    <td>
+                                        <div class="expandable">@Model.Synopsis</div>
+                                    </td>
+                                    <td class="action" align="center">
+                                        @if (ViewBag.RightCode.Contains("~" + Convert.ToString(GlobalParams.RightCodeForEdit) + "~"))
+                                        {
+                                            <a alt title="Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer;" onclick="EditContent_OnClick(@Model.Title_Alternate_Content_Code,'EDIT')"></a>
+                                            <text>&nbsp;</text>
+                                        }
+                                    </td>
+                        }
+        </tr>
+    </tbody>
+</table>

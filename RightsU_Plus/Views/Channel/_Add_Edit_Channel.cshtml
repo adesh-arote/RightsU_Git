@@ -1,0 +1,507 @@
+﻿@model List<RightsU_Entities.Channel>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }    
+}
+<script>
+    $(document).ready(function () {
+        $('#BV_Channel_Code,#OffsetTime_Schedule,#OffsetTime_Schedule1,#OffsetTime_AsRun,#OffsetTime_AsRun1').keypress(function () {
+            CheckNumeric(event);
+        });
+        $("#hdnRecodLockingCode").val($("#hdnRecodLockingCode_temp").val())
+        checkMax();
+
+    });
+    
+    function checkMax() {
+        debugger;
+        $(".hrs").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 23,
+            min: 0
+        });
+        $(".min").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 59,
+            min: 0
+        });
+    }
+    $(document).ready(function () {
+        debugger;
+        if ('@ViewBag.EntityType' == "Own") {
+            $("#divVendor").hide();
+            $("#divEntity").show();
+        }
+        else {
+            $("#divVendor").show();
+            $("#divEntity").hide();
+        }
+
+        $("#rbgOwn").click(function () {
+            $("#divVendor").hide();
+            $("#divEntity").show();
+        });
+        $("#rbgOthers").click(function () {
+            $("#divVendor").show();
+            $("#divEntity").hide();
+        });
+
+        initializeChosen();
+    });
+
+    function SaveChannel() {
+        debugger;
+
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        var IsValid = true;
+
+        if (!checkCurrentAction())
+            return false;
+
+       // var Record_Code = $('#hdnRecodLockingCode').val();
+
+        var channelName = $.trim($('#Channel_Name').val());
+        // var beamName = $.trim($('#ddlBeam').val());
+        // var genresName = $.trim($('#ddlGenres').val());
+        var own = document.getElementById("rbgOwn");
+        var others = document.getElementById("rbgOthers");
+        var chn = $('#Channel_Name');
+        var entityName = $.trim($('#ddlEntity').val());
+        var vendorName = $.trim($('#ddlVendor').val());
+        // var countryName = $.trim($('#ddlCountry').val());
+        var sourceFilePtah = $.trim($('#Schedule_Source_FilePath').val());
+        var sourceFilePtahPkg = $.trim($('#Schedule_Source_FilePath_Pkg').val());
+        var bvChannelCode = $.trim($('#BV_Channel_Code').val());
+        var offsetTimeSchedule = $.trim($('#OffsetTime_Schedule').val());
+        var offsetTimeSchedule1 = $.trim($('#OffsetTime_Schedule1').val());
+        var offsetTimeAsRun = $.trim($('#OffsetTime_AsRun').val());
+        var offsetTimeAsRun1 = $.trim($('#OffsetTime_AsRun1').val());
+
+        if (channelName == '') {
+            $(chn).val('').attr('required', true)
+            IsValid = false;
+        }
+        //if (beamName == '') {
+        //    $('#ddlBeam').attr('required', true)
+        //    IsValid = false;
+        //}
+        //if (genresName == '') {
+        //    $('#ddlGenres').val('').attr('required', true)
+        //    IsValid = false;
+        //}
+        if (own.checked) {
+            if ($('#ddlEntity option:selected').val() == '') {
+                $('#ddlEntity').val('').attr('required', true);
+                IsValid = false;
+            }
+        } else if (others.checked) {
+            if ($('#ddlVendor option:selected').val() == '') {
+                $('#ddlVendor').val('').attr('required', true);
+                IsValid = false;
+            }
+        }
+        //if (countryName == "") {
+        //    $('#ddlCountry').addClass("required");
+        //    IsValid = false;
+        //}
+        if (sourceFilePtah == '') {
+            $('#Schedule_Source_FilePath').val('').attr('required', true);
+            IsValid = false;
+        }
+        if (sourceFilePtahPkg == '') {
+            $('#Schedule_Source_FilePath_Pkg').val('').attr('required', true);
+            IsValid = false;
+        }
+        if (bvChannelCode == '') {
+            $('#BV_Channel_Code').val('').attr('required', true);
+            IsValid = false;
+        }
+        if (offsetTimeSchedule == '') {
+            $('#OffsetTime_Schedule').val('').attr('required', true);
+            IsValid = false;
+        }
+        if (offsetTimeSchedule1 == '') {
+            $('#OffsetTime_Schedule1').val('').attr('required', true);
+            IsValid = false;
+        }
+        if (offsetTimeAsRun == '') {
+            $('#OffsetTime_AsRun').val('').attr('required', true);
+            IsValid = false;
+        }
+        if (offsetTimeAsRun1 == '') {
+            $('#OffsetTime_AsRun1').val('').attr('required', true);
+            IsValid = false;
+        }
+        if (IsValid == false)
+            return false;
+        else
+            return true;
+
+    }
+    function checkCurrentAction() {
+        debugger;
+        return true;
+    }
+
+    function CheckNumeric(e) {
+
+        if (window.event) // IE
+        {
+            if ((e.keyCode < 48 || e.keyCode > 57) & e.keyCode != 8) {
+                event.returnValue = false;
+                return false;
+
+            }
+        }
+    }
+    function SaveSuccess(result) {
+        debugger;
+
+        $('#hdnRecodLockingCode_temp').val(0);
+        $('#hdnRecodLockingCode').val(0);
+        if (result.Status == "S") {
+            Command_Name = "SAVE_UPDATE_CHANNEL";
+            showAlert("S", result.Message);
+            BindPartialView("LIST", 0)
+        }
+        else {
+            showAlert("E", result.Message);
+        }
+    }
+
+   
+
+
+
+</script>
+<style>
+    .chosen-container {
+        width: 50% !important;
+    }
+    .SumoSelect {
+        width : 50% !important;
+    }
+</style>
+
+
+<div class="">
+    <div class="title_block dotted_border clearfix">
+        @if (TempData["Act"] == "Add")
+        {
+            <h2 class="pull-left" style="font-weight:300">
+                @objMessageKey.AddChannelDetails
+                <span></span>
+            </h2>
+        }
+        else
+        {
+            <h2 class="pull-left" style="font-weight:300">
+                @objMessageKey.EditChannelDetails
+                <span></span>
+            </h2>
+        }
+        <div class="right_nav pull-right">
+            <ul>
+                <li>
+
+                </li>
+            </ul>
+        </div>
+        <div class="right_nav pull-right">
+        </div>
+    </div>
+
+    <div class="grid_area">
+        <div style="border-bottom: 1px dotted #777; display:none;"></div>
+
+
+        <input type="hidden" id="hdnTalentCode" value="0" />
+        @if (TempData["Act"] == "Add")
+        {
+            <div id="divAddEditChannel" class="deal clearfix">
+                @using (Ajax.BeginForm("SaveChannel", "Channel", new AjaxOptions() { OnSuccess = "SaveSuccess" }, FormMethod.Post))
+                {
+                    <div class="tab-content clearfix table-wrapper scale_table_container">
+                        <div class="scale_table_block">
+                            <table class="table table-bordered table-hover">
+                                <tr>
+                                    <td style="width: 30%;">@objMessageKey.ChannelName</td>
+                                    <td style="width: 70%;">
+                                        @Html.TextBox("Channel_Name", null, new { style = "width: 382px;" })
+
+                                    </td>
+                                </tr>
+
+                                @*<tr>
+                                        <td>Channel Beam</td>
+                                        <td>
+                                            @Html.DropDownList("ddlBeam", ViewBag.BeamList as IEnumerable<SelectListItem>, "Select", new { @id = "ddlBeam", @class = "form_input chosen-select" })
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>Genres</td>
+                                        <td>
+                                            @Html.DropDownList("ddlGenres", ViewBag.lstGeneres as IEnumerable<SelectListItem>, "Select", new { @id = "ddlGenres", @class = "form_input chosen-select" })
+                                        </td>
+                                    </tr>*@
+
+                                <tr>
+                                    <td>
+                                       @objMessageKey.EntityType
+                                    </td>
+                                    <td>
+                                        <div id="CheckBoxDiv" class="divCheckbox">
+                                            @Html.RadioButton("item.Entity_Type", "O", true, new { id = "rbgOwn", @class = "entityTypeclass" }) <span>@objMessageKey.Own</span>
+                                            @Html.RadioButton("item.Entity_Type", "C", new { id = "rbgOthers", @class = "entityTypeclass" }) <span>@objMessageKey.Others</span>
+
+
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        @objMessageKey.Entity / @objMessageKey.Broadcaster
+                                    </td>
+                                    <td>
+                                        <div id="divEntity">
+                                            @Html.DropDownList("ddlEntity", ViewBag.lstEntity as IEnumerable<SelectListItem>, "Select", new { @id = "ddlEntity", @class = "form_input chosen-select" })
+                                        </div>
+                                        <div id="divVendor">
+                                            @Html.DropDownList("ddlVendor", ViewBag.lstVendors as IEnumerable<SelectListItem>, "Select", new { @id = "ddlVendor", @class = "form_input chosen-select" })
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        @objMessageKey.Country
+                                    </td>
+                                    <td>
+                                        <div id="divCountry">
+                                            @Html.DropDownList("ddlCountry", ViewBag.lstCountry as MultiSelectList, new { @id = "ddlCountry", @multiple = "multiple" })
+                                        </div>
+
+                                    </td>
+                                </tr>
+                                <!-- new fields -->
+
+                                <tr>
+                                    <td>
+                                        @objMessageKey.ScheduleSourceFilePath
+                                    </td>
+                                    <td>
+                                        @Html.TextBox("Schedule_Source_FilePath", null, new { style = "width: 382px;" })
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        @objMessageKey.ScheduleSourceFilePathSSISPackage
+                                    </td>
+                                    <td>
+                                        @Html.TextBox("Schedule_Source_FilePath_Pkg", null, new { style = "width: 382px;" })
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        @objMessageKey.BroadviewChannelCode
+                                    </td>
+                                    <td>
+                                        @Html.TextBox("BV_Channel_Code", null, new { style = "width: 382px;" })
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                       @objMessageKey.OffsetTimeSchedule
+                                    </td>
+                                    <td>
+                                        @Html.TextBox("OffsetTime_Schedule", null, new { style = "width: 50px;", @class = "hrs" })<span> @objMessageKey.hrs</span>
+                                        @Html.TextBox("OffsetTime_Schedule1", null, new { style = "width: 50px;", @class = "min" })<span> @objMessageKey.mins</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        @objMessageKey.OffsetTimeAsRun
+                                    </td>
+                                    <td>
+                                        @Html.TextBox("OffsetTime_AsRun", null, new { style = "width: 50px;", @class = "hrs" })<span>@objMessageKey.hrs</span>
+                                        @Html.TextBox("OffsetTime_AsRun1", null, new { style = "width: 50px;", @class = "min" })<span> @objMessageKey.mins</span>
+
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="bottom_action" style="margin-top:8px;">
+
+                        <input type="submit" class="btn btn-primary" value="@objMessageKey.Save" onclick="SaveChannel()" />
+                        <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="BindPartialView('LIST', 0)" />
+
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div id="divAddEditChannel" class="deal clearfix">
+                @using (Ajax.BeginForm("UpdateChannel", "Channel", new AjaxOptions() { OnSuccess = "SaveSuccess" }, FormMethod.Post))
+                {
+                    <div class="tab-content clearfix table-wrapper scale_table_container">
+                        <div class="scale_table_block">
+                            <table class="table table-bordered table-hover">
+
+
+                                @foreach (var item in Model)
+                                {
+                                    var OffsetTime_Schedule = item.OffsetTime_Schedule.Split(':');
+                                    var OffsetTime_AsRun = item.OffsetTime_AsRun.Split(':');
+                                    <tr>
+                                        <td style="width: 30%;">@objMessageKey.ChannelName</td>
+                                        <td style="width: 70%;">
+                                            @Html.TextBox("Channel_Name", item.Channel_Name, new { style = "width: 382px;" })
+                                            @Html.HiddenFor(model => item.Channel_Code)
+                                            @Html.HiddenFor(model => item.Entity_Code)
+                                            <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
+                                        </td>
+
+                                    </tr>
+
+                                    @*<tr>
+                                            <td>Channel Beam</td>
+                                            <td>
+                                                @Html.DropDownList("ddlBeam", ViewBag.BeamList as IEnumerable<SelectListItem>, "Select", new { @id = "ddlBeam", @class = "form_input chosen-select" })
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>Genres</td>
+                                            <td>
+                                                @Html.DropDownList("ddlGenres", ViewBag.GenereList as IEnumerable<SelectListItem>, "Select", new { @id = "ddlGenres", @class = "form_input chosen-select" })
+                                            </td>
+                                        </tr>*@
+
+                                    <tr>
+                                        <td>
+                                            @objMessageKey.EntityType
+                                        </td>
+                                        <td>
+                                            <div id="CheckBoxDiv" class="divCheckbox">
+                                                @if (ViewBag.EntityType == "Own")
+                                                {
+                                                    @Html.RadioButton("item.Entity_Type", "O", true, new { id = "rbgOwn", @class = "entityTypeclass" }) <span>@objMessageKey.Own</span>
+                                                    @Html.RadioButton("item.Entity_Type", "C", new { id = "rbgOthers", @class = "entityTypeclass" }) <span>@objMessageKey.Others</span>
+
+                                                }
+                                                else
+                                                {
+                                                    @Html.RadioButton("item.Entity_Type", "O", new { id = "rbgOwn", @class = "entityTypeclass" }) <span>@objMessageKey.Own</span>
+                                                    @Html.RadioButton("item.Entity_Type", "C", true, new { id = "rbgOthers", @class = "entityTypeclass" }) <span>@objMessageKey.Others</span>
+                                                }
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>
+                                            @objMessageKey.Entity / @objMessageKey.Broadcaster
+                                        </td>
+                                        <td>
+                                            <div id="divEntity">
+                                                @Html.DropDownList("ddlEntity", ViewBag.EntityList as IEnumerable<SelectListItem>, "Select", new { @id = "ddlEntity", @class = "form_input chosen-select" })
+                                            </div>
+                                            <div id="divVendor">
+                                                @Html.DropDownList("ddlVendor", ViewBag.VendorList as IEnumerable<SelectListItem>, "Select", new { @id = "ddlVendor", @class = "form_input chosen-select" })
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>
+                                            @objMessageKey.Country
+                                        </td>
+                                        <td>
+                                            <div id="divCountry">
+                                                @Html.DropDownList("ddlCountry", ViewBag.CountryList as MultiSelectList, new { @id = "ddlCountry", @multiple = "multiple" })
+                                            </div>
+
+                                        </td>
+                                    </tr>
+            <!-- new fields -->
+
+                                    <tr>
+                                        <td>
+                                            @objMessageKey.ScheduleSourceFilePath
+                                        </td>
+                                        <td>
+                                            @Html.TextBox("Schedule_Source_FilePath", item.Schedule_Source_FilePath, new { style = "width: 382px;" })
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>
+                                            @objMessageKey.ScheduleSourceFilePathSSISPackage
+                                        </td>
+                                        <td>
+                                            @Html.TextBox("Schedule_Source_FilePath_Pkg", item.Schedule_Source_FilePath_Pkg, new { style = "width: 382px;" })
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>
+                                            @objMessageKey.BroadviewChannelCode
+                                        </td>
+                                        <td>
+                                            @Html.TextBox("BV_Channel_Code", item.BV_Channel_Code, new { style = "width: 382px;" })
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            @objMessageKey.OffsetTimeSchedule
+                                        </td>
+                                        <td>
+                                            @Html.TextBox("OffsetTime_Schedule", OffsetTime_Schedule[0], new { style = "width: 50px;", @class = "hrs" })<span> @objMessageKey.hrs</span>
+                                            @Html.TextBox("OffsetTime_Schedule1", OffsetTime_Schedule[1], new { style = "width: 50px;", @class = "min" })<span> @objMessageKey.mins</span>
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            @objMessageKey.OffsetTimeAsRun
+                                        </td>
+                                        <td>
+                                            @Html.TextBox("OffsetTime_AsRun", OffsetTime_AsRun[0], new { style = "width: 50px;", @class = "hrs" })<span> @objMessageKey.hrs</span>
+                                            @Html.TextBox("OffsetTime_AsRun1", OffsetTime_AsRun[1], new { style = "width: 50px;", @class = "min" })<span> @objMessageKey.mins</span>
+
+                                        </td>
+                                    </tr>
+                                }
+                            </table>
+                        </div>
+                    </div>
+                    <div class="bottom_action" style="margin-top:8px">
+
+                        <input type="submit" class="btn btn-primary" value="@objMessageKey.Save" onclick="SaveChannel()" />
+                        <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="BindPartialView('LIST', 0)" />
+
+                    </div>
+                }
+            </div>
+        }
+
+    </div>
+
+</div>

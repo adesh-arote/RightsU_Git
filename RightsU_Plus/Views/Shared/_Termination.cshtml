@@ -1,0 +1,223 @@
+﻿@model IEnumerable<RightsU_Entities.USP_Get_Termination_Title_Data_Result>
+@using UTOFrameWork.FrameworkClasses
+@{ List<RightsU_Entities.USP_Get_Termination_Title_Data_Result> objList = Model.ToList();}
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script>
+    function AssignJQuery() {
+        $("input.numeric").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 9999,
+            min: 1
+        });
+
+        initializeDatepicker();
+    }
+</script>
+
+<style>
+    .divNote
+    {
+        height: 30px;
+    }
+
+    .scale_table_block
+    {
+        overflow-y: auto;
+        /*height: 500px;*/
+        max-height: 500px;
+    }
+</style>
+<div>
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form">
+                <div>
+                    <div class="form_fields acq">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>×</span>
+                                <span class="sr-only">@objMessageKey.Close</span>
+                            </a>
+                            <h2>@objMessageKey.Termination</h2>
+                        </div>
+                        <div class="scale_table_block" >
+                            <div class="divNote">
+                                <span>All rights of <b>@ViewBag.Agreement_No</b> deal will be terminated on less than or equal to termination date </span>
+                            </div>
+                            <table class="table table-bordered table-hover" id="tblTermination">
+                                <thead>
+                                    <tr>
+                                        <th rowspan="2">@objMessageKey.Title</th>
+
+                                        @if (ViewBag.Deal_Type_Condition == GlobalParams.Deal_Program)
+                                        {
+                                            <th rowspan="2">@objMessageKey.EpisodeRange</th>
+                                        }
+
+                                        <th rowspan="2">@objMessageKey.StartDate</th>
+                                        <th rowspan="2">@objMessageKey.EndDate</th>
+
+                                        @if (ViewBag.Module_Type == "A")
+                                        {
+                                            <th colspan="2">@objMessageKey.Schedule</th>
+                                            <th colspan="2">@objMessageKey.Syndication</th>
+                                        }
+                                        <th colspan="2">@objMessageKey.Termination</th>
+                                    </tr>
+                                    <tr>
+                                        @if (ViewBag.Module_Type == "A")
+                                        {
+                                            if (ViewBag.Deal_Type_Condition == GlobalParams.Deal_Program)
+                                            {
+                                            <th class="">@objMessageKey.episode</th>
+                                            }
+                                            <th colspan="@(ViewBag.Deal_Type_Condition == GlobalParams.Deal_Program ? "1" : "2")">@objMessageKey.Date</th>
+                                            if (ViewBag.Deal_Type_Condition == GlobalParams.Deal_Program)
+                                            {
+                                            <th>@objMessageKey.episode</th>
+                                            }
+                                            <th colspan="@(ViewBag.Deal_Type_Condition == GlobalParams.Deal_Program ? "1" : "2")">@objMessageKey.Date</th>
+                                        }
+                                        @if (ViewBag.Deal_Type_Condition == GlobalParams.Deal_Program)
+                                        {
+                                            <th>@objMessageKey.episode</th>
+                                        }
+                                        <th>@objMessageKey.Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (objList != null)
+                                    {
+                                        int lastTitleCode = -1;
+                                        foreach (var item in objList)
+                                        {
+                                            bool isPreviousTitle = true;
+                                            int rowSpan = 0, minEpisode = 0, maxEpisode = 0;
+                                            string minDate = "", maxDate = "", minSchdate = "", minSyndate = "", terminationDate = "";
+                                            if (item.Termination_Date != null)
+                                            {
+                                                terminationDate = ((DateTime)item.Termination_Date).ToString(GlobalParams.DateFormat);
+                                            }
+                                            if (lastTitleCode != item.Title_Code)
+                                            {
+                                                isPreviousTitle = false;
+                                                lastTitleCode = Convert.ToInt32(item.Title_Code);
+                                                rowSpan = objList.Where(x => x.Title_Code == lastTitleCode).Count();
+                                                minDate = objList.Where(x => x.Title_Code == lastTitleCode).Min(m => Convert.ToDateTime(m.Right_Start_Date)).ToString(GlobalParams.DateFormat);
+                                                maxDate = objList.Where(x => x.Title_Code == lastTitleCode).Max(m => Convert.ToDateTime(m.Right_End_Date)).ToString(GlobalParams.DateFormat);
+                                                minSchdate = objList.Where(x => x.Title_Code == lastTitleCode).Max(m => Convert.ToDateTime(m.Schedule_End_Date)).ToString(GlobalParams.DateFormat_Display);
+                                                minSyndate = objList.Where(x => x.Title_Code == lastTitleCode).Max(m => Convert.ToDateTime(m.Syndication_End_Date)).ToString(GlobalParams.DateFormat_Display);
+                                                minEpisode = (int)objList.Where(x => x.Title_Code == lastTitleCode).Min(m => m.Episode_From);
+                                                maxEpisode = (int)objList.Where(x => x.Title_Code == lastTitleCode).Max(m => m.Episode_To);
+                                            }
+                                            string startDate = "", endDate = "";
+                                            if (item.Right_Start_Date != null)
+                                            {
+                                                startDate = Convert.ToDateTime(item.Right_Start_Date).ToString(GlobalParams.DateFormat_Display);
+                                            }
+                                            if (item.Right_End_Date != null)
+                                            {
+                                                endDate = Convert.ToDateTime(item.Right_End_Date).ToString(GlobalParams.DateFormat_Display);
+                                            }
+
+                                            string className = "";
+                                            if (!isPreviousTitle)
+                                            {
+                                                className = "trFullRow";
+                                            }
+                                            else
+                                            {
+                                                className = "trSpanRow";
+                                            }
+                                        <tr class="@className">
+                                            @if (!isPreviousTitle)
+                                            {
+                                                <td rowspan="@rowSpan">
+                                                    <span id="lblTitleName_" + @lastTitleCode>@item.Title_Name</span>
+                                                    <span id="lblTitleCode_" + @lastTitleCode style="display:none">@lastTitleCode</span>
+                                                </td>
+                                            }
+                                            @if (ViewBag.Deal_Type_Condition == GlobalParams.Deal_Program)
+                                            {
+                                                <td>
+                                                    <span id="lblEpisodeRange_" + @lastTitleCode>@item.Episode_Range</span>
+                                                </td>
+                                            }
+                                            <td>@startDate</td>
+                                            <td>@endDate</td>
+                                            @if (ViewBag.Module_Type == "A")
+                                            {
+                                                if (!isPreviousTitle)
+                                                {
+                                                    if (ViewBag.Deal_Type_Condition == GlobalParams.Deal_Program)
+                                                    {
+                                                <td rowspan="@rowSpan">
+                                                    <span id="lblSchEpsNo_" + @lastTitleCode>@item.Schedule_Episode_No</span>
+                                                </td>
+                                                    }
+                                                <td rowspan="@rowSpan" colspan="@(ViewBag.Deal_Type_Condition == GlobalParams.Deal_Program ? "1" : "2")">
+                                                    <span id="lblSchEndDate_" + @lastTitleCode>@(minSchdate == "01-Jan-0001" ? "" : minSchdate)</span>
+                                                </td>
+                                                }
+                                                if (!isPreviousTitle)
+                                                {
+                                                    if (ViewBag.Deal_Type_Condition == GlobalParams.Deal_Program)
+                                                    {
+                                                        <td rowspan="@rowSpan">
+                                                            <span id="lblSynEpsNo_" + @lastTitleCode>@item.Syndication_Episode_No</span>
+                                                        </td>
+                                                    }
+                                                    <td rowspan="@rowSpan" colspan="@(ViewBag.Deal_Type_Condition == GlobalParams.Deal_Program ? "1" : "2")">
+                                                        <span id="lblSynEndDate_" + @lastTitleCode>@(minSyndate == "01-Jan-0001" ? "" : minSyndate)</span>
+                                                    </td>
+                                                }
+                                            }
+                                            @if (!isPreviousTitle)
+                                            {
+                                                if (ViewBag.Deal_Type_Condition == GlobalParams.Deal_Program)
+                                                {
+                                                <td rowspan="@rowSpan">
+                                                    @Html.TextBox("Terminate_Episode_No", item.Termination_Eps_No, new { @class = "textbox numeric", @id = "txtTerminateEpisodeNo_" + lastTitleCode, @style = "width:50px" })
+                                                    <span id="lblMinEpisode_" + @lastTitleCode style="display:none">@minEpisode</span>
+                                                    <span id="lblMaxEpisode_" + @lastTitleCode style="display:none">@maxEpisode</span>
+                                                </td>
+                                                }
+                                                <td rowspan="@rowSpan">
+                                                    @Html.TextBox("Terminate_From", terminationDate, new { @class = "isDatepicker shortDate", @id = "txtTerminationFrom_" + lastTitleCode, @style = "width:85px" })
+                                                    <span id="lblMinDate_" + @lastTitleCode style="display:none">@minDate</span>
+                                                    <span id="lblMaxDate_" + @lastTitleCode style="display:none">@maxDate</span>
+                                                </td>
+                                            }
+                                        </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li>
+                                        @*<input type="button" id="btnSave" class="btn btn-primary" value="Save" onclick="return SaveTermination('@ViewBag.Deal_Code', '@ViewBag.Deal_Type_Condition');" />*@
+                                        <a class="btn-primary" href="#" onclick="return SaveTermination('@ViewBag.Deal_Code', '@ViewBag.Deal_Type_Condition');">@objMessageKey.Terminate</a>
+                                    </li>
+                                    <li>
+                                        <a data-dismiss="modal" class="btn-primary" href="#">@objMessageKey.Cancel</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

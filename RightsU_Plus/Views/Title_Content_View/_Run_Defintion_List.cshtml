@@ -1,0 +1,393 @@
+﻿@using RightsU_Entities
+@model List<USP_GetRunDefinitonForContent_Result>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script>
+    function HideShow(Code) {
+        var hidden = $('.tblChannel_' + Code).is(":hidden")
+        if (hidden == true) {
+            $('.tblChannel_' + Code).show();
+            $("#liChannel_" + Code).removeClass("glyphicon glyphicon-triangle-bottom nav-toggle expander")
+            $("#liChannel_" + Code).addClass("glyphicon glyphicon-triangle-top nav-toggle expander")
+        }
+        else {
+            $('.tblChannel_' + Code).hide();
+            $("#liChannel_" + Code).removeClass("glyphicon glyphicon-triangle-top nav-toggle expander")
+            $("#liChannel_" + Code).addClass("glyphicon glyphicon-triangle-bottom nav-toggle expander")
+        }
+    }
+    function HideShowDeal(Code) {
+        var hidden = $('.tblDeal_' + Code).is(":hidden")
+        if (hidden == true) {
+            $('.tblDeal_' + Code).show();
+            $("#liDeal_" + Code).removeClass("glyphicon glyphicon-triangle-bottom nav-toggle expander")
+            $("#liDeal_" + Code).addClass("glyphicon glyphicon-triangle-top nav-toggle expander")
+        }
+        else {
+            $('.tblDeal_' + Code).hide();
+            $("#liDeal_" + Code).removeClass("glyphicon glyphicon-triangle-top nav-toggle expander")
+            $("#liDeal_" + Code).addClass("glyphicon glyphicon-triangle-bottom nav-toggle expander")
+        }
+    }
+</script>
+@if (ViewBag.Type == "N")
+{
+    <div>
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th style="width:12%;" rowspan="2">@objMessageKey.AgreementNo</th>
+                    <th style="width:12%;" rowspan="2">@objMessageKey.DealType</th>
+                    <th style="width:12%;" rowspan="2">@objMessageKey.StartDate</th>
+                    <th style="width:12%;" rowspan="2">@objMessageKey.EndDate</th>
+                    <th style="width:12%;" rowspan="2">@objMessageKey.ChannelName</th>
+                    <th style="width:12%;" rowspan="2">@objMessageKey.RightRuleName</th>
+                    <th style="width:10%;" colspan="3">@objMessageKey.Runs</th>
+                </tr>
+                <tr>
+                    <th>
+                        @objMessageKey.DefinedRuns
+                    </th>
+                    <th>@objMessageKey.Schedule</th>
+                    <th>@objMessageKey.BalanceRuns</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Count > 0)
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+
+                            <td style="text-align:center;">@item.Agreement_No</td>
+                            <td style="text-align:center;">@item.Deal_Type</td>
+                            <td style="text-align:center;">@item.Rights_Start_Date</td>
+                            <td style="text-align:center;">@item.Rights_End_Date</td>
+                            <td style="text-align:left;">@item.Channel_Name</td>
+                            <td style="text-align:left;">@item.Right_Rule_Name</td>
+                            @if (item.Defined_Runs == -1)
+                            {
+                                <td style="text-align:center;"><span>Unlimited</span></td>
+                            }
+                            else
+                            {
+                                <td style="text-align:center;">@item.Defined_Runs</td>
+                            }
+                            @if (item.Schedule_Runs == null)
+                            {
+                                <td style="text-align:center;">0</td>
+                            }
+                            else
+                            {
+                                <td style="text-align:center;">@item.Schedule_Runs</td>
+                            }
+                            @if (@item.Defined_Runs == null)
+                            {
+                                <td></td>
+                            }
+                            else
+                            {
+                                if (@item.Balanced_Runs == null)
+                                {
+                                    if (item.Defined_Runs == -1)
+                                    {
+                                        <td style="text-align:center;"><span>Unlimited</span></td>
+                                    }
+                                    else
+                                    {
+                                        <td style="width:12%;text-align:center;">0</td>
+                                    }
+                                }
+                                else if (@item.Balanced_Runs == -1)
+                                {
+                                    if (item.Defined_Runs == -1)
+                                    {
+                                        <td style="text-align:center;"><span>Unlimited</span></td>
+                                    }
+                                    else
+                                    {
+                                        <td style="width:12%;text-align:center;">@item.Balanced_Runs</td>
+                                    }
+                                }
+                                else
+                                {
+                                    <td style="width:12%;text-align:center;">@item.Balanced_Runs</td>
+                                }
+                            }
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="9">@objMessageKey.Norecordfound</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+@if (ViewBag.Type == "C")
+{
+    <div>
+        @if (Model.Count > 0)
+        {
+            int? ChannelCode = 0, Count = 0;
+            foreach (var item in Model.OrderBy(o => o.Channel_Name))
+            {
+                if (ChannelCode == 0 || ChannelCode != @item.Channel_Code)
+                {
+                    Count = 0;
+                    if (ChannelCode != 0)
+                    {
+
+                    }
+                    ChannelCode = @item.Channel_Code;
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <td style="width:1%;">
+                                    <ul>
+                                        <li class="glyphicon glyphicon-triangle-bottom nav-toggle expander" id="liChannel_@ChannelCode" onclick="HideShow(@item.Channel_Code);"></li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    @item.Channel_Name
+                                </td>
+                            </tr>
+
+                        </thead>
+                    </table>
+                }
+                <table class="table table-bordered table-hover tblChannel_@ChannelCode" style="display:none">
+                    @if (ChannelCode == @item.Channel_Code)
+                    {
+                        if (Count == 0)
+                        {
+                            <tr>
+                                <th rowspan="2">@objMessageKey.AgreementNo</th>
+                                <th rowspan="2">@objMessageKey.DealType</th>
+                                <th rowspan="2">@objMessageKey.StartDate</th>
+                                <th rowspan="2">@objMessageKey.EndDate</th>
+                                <th rowspan="2">@objMessageKey.RightRuleName</th>
+                                <th colspan="3">@objMessageKey.Runs</th>
+                            </tr>
+                            <tr>
+                                <th> @objMessageKey.DefinedRuns </th>
+                                <th>@objMessageKey.Schedule</th>
+                                <th>@objMessageKey.BalanceRuns</th>
+                            </tr>
+                        }
+                        Count++;
+                        <tr>
+                            <td style="width:12%;text-align:center;">@item.Agreement_No</td>
+                            <td style="width:12%;text-align:center;">@item.Deal_Type</td>
+                            <td style="width:12%;text-align:center;">@item.Rights_Start_Date</td>
+                            <td style="width:12%;text-align:center;">@item.Rights_End_Date</td>
+                            <td style="width:18%;text-align:left;">@item.Right_Rule_Name</td>
+                            <td style="width:12%;text-align:center;">@item.Defined_Runs</td>
+                            <td style="width:12%;text-align:center;">@item.Schedule_Runs</td>
+                            @*@if (@item.Defined_Runs == null)
+                                {
+                                    <td style="width:12%;"></td>
+                                }
+                                else
+                                {
+                                    if (@item.Balanced_Runs == null)
+                                    {
+                                        <td style="width:12%;text-align:center;">@item.Defined_Runs</td>
+                                    }
+                                    else
+                                    {
+                                        <td style="width:12%;text-align:center;">@item.Balanced_Runs</td>
+                                    }
+                                }*@
+                            @if (item.Defined_Runs == -1)
+                            {
+                                <td style="text-align:center;"><span>Unlimited</span></td>
+                            }
+                            else
+                            {
+                                <td style="text-align:center;">@item.Defined_Runs</td>
+                            }
+                            <td style="text-align:center;">@item.Schedule_Runs</td>
+                            @if (@item.Defined_Runs == null)
+                            {
+                                <td></td>
+                            }
+                            else
+                            {
+                                if (@item.Balanced_Runs == null)
+                                {
+                                    if (item.Defined_Runs == -1)
+                                    {
+                                        <td style="text-align:center;"><span>Unlimited</span></td>
+                                    }
+                                    else
+                                    {
+                                        <td style="width:12%;text-align:center;">@item.Defined_Runs</td>
+                                    }
+                                }
+                                @*else if (@item.Balanced_Runs == -1)
+                                    {
+                                        <td style="width:12%;text-align:center;"><span>Unlimited</span></td>
+                                    }*@
+                                else
+                                {
+                                    <td style="width:12%;text-align:center;">@item.Balanced_Runs</td>
+                                }
+                            }
+                        </tr>
+
+                    }
+                </table>
+
+            }
+        }
+        else
+        {
+            <table class="table table-bordered">
+                <tr>
+                    <td>
+                        @objMessageKey.Norecordfound
+                    </td>
+                </tr>
+
+            </table>
+        }
+    </div>
+}
+@if (ViewBag.Type == "D")
+{
+    <div>
+        @if (Model.Count > 0)
+        {
+            string AgreementNo = "";
+            int Count = 0;
+            foreach (var item in Model.OrderBy(o => o.Agreement_No))
+            {
+                if (AgreementNo == "" || AgreementNo != @item.Agreement_No)
+                {
+                    Count = 0;
+                    if (AgreementNo != "")
+                    {
+                        <br />
+                    }
+                    AgreementNo = @item.Agreement_No;
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <td style="width:1%;">
+                                    <ul>
+                                        <li class="glyphicon glyphicon-triangle-bottom nav-toggle expander" id="liDeal_@AgreementNo" onclick="HideShowDeal('@item.Agreement_No');"></li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    @item.Deal_Type - @item.Agreement_No
+                                </td>
+                            </tr>
+
+                        </thead>
+                    </table>
+                }
+                <table class="table table-bordered table-hover tblDeal_@AgreementNo" style="display:none">
+                    @if (AgreementNo == @item.Agreement_No)
+                    {
+                        if (Count == 0)
+                        {
+                            <tr>
+                                <th rowspan="2">@objMessageKey.StartDate</th>
+                                <th rowspan="2">@objMessageKey.EndDate</th>
+                                <th rowspan="2">@objMessageKey.ChannelName</th>
+                                <th rowspan="2">@objMessageKey.RightRuleName</th>
+                                <th colspan="3">@objMessageKey.Runs</th>
+                            </tr>
+                            <tr>
+                                <th>@objMessageKey.DefinedRuns</th>
+                                <th>@objMessageKey.Schedule</th>
+                                <th>@objMessageKey.BalanceRuns</th>
+                            </tr>
+                        }
+                        Count++;
+                        <tr>
+                            <td style="width:12%;text-align:center;">@item.Rights_Start_Date</td>
+                            <td style="width:12%;text-align:center">@item.Rights_End_Date</td>
+                            <td style="width:12%;text-align:left;">@item.Channel_Name</td>
+                            <td style="width:18%;text-align:left;">@item.Right_Rule_Name</td>
+                            <td style="width:12%;text-align:center;">@item.Defined_Runs</td>
+                            <td style="width:12%;text-align:center;">@item.Schedule_Runs</td>
+                            @if (item.Defined_Runs == -1)
+                            {
+                                <td style="text-align:center;"><span>Unlimited</span></td>
+                            }
+                            else
+                            {
+                                <td style="text-align:center;">@item.Defined_Runs</td>
+                            }
+                            <td style="text-align:center;">@item.Schedule_Runs</td>
+                            @if (@item.Defined_Runs == null)
+                            {
+                                <td></td>
+                            }
+                            else
+                            {
+                                if (@item.Balanced_Runs == null)
+                                {
+                                    if (item.Defined_Runs == -1)
+                                    {
+                                        <td style="text-align:center;"><span>Unlimited</span></td>
+                                    }
+                                    else
+                                    {
+                                        <td style="width:12%;text-align:center;">@item.Defined_Runs</td>
+                                    }
+                                }
+                                @*else if (@item.Balanced_Runs == -1)
+                                    {
+                                        <td style="width:12%;text-align:center;"><span>Unlimited</span></td>
+                                    }*@
+                                else
+                                {
+                                    <td style="width:12%;text-align:center;">@item.Balanced_Runs</td>
+                                }
+                            }
+                            @*@if (@item.Defined_Runs == null)
+                                {
+                                    <td style="width:12%;"></td>
+                                }
+                                else
+                                {
+                                    if (@item.Balanced_Runs == null)
+                                    {
+                                        <td style="width:12%;text-align:center;">@item.Defined_Runs</td>
+                                    }
+                                    else
+                                    {
+                                        <td style="width:12%;text-align:center;">@item.Balanced_Runs</td>
+                                    }
+                                }*@
+                        </tr>
+
+                    }
+                </table>
+
+            }
+        }
+        else
+        {
+            <table class="table table-bordered">
+                <tr>
+                    <td>
+                        @objMessageKey.Norecordfound
+                    </td>
+                </tr>
+
+            </table>
+        }
+    </div>
+}

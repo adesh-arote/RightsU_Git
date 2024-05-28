@@ -1,0 +1,371 @@
+﻿@using UTOFrameWork.FrameworkClasses;
+@{
+    RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
+    if (Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA] != null)
+    {
+        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA];
+
+        if (objSchema.Run_PageSize == 0)
+        {
+            objSchema.Run_PageSize = 50;
+        }
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+    string Message = Convert.ToString(Session["Message"]);
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+}
+
+<script>
+    var recordLockingCode_G = parseInt(@ViewBag.Record_Locking_Code);
+    var meesage_G = '@Message';
+    var arrRunTitles_G = '@objSchema.Run_Titles'.split(',');
+    var runPageSize_G = @objSchema.Run_PageSize;
+    var runPageNo_G = @objSchema.Run_PageNo;
+    var dealMode_G = '@objSchema.Mode';
+    var isRightsAdded_G = '@(ViewBag.IsRightsAdded)';
+
+    var URL_Global_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global", null, Request.Url.Scheme)';
+    var URL_ResetMessageSession = '@Url.Action("ResetMessageSession", "Acq_Run_List")';
+    var URL_Delete = '@Url.Action("Delete", "Acq_Run_List")';
+    var URL_Cancel = '@Url.Action("Cancel", "Acq_Run_List")';isRightsAdded_G
+    var URL_BindRun = '@Url.Action("BindRun", "Acq_Run_List")';
+    var URL_Global_SetApprovalRemarks = '@Url.Action("SetApprovalRemarks", "Global")';
+    var URL_SaveChannelCluster = '@Url.Action("SaveChannelCluster", "Acq_Run_List")';
+    var URL_ButtonEvents = '@Url.Action("ButtonEvents", "Acq_Run_List")';
+    var URL_Commit='@Url.Action("Commit", "Acq_Run_List")';
+    var URL_Index='@Url.Action("Index", "Acq_List")';
+    $(document).ready(function () {
+        $('#lbChannel').SumoSelect();
+        $('#ddlPrimaryChannelCluster').SumoSelect();
+
+        // $("#ancFileName").attr('href','Help/index.html?IntCode=@Session["FileName"]');
+        if ('@objMessageKey.LayoutDirection' == "RTL")
+        {
+            $('#paging_area span.pull-left').css("margin-left", "20%");
+        }
+        else
+        {
+            $('#paging_area span.pull-left').css("margin-right", "20%");
+        }
+        if('@objSchema.Mode'=='@GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL')
+            CurrentTab = '@GlobalParams.Page_From_Run';
+
+
+        $('#Title_Code1').SumoSelect({ selectAll: true, triggerChangeCombined: false });
+        $('#Title_Code1').each(function () {
+                $(this)[0].sumo.reload();
+        });
+        if(@ViewBag.RecordCount>0)
+        {
+            $('#btnBulkUpdate,#btnBulkDelete').show();
+        }
+        else
+        {
+            $('#btnBulkUpdate').hide();
+        }
+        $('#divlbChannelCluster').hide();
+        $('#divlbChannel').show();
+        ChannelChanged();
+    });
+
+</script>
+<script src="~/Custom_Scripts/Acq_Deal_Run_List.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<style>
+    .paging_area {
+        border-bottom: 0px dotted #777 !important;
+    }
+
+    #paging_area .clusterDDL {
+        display: inline;
+    }
+
+        #paging_area.clusterDDL select {
+            width: 250px;
+        }
+
+    /*#paging_area span.pull-left {
+        margin-right: 20%;
+    }*/
+
+    #Channel_Cluster_chosen {
+        width: 20% !important;
+    }
+
+    .navigation_tabs {
+        overflow: visible !important;
+    }
+
+    .SumoSelect {
+        width: 94% !important;
+    }
+</style>
+<div class="grid_area">
+    <div class="navigation_tabs">
+        <div class="tabbable">
+            <div class="tab-content clearfix table-wrapper scale_table_container">
+                <div class="tab-pane active" id="tabRunDef">
+                    <div class="scale_table_block">
+                        <table class="table">
+                            <tr>
+                                <td class="bold" style="width: 10%;">@objMessageKey.Titles</td>
+                                <td style="width: 60%;">
+                                    @Html.Hidden("hdnCommandName", "")
+                                    @Html.Hidden("hdnCommandNameAllShow", "")
+                                    @Html.Hidden("hdnTitleName", "")
+                                    @Html.Hidden("hdnChannelName", "")
+                                    @Html.Hidden("hdnTitleCode", "")
+                                    @Html.ListBox(
+                                                                     "Title_Code1",
+                                                                     ViewBag.TitleList as MultiSelectList,
+                                                                     new { }
+                                                                  )
+                                </td>
+
+
+
+                                <td style="width: 20%;">
+                                    @if (ViewBag.Buttonvisibility
+                                       && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_VIEW
+                                       && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_APPROVE
+                                       && objSchema.Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                                    {
+
+                                        <input type="button" class="button" value="Bulk Update" id="btnBulkUpdate" onclick="BindPartialTabs('@GlobalParams.Page_From_Run_Bulk_update')">
+
+                                    }
+
+                                    @if (ViewBag.ButtonVisibility_BLK_DEL
+                                        && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_VIEW
+                                        && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_APPROVE
+                                        && objSchema.Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                                    {
+
+                                        <input type="button" class="button" value="Bulk Delete" id="btnBulkDelete" onclick="BindPartialTabs('@GlobalParams.Page_From_Run_Bulk_Delete')">
+
+                                    }
+
+
+                                </td>
+                                <td style="float: right;">
+                                    @if (objSchema.Mode != GlobalParams.DEAL_MODE_APPROVE && objSchema.Mode != GlobalParams.DEAL_MODE_VIEW)
+                                    {
+                                        @*@Html.ActionLink("Add", "ButtonEvents", "Acq_Run_List", new { id = 0 }, new { @class = "btn btn-primary", @onclick = "return ValidateAdd()" })*@
+                                        <a class="btn btn-primary" onclick="ButtonEvents(0)">@objMessageKey.Add</a>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+
+                                <td style="width: 10%;"><span class='bold'>Channel Cluster</span></td>
+                                <td style="width: 60%;">
+                                    <div style="width:96%">
+                                        <div id="divChannelCategorys" style="width:30%; float:left;">
+                                            <select id="lbChannelCluster" name="lbChannelCluster" class="form_input chosen-select"></select>@*onchange="ChannelCategory_Changed();"*@
+                                        </div>
+                                        <div class="bold" style="width:15%; text-align:center; float:left;">
+                                            Channel
+                                        </div>
+                                        <div style=" width:30%; float:left">
+                                            <div id="divlbChannelCluster">
+                                                <select id="ddlPrimaryChannelCluster" name='ddlPrimaryChannelCluster' multiple="multiple"></select>
+                                            </div>
+                                            <div id="divlbChannel">
+                                                <select id="lbChannel" name="lbChannel" multiple="multiple"></select>
+                                            </div>
+                                        </div>
+                                        <div style=" width:20%; float:right">
+                                            <input type="button" class="button" value="@objMessageKey.Search" onclick="searchClick()">
+                                            <input type="button" class="button" value="@objMessageKey.ShowAll" onclick="showAllClick()">
+                                        </div>
+                                    </div>
+                                </td>
+                                <td colspan="2" style="width: 20%;">
+                                    @*<input type="button" class="button" value="@objMessageKey.Search" onclick="searchClick()">
+                                        <input type="button" class="button" value="@objMessageKey.ShowAll" onclick="showAllClick()">*@
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div id="paging_area" class="paging_area clearfix">
+                        <span id="spanRecordCount" class="pull-left">@objMessageKey.TotalRecords:  @ViewBag.RecordCount</span>
+                        <div class="clusterDDL">@objMessageKey.ChannelCluster:</div>
+                        <div class="clusterDDL">
+                            @if (objSchema.Mode != GlobalParams.DEAL_MODE_APPROVE && objSchema.Mode != GlobalParams.DEAL_MODE_VIEW)
+                            {
+                                @Html.DropDownList("Channel_Cluster",
+                                                                     ViewBag.ChannelClusterList as MultiSelectList,
+                                                                          new { @class = "form_input chosen-select" }
+                                                                  )
+                            }
+
+                            else
+                            {
+                                @ViewBag.ChannelClusterName
+                            }
+                        </div>
+                        <div id="Pagination" class="pagination"></div>
+                        <span class="pull-right">@objMessageKey.PageSize : @Html.TextBox("txtPageSize", 50, new { @onchange = "applyPaging()", @style = "width:35px", @Onblure = "setDefaultPaging('txtPageSize')" })</span>
+                    </div>
+
+                    <div class="scale_table_block" id="grdRun">
+                    </div>
+
+                    @Html.Hidden("Acq_Deal_Run_Code")
+                </div>
+                @if (objSchema.Mode == GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                {
+                    @Html.Partial("_Edit_Without_Approval")
+                }
+                @if (objSchema.Mode == GlobalParams.DEAL_MODE_APPROVE)
+                {
+                    @Html.Partial("_Approved_List")
+                }
+                else if (objSchema.Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                {
+                    <div class="bottom_action">
+                        <ul class="form_link_nav clearfix">
+
+                            @if (objSchema.Mode != GlobalParams.DEAL_MODE_VIEW && objSchema.Mode != GlobalParams.DEAL_MODE_APPROVE)
+                            {
+                                <li>
+                                    <input type="button" id="btnSaveDeal" class="btn btn-primary" value="@objMessageKey.Save"
+                                           onclick="SaveDeal();">
+                                    <input type="hidden" id="hdnReopenMode" name="hdnReopenMode" value="E" />
+                                </li>
+                                if (objSchema.Deal_Workflow_Flag == GlobalParams.DEAL_MODE_REOPEN || objSchema.Mode == GlobalParams.DEAL_MODE_REOPEN)
+                                {
+                                    <li>
+                                        <input type="button" id="btnSaveApproveRun" class="btn btn-primary" value="@objMessageKey.SaveApprove" onclick="SaveDeal();" />
+                                    </li>
+                                }
+                                <li>
+                                    <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="CancelSaveDeal()">
+                                </li>
+                            }
+                            else
+                            {
+                                var Show_Acq_SubDeal_List = new RightsU_BLL.System_Parameter_New_Service(objLoginEntity.ConnectionStringName)
+                                .SearchFor(x => x.Parameter_Name == "Show_Acq_SubDeal_List").Select(x => x.Parameter_Value).FirstOrDefault();
+                                <li>
+                                    @if (Show_Acq_SubDeal_List == "Y" && Convert.ToInt32(ViewBag.prevAcq_Deal) > 0)
+                                    {
+                                        <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                               onclick="location.href='@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = ViewBag.prevAcq_Deal })'">
+                                    }
+                                    else
+                                    {
+                                        <input type="button" id="btnCancel_Deal" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="location.href='@Url.Action("Cancel", "Acq_Run_List")'" />
+                                    }
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                }
+                <input type="hidden" id="hdnTabName" name="hdnTabName" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<div aria-labelledby="myModalLabel" id="popupLinkShow" class="form_wrapper modal fade scroll" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+</div>
+<style>
+    .SumoSelect, #divlbChannel, #divlbChannelCluster {
+        width: 100%;
+    }
+
+    #divChannelCategorys {
+        width: 50%;
+    }
+</style>
+<script>
+    var URL_ChannelChanged = '@Url.Action("ChannelChanged", "Acq_Run")';
+    var URL_ChanelCateogyChanged= '@Url.Action("ChannelCategoryChanged", "Acq_Run_List")';
+    function ChannelChanged() {
+        debugger
+        $.ajax({
+            type: "POST",
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            url: URL_ChannelChanged,
+            data: JSON.stringify({
+            }),
+            async: true,
+            success: function (result) {
+                debugger
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#lbChannel').empty();
+                    $("#lbChannelCluster").empty();
+
+                    $.each(result.Channel_List, function () {
+                        $("#lbChannel").append($("<option />").val(this.Value).text(this.Text));
+                    });
+                    $('#lbChannel').each(function () {
+                        $(this)[0].sumo.reload();
+                    });
+                    $.each(result.Channel_Cluster_List, function () {
+                        $("#lbChannelCluster").append($("<option />").val(this.Value).text(this.Text));
+                    });
+                    $("#lbChannelCluster").trigger("chosen:updated");
+
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function ChannelCategory_Changed() {
+        debugger
+        var Category_Code = $('#lbChannelCluster').val();
+        $.ajax({
+            type: "POST",
+            url: URL_ChanelCateogyChanged,
+            traditional: true,
+            async: false,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                category_Code: Category_Code
+            }),
+            success: function (result) {
+                $("#ddlPrimaryChannelCluster").empty();
+                $.each(result.Channel_Cluster_Primary_List, function () {
+                    $("#ddlPrimaryChannelCluster").append($("<option />").val(this.Value).text(this.Text));
+                });
+
+                $("#ddlPrimaryChannelCluster")[0].sumo.reload();
+                $('#ddlPrimaryChannelCluster')[0].sumo.selectAll();
+
+
+                if (Category_Code == "0") {
+                    $('#divlbChannelCluster').hide();
+                    $('#divlbChannel').show();
+                    $('#ddlPrimaryChannelCluster')[0].sumo.unSelectAll();
+                }
+                else {
+                    $('#divlbChannelCluster').show();
+                    $('#lbChannel')[0].sumo.unSelectAll();
+                    $('#divlbChannel').hide();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+
+    }
+</script>

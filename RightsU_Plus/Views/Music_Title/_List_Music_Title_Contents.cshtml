@@ -1,0 +1,44 @@
+﻿@using RightsU_Entities
+@model List<USP_Music_Title_Contents_Result>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<table class="table table-bordered table-hover" id="tblMusicTitleContent">
+    <thead>
+        <tr>
+            <th style="width:15%;">@objMessageKey.Content</th>
+            <th style="width:10%;">@objMessageKey.episode</th>   
+            <th style="width:8%;">@objMessageKey.DurationInMin</th>
+            <th style="width:10%;">@objMessageKey.TCIn</th>
+            <th style="width:9%;">@objMessageKey.TCOut</th>
+            <th style="width:8%;">@objMessageKey.Duration</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            string TCIn = item.From.ToString() +' '+ item.From_Frame;
+            string TCOut = item.To.ToString() +' '+ item.To_Frame;
+            <tr>
+                @if(item.Content == "")
+                {
+                    <td>@item.Title_Name</td>
+                }
+                else
+                { 
+                <td>@item.Content</td>
+                }
+                <td style="text-align:center;">@item.Episode_No</td>
+                <td style="text-align:center;">@item.Duration_In_Min</td>
+                <td style="text-align:center;">@TCIn</td>
+                <td style="text-align:center;">@TCOut</td>
+                <td style="text-align:center">@item.Duration</td>
+            </tr>
+        }
+    </tbody>
+</table>

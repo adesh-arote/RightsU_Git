@@ -1,0 +1,158 @@
+﻿@model RightsU_Entities.USPAL_GetRevisionHistoryForModule_Result
+@using UTOFrameWork.FrameworkClasses;
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<script>
+    var IsCall = 'Y';
+
+    $(document).ready(function () {
+        debugger;
+        addNumeric();
+        tdExpander();
+    });
+
+    function SetPaging_MSH() {
+        debugger;
+        IsCall = 'N';
+        var pageNo = parseInt($('#hdnPageNo_MSH').val());
+        var recordCount = parseInt($('#hdnRecordCount_MSH').val());
+        var pagePerBatch = parseInt($('#hdnPagePerBatch_MSH').val());
+        var recordPerPage = parseInt($('#txtPageSize_MSH').val());
+
+        var cnt = pageNo * recordPerPage;
+        if (cnt >= recordCount) {
+            var v1 = parseInt(recordCount / recordPerPage);
+            if ((v1 * recordPerPage) == recordCount)
+                pageNo = v1;
+            else
+                pageNo = v1 + 1;
+        }
+
+        if (pageNo == 0)
+            pageNo = 1;
+
+        var index = pageNo - 1;
+        $('#hdnPageNo_MSH').val(pageNo);
+
+        var opt = null;
+        opt = { callback: pageselectCallback_MSH };
+        opt["items_per_page"] = recordPerPage;
+        opt["num_display_entries"] = pagePerBatch;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = index;
+        $("#Pagination_MSH").pagination(recordCount, opt);
+    }
+
+    function pageselectCallback_MSH(page_index, jq) {
+        debugger;
+        $('.required').removeClass('required');
+
+        if (!ValidatePageSize_MSH())
+            return false;
+
+        var pageNo = page_index + 1
+        $('#hdnPageNo_MSH').val(pageNo);
+        if (IsCall == 'Y')
+            BindStatusHistoryList();
+        else
+            IsCall = 'Y';
+    }
+
+    function txtPageSize_MSH_OnChange() {
+        debugger;
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        if (!ValidatePageSize_MSH())
+            return false;
+
+        BindStatusHistoryList();
+        SetPaging_MSH();
+    }
+
+    function ValidatePageSize_MSH() {
+        debugger;
+        var recordPerPage = $('#txtPageSize_MSH').val()
+        if (recordPerPage != "") {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize_MSH').attr('required', true)
+        return false
+    }
+
+    function addNumeric() {
+        debugger;
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
+
+    function tdExpander() {
+        $('.expand_Remaks').expander({
+        slicePoint: 32,
+        expandPrefix: '',
+        expandText: '...@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+        });
+    }
+
+</script>
+
+<div class="modal_block modal_header">
+    <a class="close" onclick="ClosePopup()">
+        <span>X</span>
+        <span class="sr-only">Close</span>
+    </a>
+    <h2>Status History</h2>
+</div>
+
+<div class="grid_area" style="margin: 0 auto; width: 98%;">
+    <div class="paging_area clearfix" style="margin-top:10px;">
+        <span class="pull-left">@objMessageKey.TotalRecords: </span>
+        <span class="pull-left" id="lblRecordCount_MSH"></span>
+        <input type="hidden" id="hdnPageNo_MSH" name="hdnPageNo" value="1" />
+        <input type="hidden" id="hdnPagePerBatch_MSH" name="hdnPagePerBatch" value="5" />
+        <input type="hidden" id="hdnRecordCount_MSH" name="hdnRecordCount" value="0" />
+
+        <div id="Pagination_MSH" class="pagination">
+        </div>
+        <span class="pull-right">
+            @objMessageKey.PageSize:
+            <input type="text" id="txtPageSize_MSH" name="txtPageSize" class="smallTextBox pagingSize" value="10" autocomplete="off" onchange="txtPageSize_MSH_OnChange()" onblur="setDefaultPaging('txtPageSize_MSH')">
+        </span>
+    </div>
+    <div class="tab-content clearfix table-wrapper scale_table_container" style="margin-bottom: 10px;">
+        <div class="scale_table_block" id="divStatusHistoryList" style="overflow:auto; max-height:500px">
+            <table class="table table-bordered table-hover" id="tblMusicLink">
+                <thead>
+                    <tr>
+                        <th style="width:20%">Last Action By</th>
+                        <th style="width:20%">Last Action On</th>
+                        <th style="width:20%">Workflow Status</th>
+                        <th style="width:20%">Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="4">No recordfound</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+            

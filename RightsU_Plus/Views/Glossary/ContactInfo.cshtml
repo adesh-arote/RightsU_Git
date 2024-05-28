@@ -1,0 +1,40 @@
+﻿@model List<RightsU_Entities.Glossary>
+@{
+    ViewBag.Title = "ContactInfo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    //$(document).ready(function () {
+    //    $("#ancFileName").attr('href', '../Help/Masters/Layout.html?Glossary_ContactInfo');
+    //})
+</script>
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="top_area">
+                <h2 class="pull-left">Contact Info</h2>
+                <div class="right_nav pull-right">
+                </div>
+            </div>
+            <div class="grid_area deal clearfix">
+                @foreach (var item in Model)
+                {
+                    <div class="grid_item">
+                        <ul>
+                            <li><b>@item.Name</b></li>
+                            <br />
+                            <li><p>@item.Description - <a href="mailto:@item.Example" style="text-decoration:underline;">@item.Example</a></p></li>
+                        </ul>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+</div>
+<style>
+    .grid_item:hover {
+        border-left : 6px solid #2b64a5 !important;
+        transition: .1s ease;
+    }
+</style>

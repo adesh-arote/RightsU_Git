@@ -1,0 +1,448 @@
+﻿@{
+    ViewBag.Title = "RevenueReport";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/JS_Core/jquery.sumoselect.js"></script>
+<link href="~/CSS/sumoselect.css" rel="stylesheet" />
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+
+<script>
+
+    var URL_BindCostReport = '@Url.Action("BindRevenueReport", "Reports")';
+    var URL_BindTitleList = '@Url.Action("BindSynTitleList", "Reports")';
+    URL_PopulateAgreementNo = '@Url.Action("PopulateAgreementNo", "Reports")';
+
+
+
+    $(document).ready(function () {
+        var Count_Title= @Enumerable.Count(ViewBag.TitleList);
+
+        if(Count_Title > 500)
+            $('#ddlTitle').SumoSelect({selectAll:false});
+        else
+            $('#ddlTitle').SumoSelect({selectAll:true});
+
+        $('#ddlTitle')[0].sumo.reload();
+        //var dateInString = $("#txtfrom").val();
+        //var txtto = $("#txtto").val();
+
+        $('#ddlBusinessUnit_chosen').click(function () {
+            BindTitleList($('#ddlBusinessUnit').val());
+        });
+
+        $('#txtfrom').change(function () {
+            debugger;
+            SetMinDt();
+        });
+
+        $('#txtto').change(function () {
+            debugger;
+            SetMaxDt();
+        });
+    });
+    function SetMaxDt() {
+        setMinMaxDates('txtfrom', '', $('#txtto').val());
+    }
+    function SetMinDt() {
+        setMinMaxDates('txtto', $('#txtfrom').val(), '');
+    }
+
+    function CalculateStartDate(startDate, year, month) {
+        debugger;
+        var yearToMonth = 12 * year;
+        month = month + yearToMonth;
+        startDate.setMonth(startDate.getMonth() - month);
+        startDate.setDate(startDate.getDate() + 1);
+        var newDateStr = ConvertDateToCurrentFormat(startDate);
+        return newDateStr;
+    }
+
+    function ConvertDateToCurrentFormat(objDate) {
+        debugger;
+        var dd = objDate.getDate();
+        var mm = objDate.getMonth() + 1; //January is 0!
+        var yyyy = objDate.getFullYear();
+
+        if (dd < 10)
+            dd = '0' + dd
+
+        if (mm < 10)
+            mm = '0' + mm
+
+        var newDate = dd + '/' + mm + '/' + yyyy;
+        return newDate;
+    }
+
+    function btnShow_OnClick() {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        var str = "";
+        var returnVal = true;
+        var StartDate = $('#txtfrom').val();
+        var EndDate = $('#txtto').val();
+        var titleList = $('#ddlTitle').val();
+        var agreementNo = $('#txtAgreementNo').val();
+        var include = $('#chkIncludeExpiry').is(":checked");
+        if (include == true) {
+            include = 'Y';
+        }
+        else {
+            include = 'N';
+        }
+        var module = @UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForSynDeal.ToString();
+        if ($('#ddlTitle').val() == null && ($('#txtAgreementNo').val() == null || agreementNo == "")) {
+            showAlert('E', 'Please Select at least one search criteria');
+            return false;
+        }
+
+        if ($('#txtAgreementNo').val() != "") {
+            if ($('#hdnAgreementNo').val() == '' || $('#hdnAgreementNo').val() == undefined || $('#hdnAgreementNo').val() == '0') {
+                showAlert('E', 'Please select valid agreement no');
+                return false;
+            }
+        }
+
+        if (titleList == null || titleList == 0 || titleList == undefined) {
+            titleList = " ";
+        }
+        else {
+            $.each(titleList, function (idx, val) {
+                if (str != "") {
+                    str += ",";
+                }
+                str += val;
+
+            });
+            titleList = str;
+        }
+       
+        if(returnVal){
+            $.ajax({
+                type: "POST",
+                url: URL_BindCostReport,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    StartDate: StartDate,
+                    EndDate:EndDate,
+                    titleCodes: titleList,
+                    agreementNo: agreementNo,
+                    IncludeExpiry: include,
+                    ModuleCode: module,
+                    dateformat: $('#ddlDateFormat').val(),
+                    numberformat: $('#ddlNumberFormat').val()
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        $('#divResult').empty();
+                        $('#divResult').html(result);
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    }
+
+    function BindTitleList(code) {
+        debugger;
+        //var code = $('#ddlBusinessUnit').val();
+        showLoading();
+        $.ajax({
+            type: "POST",
+
+            url: URL_BindTitleList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: true,
+            data: JSON.stringify({
+                BU_Code: code
+
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger;
+                    $('#ddlTitle').empty();
+                    $.each(result.ddlTitle, function (index, item) {
+                        $("#ddlTitle").append($("<option>").val(this.Value).text(this.Text));
+                    });
+                    $('#ddlTitle')[0].sumo.reload();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+        hideLoading();
+    }
+
+    function populateAgreementNo(evt) {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var businessUnitcode = $('#ddlBusinessUnit').val();
+        var selectedtxt = $('#txtAgreementNo').val()
+        var returnVal = true;
+        if (businessUnitcode == 0) {
+            $('#ddlBusinessUnit').attr('required', true);
+            returnVal = false;
+        }
+        var module = @UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForSynDeal.ToString();
+        if (returnVal) {
+            $("#txtAgreementNo").autocomplete({
+                focus: function () {
+                    // prevent value inserted on focus
+                    return false;
+                },
+                search: function (e, u) {
+                    $(this).addClass('loader');
+                },
+                source: function (request, response) {
+                    $('#hdnAcqDealCode').val('0')
+                    $('#hdnAgreementNo').val('')
+                    var param = {
+                        searchPrefix: $('#txtAgreementNo').val(),
+                        module: module
+                    };
+                    $.ajax({
+                        url: URL_PopulateAgreementNo,
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+                            if (data.length == 0) {
+                                data[0] = 'Result Not Found';
+                                response($.map(data, function (v, i) {
+                                    $('#txtAgreementNo').removeClass('loader');
+                                    return {
+                                        label: 'Result Not Found',
+                                        val: '0'
+                                    }
+                                }))
+                            }
+                            else {
+                                response($.map(data, function (v, i) {
+                                    $('#txtAgreementNo').removeClass('loader');
+                                    return {
+                                        label: v.Text,
+                                        val: v.Code
+                                    }
+                                }))
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            alert("Error" + textStatus);
+                        }
+                    });
+                },
+                select: function (event, i) {
+                    var code = i.item.val;
+                    $('#hdnAcqDealCode').val(code);
+                    $('#hdnAgreementNo').val(i.item.value);
+                },
+                minLength: 2,
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("position", "absolute");
+                    $(".ui-autocomplete").css("max-height", "200px");
+                    $(".ui-autocomplete").css("overflow-y", "auto");
+                    $(".ui-autocomplete").css("overflow-x", "hidden");
+                    $(".ui-autocomplete").css("z-index", "2147483647");
+                },
+
+            });
+        }
+    }
+
+    function ClearAll() {
+        debugger;
+        var code = 1;
+        $("#txtAgreementNo").val('').trigger("chosen:updated");
+        $('#ddlBusinessUnit').val(code).trigger('chosen:updated');
+        $('#txtfrom').val('');
+        $('#txtto').val('')
+        $('#ddlTitle')[0].sumo.unSelectAll();
+        $('#chkIncludeExpiry').attr('checked',false);
+    }
+</script>
+
+<style>
+    #divFilter {
+        background: #eee;
+        padding: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    #ddlBusinessUnit_chosen {
+        max-width: 70%;
+    }
+
+    #ddlTitleList_chosen {
+        max-width: 50%;
+    }
+
+    #popupFade {
+        position: absolute;
+        display: none;
+        max-width: 300px;
+        overflow: hidden;
+        border: #bbb 1px solid;
+        z-index: 100;
+    }
+
+        #popupFade .modal-dialog ul.fancytree-container {
+            height: 100%;
+            border: 0;
+        }
+
+        #popupFade form .modal_block {
+            padding: 3px 10px;
+        }
+
+        #popupFade #Rights_Platform {
+            max-height: 300px;
+        }
+
+    td {
+        padding: 1px;
+    }
+
+    #ddlModule_chosen {
+        max-width: 100%;
+    }
+</style>
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="title_block dotted_border clearfix">
+                <h2 class="pull-left">Revenue Report</h2>
+                <div class="right_nav pull-right" style="line-height: 50px !important; width: 20%;">
+                    <table>
+                        <tr>
+                            <td align="right" style="width: 51%;"><label class="bold"></label></td>
+                            <td align="right">
+                                @*<select class="form_input chosen-select" id="ddlModule" name="">
+                                    <option value="30" selected>Acquisition</option>
+                                    <option value="35">Syndication</option>
+                                </select>*@
+                                @*@Html.DropDownList("BusinessUnit", (List<SelectListItem>)ViewBag.BusinessUnitList, new { @id = "ddlBusinessUnit", @class = "form_input chosen-select", @onchange = "BindContentList()" })*@
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div id="divFilter">
+                
+                @*<table>
+                    <tr>
+                        <td style="width:12%;"><label class="bold">Agreement No</label></td>
+                        <td style="width:38%;">
+                            <input type="text" id="txtAgreementNo" maxlength="20" style="width:150px" placeholder="Agreement No." onkeyup="populateAgreementNo(this)" />
+                            <input type="hidden" id="hdnAcqDealCode" value="0" />
+                            <input type="hidden" id="hdnAgreementNo" value="0" />
+                        </td>
+                        <td style="width:25%;">
+                            <label class="bold">Start Date</label>&nbsp;&nbsp;
+                            <input type="text" class="isDatepicker shortDate common" value="@ViewBag.DealFrmDt_Search" id="txtfrom" placeholder="From" title="From" style=" width: 55%;" />
+                        </td>
+                        <td style="width:25%;">
+                            <label class="bold">End Date</label>&nbsp;&nbsp;
+                            <input type="text" class="isDatepicker shortDate common" value="@ViewBag.DealToDt_Search" id="txtto" placeholder="To" title="To" style=" width: 55%;" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width:8%;"><label class="bold">Title</label></td>
+                        <td style="width:26%;">
+                            @Html.DropDownList("TitleList", ViewBag.TitleList as MultiSelectList, new { @id = "ddlTitle", @multiple = "multiple" })
+                        </td>
+                        <td><label class="bold"><input type="checkbox" id="chkIncludeExpiry" />&nbsp;&nbsp;Include Expired Deals</label></td>
+                        <td style="width:26%;padding-left: 10%;">
+                            <input type="button" id="btnShow" class="btn btn-primary" value="Show" onclick="btnShow_OnClick()">
+                            <input type="button" id="btnClearAll" class="btn btn-primary" value="Reset" onclick="ClearAll()">
+                        </td>
+                    </tr>
+                </table>*@
+              
+                <table>
+                    <tr>
+                        <td style="width:9%;"><label class="bold">Agreement No</label></td>
+                        <td style="width:10%;">
+                            <input type="text" id="txtAgreementNo" maxlength="20" style="width:150px" placeholder="Agreement No." onkeyup="populateAgreementNo(this)" />
+                            <input type="hidden" id="hdnAcqDealCode" value="0" />
+                            <input type="hidden" id="hdnAgreementNo" value="0" />
+                        </td>
+                        <td style="width:17%;">
+                            <label class="bold">Start Date</label>&nbsp;&nbsp;
+                            <input type="text" class="isDatepicker shortDate common" value="@ViewBag.DealFrmDt_Search" id="txtfrom" placeholder="From" title="From" style=" width: 55%;" />
+                        </td>
+                        <td style="width:17%;">
+                            <label class="bold">End Date</label>&nbsp;&nbsp;
+                            <input type="text" class="isDatepicker shortDate common" value="@ViewBag.DealToDt_Search" id="txtto" placeholder="To" title="To" style=" width: 55%;" />
+                        </td>
+                        <td style="width:10%;">
+                            <b>Date Format</b>
+                        </td>
+                        <td style="width:20%">
+                            @Html.DropDownList("DateFormat", (List<SelectListItem>)ViewBag.DateFormat,  new { @id = "ddlDateFormat", @class = "form_input chosen-select" })
+                        </td>
+                        <td>
+                            <input type="button" id="btnShow" class="btn btn-primary" value="Show" onclick="btnShow_OnClick()">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label class="bold">Title</label></td>
+                        <td>
+                            <input type="text" id="txtTitle" class="search" maxlength="100" style="width:200px" placeholder="Title" onkeyup="PopulateTitleNameForCost(event)" autocomplete="on" />
+                            <input type="hidden" id="hdnTitleCode" value="0" />
+                        </td>
+                        <td></td>
+                        <td><label class="bold"><input type="checkbox" id="chkIncludeExpiry" />&nbsp;&nbsp;Include Expired Deals</label></td>
+                        <td>
+                            <b>Number Format</b>
+                        </td>
+                        <td>
+                            @Html.DropDownList("NumberFormat", (List<SelectListItem>)ViewBag.NumberFormat,  new { @id = "ddlNumberFormat", @class = "form_input chosen-select" })
+                        </td>
+                        <td>
+                            <input type="button" id="btnClearAll" class="btn btn-primary" value="Reset" onclick="ClearAll()">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <br />
+            <div id="divResult">
+
+            </div>
+        </div>
+    </section>
+</div>
+
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+
+            <div class="form_fields acq" id="pupupHtml">
+
+            </div>
+
+        </div>
+    </div>
+</div>

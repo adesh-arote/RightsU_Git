@@ -1,0 +1,138 @@
+﻿@model ICollection<RightsU_Entities.Syn_Deal_Revenue>
+@using UTOFrameWork.FrameworkClasses;
+@{
+    RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
+    if (Session[RightsU_Entities.RightsU_Session.Syn_DEAL_SCHEMA] != null)
+    {
+        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.Syn_DEAL_SCHEMA];
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<!DOCTYPE html>
+<script>
+    var Mode_RG='@ViewBag.Mode';
+    var approvalremarks_G = '@ViewBag.Approver_Remark';
+    var TotalFixedDealCost_G = '@ViewBag.TotalFixedDealCost';
+    var Record_Locking_Code_G = @ViewBag.Record_Locking_Code;
+
+    var Refresh_Lock_Full_URL = '@Url.Action("Refresh_Lock", "Global", null, Request.Url.Scheme)';
+    var DeleteRecord_URL = '@Url.Action("DeleteRecord", "Syn_Revenue")';
+    var DeleteCostType_URL = '@Url.Action("DeleteCostType", "Syn_Revenue")';
+    var DeleteAdditionalExpense_URL = '@Url.Action("DeleteAdditionalExpense", "Syn_Revenue")';
+    var DeleteStandardReturns_URL = '@Url.Action("DeleteStandardReturns", "Syn_Revenue")';
+    var Cancel_Revenue_URL = '@Url.Action("Cancel", "Syn_Revenue")';
+    var Index_SL_URL = '@Url.Action("Index", "Syn_List")';
+    var SetSynApprovalRemarks_URL = '@Url.Action("SetSynApprovalRemarks", "Global")';
+    var PartialAddEditDealCost_URL= '@Url.Action("PartialAddEditDealCost", "Syn_Revenue")';
+    var ChangeTab_URL = '@Url.Action("ChangeTab", "Global")';
+    var BindGridSynDealRevenue_URL = '@Url.Action("BindGridSynDealRevenue", "Syn_Revenue")';
+    //$(document).ready(function () {
+    //    $("#ancFileName").attr('href', 'Help/index.html?IntCode=Login');
+    //});
+    var ShowMessage={
+        "Allunsaved" : '@objMessageKey.AllUnsavedDataWillBeLostStillWantToGoAhead',
+        "ThisFixedFees" :'@objMessageKey.ThisFixedFeesisalreadyassignedtoStandardReturnsPaymentTerms',
+        "AreyousureyouwanttodeletethisRevenue" :'@objMessageKey.AreyousureyouwanttodeletethisRevenue',
+        "Revenuedeletedsuccessfully" :'@objMessageKey.Revenuedeletedsuccessfully',
+        "MsgPlaceSearch": '@objMessageKey.Search'
+    }
+</script>
+<script src="~/Custom_Scripts/Syn_Revenue.js"></script>
+@using (Ajax.BeginForm("SaveDeal", "Syn_Revenue", new AjaxOptions { OnSuccess = "Save_Success" }))
+{    
+        <div class="grid_area">
+            <div class="navigation_tabs">
+                <div class="tabbable">
+                    <div class="tab-content clearfix table-wrapper scale_table_container">
+                        <div class="tab-pane active" id="tabCost">
+                            <div class="scale_table_block">
+                                <table class="four_column table style_table">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                @objMessageKey.SyndicationRevenue :
+                                                <span id="lblTotalFixedDealCost"></span>
+                                                <input type="hidden" id="hdnTabName" name="hdnTabName" />
+                                            </td>
+                                            <td>
+                                                @objMessageKey.CurrencyExchangeRate:
+                                                @{
+    bool disTxt = false;
+    if (ViewBag.Mode == GlobalParams.DEAL_MODE_VIEW || ViewBag.Mode == GlobalParams.DEAL_MODE_APPROVE)
+    {
+        disTxt = true;
+    }
+    else
+    {
+        if (ViewBag.Currency == "INR") { disTxt = true; }
+    }
+    string currExRate = Convert.ToString(ViewBag.CurrencyExchangeRate);
+    <input type="text" style="width: 80px;" id="txtCurrencyExchangeRate" value="@currExRate" disabled="@disTxt" onkeyup="UpdateCurrExRate()" />
+                                                    @Html.Hidden("hdnCurrencyExchangeRate", @currExRate)
+                                                }
+                                                @ViewBag.Currency
+                                            </td>
+                                            <td>
+                                                <div class="pull-right">
+                                                    @{if (ViewBag.Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Mode != GlobalParams.DEAL_MODE_APPROVE)
+                                                    {<a title="@objMessageKey.AddRevenue" href="#" class="btn btn-primary" data-toggle="modal" onclick="AddEditRevenue(0,'Add');">@objMessageKey.Add</a>}
+                                                    }
+
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="scale_table_block" id="dvDealSynRevenueList">
+                            </div>
+                            @if (ViewBag.Mode == GlobalParams.DEAL_MODE_APPROVE)
+                            {
+                                @Html.Partial("_Syn_Approved_List")
+                                <br />
+                            }
+                            else
+                            {
+                                <div class="bottom_action">
+                                    <ul class="form_link_nav clearfix">
+                                        @if (ViewBag.Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Mode != GlobalParams.DEAL_MODE_APPROVE)
+                                        {
+                                            <li>
+                                                <input type="submit" id="btnSaveDeal" class="btn btn-primary" value="@objMessageKey.Save">
+                                                <input type="hidden" id="hdnReopenMode" name="hdnReopenMode" value="E" />
+                                            </li>
+                                            if (objSchema.Deal_Workflow_Flag == GlobalParams.DEAL_MODE_REOPEN || objSchema.Mode == GlobalParams.DEAL_MODE_REOPEN)
+                                            {
+                                                <li>
+                                                    <input type="submit" id="btnSaveApproveDeal" class="btn btn-primary" value="@objMessageKey.SaveApprove">
+                                                </li>
+                                            }
+                                            <li>
+                                                <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="CancelSaveDeal()" />
+                                            </li>
+                                        }
+                                        else
+                                        {
+                                            <li>
+                                                <input type="button" id="btnCancel_Deal" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="location.href='@Url.Action("Cancel", "Syn_Revenue")    '" />
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>    
+}
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popAddEditRevenue" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix" id="dvSynDealRevenueList">
+        </div>
+    </div>
+</div>

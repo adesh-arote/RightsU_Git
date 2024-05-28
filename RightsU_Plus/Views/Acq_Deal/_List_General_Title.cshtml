@@ -1,0 +1,727 @@
+﻿@model IEnumerable<RightsU_Entities.Acq_Deal_Movie>
+@using UTOFrameWork.FrameworkClasses
+@using RightsU_Entities;
+@{
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+    string Is_AcqDealDueDiligence = new RightsU_BLL.System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "AcqDealDueDiligence").Select(x => x.Parameter_Value).FirstOrDefault();
+}
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<style>
+    .MoreActionDiv {
+        padding: 2px;
+        background: #ffffff; /*#2B5F8E;*/
+        width: 200px;
+        height: inherit;
+        box-shadow: 0 0 5px #aaa;
+        font-size: 12px;
+        color: #000;
+        text-align: left;
+        position: absolute;
+        z-index: 99;
+        right: 485px;
+        display: none;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        $("input.textbox1").numeric
+            ({
+                allowMinus: false,
+                allowThouSep: true,
+                allowDecSep: true,
+                maxDecimalPlaces: 2,
+                maxPreDecimalPlaces: 3
+            });
+        $('.show_hide').click(function () {
+            debugger
+            $('.MoreActionDiv').slideUp();
+            $(this).parent().find('.MoreActionDiv').slideToggle('fast');
+            return false;
+        });
+    });
+    function hideStarCast() {
+        //debugger
+        $('.MoreActionDiv').hide('slow');
+    }
+    function MoreActionDiv_Hover(tempCount) {
+        debugger
+        // Get the current title
+        var title = $('#show_hide_' + tempCount).attr("data-original-title");
+        // Store it in a temporary attribute
+        $('#show_hide_' + tempCount).attr("tmp_title", title);
+        // Set the title to nothing so we don't see the tooltips
+        $('#show_hide_' + tempCount).attr("data-original-title", "");
+    }
+    function checkAfterDecimal(idthis, evt) {
+        debugger;
+        var v = $('#' + idthis.id).val();
+        var v1 = evt.key;
+        var v2 = v + '' + v1;
+        var v3 = v2.split('.');
+        var v4 = parseInt(v3[1]);
+
+        if (v4 > 59)
+            return false;
+        else
+            return true;
+    }
+</script>
+<div class="sub_block clearfix" onclick="hideStarCast()">
+    <table id="tblMovie" class="table table-bordered table-hover" style="display: table;">
+        <thead>
+            <tr>
+                @if (ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Movie || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Documentary_Film
+                    || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_ShortFlim || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Featurette || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Cineplay
+                    || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Tele_Film || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Drama_Play
+                    )
+                {
+                    <th class="movie" style="width:13%">@ViewBag.Title_Label</th>
+                    <th style="width:12%">@objMessageKey.TitleLanguage</th>
+                    <th style="width:13%">@objMessageKey.Note</th>
+                    <th class="key_cast" style="width:13%">@objMessageKey.StarCast</th>
+                    <th style="width:20%">@ViewBag.Title_Label @objMessageKey.Type</th>
+                    if (Is_AcqDealDueDiligence == "Y")
+                    {
+                        <th style="width:10%">@objMessageKey.DueDiligence</th>
+                    }
+                    <th style="width:9%">
+                        @objMessageKey.DurationInMin
+                    </th>
+                }
+                else if (ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Content || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Event
+                || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Documentary_Show || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Format_Program
+                || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_WebSeries)
+                {
+                    <th class="movie" style="width:18%">@ViewBag.Title_Label</th>
+                    <th style="width:10%">@objMessageKey.TitleLanguage</th>
+                    <th style="width:8%">@objMessageKey.EpsFrom</th>
+                    <th style="width:6%">@objMessageKey.EpsTo</th>
+                    <th style="width:2%">@objMessageKey.Note</th>
+                    <th class="key_cast" style="width:12%">@objMessageKey.StarCast</th>
+                    <th style="width:20%">@ViewBag.Title_Label @objMessageKey.Type</th>
+                    if (Is_AcqDealDueDiligence == "Y")
+                    {
+                        <th style="width:10%">@objMessageKey.DueDiligence</th>
+                    }
+                    <th style="width:10%">
+                        @objMessageKey.DurationInMin
+                    </th>
+
+                }
+                else if (ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Sports)
+                {
+                    <th class="movie" style="width:15%">@ViewBag.Title_Label</th>
+                    <th style="width:12%">@objMessageKey.TitleLanguage</th>
+                    <th style="width:11%">@objMessageKey.MatchesFrom</th>
+                    <th style="width:14%">@objMessageKey.NoofMatches</th>
+                    <th style="width:8%">@objMessageKey.Note</th>
+                    <th style="width:20%">@objMessageKey.SportType</th>
+                    if (Is_AcqDealDueDiligence == "Y")
+                    {
+                        <th>@objMessageKey.DueDiligence</th>
+                    }
+                    <th style="width:11%">
+                        @objMessageKey.DurationInMin
+                    </th>
+                }
+                else if (ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Music || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_ContentMusic)
+                {
+                    <th class="movie" style="width:14%">@ViewBag.Title_Label</th>
+                    <th style="width:12%">@objMessageKey.TitleLanguage</th>
+                    <th style="width:14%">@objMessageKey.Noofsongs</th>
+                    <th style="width:10%">@objMessageKey.Note</th>
+                    <th style="width:22%">@objMessageKey.MusicType</th>
+                    if (Is_AcqDealDueDiligence == "Y")
+                    {
+                        <th style="width:10%">@objMessageKey.DueDiligence</th>
+                    }
+                    if (ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Music)
+                    {
+                        <th style="width:12%">
+                            @objMessageKey.DurationRestrictionMin
+                        </th>
+                        <th style="width:10%">
+                            @objMessageKey.MusicLabel
+                        </th>
+                    }
+                    else
+                    {
+                        <th style="width:23%">
+                            @objMessageKey.DurationInMin
+                        </th>
+                    }
+                }
+                else if (ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Performer || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Writer
+                || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Music_Composer || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_DOP
+                || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Choreographer || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Lyricist
+                || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Director || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_VideoMusic
+                || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Singer || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Other_Talent
+                || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Contestant || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Producer)
+                {
+                    <th class="movie">@ViewBag.Title_Label</th>
+                    <th>Synopsis</th>
+                    if (ViewBag.DealTypeCode_MasterDeal != GlobalParams.Deal_Type_Movie && ViewBag.DealTypeCode_MasterDeal > 0)
+                    {
+                        <th>@objMessageKey.NoofAppearances</th>
+                    }
+                    if (Is_AcqDealDueDiligence == "Y")
+                    {
+                        <th>@objMessageKey.DueDiligence</th>
+                    }
+                    <th>
+                        @objMessageKey.DurationInMin
+                    </th>
+                }
+
+                @if (Model != null)
+                {
+                    if (ViewBag.Deal_Mode == GlobalParams.DEAL_MOVIE_CLOSE || Model.Where(x => x.Is_Closed == "Y" || x.Is_Closed == "X").Count() > 0)
+                    {
+                        <th>Closed Date</th>
+                        <th>Closing Remarks</th>
+                    }
+                }
+
+                @if (ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_APPROVE && ViewBag.Deal_Type_Code > 0)
+                {
+                    <th style="width:10%">@objMessageKey.Action</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+
+                List<Syn_Deal_Movie> lstSynDealMovie = null;
+                bool showCloseTitle = Model.Where(w => w.Is_Closed == "X").Count() > 0 ? true : false;
+                for (int i = 0; i < Model.Count(); i++)
+                {
+                    Acq_Deal_Movie objADM = Model.ElementAt(i);
+                    if (objADM.EntityState != State.Deleted)
+                    {
+                        string titleName = objADM.Title.Title_Name, starCast = "", titleLanguageName = "", duration = "0";
+                        if (string.IsNullOrEmpty(objADM.Title_Type))
+                        {
+                            objADM.Title_Type = "P";
+                        }
+                        if (string.IsNullOrEmpty(objADM.Notes))
+                        {
+                            objADM.Notes = "";
+                        }
+                        if (string.IsNullOrEmpty(objADM.Due_Diligence))
+                        {
+                            objADM.Due_Diligence = "N";
+                        }
+                        string strTitle_type = objADM.Title_Type.Trim() == "P" ? "Premier" : (objADM.Title_Type.Trim() == "L" ? "Library" : "N/A");
+                        string strDue_Diligence = objADM.Due_Diligence.Trim() == "Y" ? "Yes" : "No";
+                        if (objADM.Title.Title_Languages != null)
+                        {
+                            titleLanguageName = objADM.Title.Title_Languages.Language_Name;
+                        }
+
+                        if (objADM.Title.Duration_In_Min != null)
+                        {
+                            duration = objADM.Title.Duration_In_Min.ToString();
+                        }
+                        starCast = string.Join(", ", objADM.Title.Title_Talent.
+                                Where(w => w.Role_Code == GlobalParams.RoleCode_StarCast).OrderBy(o => o.Talent.Talent_Name).Select(s => s.Talent.Talent_Name).ToArray().Distinct());
+                        //var tempStarCast = starCast.First();
+                        <tr id="tblMovie_tr_@i">
+                            <td>
+                                @Html.Label("Acq_Deal_Movie[" + i + "].Title.Title_Name", titleName, new { id = "lblTitleName_" + i })
+                                @if (ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_APPROVE)
+                                {
+                                    @Html.Hidden("Acq_Deal_Movie[" + i + "].Acq_Deal_Movie_Code", objADM.Acq_Deal_Movie_Code, new { id = "hdnAcq_Deal_Movie_Code_" + i })
+                                    @Html.Hidden("Acq_Deal_Movie[" + i + "].Acq_Deal_Code", objADM.Acq_Deal_Code)
+                                    @Html.Hidden("Acq_Deal_Movie[" + i + "].Title_Code", objADM.Title_Code, new { @id = "hdnTitleCode_" + i })
+                                    @Html.Hidden("Acq_Deal_Movie[" + i + "].Dummy_Guid", objADM.Dummy_Guid);
+                                    @Html.Hidden("Acq_Deal_Movie[" + i + "]._Dummy_Guid", objADM._Dummy_Guid, new { id = "hdnDummyGuid_" + i })
+                                    if (ViewBag.Deal_Mode == GlobalParams.DEAL_MODE_CLONE)
+                                    {
+                                        <div id="divTitle_@i" style="display:none">
+                                            <select id="ddlTitle_@i" style="display:none" class="form_input chosen-select"></select>
+                                        </div>
+                                    }
+                                    <input type="hidden" id="hdnMininumEpisodeTo_@i" value="@objADM.MinEpisodeTo" />
+                                    <input type="hidden" id="hdnMaximumEpisodeFrom_@i" value="@objADM.MaxEpisodeFrom" />
+                                }
+                            </td>
+
+                            @if (ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Movie || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Documentary_Film
+                                || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_ShortFlim || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Featurette || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Cineplay
+                                || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Tele_Film || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Drama_Play
+                                )
+                            {
+                                <td>
+                                    @Html.Label("Acq_Deal_Movie[" + i + "].Title.Title_Languages.Language_Name", titleLanguageName, new { id = "lblTitleLangName_" + i })
+                                </td>
+                                <td>
+                                    @if (ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_APPROVE)
+                                    {
+                                        @Html.TextBox("Acq_Deal_Movie[" + i + "].Notes", objADM.Notes, new { @class = "textbox", @id = "txtNotes_" + i, @maxlength = "500" })
+                                        @Html.Hidden("Acq_Deal_Movie[" + i + "].No_Of_Episodes", objADM.No_Of_Episodes)
+                                        @Html.Hidden("Acq_Deal_Movie[" + i + "].Episode_Starts_From", objADM.Episode_Starts_From)
+                                        @Html.Hidden("Acq_Deal_Movie[" + i + "].Episode_End_To", objADM.Episode_End_To)
+                                    }
+                                    else
+                                    {
+                                        <div class="expandable">
+                                            @objADM.Notes
+                                        </div>
+                                    }
+                                </td>
+                                <td>
+                                    <div>
+                                        @if (starCast.Length > 18)
+                                        {
+                                            @starCast.Substring(0, 18)
+
+                                            <a title="@objMessageKey.MoreStarCast" id="show_hide_@i" href="#" class="glyphicon glyphicon-option-vertical show_hide"></a>
+                                            <div id="extent_@i" class="MoreActionDiv" style="display:none;" onmouseover="MoreActionDiv_Hover('@i')">
+                                                <span id="starcast">@starCast</span>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span id="lblStarCast_@i">
+                                                @starCast
+                                            </span>
+                                        }
+                                    </div>
+                                </td>
+                                <td>
+                                    @if (ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_APPROVE && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                                    {
+                                        if ((string)ViewBag.IsMovieType_Premier == "Y")
+                                        {
+                                            <label class="radio-inline">
+                                                @Html.RadioButtonFor(m => objADM.Title_Type, "P", new { id = "rbMovieType_P_" + i, Name = "Acq_Deal_Movie[" + i + "].Title_Type", @checked = "checked" })Premier
+                                            </label>
+                                            <label class="radio-inline">
+                                                @Html.RadioButtonFor(m => objADM.Title_Type, "L", new { id = "rbMovieType_L_" + i, Name = "Acq_Deal_Movie[" + i + "].Title_Type" })Library
+                                            </label>
+                                        }
+                                        else
+                                        {
+                                            <label class="radio-inline">
+                                                @Html.RadioButtonFor(m => objADM.Title_Type, "P", new { id = "rbMovieType_P_" + i, Name = "Acq_Deal_Movie[" + i + "].Title_Type" })Premier
+                                            </label>
+                                            <label class="radio-inline">
+                                                @Html.RadioButtonFor(m => objADM.Title_Type, "L", new { id = "rbMovieType_L_" + i, Name = "Acq_Deal_Movie[" + i + "].Title_Type", @checked = "checked" })Library
+                                            </label>
+                                        }
+                                        <label class="radio-inline">
+                                            @Html.RadioButtonFor(m => objADM.Title_Type, "N", new { id = "rbMovieType_I_" + i, Name = "Acq_Deal_Movie[" + i + "].Title_Type" })N/A
+                                        </label>
+                                    }
+                                    else
+                                    {
+                                        @strTitle_type
+                                    }
+                                </td>
+                                if (Is_AcqDealDueDiligence == "Y")
+                                {
+                                    <td>
+                                        @if (ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_APPROVE && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                                        {
+                                            <label class="radio-inline">
+                                                @Html.RadioButton("Acq_Deal_Movie[" + i + "].Due_Diligence", "Y", objADM.Due_Diligence == "Y", new { id = "rdDueDiligence_Y_" + i })Yes
+                                            </label>
+                                            <label class="radio-inline">
+                                                @Html.RadioButton("Acq_Deal_Movie[" + i + "].Due_Diligence", "N", objADM.Due_Diligence == "N", new { id = "rdDueDiligence_N_" + i })No
+                                            </label>
+                                        }
+                                        else
+                                        {
+                                            @strDue_Diligence
+                                        }
+                                    </td>
+                                }
+                                <td>
+                                    @Html.Label("Acq_Deal_Movie[" + i + "].Title.Duration_In_Min", duration, new { id = "lblDuration_" + i })
+                                </td>
+                            }
+                            else if (ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Content || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Event
+                            || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Documentary_Show || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Format_Program
+                             || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_WebSeries)
+                            {
+                                <td>
+                                    @Html.Label("Acq_Deal_Movie[" + i + "].Title.Title_Languages.Language_Name", titleLanguageName, new { id = "lblTitleLangName_" + i })
+                                </td>
+                                <td>
+                                    @if (ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_APPROVE && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                                    {
+                                        @Html.TextBox("Acq_Deal_Movie[" + i + "].Episode_Starts_From", objADM.Episode_Starts_From, new { @class = "textbox smallTextBox numeric", @id = "txtEpisode_Starts_From_" + i })
+                                    }
+                                    else
+                                    {
+                                        @Convert.ToString(objADM.Episode_Starts_From)
+                                    }
+                                </td>
+                                <td>
+                                    @if (ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_APPROVE && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                                    {
+                                        @Html.TextBox("Acq_Deal_Movie[" + i + "].Episode_End_To", objADM.Episode_End_To, new { @class = "textbox smallTextBox numeric", @id = "txtEpisode_End_To_" + i })
+                                    }
+                                    else
+                                    {
+                                        @Convert.ToString(objADM.Episode_End_To)
+                                    }
+                                </td>
+                                <td>
+                                    @if (ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_APPROVE && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                                    {
+                                        @Html.TextBox("Acq_Deal_Movie[" + i + "].Notes", objADM.Notes, new { @class = "textbox", @id = "txtNotes_" + i, @maxlength = "500" })
+                                        @Html.Hidden("Acq_Deal_Movie[" + i + "].No_Of_Episodes", objADM.No_Of_Episodes)
+                                    }
+                                    else
+                                    {
+                                        <div class="expandable">
+                                            @objADM.Notes
+                                        </div>
+                                    }
+                                </td>
+                                <td>
+                                    <div id="divAction">
+                                        @if (starCast.Length > 12)
+                                        {
+                                            @starCast.Substring(0, 12)
+                                            <a title="@objMessageKey.MoreStarCast" id="show_hide_@i" href="#" class="glyphicon glyphicon-option-vertical show_hide"></a>
+                                            <div id="extent_@i" class="MoreActionDiv" style="right:425px !important" onmouseover="MoreActionDiv_Hover('@i')">
+                                                <span id="starcast">@starCast</span>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span id="lblStarCast_@i">
+                                                @starCast
+                                            </span>
+                                        }
+                                    </div>
+                                    @*<div class="expandable">
+                                            <span id="lblStarCast_@i">@starCast</span>
+                                        </div>*@
+                                </td>
+                                <td>
+                                    @if (ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_APPROVE && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                                    {
+                                        if ((string)ViewBag.IsMovieType_Premier == "Y")
+                                        {
+                                            <label class="radio-inline">
+                                                @Html.RadioButtonFor(m => objADM.Title_Type, "P", new { id = "rbMovieType_P_" + i, Name = "Acq_Deal_Movie[" + i + "].Title_Type", @checked = "checked" })Premier
+                                            </label>
+                                            <label class="radio-inline">
+                                                @Html.RadioButtonFor(m => objADM.Title_Type, "L", new { id = "rbMovieType_L_" + i, Name = "Acq_Deal_Movie[" + i + "].Title_Type" })Library
+                                            </label>
+                                        }
+                                        else
+                                        {
+                                            <label class="radio-inline">
+                                                @Html.RadioButtonFor(m => objADM.Title_Type, "P", new { id = "rbMovieType_P_" + i, Name = "Acq_Deal_Movie[" + i + "].Title_Type" })Premier
+                                            </label>
+                                            <label class="radio-inline">
+                                                @Html.RadioButtonFor(m => objADM.Title_Type, "L", new { id = "rbMovieType_L_" + i, Name = "Acq_Deal_Movie[" + i + "].Title_Type", @checked = "checked" })Library
+                                            </label>
+                                        }
+
+                                        <label class="radio-inline">
+                                            @Html.RadioButtonFor(m => objADM.Title_Type, "N", new { id = "rbMovieType_I_" + i, Name = "Acq_Deal_Movie[" + i + "].Title_Type" })N/A
+                                        </label>
+                                    }
+                                    else
+                                    {
+                                        @strTitle_type
+                                    }
+                                </td>
+                                if (Is_AcqDealDueDiligence == "Y")
+                                {
+                                    <td>
+                                        @if (ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_APPROVE && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                                        {
+                                            <label class="radio-inline">
+                                                @Html.RadioButton("Acq_Deal_Movie[" + i + "].Due_Diligence", "Y", objADM.Due_Diligence == "Y", new { id = "rdDueDiligence_Y_" + i })Yes
+                                            </label>
+                                            <label class="radio-inline">
+                                                @Html.RadioButton("Acq_Deal_Movie[" + i + "].Due_Diligence", "N", objADM.Due_Diligence == "N", new { id = "rdDueDiligence_N_" + i })No
+                                            </label>
+                                        }
+                                        else
+                                        {
+                                            @strDue_Diligence
+                                        }
+                                    </td>
+                                }
+                                <td>
+                                    @Html.Label("Acq_Deal_Movie[" + i + "].Title.Duration_In_Min", duration, new { id = "lblDuration_" + i })
+                                </td>
+                            }
+                            else if (ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Sports || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Music ||
+                                ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_ContentMusic)
+                            {
+                                <td>
+                                    @Html.Label("Acq_Deal_Movie[" + i + "].Title.Title_Languages.Language_Name", titleLanguageName, new { id = "lblTitleLangName_" + i })
+                                </td>
+
+                                if (ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Sports)
+                                {
+                                    <td>
+                                        @Html.TextBox("Acq_Deal_Movie[" + i + "].Episode_Starts_From", objADM.Episode_Starts_From, new { @id = "txtEpisode_Starts_From_" + i, @class = "textbox smallTextBox matchFrom_Sport", @readonly = "readonly" })
+                                    </td>
+                                }
+                                else
+                                {
+                                    @Html.Hidden("Acq_Deal_Movie[" + i + "].Episode_Starts_From", objADM.Episode_Starts_From)
+                                }
+                                <td>
+                                    @if (ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_APPROVE && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                                    {
+                                        bool isChecked = false;
+                                        if (ViewBag.Deal_Type_Code != GlobalParams.Deal_Type_Sports)
+                                        {
+                                            isChecked = (objADM.Episode_End_To == 0);
+                                            @Html.CheckBox("chkUnlimited", isChecked, new { id = "chkUnlimited_" + i, @onclick = "chkUnlimited_OnClick(this, 'txtEpisode_End_To_" + i + "');" })
+                                            <span>@objMessageKey.Unlimited</span>
+                                        }
+                                        if (isChecked)
+                                        {
+                                            @Html.TextBox("Acq_Deal_Movie[" + i + "].Episode_End_To", objADM.Episode_End_To, new { @class = "textbox smallTextBox numeric_music unlimitedMusic", @id = "txtEpisode_End_To_" + i, @readonly = "readonly" });
+                                        }
+                                        else
+                                        {
+                                            @Html.TextBox("Acq_Deal_Movie[" + i + "].Episode_End_To", objADM.Episode_End_To, new { @class = "textbox smallTextBox numeric_music", @id = "txtEpisode_End_To_" + i });
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (objADM.Episode_End_To == 0)
+                                        {
+                                            <span>@objMessageKey.Unlimited</span>
+                                        }
+                                        else
+                                        {
+                                            @Convert.ToString(objADM.Episode_End_To)
+                                        }
+                                    }
+                                </td>
+                                <td>
+                                    @if (ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_APPROVE && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                                    {
+                                        @Html.TextBox("Acq_Deal_Movie[" + i + "].Notes", objADM.Notes, new { @class = "textbox", @id = "txtNotes_" + i, @maxlength = "500" })
+                                        @Html.Hidden("Acq_Deal_Movie[" + i + "].No_Of_Episodes", objADM.No_Of_Episodes)
+                                    }
+                                    else
+                                    {
+                                        <div class="expandable">
+                                            @objADM.Notes
+                                        </div>
+                                    }
+                                </td>
+                                <td>
+                                    @if (ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_APPROVE && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                                    {
+                                        if ((string)ViewBag.IsMovieType_Premier == "Y")
+                                        {
+                                            <label class="radio-inline">
+                                                @Html.RadioButtonFor(m => objADM.Title_Type, "P", new { id = "rbMovieType_P_" + i, Name = "Acq_Deal_Movie[" + i + "].Title_Type", @checked = "checked" })Premier
+                                            </label>
+                                            <label class="radio-inline">
+                                                @Html.RadioButtonFor(m => objADM.Title_Type, "L", new { id = "rbMovieType_L_" + i, Name = "Acq_Deal_Movie[" + i + "].Title_Type" })Library
+                                            </label>
+                                        }
+                                        else
+                                        {
+                                            <label class="radio-inline">
+                                                @Html.RadioButtonFor(m => objADM.Title_Type, "P", new { id = "rbMovieType_P_" + i, Name = "Acq_Deal_Movie[" + i + "].Title_Type" })Premier
+                                            </label>
+                                            <label class="radio-inline">
+                                                @Html.RadioButtonFor(m => objADM.Title_Type, "L", new { id = "rbMovieType_L_" + i, Name = "Acq_Deal_Movie[" + i + "].Title_Type", @checked = "checked" })Library
+                                            </label>
+                                        }
+
+                                        <label class="radio-inline">
+                                            @Html.RadioButtonFor(m => objADM.Title_Type, "N", new { id = "rbMovieType_I_" + i, Name = "Acq_Deal_Movie[" + i + "].Title_Type" })N/A
+                                        </label>
+                                    }
+                                    else
+                                    {
+                                        @strTitle_type
+                                    }
+                                </td>
+                                if (Is_AcqDealDueDiligence == "Y")
+                                {
+                                    <td>
+                                        @if (ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_APPROVE && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                                        {
+                                            <label class="radio-inline">
+                                                @Html.RadioButton("Acq_Deal_Movie[" + i + "].Due_Diligence", "Y", objADM.Due_Diligence == "Y", new { id = "rdDueDiligence_Y_" + i })Yes
+                                            </label>
+                                            <label class="radio-inline">
+                                                @Html.RadioButton("Acq_Deal_Movie[" + i + "].Due_Diligence", "N", objADM.Due_Diligence == "N", new { id = "rdDueDiligence_N_" + i })No
+                                            </label>
+                                        }
+                                        else
+                                        {
+                                            @strDue_Diligence
+                                        }
+                                    </td>
+                                }
+                                <td>
+                                    @if (ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Music && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_APPROVE)
+                                    {
+                                        @Html.TextBox("Acq_Deal_Movie[" + i + "].Duration_Restriction", objADM.Duration_Restriction, new { @class = "textbox1", @id = "lblDuration_" + i, @maxlength = "7", @onkeypress = "return checkAfterDecimal(this,event)" })
+                                    }
+                                    else if (ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Music)
+                                    {
+                                        @Html.Label("Acq_Deal_Movie[" + i + "].Duration_Restriction", Convert.ToString(objADM.Duration_Restriction), new { @id = "lblDuration_" + i })
+                                    }
+                                    else
+                                    {
+                                        @Html.Label("Acq_Deal_Movie[" + i + "].Title.Duration_In_Min", duration, new { id = "lblDuration_" + i })
+                                    }
+                                </td>
+                                if (ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Music)
+                                {
+                                    <td>
+                                        @{
+                                            string musicLabelName = "";
+                                            if (objADM.Title.Music_Label_Code > 0)
+                                            {
+                                                musicLabelName = new RightsU_BLL.Music_Label_Service(objLoginEntity.ConnectionStringName).GetById((int)objADM.Title.Music_Label_Code).Music_Label_Name;
+                                            }
+                                        }
+                                        <span>@musicLabelName</span>
+                                    </td>
+                                }
+                            }
+                            else if (ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Performer || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Writer
+                            || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Music_Composer || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_DOP
+                            || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Choreographer || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Lyricist
+                            || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Director || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_VideoMusic
+                            || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Singer || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Other_Talent
+                            || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Contestant || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Producer
+                            || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_ShortFlim)
+                            {
+                                <td>
+                                    @Html.Label("Acq_Deal_Movie[" + i + "].Title.Synopsis", objADM.Title.Synopsis)
+                                    @Html.Hidden("Acq_Deal_Movie[" + i + "].Notes", objADM.Notes)
+                                    @Html.Hidden("Acq_Deal_Movie[" + i + "].Title_Type", objADM.Title_Type)
+                                    @Html.Hidden("Acq_Deal_Movie[" + i + "].Episode_Starts_From", objADM.Episode_Starts_From)
+                                    @Html.Hidden("Acq_Deal_Movie[" + i + "].Episode_End_To", objADM.Episode_End_To)
+                                </td>
+                                if (ViewBag.DealTypeCode_MasterDeal != GlobalParams.Deal_Type_Movie)
+                                {
+                                    <td>
+                                        @if (ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_APPROVE && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                                        {
+                                            @Html.TextBox("Acq_Deal_Movie[" + i + "].No_Of_Episodes", objADM.No_Of_Episodes, new { @class = "textbox smallTextBox numeric", @id = "txtNo_Of_Episodes_" + i })
+                                        }
+                                        else
+                                        {
+                                            @Convert.ToString(objADM.No_Of_Episodes)
+                                        }
+                                    </td>
+                                }
+                                if (Is_AcqDealDueDiligence == "Y")
+                                {
+                                    <td>
+                                        @if (ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_APPROVE && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                                        {
+                                            <label class="radio-inline">
+                                                @Html.RadioButton("Acq_Deal_Movie[" + i + "].Due_Diligence", "Y", objADM.Due_Diligence == "Y", new { id = "rdDueDiligence_Y_" + i })Yes
+                                            </label>
+                                            <label class="radio-inline">
+                                                @Html.RadioButton("Acq_Deal_Movie[" + i + "].Due_Diligence", "N", objADM.Due_Diligence == "N", new { id = "rdDueDiligence_N_" + i })No
+                                            </label>
+                                        }
+                                        else
+                                        {
+                                            @strDue_Diligence
+                                        }
+                                    </td>
+                                }
+                                <td>
+                                    @Html.Label("Acq_Deal_Movie[" + i + "].Title.Duration_In_Min", duration, new { id = "lblDuration_" + i })
+                                </td>
+                            }
+                            @if (ViewBag.Deal_Mode == GlobalParams.DEAL_MOVIE_CLOSE || Model.Where(x => x.Is_Closed == "Y" || x.Is_Closed == "X").Count() > 0)
+                            {
+                                DateTime dtCloseDate = Convert.ToDateTime(objADM.Movie_Closed_Date);
+                                string closeDate_display = "", closeDate = "", closingRemark = "";
+
+                                if (!string.IsNullOrEmpty(objADM.Closing_Remarks))
+                                {
+                                    closingRemark = objADM.Closing_Remarks;
+                                }
+
+                                if (dtCloseDate != DateTime.MinValue)
+                                {
+                                    closeDate_display = dtCloseDate.ToString(GlobalParams.DateFormat_Display);
+                                    closeDate = dtCloseDate.ToString(GlobalParams.DateFormat);
+                                }
+
+                                <td>
+                                    <span id="lblMovie_Closed_Date_@i" name="Acq_Deal_Movie[@i].Movie_Closed_Date">@closeDate_display</span>
+                                    @if (ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_APPROVE && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                                    {
+                                        @Html.TextBox("Acq_Deal_Movie[" + i + "].Movie_Closed_Date", closeDate,
+                                                                           new { id = "txtMovie_Closed_Date_" + i, style = "display:none", @class = "isDatepicker shortDate" })
+                                        @Html.Hidden("hdnTitleClosedDate", closeDate, new { id = i + "_hdnTitleClosedDate" })
+                                    }
+                                </td>
+                                <td>
+                                    <div class="expandable" id="divClosing_Remarks_@i">
+                                        <span id="lblClosing_Remarks_@i" name="Acq_Deal_Movie[@i].Closing_Remarks">@closingRemark</span>
+                                    </div>
+                                    @if (ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_APPROVE && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                                    {
+                                        @Html.TextArea("Acq_Deal_Movie[" + i + "].Closing_Remarks", objADM.Closing_Remarks
+                                                                       , new { id = "txtClosing_Remarks_" + i, style = "display:none", @class = "textarea", @maxlength = "5000" })
+                                    }
+                                </td>
+
+                            }
+                            @if (ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_APPROVE && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
+                            {
+                                <td>
+                                    @{
+                                        string isClosed = objADM.Is_Closed;
+                                        isClosed = (string.IsNullOrEmpty(isClosed)) ? "N" : isClosed;
+
+                                        if ((ViewBag.Deal_Mode == GlobalParams.DEAL_MOVIE_CLOSE || (ViewBag.Deal_Mode == GlobalParams.DEAL_MODE_EDIT && isClosed.Equals("X"))
+                                            || showCloseTitle) && !isClosed.Equals("Y"))
+                                        {
+                                            var confirmMsg_CloseTitle = "Are you sure, you want to close this title ?";
+                                            confirmMsg_CloseTitle = (isClosed.Equals("N")) ? confirmMsg_CloseTitle : "Are you sure, you want to edit Title close date ?";
+                                            var title = (isClosed.Equals("N")) ? "Close Title" : "Edit Close Title";
+                                            <a title='@title' href="#" id="btnCloseTitle_@i" class="glyphicon glyphicon-copyright-mark" onclick="Ask_Confirmation('@confirmMsg_CloseTitle','@objADM.Dummy_Guid', @i, 'CLOSE_TITLE')"></a>
+                                            <a title="@objMessageKey.Save" href="#" id="btnSave_@i" class="glyphicon glyphicon-ok-circle" onclick="tblMovie_RowCommand('@objADM.Dummy_Guid', @i, 'SAVE_CLOSED_TITLE')" , style="display:none"></a>
+                                            <a title="@objMessageKey.Cancel" href="#" id="btnCancel_@i" class="glyphicon glyphicon-remove-circle" onclick="tblMovie_RowCommand('@objADM.Dummy_Guid', @i, 'CANCEL_CLOSE_TITLE')" , style="display:none"></a>
+                                        }
+                                        else if (ViewBag.Deal_Mode == GlobalParams.DEAL_MODE_CLONE)
+                                        {
+                                            <a title='@objMessageKey.Replace' href="#" id="btnReplace_@i" class="glyphicon glyphicon-sort replace" onclick="Ask_Confirmation('Are you sure, you want to replace this title ?', '@objADM.Dummy_Guid', @i, 'REPLACE_TITLE')"></a>
+                                            <a title="@objMessageKey.Save" href="#" id="btnSave_@i" class="glyphicon glyphicon-ok-circle" onclick="tblMovie_RowCommand('@objADM.Dummy_Guid', @i, 'SAVE_REPLACE_TITLE')" , style="display:none"></a>
+                                            <a title="@objMessageKey.Cancel" href="#" id="btnCancel_@i" class="glyphicon glyphicon-remove-circle" onclick="tblMovie_RowCommand('@objADM.Dummy_Guid', @i, 'CANCEL_REPLACE_TITLE')" , style="display:none"></a>
+                                        }
+
+                                        <a title="@objMessageKey.Delete" href="#" id="btnDelete_@i" class="glyphicon glyphicon-trash" onclick="Ask_Confirmation('Are you sure, you want to delete this record ?', '@objADM.Dummy_Guid', @i, 'DELETE')"></a>
+                                    }
+                                </td>
+                            }
+                        </tr>
+                    }
+                }
+            }
+        </tbody>
+    </table>
+</div>
+

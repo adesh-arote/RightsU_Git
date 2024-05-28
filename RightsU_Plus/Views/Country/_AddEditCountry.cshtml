@@ -1,0 +1,108 @@
+﻿@model RightsU_Entities.Country
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    } 
+}
+<div class="modal_block modal_header">
+    <a class="close" onclick="ClosePopup()">
+        <span>X</span>
+        <span class="sr-only">Close</span>
+    </a>
+    @if (Model.Country_Code > 0)
+    {
+        <h2>@objMessageKey.EditCountryDetails</h2>
+    }
+    else
+    {
+        <h2>@objMessageKey.AddCountryDetails</h2>
+    }
+</div>
+@using (Ajax.BeginForm("SaveCountry", "Country", new AjaxOptions() { OnSuccess = "SaveSuccess" }))
+{
+    <div class="modal_block sty" style="margin-left: 10px;margin-right: 10px;">
+        <table class="add_title_popup">
+            <tr>
+                <td style="width:25%"><b>@objMessageKey.CountryName</b></td>
+                <td style="width:75%">
+                    <input type="text" id="txtCountryName" name="Country_Name" value="@Model.Country_Name" placeholder="@objMessageKey.CountryName" maxlength="100" class="form-control input-sm" style="width:95%" />
+                    <input type="hidden" id="hdnCountryCode" name="Country_Code" value="@Model.Country_Code" />
+                    <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
+                </td>
+            </tr>
+            <tr>
+                <td><b>@objMessageKey.Language</b></td>
+                <td>
+                        @Html.DropDownList("ddlLanguage", ViewBag.LanguageList as MultiSelectList, new { @id = "ddlLanguage", @multiple = "multiple" })
+                </td>
+            </tr>
+            <tr>
+                <td><b>@objMessageKey.TheatricalTerritory</b></td>
+                <td>
+                    @if ((Model.Is_Theatrical_Territory ?? "N") == "Y")
+                    {
+                        <input type="checkbox" id="chkTheatricalTerritory" value="Y" name="IsTheatricalTerritory" checked="checked" onchange="TheatricalTerritory_OnChange()" />
+                    }
+                    else
+                    {
+                        <input type="checkbox" id="chkTheatricalTerritory" name="IsTheatricalTerritory" onchange="TheatricalTerritory_OnChange()" />
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td><b>@objMessageKey.BaseCountry</b></td>
+                <td>
+                    @{
+                    string displayStyle_divBC = "";
+                    string displayStyle_divCL = "display:none;";
+                    if ((Model.Is_Theatrical_Territory ?? "N") == "Y")
+                    {
+                        displayStyle_divBC = "display:none;";
+                        displayStyle_divCL = "";
+                    }
+                    }
+                    <div id="divBC_YN" style="@displayStyle_divBC">
+                        @if ((Model.Is_Domestic_Territory ?? "N") == "Y")
+                        {
+                            <input type="radio" id="IsDomesticTerritory_Yes" value="Y" name="IsDomesticTerritory" checked="checked" /><text> @objMessageKey.Yes</text>
+                            <input type="radio" id="IsDomesticTerritory_No" value="N" name="IsDomesticTerritory" /><text> @objMessageKey.NO</text>
+
+
+
+                        }
+                        else
+                        {
+                            if (Model.Base_Country_Count > 0)
+                            {
+                                <input type="radio" id="IsDomesticTerritory_Yes" value="Y" name="IsDomesticTerritory" disabled="disabled" /><text> @objMessageKey.Yes</text>
+                                <input type="radio" id="IsDomesticTerritory_No" value="N" name="IsDomesticTerritory" checked="checked" disabled="disabled" /><text> @objMessageKey.NO</text>
+                            }
+                            else
+                            {
+                                <input type="radio" id="IsDomesticTerritory_Yes" value="Y" name="IsDomesticTerritory" /><text> @objMessageKey.Yes</text>
+                                <input type="radio" id="IsDomesticTerritory_No" value="N" name="IsDomesticTerritory" checked="checked" /><text> @objMessageKey.NO</text>
+                            }
+                        }
+
+                    </div>
+                    <div id="divBC_List" style="@displayStyle_divCL">
+                        @Html.DropDownList("ddlCountry", ViewBag.BaseCountryList as SelectList, "Select", new { @id = "ddlCountry", @class = "form_input chosen-select" })
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+    </div>
+    <div class="modal_block_full" style="margin-top: 10px;">
+        <div class="form_links">
+            <ul class="modal_block clearfix" style="padding-left:10px; padding-top: 10px;">
+                <li>
+                    <input type="submit" class="btn btn-primary" value="@objMessageKey.Save" onclick="return ValidateSave()" />
+                    <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="ClosePopup()" />
+                </li>
+            </ul>
+        </div>
+    </div>
+}

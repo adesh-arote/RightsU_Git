@@ -1,0 +1,83 @@
+﻿@model List<RightsU_Entities.Music_Title_Label>
+@using UTOFrameWork.FrameworkClasses;
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+    
+}
+
+<script>
+    function Cancel() {
+        debugger;
+        $('#hdnMusicLabelCode').val('');
+        BindMusicLabelHistory(0,"");
+    }
+</script>
+<input type="hidden" id="hdnMusicLabelCode" value="0" />
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>@objMessageKey.MusicLabel</th>
+            <th>@objMessageKey.EffectiveFrom</th>
+            <th>@objMessageKey.EffectiveTo</th>
+            <th>@objMessageKey.Action</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @if (Model != null)
+        {
+            foreach (var item in Model)
+            {
+                string strEF = "", strET = "";
+                if (ViewBag.CommandName == "EDIT" && ViewBag.MusicLabelCode == item.Music_Label_Code)
+                {
+                    <tr>
+                        <td>@item.Music_Label.Music_Label_Name</td>
+                        <td><input type="text" id="txtEffectiveFrom_@item.Music_Label_Code" class="isDatepicker"  value='@string.Format("{0:" + GlobalParams.DateFormat + "}", item.Effective_From)' placeholder="DD/MM/YYYY" style="width:150px;line-height: initial;"/>
+                            </td>
+                        @*<td><input type="date" id="txtEffectiveFrom_@item.Music_Label_Code"   
+                              value='@string.Format("{0:" + GlobalParams.DateFormat + "}", item.Effective_From)' placeholder="DD/MM/YYYY" /> </td>*@
+                        <td>@strET</td>
+                        <td>
+                            <a title="@objMessageKey.Update" class="glyphicon glyphicon-ok-circle" onclick="SaveMusicLabelHistory(@item.Music_Label_Code)"></a>
+                            <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" onclick="Cancel()"></a>
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    if (item.Effective_From != null && item.Effective_To == null)
+                    {
+                        strEF = Convert.ToDateTime(item.Effective_From).ToString(GlobalParams.DateFormat_Display);
+                        <tr>
+                            <td>@item.Music_Label.Music_Label_Name</td>
+                            <td>@strEF</td>
+                            <td>@strET</td>
+                            <td><a title="@objMessageKey.Edit" id="Edit" class="glyphicon glyphicon-pencil" style="cursor:pointer;" onclick="EditMusicLabel_OnClick(@item.Music_Label_Code, 'EDIT')"></a></td>
+                        </tr>
+                    }
+                    if (item.Effective_From != null && item.Effective_To != null)
+                    {
+                        strEF = Convert.ToDateTime(item.Effective_From).ToString(GlobalParams.DateFormat_Display);
+                        strET = Convert.ToDateTime(item.Effective_To).ToString(GlobalParams.DateFormat_Display);
+                        <tr>
+                            <td>@item.Music_Label.Music_Label_Name</td>
+                            <td>
+                                @strEF
+                            </td>
+                            <td>@strET</td>
+                            <td></td>
+                        </tr>
+                    }
+                }
+            }
+        }
+    </tbody>
+</table>
+<input type="hidden" id="hdnEffectiveFrom" value="@ViewBag.HdnEffectiveFrom" />

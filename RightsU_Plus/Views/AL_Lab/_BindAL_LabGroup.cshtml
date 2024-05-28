@@ -1,0 +1,95 @@
+﻿@model IEnumerable<RightsU_Entities.AL_Lab>
+
+<style>
+    td {
+        text-align: center;
+    }
+</style>
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th style="width: 30%">
+                Lab Name
+            </th>
+            <th style="width: 30%">
+                Lab Short Name
+            </th>
+            <th style="width: 30%">
+                Contact Person
+            </th>
+            <th style="width: 10%">
+                Actions
+            </th>
+        </tr>
+    </thead>
+    @{
+        if (ViewBag.CommandName == "ADD")
+        {
+            <tr>
+                <td>
+                    <input autocomplete="off" type="text" id="AL_Lab_Name" style="width:75%" />
+                </td>
+                <td>
+                    <input autocomplete="off" type="text" id="AL_Lab_Short_Name" style="width:75%" />
+                </td>
+                <td>
+                    <input autocomplete="off" type="text" id="AL_Lab_Contact_Person" style="width:75%" />
+                </td>
+                <td>
+                    <a title="Save" class="glyphicon glyphicon-ok-circle" onclick="SaveAL_Lab(0)"></a>
+                    <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="AL_LabCancel()"></a>
+                </td>
+            </tr>
+        }
+    }
+
+    @foreach (var item in Model)
+    {
+
+        <tr>
+            @if (ViewBag.CommandName == "EDIT" && ViewBag.AL_LabCode == item.AL_Lab_Code)
+            {
+                <td style="display: none">
+                    <input autocomplete="off" type="text" id="AL_Lab_Code" value="@item.AL_Lab_Code" />
+                </td>
+
+                <td>
+                    <input autocomplete="off" type="text" id="AL_Lab_Name" value="@item.AL_Lab_Name" style="width:75%" />
+                </td>
+
+                <td>
+                    <input autocomplete="off" type="text" id="AL_Lab_Short_Name" value="@item.AL_Lab_Short_Name" style="width:75%" />
+                </td>
+                <td>
+                    <input autocomplete="off" type="text" id="AL_Lab_Contact_Person" value="@item.Contact_Person" style="width:75%" />
+                </td>
+                <td>
+                    <a title="Save" class="glyphicon glyphicon-ok-circle" onclick="SaveAL_Lab(@item.AL_Lab_Code)"></a>
+                    <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="AL_LabCancel()"></a>
+                </td>
+            }
+            else
+            {
+                <td>
+                    @Html.DisplayFor(modelItem => item.AL_Lab_Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AL_Lab_Short_Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Contact_Person)
+                </td>
+                <td>
+                    <a title="Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer" onclick="CheckRecordLock('EDIT', '@item.AL_Lab_Code')"></a>
+                    <a title="Delete" class="glyphicon glyphicon-trash" style="cursor: pointer" onclick="DeleteAL_Lab('@item.AL_Lab_Code')"></a>
+                </td>
+
+            }
+        </tr>
+    }
+
+</table>
+
+
+

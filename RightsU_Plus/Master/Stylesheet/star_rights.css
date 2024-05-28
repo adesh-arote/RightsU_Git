@@ -1,0 +1,1040 @@
+
+body {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    /*
+    scrollbar-face-color:#b4b4b4;
+    scrollbar-highlight-color:#f3f3f3;
+    scrollbar-shadow-color:#f3f3f3;
+    scrollbar-dark-shadow-color:#ffffff;
+    scrollbar-3d-light-color:#b4b4b4;
+    */
+    background-color: #FFFFFF;
+    scrollbar-base-color: #0B5CB5;
+    scrollbar-arrow-color: #FFFFFF;
+}
+
+.bottomBand {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 10px;
+    color: #ECF5FF;
+    background-color: #0071BC;
+}
+
+.modalBackground, .modalBackground1 {
+    background-color: Gray;
+    filter: alpha(opacity=90);
+    opacity: 0.9;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    position: absolute;
+}
+
+.mystyle {
+    background-color: #FAFFC0;
+    font-weight: lighter;
+    color: Black;
+}
+
+.tabBorder {
+    max-height: 420px;
+    border-top: 10px solid #0051AD;
+    border-right: 3px solid #0051AD;
+    border-left: 3px solid #0051AD;
+    border-bottom: 3px solid #0051AD;
+    vertical-align: top;
+}
+
+.tabBorder1 {
+    max-height: 350px;
+    border-top: 10px solid #0051AD;
+    border-right: 3px solid #0051AD;
+    border-left: 3px solid #0051AD;
+    border-bottom: 3px solid #0051AD;
+    vertical-align: top;
+}
+
+.tabBorderRun {
+    height: 10px;
+    border-top: 15px solid #0051AD;
+    border-right: 3px solid #0051AD;
+    border-left: 3px solid #0051AD;
+    border-bottom: 3px solid #0051AD;
+    vertical-align: top;
+}
+
+.tblBorder {
+    border-top: 1px solid #0051AD;
+    border-right: 1px solid #0051AD;
+    border-left: 1px solid #0051AD;
+    border-bottom: 1px solid #0051AD;
+    vertical-align: top;
+    background-color: #CCF2FF;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: #535353;
+}
+
+.tbBg {
+    background-color: #CCF2FF;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: #535353;
+}
+
+.menuBand {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 11px;
+    color: #FFFFFF;
+    font-weight: bold; /*background-color:#336699; 	filter:progid:DXImageTransform.Microsoft.Gradient( 	GradientType=1,StartColorStr='#336699',EndColorStr='#6397CB');}  	position: relative;*/
+}
+
+.tabBorder2 {
+    border-bottom: 3px solid #0051AD;
+    vertical-align: top;
+}
+
+.tabBorder3 {
+    border-top: 15px solid #0051AD;
+    border-bottom: 3px solid #0051AD;
+    vertical-align: top;
+}
+
+.tabBorder4 {
+    border-top: 15px solid #0051AD;
+    vertical-align: top;
+}
+
+.tabbottomBorder {
+    background-color: #0051AD;
+}
+
+.whiteBG {
+    background-color: #FFFFFF;
+}
+
+.bold {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: #000000;
+    font-weight: bold;
+    background-color: #AAD5FF;
+}
+
+.white {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: #FFFFFF;
+}
+
+.error {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: #FF0000;
+}
+
+.lblmandatory {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 10px;
+    color: #FF0000;
+}
+
+.normal {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: #535353;
+}
+
+.normal1 {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: #535353;
+    text-align: center;
+}
+
+.search {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: #535353;
+    background-color: #7DDBFD;
+}
+
+.searchborder {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: #535353;
+    background-color: #7DDBFD;
+    border: 1px solid #FFFFFF;
+}
+
+.paging {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 10px;
+    color: #FFFFFF;
+    border-collapse: collapse;
+    background-color: #03B8EF;
+    border: 1px solid #FFFFFF;
+}
+
+.pagingborder {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: #FFFFFF;
+    background-color: #03B8EF;
+    border: 1px solid #FFFFFF;
+}
+
+.tdHead {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: #FFFFFF;
+    border: 1px solid #FFFFFF;
+    background-color: #0976C9;
+    /*text-align: center;*/
+    text-align: left;
+    font-weight: bold;
+}
+
+.justify {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: #535353;
+    text-align: justify;
+}
+
+th {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    border: 1px solid #FFFFFF;
+    background-color: #0976C9;
+    color: #FFFFFF;
+    text-align: center;
+    font-weight: bold;
+}
+
+.th1 {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    border: 1px solid #FFFFFF;
+    background-color: #0976C9;
+    color: #FFFFFF;
+    text-align: center;
+    font-weight: bold;
+}
+
+.tableHd {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    border: 1px solid #FFFFFF;
+    background-color: #FFCC00;
+    color: #000000;
+    text-align: center;
+    font-weight: bold;
+}
+
+.th2 {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    border: 1px solid #FFFFFF;
+    background-color: #FFCC00;
+    color: #000000;
+    text-align: center;
+    font-weight: bold;
+}
+
+.tableHead {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    border: 1px solid #ababaa;
+    background-color: #2B9ADD;
+    color: #FFFFFF;
+}
+
+.tableHead1 {
+    font-weight: bold;
+    font-size: 12px;
+    color: #5F5F5F;
+    font-family: Arial,Helvetica,sans-serif;
+    border-left: 1px solid #ababaa;
+    border-top: 1px solid #ababaa;
+    background-color: #D9ECFF;
+    text-align: center;
+}
+
+.smalltext {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 10px;
+    color: #535353;
+}
+
+.head {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: #FFFFFF;
+    font-weight: bold;
+    background-color: #05377E;
+}
+
+.head1 {
+    font-family: rial,Helvetica,sans-serif;
+    font-size: 12px;
+    background-color: #0181E6;
+    color: #FFFFFF;
+    font-weight: bold;
+}
+
+.head2 {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    background-color: #0051AD;
+    color: #FFFFFF;
+    font-weight: bold;
+}
+
+table.main {
+    border-collapse: collapse;
+    border: 1px solid #0672BA;
+    background-color: #CCF2FF;
+}
+
+table.main1 {
+    border-collapse: collapse;
+    border-right: 3px solid #0051AD;
+    border-left: 3px solid #0051AD;
+    border-bottom: 3px solid #0051AD;
+    vertical-align: top;
+    background-color: #CCF2FF;
+}
+
+table.main2 {
+    border-collapse: collapse;
+    border: 1px solid #ffffff;
+    background-color: #CCF2FF;
+}
+
+td.border {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: #535353;
+    border: 1px solid #FFFFFF;
+}
+
+td.border1 {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: #535353;
+    border: 1px solid #ababaa;
+}
+
+td.border2 {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: #535353;
+    background-color: #E8DF7B;
+    border: 1px solid #ababaa;
+}
+
+td.borderSmall {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 11px;
+    color: #535353;
+    border: 1px solid #ababaa;
+}
+
+.band1 {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: #FFFFFF;
+    background-color: #03B8EF;
+    border: 1px solid #FFFFFF;
+}
+
+.band2 {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: #FFFFFF;
+    background-color: #03B8EF; /*border:1px solid #ababaa; */
+    font-weight: bold;
+}
+
+.band3 {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: #535353;
+    background-color: #7DDBFD;
+}
+
+.blank {
+    background-color: transparent;
+}
+
+.highlight {
+    background-color: #AAEAFF;
+    cursor: pointer;
+}
+
+tr.rowBg {
+    background-color: #AAEAFF;
+}
+
+input.text {
+    border: 1px solid;
+    color: #535353;
+    font-size: 12px;
+    vertical-align: Middle;
+    font-family: Arial,Helvetica,sans-serif;
+}
+
+/*Added by Dada on 18Jan2013 for Applying CSS for currency textbox*/
+input.textCurrency {
+    border: 1px solid;
+    color: #535353;
+    font-size: 12px;
+    vertical-align: Middle;
+    font-family: Arial,Helvetica,sans-serif;
+    border-radius: 20px;
+}
+
+    input.textCurrency:focus {
+        border: 1px solid #880;
+        background-color: #ff8;
+    }
+
+/*Added by Dada on 25Jan2013 for Applying CSS for Search textbox*/
+input.textSearch {
+    background-image: url('../images/search.jpg');
+    background-repeat: no-repeat;
+    background-position: left top;
+    padding-left: 25px;
+    border: 1px solid #939393;
+    width: 200px;
+    /*height:25px;*/
+    color: #535353;
+    font-size: 12px;
+    vertical-align: Middle;
+    font-family: Arial,Helvetica,sans-serif;
+}
+/*End Added by Dada on 25Jan2013 for Applying CSS for Search textbox*/
+
+input.text1 {
+    border: 1px solid;
+    color: #535353;
+    font-size: 12px;
+    vertical-align: Middle;
+    font-family: Arial,Helvetica,sans-serif;
+    text-align: right;
+}
+
+input.amt {
+    border: 1px solid;
+    color: #535353;
+    font-size: 12px;
+    text-align: right;
+    font-family: Arial,Helvetica,sans-serif;
+}
+
+input.text2 {
+    border: 0px solid;
+    color: #535353;
+    font-size: 12px;
+    vertical-align: Middle;
+    background-color: #F4F4F4;
+    font-weight: bold;
+    font-family: Arial,Helvetica,sans-serif;
+    text-align: left;
+}
+
+input.text3 {
+    border: 0px solid;
+    color: #535353;
+    font-size: 12px;
+    vertical-align: Middle;
+    font-family: Arial,Helvetica,sans-serif;
+    text-align: left;
+    background-color: transparent;
+}
+
+input.text4 {
+    border: 0px solid;
+    color: #535353;
+    font-size: 12px;
+    vertical-align: Middle;
+    font-family: Arial,Helvetica,sans-serif;
+    text-align: right;
+    background-color: transparent;
+}
+
+input.text5 {
+    border: 0px solid;
+    color: #535353;
+    font-size: 12px;
+    vertical-align: Middle;
+    font-family: Arial,Helvetica,sans-serif;
+    background-color: transparent;
+    text-align: center;
+}
+
+input.textbox_rupee {
+    font-family: Rupee Foradian;
+    font-size: 14px;
+    color: #535353;
+    border: 1px solid;
+    vertical-align: Middle;
+}
+
+input.textbox_rupee2 {
+    font-family: Rupee Foradian;
+    font-size: 14px;
+    color: #535353;
+    border: 0px solid;
+    vertical-align: Middle;
+    background-color: transparent;
+    text-align: left;
+}
+
+.welcome {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 11px;
+    color: #FFFFFF;
+    background-color: #07B4BB;
+}
+
+.button {
+    font-size: 12px;
+    color: #FFFFFF; /*border-top-color:#D3D3D3; 	border-left-color:#D3D3D3;*/
+    border-bottom: thin solid #535353;
+    border-right: thin solid #535353;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #0976C9; /*vertical-align: Middle; 	font-weight:bold; */ /*border-style:outset;*/
+    cursor: pointer;
+    border-left-width: thin;
+    border-top-width: thin;
+    margin-right: 2px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    padding-top: 2px;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-bottom: 2px;
+}
+
+    .button:disabled {
+        text-shadow: 1px 1px 0px #fff;
+        color: #aaa;
+        cursor: default;
+    }
+
+.pagingbtn {
+    font-size: 12px;
+    color: #464646;
+    border: 0px solid;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: transparent;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+    .pagingbtn:disabled {
+        color: #ddd;
+        cursor: default;
+        text-decoration: underline;
+    }
+
+.checkbox {
+    font-family: inherit;
+    font-size: 12px;
+    color: #535353;
+    cursor: pointer;
+}
+
+.radio {
+    font-family: inherit;
+    font-size: 12px;
+    color: #535353;
+    cursor: pointer;
+}
+
+input[type="radio"], input[type="checkbox"] {
+    cursor: pointer;
+}
+
+select.select {
+    font-family: inherit;
+    font-size: 12px;
+    color: #535353;
+}
+
+.textarea {
+    /*
+	border-top:1px solid #dbdbdb;
+	border-right:1px solid #dbdbdb;
+	border-bottom:1px solid #dbdbdb;
+	border-left:11px solid #ccc8cc;
+	border: 1px solid #535353;
+	scrollbar-base-color: #FFFFFF;
+	scrollbar-arrow-color: #535353;
+	scrollbar-3dlight-color: #FFFFFF;
+	scrollbar-darkshadow-color: #FFFFFF;
+	scrollbar-face-color: #FFFFFF;
+	scrollbar-highlight-color: #FFFFFF;
+	scrollbar-shadow-color: #FFFFFF;
+	scrollbar-border-color: #FFFFFF;
+	*/
+    padding: 5px;
+    background-color: #FFFFFF;
+    color: #535353;
+    font-family: inherit;
+    font-size: 12px;
+    border: 2px solid #cccccc;
+    -webkit-border-top-left-radius: 8px;
+    -moz-border-radius-topleft: 8px;
+    -webkit-border-bottom-right-radius: 8px;
+    -moz-border-radius-bottomright: 8px;
+}
+
+.textareaReadOnly {
+    background-color: inherit;
+    border: none;
+}
+
+    .textareaReadOnly:focus {
+        outline: none;
+    }
+
+select.select2 {
+    font-family: Rupee Foradian;
+    font-size: 12px;
+    color: #535353;
+    background-color: transparent;
+}
+
+.textarea2 {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: #535353;
+    border: 0px solid #535353;
+    background-color: transparent;
+    scrollbar-base-color: transparent;
+    scrollbar-arrow-color: transparent;
+    scrollbar-3dlight-color: transparent;
+    scrollbar-darkshadow-color: transparent;
+    scrollbar-face-color: transparent;
+    scrollbar-highlight-color: transparent;
+    scrollbar-shadow-color: transparent;
+    scrollbar-border-color: transparent;
+}
+
+a {
+    font-family: inherit;
+    font-size: 12px;
+    background-color: transparent;
+    text-decoration: none;
+}
+
+    a:link {
+        color: #535353;
+    }
+
+    a:visited {
+        color: #535353;
+    }
+
+    a:active {
+        color: #535353;
+    }
+
+    a:hover {
+        color: #CC3300;
+        text-decoration: underline;
+    }
+
+    a:link.menu {
+        color: #FFFFFF;
+        font-size: 11px;
+    }
+
+    a:visited.menu {
+        color: #FFFFFF;
+        font-size: 11px;
+    }
+
+    a:active.menu {
+        color: #FFFFFF;
+        font-size: 11px;
+    }
+
+    a:hover.menu {
+        color: #FFFF99;
+        font-size: 11px;
+        text-decoration: underline;
+    }
+
+    a:link.tab {
+        color: #FFFFFF;
+    }
+
+    a:visited.tab {
+        color: #FFFFFF;
+    }
+
+    a:active.tab {
+        color: #FFFFFF;
+    }
+
+    a:hover.tab {
+        color: #FFFFFF;
+    }
+
+    a:link.red2 {
+        color: #FF0000;
+    }
+
+    a:visited.red2 {
+        color: #FF0000;
+    }
+
+    a:active.red2 {
+        color: #FF0000;
+    }
+
+    a:hover.red2 {
+        color: #FF0000;
+    }
+
+.active {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: #666600;
+    background-color: #e6f9f9;
+}
+
+.deactive {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: #CFCFCF;
+    background-color: #ffedef;
+}
+
+.message {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: #666600;
+    background-color: #ffffca;
+}
+
+.preactive {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: #666600;
+    background-color: #a6deff;
+}
+
+.predeactive {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: #666600;
+    background-color: #f6f6e3;
+}
+
+.Paired {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: #666600;
+    background-color: #90c3e1;
+}
+
+.unpaired {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: #666600;
+    background-color: #c0effa;
+}
+
+.fingerprint {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: #666600;
+    background-color: #e9e9e9;
+}
+
+.email {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: #666600;
+    background-color: #f6f6f6;
+}
+
+td.topBorder {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: #000000;
+    border-top: 1px solid #FFFFFF;
+}
+
+td.bottomBorder {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: #000000;
+    border-bottom: 1px solid #FFFFFF;
+}
+
+td.topRight {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: #000000;
+    border-top: 1px solid #5E363E;
+    border-right: 1px solid #5E363E;
+}
+
+input.text2 {
+    border: 1px solid;
+    color: #000000;
+    font-size: 12px;
+    vertical-align: Middle;
+    text-align: right;
+    font-family: Arial,Helvetica,sans-serif;
+}
+
+.divmain {
+    /*width: 100%; /*change width to above width-20. */ /*height: 100%; /*change height to above height-20. REMOVE if you wish box to be content's natural height*/
+    border: 0px solid black; /*Customize box appearance*/ /* background-color: #FFFFD9;*/ /*background-color: #E1E1E1;*/
+    filter: alpha(Opacity=80);
+    padding: 0px;
+    position: absolute; /*Don't change below 3 rules */
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    z-index: 0;
+    display: none;
+}
+
+.divmain1 {
+    width: 100%; /*change width to above width-20. */
+    height: 100%; /*change height to above height-20. REMOVE if you wish box to be content's natural height*/
+    border: 0px solid black; /*Customize box appearance*/ /* background-color: #FFFFD9;*/
+    background-color: #E1E1E1;
+    filter: alpha(Opacity=80);
+    padding: 0px;
+    position: absolute; /*Don't change below 3 rules */
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    z-index: 0;
+    display: none;
+}
+
+/* So the overflow scrolls */
+.FrezeGridHeader {
+    overflow: auto;
+}
+
+    .FrezeGridHeader table th {
+        position: relative;
+    }
+
+    .FrezeGridHeader table tbody {
+        overflow-x: hidden;
+    }
+
+.tdBottem {
+    background-color: #AAEAFF;
+}
+
+DIV.AutoDiv {
+    vertical-align: top;
+    overflow: auto;
+    width: 100%;
+    max-height: 410px;
+}
+
+DIV.AutoDiv1 {
+    vertical-align: top;
+    overflow: auto;
+    width: 100%;
+    max-height: 360px;
+}
+
+.divmain {
+    width: 100%; /*change width to above width-20. */
+    height: 100%; /*change height to above height-20. REMOVE if you wish box to be content's natural height*/
+    border: 0px solid black; /*Customize box appearance*/
+    background-color: #FFFFD9;
+    filter: alpha(Opacity=80);
+    padding: 0px;
+    position: absolute; /*Don't change below 3 rules */
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    z-index: 0;
+    display: none;
+}
+
+.tabBorder3 {
+    border-bottom: 3px solid #0051AD;
+    border-top: 3px solid #0051AD;
+    vertical-align: top;
+}
+
+/* Syndication Deals colors*/
+.sd_search {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: #FFFFFF;
+    border: 1px solid #FFFFFF;
+    background-color: #00C6C6;
+}
+
+.sys_tabBorder {
+    height: 400px;
+    border-top: 8px solid #0e6276;
+    border-right: 3px solid #0e6276;
+    border-left: 3px solid #0e6276;
+    border-bottom: 3px solid #0e6276;
+    vertical-align: top;
+}
+
+.sys_paging {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 10px;
+    color: #FFFFFF;
+    border-left: 1px solid #FFFFFF;
+    border-right: 1px solid #FFFFFF;
+    background-color: #84C1C1;
+}
+
+.sys_head {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    color: #FFFFFF;
+    font-weight: bold;
+    background-color: #0E6276;
+}
+
+.sys_tabBorder2 {
+    border-bottom: 3px solid #0E6276;
+    vertical-align: top;
+}
+
+.th_sys {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    border: 1px solid #FFFFFF;
+    background-color: #519F9F;
+    color: #FFFFFF;
+    text-align: center;
+    font-weight: bold;
+}
+
+.sys_button {
+    padding-right: 1px;
+    padding-left: 1px;
+    font-size: 12px;
+    color: #FFFFFF;
+    /*border-top-color:#D3D3D3;
+	border-left-color:#D3D3D3;*/
+    border-bottom: 1px #0e6276 solid;
+    border-right: 1px #0e6276 solid;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #0e6276;
+    /*vertical-align: Middle;
+	font-weight:bold; */
+    border-width: thin;
+    /*border-style:outset;*/
+    cursor: pointer;
+}
+/*Syndication Deals colors*/
+
+.rupeesym {
+    font-family: Rupee Foradian;
+    font-size: 12px;
+    color: #535353;
+}
+
+.border_rupee {
+    font-family: Rupee Foradian;
+    font-size: 14px;
+    color: #535353;
+    border: 1px solid #FFFFFF;
+}
+
+
+/*Added by Dada on 17Jan2013 for Applying CSS for paging while using gridveiw paging*/
+.PagerGridview span {
+    text-align: center;
+    color: #999;
+    display: inline-block;
+    width: 15px;
+    background-color: #A1DCF2;
+    margin-right: 3px;
+    line-height: 150%;
+    border: 1px solid #3AC0F2;
+}
+
+.PagerGridview a {
+    text-align: center;
+    display: inline-block;
+    width: 15px;
+    background-color: #3AC0F2;
+    color: #fff;
+    border: 1px solid #3AC0F2;
+    margin-right: 3px;
+    line-height: 150%;
+    text-decoration: none;
+}
+/*End Added by Dada on 17Jan2013 for Applying CSS for paging while using gridveiw paging*/
+
+/*This CSS is added by DADA on 24JAN2013 to show tooltip for buttons or any other controls for user mesaage.*/
+#dhtmlgoodies_tooltip {
+    background-color: #FFFFAA; /*#EEE;*/ /*#9FDAEE;*/
+    border: 1px solid #FFAD33;
+    width: 200px;
+    /*border: 1px solid #000;*/
+    position: absolute;
+    display: none;
+    z-index: 20000;
+    padding: 2px;
+    font-size: 0.9em;
+    -moz-border-radius: 6px; /* Rounded edges in Firefox */
+    font-family: "Trebuchet MS", "Lucida Sans Unicode", Arial, sans-serif;
+    font-size: 12px;
+    cursor: help;
+    /*background: #9FDAEE url(../ToolTip1/info.png) no-repeat left top;*/
+}
+
+#dhtmlgoodies_tooltipShadow {
+    position: absolute;
+    background-color: #555;
+    display: none;
+    z-index: 10000;
+    opacity: 0.7;
+    filter: alpha(opacity=70);
+    -khtml-opacity: 0.7;
+    -moz-opacity: 0.7;
+    -moz-border-radius: 6px;
+}
+/*End This CSS is added by DADA on 24JAN2013 to show tooltip for buttons or any other controls for user mesaage.*/
+
+span.highlight {
+    background-color: yellow;
+}
+
+/* Report Viewer */
+.reportViewer {
+    width: 100%;
+    display: block;
+    border: 1px solid #999;
+    min-height: 500px;
+}
+
+#oReportDiv {
+    overflow-x: initial;
+}
+/* END Report Viewer */

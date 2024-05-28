@@ -1,0 +1,215 @@
+﻿@model List<RightsU_Entities.AL_Vendor_Rule>
+
+<script>
+    function checkCurrentActionCR() {
+        debugger;
+        var action = $("#hdnAction").val();
+        if (action == "ADD") {
+            showAlert("E", "Complete Add Operation First");
+            return false;
+        }
+        else if (action == "EDIT") {
+            showAlert("E", "Complete Edit Operation First");
+            return false;
+        }
+        return true;
+    }
+
+    function checkCurrentActionCRGrid() {
+        debugger;
+        var action = $("#hdnActionCRGrid").val();
+        if (action == "ADD") {
+            showAlert("E", "Complete Add Operation First");
+            return false;
+        }
+        else if (action == "EDIT") {
+            showAlert("E", "Complete Edit Operation First");
+            return false;
+        }
+        return true;
+    }
+
+    function BindContentRuleGrid(commandName, CrCCode, CrCode) {
+        if (checkCurrentActionCRGrid()) {
+            $.ajax({
+                type: "POST",
+                url: URL_ContentRulePopUpGrid,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                data: JSON.stringify({
+                    CrCCode: CrCCode,
+                    CommandName: commandName,
+                    CrCode: CrCode
+                }),
+                success: function (result) {
+                    debugger;
+                    $("#ContentRuleGrid").empty();
+                    $("#ContentRuleGrid").html(result);
+                    $("#hdnContentRuleCode").val(CrCode);
+                    $('#hdnActionCRGrid').val(commandName);
+                }
+            });
+        }
+    }
+
+    function AddEditContentRule(TabName, commandName, CRCode) {
+        //Open Other View of CR. Send ID.
+        debugger;
+        $("#SaveAdditionalInfoBtn").prop("disabled", true);
+        $("#CloseAdditionalInfoBtn").prop("disabled", true);
+        $("#AddEditContentRuleBtn").prop("disabled", true);
+        $("#ContentRuleTable tbody tr td a").css("pointer-events", "none");
+        $.ajax({
+            type: "POST",
+            url: URL_ContentRulePopup,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                TabName: TabName,
+                CommandName: commandName,
+                CrCode: CRCode
+            }),
+            success: function (result) {
+                debugger;
+                //$("#ContentRuleModalPopup").modal();
+                $("#ContentPopup").empty();
+                $("#ContentPopup").html(result);
+                if (commandName == "VIEW") {
+                    BindContentRuleGrid(commandName, 0, CRCode);
+                } else {
+                    BindContentRuleGrid('', 0, CRCode);
+                }
+            }
+        });
+    }
+
+    function DeleteContentRule(crCode, Action) {
+        $.ajax({
+            type: "POST",
+            url: URL_DeleteContentRule,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                CRCode: crCode,
+                Action: Action
+            }),
+            success: function (result) {
+                AdditionalInfoTab("CR", "", 0);
+            }
+        });
+    }
+</script>
+
+
+@{
+    int iCR = 0;
+}
+
+<div style="padding:1%">
+    <span style="font-size:18px"> Content Rule </span>
+    @if (ViewBag.CommandNameCRList != "VIEW")
+    {
+        <button id="AddEditContentRuleBtn" class="btn btn-primary pull-right" onclick="AddEditContentRule('CR', 'ADD', 0)"> Add </button>
+    }
+    <input type="hidden" id="hdnActionCR" name="hdnActionCR" value="" />
+    <input type="hidden" id="hdnActionCRGrid" name="hdnActionCRGrid" value="" />
+</div>
+
+<style>
+    #ContentRuleTable {
+        table-layout: fixed;
+    }
+
+        #ContentRuleTable thead tr th {
+            width: 20%;
+        }
+
+        #ContentRuleTable tbody tr td {
+            text-align: center;
+            word-wrap: break-word;
+        }
+</style>
+
+<table id="ContentRuleTable" class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Short Name
+            </th>
+            <th>
+                Content Type
+            </th>
+            <th>
+                Criteria
+            </th>
+            <th>
+                Action
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            //iCR++;
+            <tr>
+                @*<td>
+                        @iCR
+                    </td>*@
+                <td>
+                    @item.Rule_Name
+                </td>
+                <td>
+                    @item.Rule_Short_Name
+                </td>
+                <td>
+                    @item.Rule_Type_Name
+                </td>
+                <td>
+                    @item.Criteria
+                </td>
+                <td>
+                    @if (ViewBag.CommandNameCRList != "VIEW")
+                    {
+                        if (item.Is_Active == "Y")
+                        {
+                            <a title="Edit" class="glyphicon glyphicon-pencil" onclick="AddEditContentRule('CR', 'EDIT', '@item.AL_Vendor_Rule_Code')"></a>
+                        }
+                        else
+                        {
+                            <a title="Edit" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
+                        }
+
+                        if (item.Is_Active == "Y" && item.AL_Vendor_Rule_Code > 0)
+                        {
+                            <a title="Deactivate" class="glyphicon glyphicon-thumbs-down" onclick="DeleteContentRule('@item.AL_Vendor_Rule_Code', 'DEACTIVATE')"></a>
+                        }
+                        else if (item.Is_Active == "N" && item.AL_Vendor_Rule_Code > 0)
+                        {
+                            <a title="Activate" class="glyphicon glyphicon-thumbs-up" onclick="DeleteContentRule('@item.AL_Vendor_Rule_Code', 'ACTIVATE')"></a>
+                        }
+                        else if (item.AL_Vendor_Rule_Code < 0)
+                        {
+                            <a title="Delete" class="glyphicon glyphicon-trash" onclick="DeleteContentRule('@item.AL_Vendor_Rule_Code', 'DELETE')"></a>
+                        }
+                    }
+                    <a title="View" class="glyphicon glyphicon-eye-open" onclick="AddEditContentRule('CR', 'VIEW', '@item.AL_Vendor_Rule_Code')"></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div id="ContentPopup">
+
+</div>
+
+@*To use Modal Popup, Uncomment Popup with ID ContentRuleModalPopup from Vendor Folder Index Page, comment above div with Id Content Popup and Uncomment the Modal initializer from script*@

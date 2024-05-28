@@ -1,0 +1,1723 @@
+﻿@model List<RightsU_Entities.USP_Title_List_Result>
+@using UTOFrameWork.FrameworkClasses
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string Message = Convert.ToString(Session["Message"]);
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    if (ViewBag.Is_AcqSyn_Type_Of_Film == null)
+    {
+        ViewBag.Is_AcqSyn_Type_Of_Film = new RightsU_BLL.System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "Is_AcqSyn_Type_Of_Film").Select(s => s.Parameter_Value).FirstOrDefault();
+    }
+    if (ViewBag.Is_Title_CoProd_AdvSearch == null)
+    {
+        ViewBag.Is_Title_CoProd_AdvSearch = new RightsU_BLL.System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "Is_Title_CoProd_AdvSearch").Select(s => s.Parameter_Value).FirstOrDefault();
+    }
+}
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<style>
+    mark {
+        padding: 0;
+        background: transparent;
+        background-color: yellow !important;
+        background-position: right bottom;
+        background-size: 200% 100%;
+        transition: all .5s ease;
+    }
+
+    .RTL {
+        list-style: none;
+        float: right !important;
+    }
+</style>
+<script src="~/JS_Core/jquery.mark.min.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script>
+    var tmp_IsAdvanced = "";
+    debugger;
+    var
+    URL_Reload_Current_Page = '@Url.Action("Index", "Title_List")',
+    URL_CheckRecordLock = '@Url.Action("CheckRecordLock", "Title_List")',
+    URL_CheckRecordCurrentStatus = '@Url.Action("CheckRecordCurrentStatus", "Title_List")',
+    URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")',
+    URL_Release_Lock = '@Url.Action("Release_Lock", "Global")';
+    var panelVisible = false;
+    var RightpanelHideCss = '-350px';
+    var RightpanelShowCss = '0px';
+
+    var RightpanelHideCsss = '-350px';
+    var RightpanelShowCsss = '350px';
+
+    var LeftpanelHideCss = '-350px';
+    var LeftpanelShowCss = '0px';
+
+    var LeftpanelHideCsss = '0px';
+    var LeftpanelShowCsss = '350px';
+    var ValidateSeason = "";
+
+    function BindSearch() {
+        BindAdvanced_Search_Controls('BTC');
+        if ("RTL" == '@objMessageKey.LayoutDirection') {
+            debugger;
+            $('.SumoSelect > .optWrapper.multiple > .options li.opt span, .SumoSelect .select-all > span').css("right", '-3px');
+            $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("padding-right", "22px")
+            $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("direction", "LTR")
+            $('#AdSearch').css("padding-right", "11px");
+        }
+        else
+            $('#AdSearch').css("padding-right", "0px");
+    }
+    $(document).ready(function () {
+        debugger;
+        if ('@objMessageKey.LayoutDirection' == 'RTL') {
+            //alert('a');
+            //$('.pull-left').addClass('pull-left-Head')
+            //$('.pull-right').addClass('pull-right-Head')
+            //$('.right_nav').addClass('right_nav_Head')
+            //$('.container').addClass('container-Head')
+            //$('#sideNavi').addClass('side_nav_head')
+            $('.glyphicon-search').css("transform", "rotate(-360deg)");
+        }
+        else
+            $('.glyphicon-search').css("transform", "rotate(-270deg)");
+
+        $('#ddlLangugaeAd').SumoSelect();
+        $('#ddlCountry').SumoSelect();
+        $('#ddlDirector').SumoSelect();
+        $('#ddlStarCast').SumoSelect();
+        $('#ddlOrigLang').SumoSelect();
+
+        var mark = function () {
+            var keyword = $("#srchCommon").val();
+            var options = { 'separateWordSearch': true };
+            $(".title_descriptn").unmark({
+                done: function () {
+                    $(".title_descriptn").mark(keyword, options);
+                }
+            });
+            $("#srchCommon").on("input", mark);
+            $("#srchCommon").on("change", mark);
+        }
+
+        //$("#srchCommon").on("input", mark);
+        //$("#srchCommon").on("input", search);
+        //$("#srchCommon").on("change", mark);
+
+        $('#srchCommon').keypress(function (e) {
+            if (e.keyCode == 13) {
+                search()
+                return false;
+            }
+        });
+
+        debugger;
+        $("#ddlStarCast").val('@ViewBag.StarCast_Code');
+        $("#ddlLangugaeAd").val('@ViewBag.Language_Code');
+        $("#ddlDirector").val('@ViewBag.Director_Code');
+        $("#txtTitleSearch").val('@ViewBag.SrchTitle');
+        $("#ddlOrigLang").val('@ViewBag.OrigLang_Code');
+        $("#txtOrigTitleSearch").val('@ViewBag.SrchOrigTitle');
+
+        tmp_IsAdvanced = '@ViewBag.isAdvanced';
+        AllsubmenuHide();
+        initializeChosen();
+        initializeSubMenu2();
+
+        var lastScrollTop = 0;
+        $(window).scroll(function (event) {
+            var st = $(this).scrollTop();
+            if (st > lastScrollTop)
+                $("#pnlSearch").addClass("tinyADSearch")
+            else
+                $("#pnlSearch").removeClass("tinyADSearch")
+        });
+        // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?TitleList');
+        var meesage = '@Message'
+        if ('@ViewBag.Message' != '') {
+            showAlert("M", '@ViewBag.Message');
+        }
+        if ('@ViewBag.PageSize' != '0')
+            $("#PageSize").val('@ViewBag.PageSize');
+        if (meesage != '') {
+            showAlert('S', meesage);
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("ResetMessageSession", "Title_List")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                async: false,
+                data: JSON.stringify({}),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+        BindGrid('@ViewBag.Query_String_Page_No', '@ViewBag.isShowAll', '@ViewBag.isSearch', '@ViewBag.isAdvanced');
+        BindSearch();
+        setChosenWidth("#lbTitle_Code", "350px");
+        setChosenWidth("#lbOrigTitle_Code", "350px");
+        setChosenWidth("#ddlDeal_Type_Code", "200px");
+
+
+    });
+
+    function BindGrid(page_index, ShowAll, IsSearch, IsAdv) {
+        debugger;
+        showLoading();
+        var typeCode = '0';
+        var titleName = '', origTitleName = '';
+        var genericSearch = '';
+
+        if ("RTL" == '@objMessageKey.LayoutDirection') {
+            debugger;
+            $('.SumoSelect > .optWrapper.multiple > .options li.opt span, .SumoSelect .select-all > span').css("right", '-3px');
+            $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("padding-right", "22px")
+            $('.SumoSelect > .optWrapper > .options li.opt label, .SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css("direction", "LTR")
+            $('#AdSearch').css("padding-right", "11px");
+        }
+        if (IsSearch == "Y") {
+            typeCode = '0';
+            ShowAll = 'N';
+            genericSearch = $('#srchCommon').val();
+            tmp_IsAdvanced = 'N';
+        }
+        if (IsAdv == "Y") {
+            IsSearch = 'N';
+            tmp_IsAdvanced = 'Y';
+            ShowAll = 'N';
+            typeCode = $('#ddlDealTypeAd').val();
+            titleName = $('#txtTitleSearch').val();
+            origTitleName = $('#txtOrigTitleSearch').val();
+            if (typeCode == '')
+                typeCode = 0;
+        }
+        if (ShowAll == 'Y') {
+            $('#txtTitleSearch').val('');
+            $('#txtOrigTitleSearch').val('');
+            IsSearch = 'N';
+            tmp_IsAdvanced = 'N';
+            typeCode = 0;
+        }
+        var IsAdvanced = IsAdv;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindGrid", "Title_List")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            async: false,
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                TitleName: titleName,
+                origTitleName: origTitleName,
+                DealTypeCode: typeCode,
+                PageIndex: page_index,
+                IsShowAll: ShowAll,
+                pageSize: ($('#PageSize').val() == '' ? 0 : $('#PageSize').val()),
+                isSearch: IsSearch,
+                isTAdvanced: IsAdvanced,
+                GenericSearch: genericSearch
+            }),
+            success: function (result) {
+
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $("#TitleListGrid").empty();
+                    $("#TitleListGrid").append(result);
+                    if ($('#srchCommon').val().trim() != '') {
+                        var keyword = $("#srchCommon").val();
+                        var options = { 'separateWordSearch': true };
+                        $(".title_descriptn").unmark({
+                            done: function () {
+                                $(".title_descriptn").mark(keyword, options);
+                            }
+                        });
+                        // $("#lbTitle_Code").on("input", mark);
+                        // $("#lbTitle_Code").on("change", mark);
+                    }
+                    if ($('.pagination'))
+                        SetPaging();
+                    initializeExpander();
+                    initializeTooltip();
+                    hideLoading();
+                }
+            },
+            error: function (result) {
+                alert(result);
+            }
+        });
+
+        $("#hdnPageIndex").val(page_index);
+    }
+    function isNumber(evt) {
+        evt = (evt) ? evt : window.event;
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57) && charCode != 13) {
+            return false;
+        }
+        else {
+            if (charCode == 13) {
+                setPageSize();
+                BindGrid('@ViewBag.Query_String_Page_No', "N", "", "");
+            }
+            return true;
+        }
+    }
+    function Ask_Confirmation(commandName, RowNum) {
+        debugger;
+        if (commandName == "DEACTIVATE") {
+            $("#hdnRowNum").val(RowNum);
+            showAlert("I", '@objMessageKey.DeactivateConfirmationMessage', "OKCANCEL");
+        }
+    }
+    function handleCancel() {
+        $("#hdnRowNum").val('');
+    }
+    function handleOk() {
+        var RowNum = $("#hdnRowNum").val();
+        var obj = $("#" + RowNum + "_hdnTitleCode").val();
+        $.ajax({
+            type: "POST",
+            url: URL_CheckRecordCurrentStatus,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: true,
+            data: JSON.stringify({
+                Title_Deal_Code: obj,
+            }),
+            success: function (result) {
+                hideLoading();
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Is_Locked == "Y") {
+                        debugger;
+                        $('#hdnRecodLockingCode').val(result.Record_Locking_Code);
+
+                        DeActivateTitle(obj, 'N');
+                        Call_RefreshRecordReleaseTime(result.Record_Locking_Code, URL_Refresh_Lock);
+                        return true;
+                    }
+                    else {
+                        showAlert("E", result.Message);
+                        return false;
+                    }
+                }
+            },
+            error: function (result) {
+                hideLoading();
+                Command_Name_G = "";
+                objSynListCode = 0;
+                alert('Error in CheckRecordCurrentStatus() : ' + result.responseText);
+            }
+        });
+        hideLoading();
+    }
+
+    function DeActivateTitle(obj, type) {
+        debugger;
+        showLoading();
+        var TitleCode = obj;
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("DeactivateTitle", "Title_List")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            async: false,
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                TitleCode: TitleCode,
+                Type: type
+            }),
+            success: function (result) {
+                debugger;
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Error != "")
+                        showAlert("E", result.Error);
+                    else {
+                        showAlert("S", result.Message);
+                        BindGrid($("#hdnPageIndex").val(), "N", "", "");
+                    }
+                    hideLoading();
+                }
+            },
+            error: function (result) { }
+        });
+    }
+    function AddTitle() {
+        debugger;
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindLanguage", "Title_List")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            async: false,
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                DealTypeCode: 0,
+                fromAcqGeneral: "N"
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    hideLoading();
+                    $("#popAddTitle").html(result);
+                    $("#popAddTitle").modal();
+                    initializeChosen();
+                }
+            },
+            error: function (result) { }
+        });
+    }
+    function DealTypeChange() {
+        debugger;
+        $("#txtTitleSearch").val('');
+        $("#txtOrigTitleSearch").val('');
+        var Selected_Title_Codes = "";
+        var Selected_deal_type_Code = $('#ddlDeal_Type_CodeCommon').val();
+
+        $('#DealTypeC').val($('#ddlDeal_Type_CodeCommon').val());
+
+        @*var Selected_BUCode = 0;
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindTitle_List", "Title_List")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Selected_deal_type_Code: Selected_deal_type_Code,
+                Selected_BUCode: Selected_BUCode,
+                Selected_Title_Codes: Selected_Title_Codes
+            }),
+            success: function (result) {
+                $('.divgvAdditionalField').html(result);
+
+                //$.each(result, function () {
+                //    $("#lbTitle_Code").append($("<option />").val(this.Value).text(this.Text));
+                //});
+                //$("#lbTitle_Code").trigger("chosen:updated");
+                initializeChosen();
+                hideLoading();
+            },
+            error: function (result) { }
+        });*@
+    }
+    function split(val) {
+        return val.split(/﹐\s*/);
+    }
+    function extractLast(term) {
+        return split(term).pop();
+    }
+    function populateTitle(evt) {
+        debugger;
+        var Selected_BUCode = 0;
+        var Selected_Title_Codes = "";
+
+        var selectedtxt = $('#txtTitleSearch').val()
+        var dealtype = 0;
+        if ($('#ddlDeal_Type_CodeCommon').val() == null || $('#ddlDeal_Type_CodeCommon').val() == undefined)
+            dealtype = 0;
+        else
+            dealtype = $('#ddlDeal_Type_CodeCommon').val();
+        var txt = selectedtxt.split(',');
+        var iscomplete = true;
+        if (txt[txt.length - 1].trim() == "")
+            iscomplete = false;
+        if (iscomplete) {
+            $("#txtTitleSearch").autocomplete({
+                focus: function () {
+                    return false;
+                },
+                search: function (e, u) {
+                    $(this).addClass('loader');
+                },
+                source: function (request, response) {
+                    var param = {
+                        Selected_deal_type_Code: dealtype,
+                        Selected_BUCode: Selected_BUCode,
+                        Selected_Title_Codes: Selected_Title_Codes,
+                        Searched_Title: $('#txtTitleSearch').val()
+                    };
+                    $.ajax({
+                        url: '@Url.Action("GetTitle", "Title_List")',
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+                            $("#lbTitle_Code").val('');
+                            if (data.length == 0) {
+                                data[0] = 'Result Not Found';
+                                response($.map(data, function (v, i) {
+                                    $('#txtTitleSearch').removeClass('loader');
+                                    return {
+                                        label: 'Result Not Found',
+                                        val: '0'
+                                    }
+                                }))
+                            }
+                            else {
+                                response($.map(data, function (v, i) {
+                                    $('#txtTitleSearch').removeClass('loader');
+                                    return {
+                                        label: v.Display_Text,
+                                        val: v.Display_Value
+                                    }
+                                }))
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            alert("Error" + textStatus);
+                        }
+                    });
+                },
+                select: function (event, i) {
+                    var text = this.value.split(/﹐\s*/);
+                    text.pop();
+                    text.push(i.item.value);
+                    text.push("");
+                    this.value = text;
+                    this.value = text.join("﹐");
+                    var value = $("#hdnTitleSearch").val().split(/,\s*/);
+                    value.pop();
+                    value.push(i.item.val);
+                    value.push("");
+                    $("#hdnTitleSearch")[0].value = value.join(", ");
+                    return false;
+                },
+                minLength: 2,
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("position", "absolute");
+                    $(".ui-autocomplete").css("max-height", "200px");
+                    $(".ui-autocomplete").css("overflow-y", "auto");
+                    $(".ui-autocomplete").css("overflow-x", "hidden");
+                    $(".ui-autocomplete").css("z-index", "2147483647");
+                },
+            });
+        }
+        else
+            return false;
+    }
+
+    function populateOrigTitle(evt) {
+        debugger;
+        var Selected_BUCode = 0;
+        var Selected_Title_Codes = "";
+
+        var selectedtxt = $('#txtOrigTitleSearch').val()
+        var dealtype = 0;
+        if ($('#ddlDeal_Type_CodeCommon').val() == null || $('#ddlDeal_Type_CodeCommon').val() == undefined)
+            dealtype = 0;
+        else
+            dealtype = $('#ddlDeal_Type_CodeCommon').val();
+        var txt = selectedtxt.split(',');
+        var iscomplete = true;
+        if (txt[txt.length - 1].trim() == "")
+            iscomplete = false;
+        if (iscomplete) {
+            $("#txtOrigTitleSearch").autocomplete({
+                focus: function () {
+                    return false;
+                },
+                search: function (e, u) {
+                    $(this).addClass('loader');
+                },
+                source: function (request, response) {
+                    debugger;
+                    var param = {
+                        Selected_deal_type_Code: dealtype,
+                        Selected_BUCode: Selected_BUCode,
+                        Selected_Title_Codes: Selected_Title_Codes,
+                        Searched_Title: $('#txtOrigTitleSearch').val(),
+                        isOriginal: 'Y'
+                    };
+                    $.ajax({
+                        url: '@Url.Action("GetTitle", "Title_List")',
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+                            if (data.length == 0) {
+                                $("#lbOrigTitle_Code").val('');
+                                data[0] = 'Result Not Found';
+                                response($.map(data, function (v, i) {
+                                    $('#txtOrigTitleSearch').removeClass('loader');
+                                    return {
+                                        label: 'Result Not Found',
+                                        val: '0'
+                                    }
+                                }))
+                            }
+                            else {
+                                response($.map(data, function (v, i) {
+                                    $('#txtOrigTitleSearch').removeClass('loader');
+                                    return {
+                                        label: v.Display_Text,
+                                        val: v.Display_Value
+                                    }
+                                }))
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            alert("Error" + textStatus);
+                        }
+                    });
+                },
+                select: function (event, i) {
+                    debugger;
+                    var text = this.value.split(/﹐\s*/);
+                    text.pop();
+                    text.push(i.item.value);
+                    text.push("");
+                    this.value = text;
+                    this.value = text.join("﹐");
+                    var value = $("#hdnOrigTitleSearch").val().split(/,\s*/);
+                    value.pop();
+                    value.push(i.item.val);
+                    value.push("");
+                    $("#hdnOrigTitleSearch")[0].value = value.join(", ");
+                    return false;
+                },
+                minLength: 2,
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("position", "absolute");
+                    $(".ui-autocomplete").css("max-height", "200px");
+                    $(".ui-autocomplete").css("overflow-y", "auto");
+                    $(".ui-autocomplete").css("overflow-x", "hidden");
+                    $(".ui-autocomplete").css("z-index", "2147483647");
+                },
+            });
+        }
+        else
+            return false;
+    }
+
+    function populateTitleCommon(evt) {
+        debugger;
+        var Selected_BUCode = 0;
+        var Selected_Title_Codes = "";
+
+        var selectedtxt = $('#txtTitlesrchCommon').val()
+        var dealtype = 0;
+        if ($('#ddlDeal_Type_CodeCommon').val() == null || $('#ddlDeal_Type_CodeCommon').val() == undefined)
+            dealtype = 0;
+        else
+            dealtype = $('#ddlDeal_Type_CodeCommon').val();
+        var txt = selectedtxt.split(',');
+        var iscomplete = true;
+        if (txt[txt.length - 1].trim() == "")
+            iscomplete = false;
+        if (iscomplete) {
+            $("#txtTitlesrchCommon").autocomplete({
+                focus: function () {
+                    return false;
+                },
+                search: function (e, u) {
+                    $(this).addClass('loader');
+                },
+                source: function (request, response) {
+                    var param = {
+                        Selected_deal_type_Code: dealtype,
+                        Selected_BUCode: Selected_BUCode,
+                        Selected_Title_Codes: Selected_Title_Codes,
+                        Searched_Title: $('#txtTitlesrchCommon').val()
+                    };
+                    $.ajax({
+                        url: '@Url.Action("GetTitle", "Title_List")',
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+                            $("#lbTitle_Code").val('');
+                            if (data.length == 0) {
+                                $("#lbOrigTitle_Code").val('');
+                                data[0] = 'Result Not Found';
+                                response($.map(data, function (v, i) {
+                                    $('#txtOrigTitleSearch').removeClass('loader');
+                                    return {
+                                        label: 'Result Not Found',
+                                        val: '0'
+                                    }
+                                }))
+                            }
+                            else {
+                                response($.map(data, function (v, i) {
+                                    $('#txtOrigTitleSearch').removeClass('loader');
+                                    return {
+                                        label: v.Display_Text,
+                                        val: v.Display_Value
+                                    }
+                                }))
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            alert("Error" + textStatus);
+                        }
+                    });
+                },
+                select: function (event, i) {
+                    var text = this.value.split(/﹐\s*/);
+                    text.pop();
+                    text.push(i.item.value);
+                    text.push("");
+                    this.value = text;
+                    this.value = text.join("﹐");
+                    var value = $("#hdnTitleSearch").val().split(/,\s*/);
+                    value.pop();
+                    value.push(i.item.val);
+                    value.push("");
+                    $("#hdnTitleSearch")[0].value = value.join(", ");
+                    return false;
+                },
+                minLength: 2,
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("position", "absolute");
+                    $(".ui-autocomplete").css("max-height", "200px");
+                    $(".ui-autocomplete").css("overflow-y", "auto");
+                    $(".ui-autocomplete").css("overflow-x", "hidden");
+                    $(".ui-autocomplete").css("z-index", "2147483647");
+                },
+
+            });
+        }
+        else
+            return false;
+    }
+
+    function search() {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        var commonSeach = $.trim($('#srchCommon').val());
+        if (commonSeach == '') {
+            $('#srchCommon').val('');
+            $('#srchCommon').attr('required', true)
+            return false;
+        }
+        $('#txtTitleSearch').val('');
+        $('#txtYearOfRelease').val('');
+        $('#txtOrigTitleSearch').val('');
+        $("#ddlLangugaeAd").find("option").attr("selected", false);
+        $("#ddlLangugaeAd").val('')[0].sumo.reload();
+
+        $("#ddlOrigLang").find("option").attr("selected", false);
+        $("#ddlOrigLang").val('')[0].sumo.reload();
+
+        $("#ddlCountry").find("option").attr("selected", false);
+        $("#ddlCountry").val('')[0].sumo.reload();
+        $("#ddlDirector").find("option").attr("selected", false);
+        $("#ddlDirector").val('')[0].sumo.reload();
+        $("#ddlStarCast").find("option").attr("selected", false);
+        $("#ddlStarCast").val('')[0].sumo.reload();
+        $("#ddlDealTypeAd").find("option").attr("selected", false);
+        $("#ddlDealTypeAd").val('').trigger("chosen:updated");
+        if ($("#srchCommon").val() != "" && $("#srchCommon").val() != null)
+            $('#srchCommon').val($("#srchCommon").val());
+        else
+            $('#srchCommon').val("");
+        BindGrid(0, "N", "Y", "N");
+
+        if ($('#srchCommon').val().trim() != '') {
+            var keyword = $("#srchCommon").val();
+            var options = { 'separateWordSearch': true };
+            $(".title_descriptn").unmark({
+                done: function () {
+                    $(".title_descriptn").mark(keyword, options);
+                }
+            });
+            // $("#lbTitle_Code").on("input", mark);
+            // $("#lbTitle_Code").on("change", mark);
+        }
+        return true;
+    }
+    function ShowAll() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        $('#txtTitleSearch').val('');
+        $('#txtOrigTitleSearch').val('');
+        $('#txtYearOfRelease').val('');
+        $("#ddlLangugaeAd").find("option").attr("selected", false);
+        $("#ddlLangugaeAd").val('')[0].sumo.reload();
+
+        $("#ddlOrigLang").find("option").attr("selected", false);
+        $("#ddlOrigLang").val('')[0].sumo.reload();
+
+        $("#ddlCountry").find("option").attr("selected", false);
+        $("#ddlCountry").val('')[0].sumo.reload();
+        $("#ddlDirector").find("option").attr("selected", false);
+        $("#ddlDirector").val('')[0].sumo.reload();
+        $("#ddlStarCast").find("option").attr("selected", false);
+        $("#ddlStarCast").val('')[0].sumo.reload();
+        $("#ddlDealTypeAd").find("option").attr("selected", false);
+        $("#ddlDealTypeAd").val('').trigger("chosen:updated");
+        $("#ddlProgram").find("option").attr("selected", false);
+        $("#ddlProgram").val('').trigger("chosen:updated");
+        $("#ddlTypeofFilm").find("option").attr("selected", false);
+        $("#ddlTypeofFilm").val('').trigger("chosen:updated");
+        $("#ddlCoProduction").find("option").attr("selected", false);
+        $("#ddlCoProduction").val('').trigger("chosen:updated");
+        $('#srchCommon').val('');
+        BindGrid(0, "Y", "N", "N");
+    }
+    function OpenPopup(id) {
+        $('#' + id).modal();
+    }
+    function Sampledownload() {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("SampleDownload", "Title_List")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            async: false,
+            contentType: "application/json; charset=utf-8",
+            success: function (result) {
+                var r = "";
+                if (r != "") {
+                    showAlert("a", r);
+                }
+            },
+            error: function (result) { }
+        });
+    }
+    function BindTitle_Async() {
+        var hdnddlDealType = "";
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindTitle_Ajax", "Title_List")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            async: false,
+            data: JSON.stringify({
+                Selected_deal_type_Code: '@ViewBag.DealTypeCode',
+                Selected_BUCode: 0,
+                Selected_Title_Codes: '@ViewBag.SearchedTitle'
+            }),
+            contentType: "application/json; charset=utf-8",
+            success: function (result) {
+
+                $.each(result, function () {
+                    $("#lbTitle_Code").append($("<option />").val(this.Value).text(this.Text));
+                    var titleCodes_Srch = '@ViewBag.SearchedTitle';
+                    $("select#lbTitle_Code.form_input.chosen-select").val(titleCodes_Srch.split(','))
+                });
+                $("#lbTitle_Code").trigger("chosen:updated");
+                initializeChosen();
+            },
+            error: function (result) {
+            }
+        });
+    }
+    function HideAllPopupDiv() {
+        try {
+            FadeOutPopup();
+        }
+        catch (err) {
+        }
+    }
+    function togglePanelVisibility2(panelID) {
+        document.getElementById("showMore").innerHTML = "Show more...";
+        if ('@objMessageKey.LayoutDirection' == 'RTL') {
+            document.getElementById('pnlSearch').removeAttribute('hidden')
+            $('.leftPanel').css('right', panelHideCss);
+            $(".RightPanel:not(#" + panelID + ")").css("left", LeftpanelHideCss);
+            var panel = document.getElementById(panelID);
+            if (panel.style.left == LeftpanelShowCss) {
+                panel.style.left = LeftpanelHideCss;
+                panelVisible = false;
+                $('#sideNavi').show();
+            }
+            else {
+                panel.style.left = LeftpanelShowCss;
+                panelVisible = true;
+                $('#sideNavi').hide();
+            }
+        }
+        else {
+            document.getElementById('pnlSearch').removeAttribute('hidden')
+            $('.leftPanel').css('left', panelHideCss);
+            $(".RightPanel:not(#" + panelID + ")").css("right", RightpanelHideCss);
+            var panel = document.getElementById(panelID);
+            if (panel.style.right == RightpanelShowCss) {
+                panel.style.right = RightpanelHideCss;
+                panelVisible = false;
+                $('#sideNavi').show();
+            }
+            else {
+                panel.style.right = RightpanelShowCss;
+                panelVisible = true;
+                $('#sideNavi').hide();
+            }
+        }
+    }
+
+    function ShowMore(panelID) {
+        debugger;
+        document.getElementById('pnlShowmore').removeAttribute('hidden')
+        $('.leftPanel').css('left', panelHideCss);
+        $('.MoreActionDiv').hide('fast');
+        $(".RightPanel:not(#" + panelID + ")").css("right", RightpanelShowCss);
+        var panel = document.getElementById(panelID);
+        if (panel.style.right == RightpanelShowCsss) {
+            panel.style.right = RightpanelHideCss;
+            panelVisible = false;
+            $('#sideNavi').show();
+        }
+        else {
+            panel.style.right = RightpanelShowCsss;
+            panelVisible = true;
+            $('#sideNavi').hide();
+        }
+        if (panel.style.right == '350px') {
+            document.getElementById("showMore").innerHTML = "Show less...";
+        }
+        else {
+            document.getElementById("showMore").innerHTML = "Show more...";
+        }
+    }
+
+
+    function AllsubmenuHide() {
+        debugger
+        if ('@objMessageKey.LayoutDirection' == 'RTL') {
+            $('.RightPanel').css('left', LeftpanelHideCss);
+            $('.leftPanel').css('right', panelHideCss);
+            $('#sideNavi').show();
+        }
+        else {
+            $('.RightPanel').css('right', RightpanelHideCss);
+            $('.leftPanel').css('left', panelHideCss);
+            $('#sideNavi').show();
+        }
+    }
+    function initializeSubMenu2() {
+        $('.RightPanel li.has-sub>a').on('click', function () {
+            $(this).removeAttr('href');
+            var element = $(this).parent('li');
+            if (element.hasClass('open')) {
+                element.removeClass('open');
+                element.find('li').removeClass('open');
+                element.find('ul').slideUp(200);
+            }
+            else {
+                element.addClass('open');
+                element.children('ul').slideDown(200);
+                element.siblings('li').children('ul').slideUp(200);
+                element.siblings('li').removeClass('open');
+                element.siblings('li').find('li').removeClass('open');
+                element.siblings('li').find('ul').slideUp(200);
+            }
+        });
+    }
+    function ClearAll() {
+        ShowAll();
+    }
+    function validateSearch() {
+        debugger;
+        tmp_IsAdvanced = 'Y';
+        tmp_IsSearch = 'N';
+        //$("#srchCommon").val('');
+        $('#hdnClearAll').val('N');
+        var tmpStarCast = '', tmpLanguage = '',tmpOrigLang='', tmpDeal = '', tmpCountry = '', tmpDirector = '';
+
+        if ($('#ddlStarCast').val())
+            tmpStarCast = $('#ddlStarCast').val().join(',');
+
+        if ($('#ddlDealTypeAd').val())
+            tmpDeal = $('#ddlDealTypeAd').val();
+
+        if ($('#ddlCountry').val())
+            tmpCountry = $('#ddlCountry').val().join(',');
+
+        if ($('#ddlLangugaeAd').val())
+            tmpLanguage = $('#ddlLangugaeAd').val().join(',');
+
+        if ($('#ddlOrigLang').val())
+            tmpOrigLang = $('#ddlOrigLang').val().join(',');
+
+
+        if ($('#ddlDirector').val())
+            tmpDirector = $('#ddlDirector').val().join(',');
+
+        var txtYearOfRelease = $('#txtYearOfRelease').val();
+        var txttitleSearch = $('#txtTitleSearch').val();
+        var txtOrigTitleSearch = $('#txtOrigTitleSearch').val();
+        if (tmpStarCast == '' && tmpLanguage == '' && tmpOrigLang == '' && tmpDeal == '' && tmpCountry == '' && tmpDirector == '' && txtYearOfRelease == '' && txtTitleSearch == '' && txtOrigTitleSearch == '') {
+            debugger;
+            showAlert('e', '@objMessageKey.PleaseSelect');
+            return false;
+        }
+        else {
+            showLD = 'Y';
+            AdvanceSearch();
+        }
+    }
+    function AdvanceSearch() {
+        debugger;
+        var tmpStarCast = '', tmpLanguage = '', tmpOrigLang = '', tmpDeal = '', tmpCountry = '', tmpDirector = '', tmpProgram = '', tmpTypeOfFilm = '', tmpCoProduction = '' ;
+        if ($('#ddlStarCast').val())
+            tmpStarCast = $('#ddlStarCast').val().join(',');
+
+        if ($('#ddlDealTypeAd').val())
+            tmpDeal = $('#ddlDealTypeAd').val();
+
+        if ($('#ddlCountry').val())
+            tmpCountry = $('#ddlCountry').val().join(',');
+
+        if ($('#ddlLangugaeAd').val())
+            tmpLanguage = $('#ddlLangugaeAd').val().join(',');
+
+        if ($('#ddlOrigLang').val())
+            tmpOrigLang = $('#ddlOrigLang').val().join(',');
+
+
+        if ($('#ddlDirector').val())
+            tmpDirector = $('#ddlDirector').val().join(',');
+
+        if ($('#ddlTypeofFilm').val())
+            tmpTypeOfFilm = $('#ddlTypeofFilm').val();
+
+        if ($('#ddlCoProduction').val())
+            tmpCoProduction = $('#ddlCoProduction').val();
+
+        var txtYearOfRelease = $('#txtYearOfRelease').val();
+
+        tmpProgram = $('#ddlProgram').val();
+        tmpTypeOfFilm = $('#ddlTypeofFilm').val();
+        tmpCoProduction = $('#ddlCoProduction').val();
+
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("AdvanceSearch", "Title_List")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            async: false,
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                SrchStarCast: tmpStarCast,
+                SrhDealTypeCode: tmpDeal,
+                SrchCountry: tmpCountry,
+                SrchLanguage: tmpLanguage,
+                SrchDirector: tmpDirector,
+                SrchYearOfRelease: txtYearOfRelease,
+                SrchTitle: $('#txtTitleSearch').val(),
+                srchProgram: tmpProgram,
+                SrchOrigLang: tmpOrigLang,
+                SrchOrigTitle: $('#txtOrigTitleSearch').val(),
+                sechTypeofFilm: tmpTypeOfFilm,
+                sechCoProduction: tmpCoProduction
+            }),
+            success: function (result) {
+
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger;
+                    BindGrid(0, '', 'N', 'Y');
+                    //$('#txtTitleSearch').val(j);
+                }
+            },
+            error: function (result) {
+                alert(result);
+            }
+        });
+    }
+    var URL_BindAdvanced_Search_Controls = '@Url.Action("BindAdvanced_Search_Controls", "Title_List")';
+    function BindAdvanced_Search_Controls(callfrom) {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        $("#TitleName").val("");
+        $("#lbTitle_Code").val('');
+        if (callfrom == 'BTC')
+            $('#divSearch').slideToggle(400);
+        var Is_async = true;
+        if (tmp_IsAdvanced == 'Y')
+            Is_async = false;
+        if (parseInt($("#ddlStarCast option").length) == 0) {
+            $.ajax({
+                type: "POST",
+                url: URL_BindAdvanced_Search_Controls,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                }),
+                async: Is_async,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        $("#ddlLangugaeAd").empty();
+                        $("#ddlOrigLang").empty();
+                        $("#ddlDealTypeAd").empty();
+                        $("#ddlCountry").empty();
+                        $("#ddlDirector").empty();
+                        $("#ddlStarCast").empty();
+                        $('#ddlProgram').empty();
+                        $('#ddlTypeofFilm').empty();
+                        $('#ddlCoProduction').empty();
+
+                        debugger;
+                        var obj_Search = $(result.objPage_Properties);
+
+                        $(result.lstTStarCast).each(function (index, item) {
+                            $("#ddlStarCast").append($("<option>").val(this.Value).text(this.Text));
+                        });
+                        $("#ddlStarCast").val(obj_Search[0].StarCastCodes_Search.split(',')).attr("selected", "true")[0].sumo.reload();
+                        $(result.lstTDirector).each(function (index, item) {
+                            $("#ddlDirector").append($("<option>").val(this.Value).text(this.Text));
+                        });
+                        $("#ddlDirector").val(obj_Search[0].DirectorCodes_Search.split(',')).attr("selected", "true")[0].sumo.reload();
+                        $(result.lstLanguage).each(function (index, item) {
+                            $("#ddlLangugaeAd").append($("<option>").val(this.Value).text(this.Text));
+                        });
+                        $("#ddlLangugaeAd").val(obj_Search[0].LanguagesCodes_Search.split(',')).attr("selected", "true")[0].sumo.reload();
+
+                        $(result.lstOrigLang).each(function (index, item) {
+                            $("#ddlOrigLang").append($("<option>").val(this.Value).text(this.Text));
+                        });
+                        $("#ddlOrigLang").val(obj_Search[0].OrigLangCodes_Search.split(',')).attr("selected", "true")[0].sumo.reload();
+
+                        $(result.lstCountry).each(function (index, item) {
+                            $("#ddlCountry").append($("<option>").val(this.Value).text(this.Text));
+                        });
+                        $("#ddlCountry").val(obj_Search[0].CountryCodes_Search.split(',')).attr("selected", "true")[0].sumo.reload();
+
+                        $(result.lstDealType).each(function (index, item) {
+                            $("#ddlDealTypeAd").append($("<option>").val(this.Value).text(this.Text));
+                        });
+                        $("#ddlDealTypeAd").val(obj_Search[0].DealTypeCode.split(',')).attr("selected", "true").trigger("chosen:updated")
+
+                        $('#txtYearOfRelease').val(obj_Search[0].YearOfRelease);
+
+                        $(result.lstProgram).each(function (index, item) {
+                            $("#ddlProgram").append($("<option>").val(this.Value).text(this.Text));
+                        });
+
+                        $('#ddlProgram').val(obj_Search[0].ProgramCode_Search).trigger("chosen:updated");
+
+                        $(result.lstTypeOfFilm).each(function (index, item) {
+                            $("#ddlTypeofFilm").append($("<option>").val(this.Value).text(this.Text));
+                        });
+
+                        $('#ddlTypeofFilm').val(obj_Search[0].Column_Name).trigger("chosen:updated");
+
+                        $(result.lstCoProduction).each(function (index, item) {
+                            $("#ddlCoProduction").append($("<option>").val(this.Value).text(this.Text));
+                        });
+
+                        $('#ddlCoProduction').val(obj_Search[0].CoProd_Search).trigger("chosen:updated");
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    }
+</script>
+<script>
+    function CheckRecordLock(MusicDealCode, Deal_Mode) {
+        debugger;
+        showLoading();
+        var returnVal = false;
+        $.ajax({
+            type: "POST",
+            url: URL_CheckRecordLock,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Music_Deal_Code: MusicDealCode,
+                Deal_Mode: Deal_Mode
+            }),
+            async: true,
+            success: function (result) {
+                debugger
+                hideLoading();
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Is_Locked == "Y") {
+                        debugger;
+                        if (Deal_Mode == "E") {
+                            var PageNo = $('#_PageNo').val();
+                            var PageSize = $('#_PageSize').val();
+                            var URL = '@Url.Action("Index", "Title", new
+                                {
+                                    id = "_id_",
+                                    @Type = "E",
+                                    @Page_No = "_Page_No_",
+                                    @PageSize = "_PageSize_"
+                                })';
+                            URL = URL.replace("_id_", MusicDealCode);
+                            URL = URL.replace("_Page_No_", PageNo);
+                            URL = URL.replace("_PageSize_", PageSize);
+                            URL = URL.replace(/amp;/g, "");
+                            window.location.href = URL;
+                        }
+                        else if (Deal_Mode == "R") {
+                            var URL = '@Url.Action("View", "Title", new
+                            {
+                                id = "_id_",
+                                @Type = "R"
+                            })';
+                            URL = URL.replace("_id_", MusicDealCode);
+                            URL = URL.replace(/amp;/g, "");
+                            window.location.href = URL;
+                        }
+                             else if (Deal_Mode == "M") {
+                            var URL = '@Url.Action("Title_Milestone", "Title", new
+                                  {
+                                      id = "_id_",
+                                      //@Type = "E",
+                                      @Page_No = "_Page_No_",
+                                      @PageSize = "_PageSize_"
+                                  })';
+                            URL = URL.replace("_id_", MusicDealCode);
+                            URL = URL.replace(/amp;/g, "");
+                            window.location.href = URL;
+                        }
+                        else {
+                            $('#hdnRecodLockingCode').val(result.Record_Locking_Code);
+                            Call_RefreshRecordReleaseTime(result.Record_Locking_Code, URL_Refresh_Lock);
+                        }
+                        returnVal = true;
+                    }
+                    else {
+                        showAlert("E", result.Message);
+                        returnVal = false;
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error in CheckRecordLock(): ' + result.responseText);
+                hideLoading();
+                returnVal = false;
+            }
+        });
+        return returnVal;
+    }
+
+     function ValidateSave(Type)
+    {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        var hdnddlDealType = "";
+        var hdnddlLanguage = "";
+        var hdnTxtTitleName = "";
+        var hdnMusicLabel = "0";
+        var hdnProgramCategory = "";
+        var hdnTxtDuration = "0";
+        var Error = "";
+
+        if ($("#ddlDealType").val() != "0")
+        {
+            hdnddlDealType = $("#ddlDealType").val();
+        }
+        else {
+            $('#ddlDealType').addClass("required");
+            Error = "E";
+        }
+
+        if ($.trim($('#txtTitleName').val()) != "")
+            hdnTxtTitleName = $("#txtTitleName").val();
+        else {
+            $("#txtTitleName").addClass("required");
+            Error = "E";
+        }
+
+         var IsTitleDurationMandatory = $("#IsTitleDurationMandatory").val();
+         if (IsTitleDurationMandatory == 'Y') {
+            if ($("#txtDuration").val() != undefined) {
+                if ($.trim($('#txtDuration').val()) != "")
+                    hdnTxtDuration = $("#txtDuration").val();
+                else {
+                    $("#txtDuration").addClass("required");
+                    Error = "E";
+                }
+            }
+        }
+
+        if ($("#ddlLanguage").val() != "") {
+            hdnddlLanguage = $("#ddlLanguage").val();
+            if (hdnddlLanguage == "0") {
+                $('#ddlLanguage').addClass('required');
+                Error = "E";
+            }
+        }
+        else {
+            Error = "E";
+        }
+
+        if ($("#ddlProgramCategory").val()!=undefined ){
+            if ($("#ddlProgramCategory").val() != "0") {
+                hdnProgramCategory = $("#ddlProgramCategory").val();
+            }
+            else {
+                $("#ddlProgramCategory").addClass('required');
+                $("#ddlProgramCategory").attr('required', true);
+                Error = "E";
+            }
+        }
+
+         var CodeForEmbeddedMusic = $("#CodeForEmbeddedMusic").val();
+        if ($("#ddlDealType").val() == CodeForEmbeddedMusic) {
+            if ($("#ddlMusicLabel").val() != "" && $("#ddlMusicLabel").val() != null) {
+                hdnMusicLabel = $("#ddlMusicLabel").val();
+            }
+            else {
+                $('#ddlMusicLabel').addClass("required");
+                Error = "E";
+            }
+        }
+
+        var ISDuplicate = ""
+        var NewTitleName = $.trim($('#txtTitleName').val());
+
+        if (NewTitleName != "") {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("ValidateIsDuplicate", "Title_List")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                async: false,
+                data: JSON.stringify({
+                    TitleName: NewTitleName,
+                    DealTypeCode: $("#ddlDealType").val()
+                }),
+                contentType: "application/json; charset=utf-8",
+                success: function (result) {
+                    if (result.Message != "") {
+                        ISDuplicate = result.Message;
+                        showAlert("E", ISDuplicate);
+                    }
+                },
+                error: function (result) {
+                }
+            });
+        }
+        if (Error == "E" && ISDuplicate != "") {
+            $('#popAddTitle').modal('');
+
+        }
+
+         var SeasonValue = 0;
+         if (ValidateSeason == "Y") {
+             SeasonValue = $.trim($("#intExtSeason").val());
+             if (SeasonValue == 0 || SeasonValue == null || SeasonValue == undefined) {
+                 Error = "E";
+             }
+             if (SeasonValue != 0 && SeasonValue != null && SeasonValue != undefined && SeasonValue != "") {
+                 $("#intExtSeason").removeClass("required");
+             }
+             else {
+                 $("#intExtSeason").addClass("required");
+                 Error = "E";
+             }
+             if (!isNumber(SeasonValue)) {
+                 Error = "E";
+             }
+         }
+
+        if (Error == "" && ISDuplicate == "") {
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("SaveTitle", "Title_List")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                async: false,
+                data: JSON.stringify({
+                    hdnddlDealType: hdnddlDealType,
+                    hdnddlLanguage: hdnddlLanguage,
+                    hdnTxtTitleName: hdnTxtTitleName,
+                    hdnProgramCategory:hdnProgramCategory,
+                    hdnTxtDuration:hdnTxtDuration,
+                    hdnMusicLabel: hdnMusicLabel,
+                    Type: Type,
+                    SeasonForProgram: SeasonValue
+                }),
+                contentType: "application/json; charset=utf-8",
+                success: function (result) {
+
+                    var TitleCode = parseInt(result.TitleCode);
+                    if (Type == "SS") {    //window.location.href = '.replace("TitleCode", parseInt(result.TitleCode));
+
+                        var URL = '@Url.Action("Index", "Title", new { id = "TitleCode", Page_No = @ViewBag.PageNo, SearchedTitle = @ViewBag.SearchedTitle, PageSize = @ViewBag.PageSizeCreate,DealTypeCode=@ViewBag.DealTypeCodeSearch, Type = "E"})';
+                        URL = URL.replace("TitleCode", parseInt(result.TitleCode));
+                        URL = URL.replace("amp;", "");
+                        URL = URL.replace("amp;", "");
+                        URL = URL.replace("amp;", "");
+                        URL = URL.replace("amp;", "");
+                        window.location.href = URL;
+                    }
+
+                    if ('@ViewBag.fromAcqGeneral' != 'Y') {
+                        BindGrid($("#hdnPageIndex").val(), '', '', '');
+                        BindTitle();
+                    }
+                    else {
+                        general(TitleCode);
+                    }
+
+
+                    $('#popAddTitle').modal('hide');
+                    showAlert("S", result.Message);
+                },
+                error: function (result) {
+                }
+            });
+        }
+    }
+
+</script>
+
+<!DOCTYPE html>
+@*<meta http-equiv="Content-Type" content="text/html; charset=utf-8">*@
+<html>
+<head>
+    <title>RightsU</title>
+    <meta charset="utf-8" />
+    <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+    <style>
+        .SumoSelect {
+            width: 313px !important;
+        }
+
+        /*.tinyADSearch {
+            top: 40px;
+        }*/
+
+        .top_filter {
+            margin-top: 22px;
+        }
+
+        .search_area {
+            border-bottom: 1px dotted #777;
+            margin-bottom: 5px;
+        }
+
+        #divSearch {
+            padding: 6px 10px;
+            margin-bottom: 5px;
+            border: 1px solid #ddd;
+            background-color: #eee;
+        }
+
+            #divSearch > ul > li {
+                float: left;
+                min-height: 56px;
+                list-style-type: none;
+                padding: 0 3px;
+            }
+
+            #divSearch .chosen-container {
+                margin: 0;
+            }
+
+            #divSearch .checkbox-inline {
+                margin-bottom: 7px;
+            }
+
+        ul.first > li {
+            width: 25%;
+        }
+
+            ul.first > li:nth-child(2) {
+                width: 37%;
+            }
+
+            ul.first > li:last-child {
+                width: 25%;
+            }
+
+
+
+        #divSearch label {
+            display: inline-block;
+        }
+
+        #lbSearchTitles_chosen {
+            width: 85% !Important;
+        }
+
+        .AdSearch {
+            margin-left: 8px;
+            margin-top: 3px;
+        }
+
+        #AdvanceSearchPanel {
+            overflow: visible !important;
+            height: 570px;
+        }
+
+        .pagination_popup .current.prev, .pagination .current.next {
+            z-index: -1 !important;
+        }
+
+        .grid_item ul {
+            float: left;
+            width: 100%;
+            padding: 0 0 0 0;
+            margin: 1px 0;
+        }
+
+        .grid_item li {
+            float: left;
+            list-style-type: none;
+            /*margin: 0 7px;*/
+        }
+
+        /*.right_nav li {
+            float: left;
+            list-style-type: none;
+            margin: 0 7px;
+        }*/
+
+        .right_nav_Head li {
+            float: right;
+            list-style-type: none;
+            margin: 0 7px;
+        }
+        /*.pull-left-Head {
+            float: right !important;
+        }
+
+        .pull-right-Head {
+            float: left !important;
+        }*/
+        /*.side_nav_head{
+            top: 18.8%;
+            left:40px !important;
+            right:auto !important;
+            direction: rtl !important;
+            unicode-bidi: bidi-override !important;
+            flex: auto;
+            transform: rotate(179deg);
+        }*/
+        .form_links-Head li {
+            float: right;
+            list-style-type: none;
+            margin-right: 10px;
+        }
+
+        .container {
+            min-height: 738px;
+        }
+    </style>
+
+</head>
+<body>
+    <div class="main_section" onclick="HideAllPopupDiv()" dir='@objMessageKey.LayoutDirection.ToLower();'>
+        <section class="rightsU_container clearfix">
+            <div id="sideNavi">
+                <div class="side-navi-item item1" style="top:0px ;width: 46px !important;" onclick="javascript: togglePanelVisibility2('pnlSearch'); BindSearch();"><div><span class="glyphicon glyphicon-search" style="transform: rotate(-270deg);"></span></div></div>
+            </div>
+            <div class="RightPanel" id="pnlSearch" hidden="hidden" dir="@objMessageKey.LayoutDirection">
+                <div id="AdvanceSearchPanel">
+                    <h4>@objMessageKey.AdvanceSearch</h4>
+                    <a class="close" href="#" onclick="javascript: panelVisible = true; togglePanelVisibility2('pnlSearch');"><span class="Reviewclose">x</span></a>
+                    <ul id="AdSearch" style="margin-top: 11px;border-bottom: 0;border-left: 0px;border-right: 0px;">
+                        <li class="AdSearch">
+                            <label>@objMessageKey.TitleName:</label>
+                            <br>
+                            <input type="hidden" value="@ViewBag.Is_AcqSyn_Type_Of_Film" id="hdnTypeof" />
+                            <input type="hidden" value="@ViewBag.Is_Title_CoProd_AdvSearch" id="hdnCoProduction" />
+
+                            <input type="text" placeholder="@objMessageKey.TitleName" id="txtTitleSearch" autocomplete="on" style="width:250px" value='@ViewBag.SrchTitle' onkeyup="populateTitle(event)" />
+                            <input type="text" id="lbTitle_Code" style="display: none;" />
+                            @Html.Hidden("hdnTitleSearch")
+                        </li>
+
+                        <li class="AdSearch">
+                            <label>@objMessageKey.TitleLanguage:</label><br />
+                            <select id="ddlLangugaeAd" multiple="multiple"></select>
+                        </li>
+                        <li class="AdSearch">
+                            <label>@objMessageKey.TitleType:</label>
+                            <select id="ddlDealTypeAd" class="form_input chosen-select"></select>
+                        </li>
+
+
+                        <li class="AdSearch">
+                            <label>@objMessageKey.YearOfRelease:</label><br>
+                            <input type="text" placeholder="@objMessageKey.YearOfRelease" class="text" onkeypress="return isNumber(event);" maxlength="4" id="txtYearOfRelease" style="width: 118px;" value='@ViewBag.YearOfRelease' />
+                        </li>
+
+                        <li class="AdSearch">
+                            <label>@objMessageKey.KeyStarCast:</label><br />
+                            <select id="ddlStarCast" multiple="multiple"></select>
+                        </li>
+
+                        @if (ViewBag.Is_AcqSyn_Type_Of_Film == "Y")
+                        {
+                            <li class="AdSearch">
+                                <label>Type of Film:</label><br />
+                                <select id="ddlTypeofFilm" class="form_input chosen-select"></select>
+
+                            </li>
+                        }
+                        @if (ViewBag.Is_Title_CoProd_AdvSearch == "Y")
+                        {
+                            <li class="AdSearch">
+                                <label>Co-Production:</label><br />
+                                <select id="ddlCoProduction" class="form_input chosen-select"></select>
+
+                            </li>
+                        }
+
+                        <li class="AdSearch">
+                            <a onclick="ShowMore('pnlShowmore')" id="showMore">Show more...</a>
+                        </li>
+
+                    </ul>
+                    <br />
+                    <div style="text-align:center;">
+                        <a class="btn-primary" href="#" onclick="validateSearch();">@objMessageKey.Search</a>
+                        <a class="btn-primary" href="#" onclick="ClearAll();">@objMessageKey.ClearAll</a>
+                        <input type="hidden" id="hdnClearAll" />
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="RightPanel" style="overflow-y: auto;" id="pnlShowmore" hidden="hidden" dir="@objMessageKey.LayoutDirection">
+                <div id="AdvanceSearchPanel">
+                    <h4>Additional Options</h4>
+                    <a class="close" href="#" onclick="javascript: panelVisible=true;ShowMore('pnlSearch');">@*<span class="Reviewclose">x</span>*@</a>
+                    <ul id="AdSearch" style="margin-top: 11px;border-bottom: 0;border-left: 0px;border-right: 0px;">
+                        <li class="AdSearch">
+                            <label>@objMessageKey.OriginalTitle:</label>
+                            <br>
+                            <input type="text" placeholder="@objMessageKey.OriginalTitle" id="txtOrigTitleSearch" autocomplete="on" style="width:250px" value='@ViewBag.SrchTitle' onkeyup="populateOrigTitle(event)" />
+                            <input type="text" id="lbOrigTitle_Code" style="display: none;" />
+                            @Html.Hidden("hdnOrigTitleSearch")
+                        </li>
+                        <li class="AdSearch">
+                            <label>@objMessageKey.OriginalLanguage:</label><br />
+                            <select id="ddlOrigLang" multiple="multiple"></select>
+                        </li>
+                        <li class="AdSearch">
+                            <label>@objMessageKey.CountryOfOrigin:</label><br />
+                            <select id="ddlCountry" multiple="multiple"></select>
+                        </li>
+                        <li class="AdSearch">
+                            <label>@objMessageKey.Director:</label><br />
+                            <select id="ddlDirector" multiple="multiple"></select>
+                        </li>
+                        <li class="AdSearch">
+                            <label>@objMessageKey.Program:</label>
+                            <select id="ddlProgram" class="form_input chosen-select"></select>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+
+
+
+            <div class="container acq main_col" id="AllsubmenuHide" onclick="AllsubmenuHide();" dir=@objMessageKey.LayoutDirection>
+                <div class="top_area">
+                    <header>
+                        <h2 class="pull-left">@objMessageKey.Title</h2>
+                    </header>
+                    <div class="right_nav pull-right">
+                        <ul>
+                            <li>
+                                <input type="text" name="srchCommon" id="srchCommon" value='@ViewBag.genericSearch' class="search" style="width:450px !important;"
+                                       placeholder="@objMessageKey.TitleName, @objMessageKey.TitleType, @objMessageKey.TitleLanguage, @objMessageKey.OriginalTitle,  @objMessageKey.Program" autocomplete="off" />
+                            </li>
+                            <li>
+                                <input type="button" class="btn btn-primary" value="@objMessageKey.Search" onclick="return search();" />
+                            </li>
+                            <li>
+                                <a class="glyphicon glyphicon-refresh" title="@objMessageKey.ShowAll" id="btnShowAll" onclick="ShowAll()"></a>
+                            </li>
+                            <li>
+                                @if (ViewBag.buttonVisibility.Contains("~" + GlobalParams.RightCodeForAdd + "~"))
+                                {
+                                    <a class="btn btn-primary" href="#" data-toggle="modal" onclick="AddTitle()">@objMessageKey.AddTitle</a>
+                                }
+                            </li>
+
+                            <li>
+                                @if (ViewBag.buttonVisibility.Contains("~" + GlobalParams.RightCodeForExportToExcel + "~"))
+                                {
+                                    <label for="btnExportToExcel" class="glyphicon glyphicon-floppy-save" title="@objMessageKey.SaveToExcel">
+                                        @using (Html.BeginForm("ExportToExcel", "Title_List"))
+                                        {
+                                            <input type="submit" style="display: none" id="btnExportToExcel" />
+                                            @Html.Hidden("TitleName")
+                                            @Html.Hidden("DealTypeCode")
+                                            <input type="hidden" name="DealTypeC" value="0" id="DealTypeC" />
+                                        }
+                                    </label>
+                                }
+                            </li>
+
+                            <li>
+                                @if (ViewBag.buttonVisibility.Contains("~" + GlobalParams.RightCodeForTitleImport + "~"))
+                                {
+                                    <label for="btnTitleImport" class="glyphicon glyphicon-floppy-open" style="color:#079807b8;" onclick="@("window.location.href='" + @Url.Action("titleImport", "Title") + "'");" title="@objMessageKey.TitleImport">
+                                        @*<input type="submit"   id="btnTitleImport" value="TI"
+                                            />*@
+                                    </label>
+                                }
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="">
+                </div>
+                <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
+                <div id="TitleListGrid" dir="@objMessageKey.LayoutDirection">
+                </div>
+            </div>
+        </section>
+    </div>
+    <div aria-labelledby="myModalLabel" class="form_wrapper modal fade in small_popup" id="popAddTitle" role="dialog" tabindex="-1" aria-hidden="false">
+    </div>
+</body>
+</html>

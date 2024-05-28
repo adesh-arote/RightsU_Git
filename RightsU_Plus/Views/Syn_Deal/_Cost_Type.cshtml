@@ -1,0 +1,327 @@
+﻿@model RightsU_Entities.Syn_Deal_Revenue
+@using System.Linq;
+@using UTOFrameWork.FrameworkClasses;
+<script type="text/javascript" src="~/JS_Core/jquery.alphanum.min.js"></script>
+<script type="text/javascript" src="~/JS_Core/autoNumeric-1.8.1.js"></script>
+@{
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        if ('@ViewBag.CTMessage' != '') {
+            showAlert('E', '@ViewBag.CTMessage');
+        }
+        initializeTooltip();
+    });
+
+
+    function CheckAddEditMode() {
+
+        if ('@ViewBag.IsAddEditMode' == 'Y') {
+            message = '@objMessageKey.PleasecompletetheAddEditfirst';
+            showAlert('E', message);
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    function Save(acqDealCostTypeCode, rowIdex) {
+        debugger
+        var costtypeCode = $('#ddlCostTypeCode_' + rowIdex).val();
+        var Amt = RemoveComa($('#txtAmt_' + rowIdex).val());
+
+        if (parseInt(costtypeCode) == 0) {
+            $('#ddlCostTypeCode_' + rowIdex).addClass("required");
+            return false;
+        } else if (Amt == "") {
+            $('#ddlCostTypeCode_' + rowIdex).removeClass("required");
+            $('#txtAmt_' + rowIdex).attr('required', true);
+            return false;
+        } else if (Amt != "" && parseFloat(Amt) == 0) {
+            $('#ddlCostTypeCode_' + rowIdex).removeClass("required");
+            $('#txtAmt_' + rowIdex).addClass('required');
+            return false;
+        } else {
+            EnableDisableTabs(false, 1);
+            $('.required').removeClass('required');
+            $("[required='required']").removeAttr("required");
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("SaveCostType", "Syn_Revenue")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                data: JSON.stringify({
+                    AcqDealCostTypeCode: acqDealCostTypeCode,
+                    CostTypeCode: costtypeCode,
+                    BudgetedAmt: Amt,
+                    rowIndex: rowIdex
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    } else {
+                        $('#tabCostHead').html(result);
+                        initializeChosen();
+                        initializeTooltip();
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+
+    }
+
+    function DeleteCostType(acqDealCostTypeCode, rowIndex, Cost_Type_Code) {
+        if (CheckAddEditMode()) {
+
+            /*---Collect Check Reference in Standard Returns---*/
+            var VarTypeList = new Array();
+            var StandReturns = $("#tblStdReturns tr:not(:has(th),.hide)");
+            var i = 1;
+            var isRef = 0;
+            StandReturns.each(function (rowId_outer) {
+                var _costTypeCode_SR = 0;
+
+                _costTypeCode_SR = $("#hdnCostTypeCode_" + i).val();
+
+                if (Cost_Type_Code == _costTypeCode_SR && isRef == 0)
+                    isRef = 1;
+                i = i + 1;
+            });
+            /*------------------------------------*/
+            if (isRef == 1) {
+                showAlert('E', '@objMessageKey.ThisFixedFeesisalreadyassignedtoStandardReturnsPaymentTerms');
+                return false;
+            } else {
+                CommandName = "CostType";
+                tmp_acqDealCostTypeCode = acqDealCostTypeCode;
+                tmp_rowIndex = rowIndex;
+                showAlert("I", '@objMessageKey.Areyousureyouwanttodeletethisfixedfees', "OKCANCEL");
+            }
+        }
+
+    }
+
+    function handleCancel() { }
+
+    function EditCostType(acqcosttypecode, rowIndex, costtypeCode) {
+        EnableDisableTabs(true, 1);
+
+        if (CheckAddEditMode()) {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("EditCostType", "Syn_Revenue")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                data: JSON.stringify({
+                    AcqDealCostTypeCode: acqcosttypecode,
+                    CostTypeCode: costtypeCode
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    } else {
+                        $('#tabCostHead').html(result);
+                        initializeChosen();
+                        initializeTooltip();
+
+                        $("#txtAmt_" + rowIndex).autoNumeric('init', { vMax: '99999999999.99', dGroup: 2 });
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    }
+
+    function AddCancelUpdate(isAdd) {
+        if (isAdd == 1) {
+            EnableDisableTabs(true, 1);
+        } else {
+            EnableDisableTabs(false, 1);
+        }
+
+        if (isAdd == "0" || (CheckAddEditMode() && isAdd == "1")) {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("AddCancelCostType", "Syn_Revenue")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                data: JSON.stringify({
+                    isAdd: isAdd
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    } else {
+                        $('#tabCostHead').html(result);
+                        initializeChosen();
+                        initializeTooltip();
+
+                        if (isAdd == "1") {
+                            $("#txtAmt_0").autoNumeric('init', { vMax: '99999999999.99', dGroup: 2 });
+
+                            $('#txtAmt_0').val('');
+                            $('#ddlCostTypeCode_0').val('0');
+
+                            $('#trAddEdit').show();
+                        } else {
+                            $('#trAddEdit').hide();
+                        }
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    }
+
+    function RemoveReqClassCT() {
+        $(txtBox).removeClass('required');
+    }
+
+</script>
+<style>
+    span::after {
+        content: "\200E‎";
+    }
+
+    label::after {
+        content: "\200E‎";
+    }
+
+    .active-result::after {
+        content: "\200E‎";
+    }
+</style>
+<div class="pull-right">
+    @{if (ViewBag.Mode != GlobalParams.DEAL_MODE_VIEW && @ViewBag.Mode != GlobalParams.DEAL_MODE_APPROVE)
+    { <span class="red_icon glyphicon glyphicon-plus" onclick="AddCancelUpdate(1);"></span>}}
+</div>
+<table class="table table-bordered table-hover" id="tblCostType">
+    <thead>
+        <tr>
+            <th style="width: 60%">@objMessageKey.CostType</th>
+            <th style="width: 30%">@objMessageKey.Amount</th>
+            @{if (ViewBag.Mode != GlobalParams.DEAL_MODE_VIEW && @ViewBag.Mode != GlobalParams.DEAL_MODE_APPROVE)
+            {
+                <th style="width: 10%">@objMessageKey.Action</th>}}
+        </tr>
+    </thead>
+    <tbody>
+        @{if (Model != null)
+        {
+            int i = 1;
+            foreach (var objADC in Model.Syn_Deal_Revenue_Costtype)
+            {
+                if (objADC.EntityState != RightsU_Entities.State.Deleted)
+                {
+
+                    /*Edit*/
+                    if (ViewBag.AcqDealCostTypeCode > 0 && ViewBag.AcqDealCostTypeCode == objADC.Cost_Type_Code)
+                    {
+                        <tr>
+                            <td>
+                                @if (ViewBag.DdlCostType != null)
+                                {
+                                    if (ViewBag.IsRefPayTerm == false)
+                                    {
+                                        @Html.DropDownList("Cost_Type_Code", (List<SelectListItem>)ViewBag.DdlCostType, new { @id = "ddlCostTypeCode_" + i, @class = "form_input chosen-select" });
+                                    }
+                                    else
+                                    {
+                                        @Html.DropDownList("Cost_Type_Code", (List<SelectListItem>)ViewBag.DdlCostType, new { @id = "ddlCostTypeCode_" + i, disabled = true });
+                                    }
+
+                                }
+                            </td>
+                            @* <td class="text-right">@Html.Label("ConsumedAmt",  GlobalParams.CurrencyFormat(Convert.ToDouble(objADC.Consumed_Amount.ToString())), new { @id = "lblConsumedAmt_" + i })</td>*@
+                            <td>@Html.TextBox("BudgetedAmt", GlobalParams.CurrencyFormat(Convert.ToDouble(objADC.Amount)), new { @id = "txtAmt_" + i, @class = "text-right", @onkeyup = "RemoveReqClass(this)" })</td>
+                            @*  <td class="text-right">@Html.Label("BalAmt",  GlobalParams.CurrencyFormat(Convert.ToDouble(Convert.ToDecimal(objADC.Amount - objADC.Consumed_Amount))), new { @id = "lblBalAmt_" + i })</td>*@
+                            <td>
+                                <a title="@objMessageKey.Update" href="#" class="glyphicon glyphicon-ok-circle" onclick="Save(@objADC.Syn_Deal_Revenue_Costtype_Code,@i)"></a>
+                                <a title="@objMessageKey.Cancel" href="#" class="glyphicon glyphicon-remove-circle" onclick="AddCancelUpdate(0);"></a>
+                            </td>
+                        </tr>
+                    }
+                    else/*List*/
+                    {
+                        <tr>
+                            <td>
+                                @{RightsU_BLL.Cost_Type_Service objCTS = new RightsU_BLL.Cost_Type_Service(objLoginEntity.ConnectionStringName);
+
+                                string Cost_Type_Name = objCTS.GetById(Convert.ToInt32(objADC.Cost_Type_Code)).Cost_Type_Name;
+                                @Html.Label("CostTypeName", Cost_Type_Name, new { @id = "lblCostTypeName" + i })
+                                }
+                            </td>
+                            @*   <td class="text-right">@Html.Label("ConsumedAmt", GlobalParams.CurrencyFormat(Convert.ToDouble(objADC.Consumed_Amount)), new { @id = "lblConsumedAmt" + i })</td>*@
+                            <td class="text-right">
+                                @Html.Label("BudgetedAmt", GlobalParams.CurrencyFormat(Convert.ToDouble(objADC.Amount)), new { @id = "lblAmt" + i })
+                                @Html.Hidden("hdn_BudgetedAmt_" + i, objADC.Amount)
+                                @Html.Hidden("hdn_CostTypeCode_" + i, objADC.Cost_Type_Code)
+                            </td>
+                            @*  <td class="text-right">@Html.Label("BalAmt",GlobalParams.CurrencyFormat(Convert.ToDouble(Convert.ToDecimal(objADC.Amount - objADC.Consumed_Amount))), new { @id = "lblBalAmt" + i })</td>*@
+                            @{if (ViewBag.Mode != GlobalParams.DEAL_MODE_VIEW && @ViewBag.Mode != GlobalParams.DEAL_MODE_APPROVE)
+                            {
+                                <td>
+
+                                    <a title="@objMessageKey.Edit" href="#" class="glyphicon glyphicon-pencil" onclick="EditCostType(@objADC.Syn_Deal_Revenue_Costtype_Code,@i,@objADC.Cost_Type_Code)"></a>
+                                    <a title="@objMessageKey.Delete" href="#" class="glyphicon glyphicon-trash" onclick="DeleteCostType(@objADC.Syn_Deal_Revenue_Costtype_Code,@i,@objADC.Cost_Type_Code)"></a>
+
+                                </td>}}
+                        </tr>
+                    }
+                    i++;
+                }
+            }
+        }
+        }
+        <tr id="trAddEdit" style="display: none" class="hideCT">
+            <td>
+                @if (ViewBag.DdlCostType != null)
+                {
+                    @Html.DropDownList("DdlCostType_Add", (List<SelectListItem>)ViewBag.DdlCostType, new { @id = "ddlCostTypeCode_0", @class = "form_input chosen-select" });
+
+                }
+            </td>
+            @* <td class="text-right">
+                    <label id="lblConsumedAmt_0" title=""></label>
+                </td>*@
+            <td class="text-right">
+                <input class="text" id="txtAmt_0" type="text" value="" onkeyup="RemoveReqClass(this)" />
+            </td>
+            @* <td class="text-right">
+                    <label id="lblBalAmt_0" title="0.00"></label>
+                </td>*@
+            <td>
+                <a title="@objMessageKey.Save" href="#" class="glyphicon glyphicon-ok-circle" onclick="Save(0,0)"></a>
+                <a title="@objMessageKey.Cancel" href="#" class="glyphicon glyphicon-remove-circle" onclick="AddCancelUpdate(0);"></a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<div class="pull-right">
+    <br /><b>@objMessageKey.TotalAmount : </b>@if (ViewBag.TotalCostType != null)
+    {@ViewBag.TotalCostType}<br />
+</div>

@@ -1,0 +1,268 @@
+/* You can add global styles to this file, and also import other style files */
+p-autocomplete.ng-dirty.ng-invalid > .ui-autocomplete > .ui-inputtext{
+	border-bottom: 2px solid red !important;
+}
+
+  /* //this css apply for maunal cue sheet dialogbox songtype autocomplete textbox */
+  .autoText>span>input{
+    width: 110px !important;
+  }
+
+  
+/* For Confirm Dialog box contetn */
+.ui-confirmdialog.ui-dialog .ui-dialog-content {
+    padding: 1em 1em !important;
+    /* width: 200 px !important; */
+}
+.ui-confirmdialog .ui-dialog-content .fa {
+    font-size: 1.5em !important;
+    vertical-align: middle !important;
+    margin-right: 0px !important;
+}
+.ui-dialog.ui-widget .ui-dialog-titlebar {
+    padding: 15px 11px !important;
+}
+  .ui-dialog.ui-widget .ui-dialog-titlebar {
+    /* padding: 1em 1.5em; */
+    font-style: italic !important;
+}
+
+.ui-radiobutton-box.ui-state-active {
+    border: 2px solid #156090 !important;
+    background: white !important;
+    color: blue !important;
+}
+.ui-radiobutton, .ui-radiobutton-label {
+    vertical-align: top !important;
+    padding: 1px !important;
+}
+
+  .ui-dropdown-panel {
+    /* / min-width: 87%; / */
+    width: 0px !important;
+}
+.ui-dropdown{
+    height: 30px !important;
+}
+.ui-autocomplete-panel{
+    width: 0px !important;
+    position: relative;
+}
+/* .searchmultiselect>div>div>div{
+    width: 145px !important;
+    
+} */
+/* .ui-datatable .ui-datatable-data>tr>td {
+    background-color: lightblue !important;
+} */
+
+.ui-chkbox .ui-chkbox-box {
+    width: 1.125em !important;
+    height: 1.125em !important;
+    line-height: 1.125em !important;
+    border-radius: 2px !important;
+    border-color: cadetblue !important;
+    margin-top: -3px !important;
+}
+
+.ManualcueSheetMultiSelect .ui-multiselect .ui-multiselect-label-container {
+    width:100px !important;
+}
+
+ .ui-multiselect-panel {
+    /* padding: .2em;
+    position: absolute; */
+    min-width: 8em !important;
+    
+}
+.ui-multiselect .ui-multiselect-label-container {
+    
+    width: 145px !important;
+    /* font-weight: initial; */
+}
+.ui-multiselect .ui-multiselect-label {
+    font-weight:initial !important;
+    
+}
+.ui-multiselect-item label{
+font-weight: initial !important;
+margin-top: 4px !important;
+}
+.ui-dropdown .ui-dropdown-trigger {
+   
+    border-right: 1px solid lightgray !important;
+    /* border-top: 0 !important;
+    border-bottom: 0 !important;
+    cursor: pointer !important;
+    width: 1.5em !important;
+    height: 100% !important;
+    position: absolute !important;
+    right: 0 !important;
+    top: 0 !important;
+    padding: 0 .25em !important; */
+}
+
+/* .ng-tns-c6-2> div {
+    display: block ;
+    z-index: 1001 ;
+     top: 30px !important;
+    left: -220px !important; 
+    
+        opacity: 1 ;
+        
+} */
+
+/* .ui-overlaypanel{
+    margin-bottom: 5%;
+} */
+.ui-float-label
+{
+    /* font-weight: 900; */
+  padding: 1%
+   
+    
+}
+.ui-paginator {
+    text-align: right ! important
+    }
+    .ui-datatable-footer {
+        position: absolute !important;
+        bottom: 0px;
+        border-right: 0px !important;
+        padding: 5px 10px !important;
+        /* left: 0px; */
+    }
+    
+.ui-datatable .ui-datatable-thead>tr>th {
+    font-weight: bold ! important;
+    font-size: 14px;
+background-color: rgb(199, 195, 195);
+border: 1px solid ;
+}
+
+.ui-datatable .ui-datatable-data>tr>td {
+    
+    font-size: 13px;
+     overflow: hidden !important; 
+    text-overflow: ellipsis !important;
+    
+}
+
+.ui-sidebar-right { 
+    width: 25em !important;
+}
+.ui-calendar.ui-calendar-w-btn input{
+    width: 120px !important;
+  }
+  /* .ui-widget, .ui-widget * {
+    /* box-sizing: border-box; 
+    font-weight: initial !important;
+} */
+
+span.autoMax.ui-autocomplete.ui-widget.ui-autocomplete-multiple>ul {
+    width: 230px !important;
+    /* height: 40px !important; */
+    overflow-y: auto !important;
+    max-height: 70px !important;
+}
+
+.overlay {
+    /*pointer-events: none;*/
+    opacity:1.0;
+    filter: alpha(opacity = 1.0);
+    position:absolute;
+    top:0; bottom:0; left:0; right:0;
+    display:block;
+    z-index:2;
+    background:transparent;
+    background-image:url('assets/Images/minifindstore_spin.gif');
+    background-repeat:no-repeat;
+    background-position:center;
+}
+#loadingDiv{
+    position:fixed;
+    top:0px;
+    right:0px;
+    width:100%;
+    height:100%;
+    background-image:url('assets/Images/minifindstore_spin.gif');
+    background-repeat:no-repeat;
+    background-position:center;
+    z-index:10;
+    
+  }
+  
+  .hrborder{
+    /* border: 1px solid #2E86C1; */
+    border: 1px solid gray;
+  }
+
+  .ui-float-label>input:focus~label, .ui-float-label>input.ui-state-filled~label, .ui-float-label>.ui-inputwrapper-focus~label, .ui-float-label>.ui-inputwrapper-filled~label 
+  { top: -.75em; font-size: 12px; }
+.ui-float-label>textarea:focus~label, .ui-float-label>textarea.ui-state-filled~label, .ui-float-label>.ui-textareawrapper-focus~label, .ui-float-label>.ui-textareawrapper-filled~label 
+{ top: -.75em; font-size: 12px; }
+
+
+
+
+::-webkit-scrollbar {
+    width: 10px;
+    height:10px;
+   
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);;
+    border-radius: 10px;
+ 
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px; 
+    
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+}
+
+/* .ui-datatable-scrollable-body {
+    overflow:visible !important;
+} */
+
+ /* //css property from usage request cuesheet dialoagbox calendar  */
+ p-calendar.timePickerFromCss span input,.timePickerToCss span input,.timePickerDurationCss span input {
+    width: 60px !important;
+}
+
+.ui-datepicker.ui-widget{
+    width:fit-content !important;
+    font-size: 11px !important;
+}
+/* // for usage request add to cart grid css for add to playlist column  */
+td.text-center.columnstyle.ui-editable-column.ng-star-inserted {
+    overflow: visible !important;
+}
+
+
+/* p-calendar.timePickerFromCss .ui-datepicker.ui-widget,.timePickerToCss .ui-datepicker.ui-widget,.timePickerDurationCss .ui-datepicker.ui-widget {
+    width: 100px !important;
+    display: block; z-index: 1008; top: 210px; left: 697.5px; opacity: 1;
+} */
+
+/* .ui-datatable td{
+    text-overflow: ellipsis !important;
+} */
+
+svg > g:last-child > g:last-child {
+    pointer-events: none;
+}
+
+div.google-visualization-tooltip {
+    pointer-events: none;
+}

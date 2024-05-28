@@ -1,0 +1,110 @@
+﻿@model List<RightsU_Entities.USP_List_MusicTrack_Result>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<input type="hidden" id="hdnCallFor" value="@ViewBag.CallFor" />
+<div class="tableScroll" id="hdnCallFor_@ViewBag.CallFor">
+    <table class="table table-bordered table-hover" id="tblMusicTrackSelected">
+        <thead>
+            <tr>
+                <th style="width: 25%;">@objMessageKey.MusicTrack</th>
+                <th style="width: 10%;">@objMessageKey.YOR</th>
+                <th style="width: 10%;">@objMessageKey.Duration</th>
+                <th style="width: 30%;">@objMessageKey.Movie / @objMessageKey.Album</th>
+                <th style="width: 25%;">@objMessageKey.MusicLabel</th>
+                @if (ViewBag.CallFor == "SELECTED")
+                {
+                    <th style="width: 10%;">@objMessageKey.Action</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @{ int i = 1; }
+            @if (Model.Count > 0)
+            {
+                foreach (var item in Model)
+                {
+                    if (ViewBag.CallFor == "SELECTED")
+                    {
+                        <tr id="trMusicTrack_@i" class="@item.Dummy_Guid  @item.Music_Title_Code" onclick="trMusicTrack_OnDblClick('@item.Dummy_Guid', '@ViewBag.CallFor' , @item.Music_Title_Code);" style="cursor:pointer" >@*title="Single click to select"*@
+                            <td class="trMusicTrack @item.Music_Title_Code">@item.Music_Title_Name</td>
+                            <td class="trMusicTrack @item.Music_Title_Code" style="text-align:center">@item.Release_Year</td>
+                            <td class="trMusicTrack @item.Music_Title_Code" style="text-align:center">@item.Duration_In_Min</td>
+                            <td class="trMusicTrack @item.Music_Title_Code">@item.Movie_Album</td>
+                            <td class="trMusicTrack @item.Music_Title_Code">@item.Music_Label_Name</td>
+                            <td align="center">
+                                <a title="@objMessageKey.Delete" class="glyphicon glyphicon-trash" style="cursor: pointer;" onclick="DeleteSelectedMusicTrack('@item.Dummy_Guid',false,'@item.Music_Title_Code')"></a>
+                                <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="ViewCML('@item.Music_Title_Code')"></a>
+                            </td>
+                        </tr>
+                        i++;
+                    }
+                    else
+                    {
+                        <tr id="trMusicTrack_@i" ondblclick="trMusicTrack_OnDblClick('@item.Dummy_Guid', '@ViewBag.CallFor', @item.Music_Title_Code)" style="cursor:pointer" >@*title="Double click to select"*@
+                            <td>@item.Music_Title_Name</td>
+                            <td style="text-align:center">@item.Release_Year</td>
+                            <td style="text-align:center">@item.Duration_In_Min</td>
+                            <td>@item.Movie_Album</td>
+                            <td>@item.Music_Label_Name</td>
+                        </tr>
+                        i++;
+                    }
+                }
+            }
+            else
+            {
+                if (ViewBag.CallFor == "SELECTED")
+                {
+                    <tr>
+                        <td colspan="6">@objMessageKey.Norecordfound</td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5">@objMessageKey.Norecordfound</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+<script>
+    $(document).ready(function () {
+        $("#hdnCallFor_LIST").attr('style', 'max-height: 380px!important');
+        $("#hdnCallFor_SELECTED").attr('style', 'max-height: 180px!important');
+    });
+    $(".trMusicTrack").click(function () {
+        $("#hdn_SelectedCurrentMusicList_Color").val($(this)[0].classList[1]);
+
+        $("#currentSong").text($(this).parent().find("td.trMusicTrack")[0].innerText)
+        $("#hdnMusicTitleCode_CML").val($(this)[0].classList[1])
+        var action = $.trim($('#hdnAction').val());
+        if (action == "") {
+            var a = $(this).parent().find("td.trMusicTrack");
+            if (a.hasClass("selected"))
+                a.removeClass("selected");
+            else
+                a.addClass("selected");
+            $(this).parent().siblings().find("td.trMusicTrack").removeClass("selected")
+           // $(this).addClass("selected").siblings().removeClass("selected");
+        }
+    });
+</script>
+<style>
+    #tblMusicTrackSelected tr td.selected {
+        background-color: #9abde5;
+    }
+
+    #tblMusicTrackSelected td {
+        padding: 5px;
+    }
+</style>
+
+
+

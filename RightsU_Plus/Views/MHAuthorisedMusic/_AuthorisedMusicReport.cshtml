@@ -1,0 +1,127 @@
+﻿@model List<RightsU_Entities.USPMHRequisitionList_Result>
+@using UTOFrameWork.FrameworkClasses;
+
+<script>
+    var URL_BindGrid = '@Url.Action("BindGrid", "MHDashboard")';
+    var RequestId = "", ChannelName = "", ShowName = "", Episode = "";
+
+    $(document).ready(function () {
+        debugger;
+        $("#lblRecordCount").text(@ViewBag.RecordCnt);
+        $("#hdnRecordCount").val(@ViewBag.RecordCnt);    
+        $("#txtPageSize").val(@ViewBag.PageSize);
+        $("#hdnPageNo").val(@((ViewBag.PageNumber ?? 1)));
+        SetPaging();
+
+    });
+
+        function BindGrid(MHRequestCode, VendorCodes, DealType, BU, status, callFor) {
+        debugger;
+
+        PageNo = $('#hdnPageNumber').val();
+        recordPerPage = $('#txtPgSize').val();
+        DealType = $('#ddlShowType').val();
+        BU = $('#ddlBU').val();
+
+        debugger;
+        showLoading();
+        $('#popup').modal();
+        $.ajax({
+            type: "POST",
+            url: URL_BindGrid,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                MHRequestCode: MHRequestCode,
+                VendorCodes: VendorCodes,
+                DealType: DealType,
+                BU: BU,
+                status: status,
+                callFor: callFor,
+                PageNo: PageNo,
+                recordPerPage: recordPerPage
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger;
+                    $('#hdnRequestCode').val(MHRequestCode);
+                    $('#hdnCallForAM').val(callFor);
+
+                    var RequestId = $('#RequestID_' + MHRequestCode).text();
+                    var ShowName = $('#ShowName_' + MHRequestCode).text();
+                    var Episode = $('#Episode_' + MHRequestCode).text();
+                    var ChannelName = $('#hdnChannelName_' + MHRequestCode).val();
+
+                    $('#pupupHtml').empty();
+                    $('#pupupHtml').html(result);
+                    hideLoading();
+                    if (ChannelName == "") {
+                        $('#popUpHeader').text(RequestId + " /" + ShowName + " (" + Episode + ")");
+                    }
+                    else {
+                        $('#popUpHeader').text(RequestId + " /" + ChannelName + " /" + ShowName + " (" + Episode + ")");
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+</script>
+
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th style="width:12%;">Request ID</th>
+            <th style="width:16%">Show Name</th>
+            <th style="width:6%;">Episode No</th>         
+            <th style="width:8%">Requested Songs</th>
+            <th style="width:8%">Authorised Songs</th>
+            <th style="width:14%;">Music Label</th>                    
+            <th style="width:18%;">Requested By</th>
+            <th style="width:10%">Requested Date</th>
+            <th style="width:8%;">Status</th>
+        </tr>
+    </thead>
+
+    <tbody>    
+        @if (Model.Count > 0)
+        {         
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <a style="color:blue;" onclick="BindGrid(@item.MHRequestCode,'','','','','AuthorisedMusicRequest')" onmouseover="this.style.cursor='pointer';">
+                            <span id="RequestID_@item.MHRequestCode">@item.RequestID</span>
+                        </a>  
+                        <input type="hidden" id="hdnRequestCode" name="hdnRequestCode" />                                                         
+                        <input type="hidden" id="hdnCallForAM" name="hdnCallForAM" value="AuthorisedMusicRequest" />
+                        <input type="hidden" id="hdnChannelName_@item.MHRequestCode" name="ChannelName" value="@item.ChannelName">
+                    </td>
+                    <td ><span id="ShowName_@item.MHRequestCode">@item.ShowName</span></td>
+                    <td align="center"><span id="Episode_@item.MHRequestCode">@item.EpisodeNo</span></td>
+                    <td style="text-align : center">@item.Songs</td>   
+                    <td style="text-align :center">@item.AuthorisedSongsCount</td>                                                      
+                    <td>@((item.MusicLabel ?? "NA"))</td>                
+                    <td>@item.RequestedBy</td>
+                    <td align="center">@string.Format("{0:" + GlobalParams.DateFormat_Display + "}", item.RequestedDate)</td>
+                    <td >@item.Status</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="9">No record found</td>
+            </tr>
+        }
+    </tbody>
+</table>

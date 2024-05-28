@@ -1,0 +1,151 @@
+﻿@model RightsU_Entities.Royalty_Recoupment
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }    
+}
+
+<script>
+    $(document).ready(function () {
+        debugger;
+        if ('@objMessageKey.LayoutDirection' == "RTL")
+        {
+            $('#btnCancel').css("float", "right");
+            $('#btnSave').css("float", "right");
+        }
+        $("#hdnRecodLockingCode").val($("#hdnRecodLockingCode_temp").val())
+        $('#sortable').sortable();
+
+        if ($('.checkbox:checked:not("#checkId")').length == $('.checkbox:not("#checkId")').length) {
+            $('#checkId').prop('checked', true);
+        }
+
+        $('#checkId').change(function (e) {
+            if (this.checked) {
+                $('.checkbox').prop('checked', true);
+            }
+            else {
+                $('.checkbox').prop('checked', false);
+            }
+        });
+        $('input:checkbox.checkbox').change(function (e) {
+            if (!this.checked) {
+                $('#checkId').prop('checked', false);
+            }
+            if ($('.checkbox:checked:not("#checkId")').length == $('.checkbox:not("#checkId")').length) {
+                $('#checkId').prop('checked', true);
+            }
+        });        
+    });
+    
+    $('#btnCancel').click(function () {
+        var recordLockingCode = parseInt($('#hdnRecodLockingCode_temp').val())
+            if (recordLockingCode > 0)
+                ReleaseRecordLock(recordLockingCode, URL_Release_Lock);
+            BindPartialView("LIST", 0);
+    });
+
+    function Validate_Save()
+    {
+        debugger;
+        var returnmsg = true;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var royaltyName = $.trim($('#txtRoyaltyName').val());
+        if(royaltyName == '')
+        {
+            $('#txtRoyaltyName').val('');
+            $('#txtRoyaltyName').attr('required', true)
+            returnmsg = false;
+        }
+        if ($('.checkbox:checked:not("#checkId")').length=="0")
+        {
+            showAlert("E","@objMessageKey.PleaseSelectatleastonecheckbox");
+            returnmsg = false;
+        }
+        return returnmsg;
+    }
+    function Save_Success(result) {
+        debugger;
+        if (result == "true") {
+            redirectToLogin();
+        }
+        else {
+            $('#hdnRecodLockingCode_temp').val(0);
+            $('#hdnRecodLockingCode').val(0);
+            if (result.Status == "S") {
+                showAlert("S", result.Message);
+                BindPartialView("LIST", 0)
+            }
+            else {
+                showAlert("E", result.Message);
+                BindPartialView("LIST", 0)
+            }
+        }
+    }
+</script>
+@using (Ajax.BeginForm("SaveRoyalty", "Royalty_Recoupment", new AjaxOptions() { OnSuccess = "Save_Success" }))
+{
+                <div class="">
+                    <div class="title_block dotted_border clearfix">
+                        <h2 class="pull-left">
+                            @objMessageKey.RoyaltyRecoupmentList
+                        </h2>
+                    </div>
+
+                    <div class="search_area">
+                        <table class="table">
+                            <tr>
+                                <td style="width:7%;">
+                                    @objMessageKey.RoyaltyRecoupmentName :
+                                </td>
+                                <td style="width:30%;">
+                                    <input type="text" name="Royalty_Recoupment_Name" value="@Model.Royalty_Recoupment_Name" id="txtRoyaltyName" class="form-control input-sm" style="width:45%" placeholder="@objMessageKey.RoyaltyRecoupmentName" />
+                                    <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />      
+                                    @Html.HiddenFor(m => Model.Royalty_Recoupment_Code)
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="table table-bordered table-hover">
+                            <tr>
+                                <th style="width:8%;">
+                                    <text>@objMessageKey.CheckAll  </text>   <input type="checkbox" onmouseover="" style="cursor: pointer;" id="checkId" />
+                                </th>
+                                <th style="width:92%;">
+                                    @objMessageKey.RecoupmentName
+                                </th>
+                            </tr>
+                            <tbody id="sortable">
+                                @foreach (var item in ViewBag.RecoupmentTypeList)
+                                {
+                                    <tr>
+                                        <td align="center">
+                                            @if (Model.Royalty_Recoupment_Details.Where(w => w.Recoupment_Type == item.Recoupment_Type
+                                            && w.Recoupment_Type_Code == item.Recoupment_Type_Code).Count() > 0)
+                                            {
+                                                <input type="checkbox" class="checkbox" onmouseover="" style="cursor: pointer;" name="chkRecoupmentType" value="@item.Dummy_Guid" checked="checked" />
+                                            }
+                                            else
+                                            {
+                                                <input type="checkbox" class="checkbox" onmouseover="" style="cursor: pointer;" name="chkRecoupmentType" value="@item.Dummy_Guid" />
+                                            }
+                                        </td>
+                                        <td>
+                                            @item.Recoupment_Type_Name
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        <br />
+                        <input type="submit" class="btn btn-primary" style="margin-top: -14px; margin-left:5px" value="@objMessageKey.Save" onclick="return Validate_Save();" id="btnSave" />
+                        <input type="button" class="btn btn-primary" style="margin-top: -14px;" value="@objMessageKey.Cancel" id="btnCancel" />
+                    </div>
+
+                </div>         
+}

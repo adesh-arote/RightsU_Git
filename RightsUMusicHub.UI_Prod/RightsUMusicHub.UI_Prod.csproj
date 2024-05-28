@@ -1,0 +1,422 @@
+﻿<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props')" />
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="..\packages\Microsoft.Net.Compilers.2.4.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.2.4.0\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{5E196E82-969D-41CD-B9EB-A45235F3C583}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RightsUMusicHub.UI_Prod</RootNamespace>
+    <AssemblyName>RightsUMusicHub.UI_Prod</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <UseIISExpress>true</UseIISExpress>
+    <Use64BitIISExpress />
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <TypeScriptToolsVersion>3.1</TypeScriptToolsVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.8.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include=".editorconfig" />
+    <Content Include="angular.json" />
+    <Content Include="Content\bootstrap-grid.css.map" />
+    <Content Include="Content\bootstrap-grid.min.css.map" />
+    <Content Include="Content\bootstrap-reboot.css.map" />
+    <Content Include="Content\bootstrap-reboot.min.css.map" />
+    <Content Include="Content\bootstrap.css.map" />
+    <Content Include="Content\bootstrap.min.css.map" />
+    <Content Include="obj\Debug\build.force" />
+    <Content Include="obj\Debug\DesignTimeResolveAssemblyReferencesInput.cache" />
+    <Content Include="obj\Debug\RightsUMusicHub.UINew.csproj.CoreCompileInputs.cache" />
+    <Content Include="obj\Debug\RightsUMusicHub.UINew.csprojResolveAssemblyReference.cache" />
+    <Content Include="obj\Debug\RightsUMusicHub.UI_Prod.csproj.CoreCompileInputs.cache" />
+    <Content Include="obj\Debug\RightsUMusicHub.UI_Prod.csprojResolveAssemblyReference.cache" />
+    <Content Include="obj\Release\RightsUMusicHub.UINew.csproj.CoreCompileInputs.cache" />
+    <Content Include="obj\Release\RightsUMusicHub.UINew.csprojResolveAssemblyReference.cache" />
+    <Content Include="package-lock.json" />
+    <Content Include="package.json" />
+    <None Include="packages.config" />
+    <Content Include="Scripts\bootstrap.bundle.js.map" />
+    <Content Include="Scripts\bootstrap.bundle.min.js.map" />
+    <Content Include="Scripts\bootstrap.js.map" />
+    <Content Include="Scripts\bootstrap.min.js.map" />
+    <Content Include="Scripts\esm\popper-utils.js.map" />
+    <Content Include="Scripts\esm\popper-utils.min.js.map" />
+    <Content Include="Scripts\esm\popper.js.map" />
+    <Content Include="Scripts\esm\popper.min.js.map" />
+    <Content Include="Scripts\jquery-3.2.1.min.map" />
+    <Content Include="Scripts\jquery-3.2.1.slim.min.map" />
+    <Content Include="Scripts\popper-utils.js.map" />
+    <Content Include="Scripts\popper-utils.min.js.map" />
+    <Content Include="Scripts\popper.js.map" />
+    <Content Include="Scripts\popper.min.js.map" />
+    <Content Include="Scripts\README.md" />
+    <Content Include="Scripts\umd\popper-utils.js.map" />
+    <Content Include="Scripts\umd\popper-utils.min.js.map" />
+    <Content Include="Scripts\umd\popper.js.map" />
+    <Content Include="Scripts\umd\popper.min.js.map" />
+    <Content Include="src\.editorconfig" />
+    <Content Include="src\assets\.gitkeep" />
+    <Content Include="src\assets\chosen\Thumbs.db" />
+    <Content Include="src\assets\css\slick\config.rb" />
+    <Content Include="src\assets\css\slick\fonts\slick.eot" />
+    <Content Include="src\assets\css\slick\fonts\slick.ttf" />
+    <Content Include="src\assets\css\slick\fonts\slick.woff" />
+    <Content Include="src\assets\css\slick\slick.scss" />
+    <Content Include="src\assets\template\CuesheetImport.xlsx" />
+    <Content Include="src\browserslist" />
+    <Content Include="src\tsconfig.app.json" />
+    <Content Include="src\tsconfig.spec.json" />
+    <Content Include="src\tslint.json" />
+    <Content Include="tsconfig.json" />
+    <Content Include="tslint.json" />
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include=".gitignore" />
+    <Content Include="Content\bootstrap-grid.css" />
+    <Content Include="Content\bootstrap-grid.min.css" />
+    <Content Include="Content\bootstrap-reboot.css" />
+    <Content Include="Content\bootstrap-reboot.min.css" />
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Scripts\bootstrap.bundle.js" />
+    <Content Include="Scripts\bootstrap.bundle.min.js" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Scripts\esm\popper-utils.js" />
+    <Content Include="Scripts\esm\popper-utils.min.js" />
+    <Content Include="Scripts\esm\popper.js" />
+    <Content Include="Scripts\esm\popper.min.js" />
+    <None Include="Scripts\jquery-3.2.1.intellisense.js" />
+    <Content Include="Scripts\jquery-3.2.1.js" />
+    <Content Include="Scripts\jquery-3.2.1.min.js" />
+    <Content Include="Scripts\jquery-3.2.1.slim.js" />
+    <Content Include="Scripts\jquery-3.2.1.slim.min.js" />
+    <Content Include="Scripts\popper-utils.js" />
+    <Content Include="Scripts\popper-utils.min.js" />
+    <Content Include="Scripts\popper.js" />
+    <Content Include="Scripts\popper.min.js" />
+    <Content Include="Scripts\umd\popper-utils.js" />
+    <Content Include="Scripts\umd\popper-utils.min.js" />
+    <Content Include="Scripts\umd\popper.js" />
+    <Content Include="Scripts\umd\popper.min.js" />
+    <Content Include="src\app\app.component.css" />
+    <Content Include="src\app\app.component.html" />
+    <Content Include="src\app\dashboard\dashboard\dashboard.component.css" />
+    <Content Include="src\app\dashboard\dashboard\dashboard.component.html" />
+    <Content Include="src\app\dashboard\quick-selection\quick-selection.component.css" />
+    <Content Include="src\app\dashboard\quick-selection\quick-selection.component.html" />
+    <Content Include="src\app\login\login.component.css" />
+    <Content Include="src\app\login\login.component.html" />
+    <Content Include="src\app\music-assignment\music-assignment\music-assignment.component.css" />
+    <Content Include="src\app\music-assignment\music-assignment\music-assignment.component.html" />
+    <Content Include="src\app\reports\authorized-music\authorized-music.component.css" />
+    <Content Include="src\app\reports\authorized-music\authorized-music.component.html" />
+    <Content Include="src\app\requisition\new-music-track\new-music-track.component.css" />
+    <Content Include="src\app\requisition\new-music-track\new-music-track.component.html" />
+    <Content Include="src\app\requisition\new-request\new-request.component.css" />
+    <Content Include="src\app\requisition\new-request\new-request.component.html" />
+    <Content Include="src\app\shared\common-ui\cart-grid\cart-grid.component.css" />
+    <Content Include="src\app\shared\common-ui\cart-grid\cart-grid.component.html" />
+    <Content Include="src\app\shared\common-ui\column-chart\column-chart.component.css" />
+    <Content Include="src\app\shared\common-ui\column-chart\column-chart.component.html" />
+    <Content Include="src\app\shared\common-ui\message-box\message-box.component.css" />
+    <Content Include="src\app\shared\common-ui\message-box\message-box.component.html" />
+    <Content Include="src\app\shared\common-ui\pie-chart\pie-chart.component.css" />
+    <Content Include="src\app\shared\common-ui\pie-chart\pie-chart.component.html" />
+    <Content Include="src\app\ui\change-password\change-password.component.css" />
+    <Content Include="src\app\ui\change-password\change-password.component.html" />
+    <Content Include="src\app\ui\header\header.component.css" />
+    <Content Include="src\app\ui\header\header.component.html" />
+    <Content Include="src\app\ui\notification-list\notification-list.component.css" />
+    <Content Include="src\app\ui\notification-list\notification-list.component.html" />
+    <Content Include="src\app\ui\sidebar\sidebar.component.css" />
+    <Content Include="src\app\ui\sidebar\sidebar.component.html" />
+    <Content Include="src\assets\chosen\chosen-sprite.png" />
+    <Content Include="src\assets\chosen\chosen.jquery.min.js" />
+    <Content Include="src\assets\chosen\chosen.min.css" />
+    <Content Include="src\assets\css\common.css" />
+    <Content Include="src\assets\css\PBresponsive.css" />
+    <Content Include="src\assets\css\slick\ajax-loader.gif" />
+    <Content Include="src\assets\css\slick\fonts\slick.svg" />
+    <Content Include="src\assets\css\slick\slick.css" />
+    <Content Include="src\assets\css\slick\slick.min.js" />
+    <Content Include="src\assets\css\top_slider-menu.css" />
+    <Content Include="src\assets\css\top_slider-menu.theme.css" />
+    <Content Include="src\assets\dist\css\AdminLTE.css" />
+    <Content Include="src\assets\dist\css\image-top.css" />
+    <Content Include="src\assets\dist\css\skins\skin-black-light.css" />
+    <Content Include="src\assets\dist\css\skins\skin-black-light.min.css" />
+    <Content Include="src\assets\dist\css\skins\skin-black.css" />
+    <Content Include="src\assets\dist\css\skins\skin-black.min.css" />
+    <Content Include="src\assets\dist\css\skins\_all-skins.css" />
+    <Content Include="src\assets\dist\css\skins\_all-skins.min.css" />
+    <Content Include="src\assets\dist\img\boxed-bg.jpg" />
+    <Content Include="src\assets\dist\js\adminlte.js" />
+    <Content Include="src\assets\dist\js\adminlte.min.js" />
+    <Content Include="src\assets\dist\js\app.js" />
+    <Content Include="src\assets\dist\js\app.min.js" />
+    <Content Include="src\assets\dist\js\demo.js" />
+    <Content Include="src\assets\Images\add-list.png" />
+    <Content Include="src\assets\Images\arrow.svg" />
+    <Content Include="src\assets\Images\download.png" />
+    <Content Include="src\assets\Images\list-add-512.png" />
+    <Content Include="src\assets\Images\Login\MNotes1.png" />
+    <Content Include="src\assets\Images\Login\MNotes2.png" />
+    <Content Include="src\assets\Images\Login\MNotes3.png" />
+    <Content Include="src\assets\Images\Login\MNotes4.png" />
+    <Content Include="src\assets\Images\Login\MNotes5.png" />
+    <Content Include="src\assets\Images\Login\MNotes6.png" />
+    <Content Include="src\assets\Images\Login\MNotes7.png" />
+    <Content Include="src\assets\Images\Login\MNotes8.png" />
+    <Content Include="src\assets\Images\Login\MNotes9.png" />
+    <Content Include="src\assets\Images\mhLogo_home.png" />
+    <Content Include="src\assets\Images\minifindstore_spin.gif" />
+    <Content Include="src\assets\Images\musicHub2_midium.jpg" />
+    <Content Include="src\assets\Images\musicHub2_page.png" />
+    <Content Include="src\assets\Images\musicHub2_small2.png" />
+    <Content Include="src\assets\Images\m_page.png" />
+    <Content Include="src\assets\Images\m_page2.png" />
+    <Content Include="src\assets\Images\playlist_small.jpg" />
+    <Content Include="src\assets\Images\playlist_small.png" />
+    <Content Include="src\assets\Images\rightsu_footer.jpg" />
+    <Content Include="src\assets\Images\square_dots_loading.gif" />
+    <Content Include="src\assets\Images\User_Img.png" />
+    <Content Include="src\assets\Images\viacom18.jpg" />
+    <Content Include="src\assets\Images\viacom18_small.png" />
+    <Content Include="src\assets\js\charts_loader.js" />
+    <Content Include="src\assets\js\common.concat.js" />
+    <Content Include="src\assets\js\gstatic.js" />
+    <Content Include="src\assets\js\jquery-ui.min.js" />
+    <Content Include="src\assets\js\loader.js" />
+    <Content Include="src\assets\u-to.ico" />
+    <Content Include="src\assets\viacom18.png" />
+    <Content Include="src\favicon.ico" />
+    <Content Include="src\index.html" />
+    <Content Include="src\karma.conf.js" />
+    <Content Include="src\styles.css" />
+    <Content Include="Web.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="obj\Debug\TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs" />
+    <Compile Include="obj\Debug\TemporaryGeneratedFile_5937a670-0e60-4077-877b-f7221da3dda1.cs" />
+    <Compile Include="obj\Debug\TemporaryGeneratedFile_E7A71F73-0F8D-4B9B-B56E-8E70B10BC5D3.cs" />
+    <Compile Include="obj\Release\TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs" />
+    <Compile Include="obj\Release\TemporaryGeneratedFile_5937a670-0e60-4077-877b-f7221da3dda1.cs" />
+    <Compile Include="obj\Release\TemporaryGeneratedFile_E7A71F73-0F8D-4B9B-B56E-8E70B10BC5D3.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="Scripts\index.d.ts" />
+    <TypeScriptCompile Include="src\app\app-routing.module.spec.ts" />
+    <TypeScriptCompile Include="src\app\app-routing.module.ts" />
+    <TypeScriptCompile Include="src\app\app.component.spec.ts" />
+    <TypeScriptCompile Include="src\app\app.component.ts" />
+    <TypeScriptCompile Include="src\app\app.module.ts" />
+    <TypeScriptCompile Include="src\app\app.service.spec.ts" />
+    <TypeScriptCompile Include="src\app\app.service.ts" />
+    <TypeScriptCompile Include="src\app\auth-guard.service.spec.ts" />
+    <TypeScriptCompile Include="src\app\auth-guard.service.ts" />
+    <TypeScriptCompile Include="src\app\dashboard\dashboard.module.spec.ts" />
+    <TypeScriptCompile Include="src\app\dashboard\dashboard.module.ts" />
+    <TypeScriptCompile Include="src\app\dashboard\dashboard.route.ts" />
+    <TypeScriptCompile Include="src\app\dashboard\dashboard.service.spec.ts" />
+    <TypeScriptCompile Include="src\app\dashboard\dashboard.service.ts" />
+    <TypeScriptCompile Include="src\app\dashboard\dashboard\dashboard.component.spec.ts" />
+    <TypeScriptCompile Include="src\app\dashboard\dashboard\dashboard.component.ts" />
+    <TypeScriptCompile Include="src\app\dashboard\quick-selection\quick-selection.component.spec.ts" />
+    <TypeScriptCompile Include="src\app\dashboard\quick-selection\quick-selection.component.ts" />
+    <TypeScriptCompile Include="src\app\login\login.component.spec.ts" />
+    <TypeScriptCompile Include="src\app\login\login.component.ts" />
+    <TypeScriptCompile Include="src\app\music-assignment\music-assignment.module.spec.ts" />
+    <TypeScriptCompile Include="src\app\music-assignment\music-assignment.module.ts" />
+    <TypeScriptCompile Include="src\app\music-assignment\music-assignment.route.ts" />
+    <TypeScriptCompile Include="src\app\music-assignment\music-assignment.service.spec.ts" />
+    <TypeScriptCompile Include="src\app\music-assignment\music-assignment.service.ts" />
+    <TypeScriptCompile Include="src\app\music-assignment\music-assignment\music-assignment.component.spec.ts" />
+    <TypeScriptCompile Include="src\app\music-assignment\music-assignment\music-assignment.component.ts" />
+    <TypeScriptCompile Include="src\app\reports\authorized-music\authorized-music.component.spec.ts" />
+    <TypeScriptCompile Include="src\app\reports\authorized-music\authorized-music.component.ts" />
+    <TypeScriptCompile Include="src\app\reports\reports.module.spec.ts" />
+    <TypeScriptCompile Include="src\app\reports\reports.module.ts" />
+    <TypeScriptCompile Include="src\app\reports\reports.route.ts" />
+    <TypeScriptCompile Include="src\app\requisition\new-music-track\new-music-track.component.spec.ts" />
+    <TypeScriptCompile Include="src\app\requisition\new-music-track\new-music-track.component.ts" />
+    <TypeScriptCompile Include="src\app\requisition\new-request\new-request.component.spec.ts" />
+    <TypeScriptCompile Include="src\app\requisition\new-request\new-request.component.ts" />
+    <TypeScriptCompile Include="src\app\requisition\requisition.module.spec.ts" />
+    <TypeScriptCompile Include="src\app\requisition\requisition.module.ts" />
+    <TypeScriptCompile Include="src\app\requisition\requisition.route.ts" />
+    <TypeScriptCompile Include="src\app\requisition\requisition.service.spec.ts" />
+    <TypeScriptCompile Include="src\app\requisition\requisition.service.ts" />
+    <TypeScriptCompile Include="src\app\shared\common-ui\cart-grid\cart-grid.component.spec.ts" />
+    <TypeScriptCompile Include="src\app\shared\common-ui\cart-grid\cart-grid.component.ts" />
+    <TypeScriptCompile Include="src\app\shared\common-ui\column-chart\column-chart.component.spec.ts" />
+    <TypeScriptCompile Include="src\app\shared\common-ui\column-chart\column-chart.component.ts" />
+    <TypeScriptCompile Include="src\app\shared\common-ui\common-ui.module.spec.ts" />
+    <TypeScriptCompile Include="src\app\shared\common-ui\common-ui.module.ts" />
+    <TypeScriptCompile Include="src\app\shared\common-ui\common-ui.service.spec.ts" />
+    <TypeScriptCompile Include="src\app\shared\common-ui\common-ui.service.ts" />
+    <TypeScriptCompile Include="src\app\shared\common-ui\message-box\message-box.component.spec.ts" />
+    <TypeScriptCompile Include="src\app\shared\common-ui\message-box\message-box.component.ts" />
+    <TypeScriptCompile Include="src\app\shared\common-ui\pie-chart\pie-chart.component.spec.ts" />
+    <TypeScriptCompile Include="src\app\shared\common-ui\pie-chart\pie-chart.component.ts" />
+    <TypeScriptCompile Include="src\app\shared\directives\variable-declartion.ts" />
+    <TypeScriptCompile Include="src\app\shared\pipes\filter.pipes.ts" />
+    <TypeScriptCompile Include="src\app\shared\services\authentication.service.spec.ts" />
+    <TypeScriptCompile Include="src\app\shared\services\authentication.service.ts" />
+    <TypeScriptCompile Include="src\app\shared\services\base.service.spec.ts" />
+    <TypeScriptCompile Include="src\app\shared\services\base.service.ts" />
+    <TypeScriptCompile Include="src\app\shared\services\comparentchild.service.ts" />
+    <TypeScriptCompile Include="src\app\ui\change-password\change-password.component.spec.ts" />
+    <TypeScriptCompile Include="src\app\ui\change-password\change-password.component.ts" />
+    <TypeScriptCompile Include="src\app\ui\header\header.component.spec.ts" />
+    <TypeScriptCompile Include="src\app\ui\header\header.component.ts" />
+    <TypeScriptCompile Include="src\app\ui\notification-list\notification-list.component.spec.ts" />
+    <TypeScriptCompile Include="src\app\ui\notification-list\notification-list.component.ts" />
+    <TypeScriptCompile Include="src\app\ui\sidebar\sidebar.component.spec.ts" />
+    <TypeScriptCompile Include="src\app\ui\sidebar\sidebar.component.ts" />
+    <TypeScriptCompile Include="src\environments\environment.prod.ts" />
+    <TypeScriptCompile Include="src\environments\environment.ts" />
+    <TypeScriptCompile Include="src\main.ts" />
+    <TypeScriptCompile Include="src\polyfills.ts" />
+    <TypeScriptCompile Include="src\test.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="obj\Debug\TempPE\" />
+    <Folder Include="obj\Release\TempPE\" />
+    <Folder Include="src\assets\css\font-awesome-4.7.0\css\" />
+    <Folder Include="src\assets\css\font-awesome-4.7.0\fonts\" />
+    <Folder Include="src\assets\css\font-awesome-4.7.0\less\" />
+    <Folder Include="src\assets\css\font-awesome-4.7.0\scss\" />
+    <Folder Include="src\assets\css\fonts\" />
+    <Folder Include="src\assets\dist\css\alt\" />
+    <Folder Include="src\assets\dist\img\credit\" />
+    <Folder Include="src\assets\dist\js\pages\" />
+    <Folder Include="src\assets\pages\charts\" />
+    <Folder Include="src\assets\pages\examples\" />
+    <Folder Include="src\assets\pages\forms\" />
+    <Folder Include="src\assets\pages\layout\" />
+    <Folder Include="src\assets\pages\mailbox\" />
+    <Folder Include="src\assets\pages\tables\" />
+    <Folder Include="src\assets\pages\UI\" />
+    <Folder Include="src\assets\plugins\bootstrap-slider\" />
+    <Folder Include="src\assets\plugins\bootstrap-wysihtml5\" />
+    <Folder Include="src\assets\plugins\iCheck\flat\" />
+    <Folder Include="src\assets\plugins\iCheck\futurico\" />
+    <Folder Include="src\assets\plugins\iCheck\line\" />
+    <Folder Include="src\assets\plugins\iCheck\minimal\" />
+    <Folder Include="src\assets\plugins\iCheck\polaris\" />
+    <Folder Include="src\assets\plugins\iCheck\square\" />
+    <Folder Include="src\assets\plugins\input-mask\phone-codes\" />
+    <Folder Include="src\assets\plugins\jQueryUI\" />
+    <Folder Include="src\assets\plugins\jvectormap\" />
+    <Folder Include="src\assets\plugins\pace\" />
+    <Folder Include="src\assets\plugins\timepicker\" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets')" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>59793</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:59793/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.2.4.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.2.4.0\build\Microsoft.Net.Compilers.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

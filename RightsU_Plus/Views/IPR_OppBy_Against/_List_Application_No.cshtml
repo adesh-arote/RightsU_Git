@@ -1,0 +1,35 @@
+﻿@model IEnumerable<RightsU_Plus.Controllers.App_Search_GV>
+<table style="margin:10px; width:98%" class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th style="width:5%"></th>
+            <th style="width:15%">Application No</th>
+            <th style="width:75%">Trademark</th>
+            <th style="width:5%">Type</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (RightsU_Plus.Controllers.App_Search_GV item in Model)
+        {
+            <tr>
+                <td>
+                    <label class="radio-inline">
+                        @if (ViewBag.IPR_Rep_Code == item.IPR_Rep_Code)
+                        {
+                            <input type="radio" name="rdoRepCode" id="rdoRepCodeCheck" checked="checked" onclick="SetIprRepCode(@item.IPR_Rep_Code)" />
+                        }
+                        else
+                        {
+                            <input type="radio" name="rdoRepCode" id="rdoRepCodeCheck" onclick="SetIprRepCode(@item.IPR_Rep_Code)" />
+                        }
+                    </label>
+                </td>
+                <td>
+                    @item.Application_No
+                </td>
+                <td>@item.Trademark</td>
+                <td>@item.Type</td>
+            </tr>
+        }
+    </tbody>
+</table>

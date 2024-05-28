@@ -1,0 +1,139 @@
+﻿@model List<RightsU_Entities.BV_HouseId_Data>
+@using UTOFrameWork.FrameworkClasses
+
+<script>
+    $(document).ready(function () {
+        $("#lblRecordCount").text(@ViewBag.RecordCount);
+        $("#lblRecordCount").val(@ViewBag.RecordCount);
+
+    });
+    $('#chkAll').on("click", function () {
+        var IsCheck = $(this).prop("checked");
+        $('.checkboxAll').prop('checked', IsCheck);
+        $('.txtMaptoDeal').prop('disabled', !IsCheck);
+        //$('.EpisodeNo').prop('disabled', !IsCheck);
+    });
+
+    $('.checkboxAll').on("click", function () {
+        debugger;
+        if ($('.checkboxAll:checked').length == $('.checkboxAll').length) {
+            $('#chkAll').prop('checked', true);
+        } else {
+            $('#chkAll').prop('checked', false);
+        }
+        var IsCheck = $(this).prop('checked');
+        // $('.txtMaptoDeal').attr('required', false)
+        if (IsCheck == true)
+        {
+            $(this).parents('tr').find('input[name = "Title_Name"]').attr('required', false);
+        }
+        $(this).parents('tr').find('input[name = "Title_Name"]').prop('disabled', !IsCheck);
+    });
+    function selectCurrent(chkBox) {
+        debugger;
+        var chkBoxId = chkBox.id;
+        var txtDealTitles = document.getElementById(chkBoxId.replace('chk_', 'Mapped_Deal_Title_Code_'));
+        var txtEpisodeNo = document.getElementById(chkBoxId.replace('chk_', 'Episode_No_'));
+        var chkIgnore = document.getElementById(chkBoxId.replace('chk_', 'chkIgnore_'))
+        if ($(chkBox).prop("checked")) {
+            $(txtDealTitles).removeAttr("disabled");
+        }
+        else {
+            $(chkIgnore).prop('checked', false);
+            $(txtDealTitles).val('');
+            $(txtDealTitles).attr("disabled", "disabled");
+        }
+    }
+    function SelectIgnore(chkBox) {
+        debugger;
+        var chkBoxId = chkBox.id;
+        var txtDealTitles = document.getElementById(chkBoxId.replace('chkIgnore_', 'Mapped_Deal_Title_Code_'));
+        var txtEpisodeNo = document.getElementById(chkBoxId.replace('chkIgnore_', 'Episode_No_'));
+        var chk = document.getElementById(chkBoxId.replace('chkIgnore_', 'chk_'));
+
+        if ($(chkBox).prop("checked")) {
+            $(txtDealTitles).val('');
+            $(chk).prop('checked', true);
+            $(txtDealTitles).attr("disabled", true);
+        }
+        else {
+            $(chk).removeAttr("disabled");
+            $(chk).prop('checked', true);
+            if ($(chk).prop('checked') == true) {
+                $(txtDealTitles).attr("disabled", false);
+                $(txtDealTitles).attr("required", false);
+            }
+        }
+    }
+    function ValidateEpisodeNo(obj) {
+        debugger;
+        var gvid = obj.id;
+        var episodeStart = $('#lblEpisodeStart').val();
+        var episodeEnd = $('#lblEpisodeEnd').val();
+        var txtEpisodeNo = document.getElementById(gvid.replace('Episode_No_', 'Episode_No_'));
+        var txtEpisode = $(txtEpisodeNo).val();
+        if (txtEpisode < episodeStart || txtEpisode > episodeEnd) {
+            showAlert("E", "BV Title should be between " + episodeStart + " and " + episodeEnd);
+        }
+    }
+</script>
+<style>
+    .EpisodeNo{
+        border :none;
+        width : 100%;
+        text-align : center;
+    }
+</style>
+<table class="table table-bordered table-hover" cellspacing="0" rules="all" border="1" id="tblBVMappingShows">
+    <thead>
+        <tr>
+            <th scope="col">Check All &nbsp; <input id="chkAll" type="checkbox" /></th>
+            <th scope="col">Program Episode ID</th>
+            <th scope="col">BV Title Name</th>
+            <th scope="col">Ignore</th>
+            <th scope="col">Map To Deal Title:</th>
+            <th scope="col">Episode No</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if(Model.Count>0)
+        {
+            foreach(var item in Model)
+            {
+                <tr>
+                    <td style="text-align:center;">
+                        <input type="hidden" value="@item.BV_HouseId_Data_Code" name="BV_HouseId_Data_Code" />
+                        <input type="hidden" value="@item.Schedule_Item_Log_Date" id="SheduleDate_@item.BV_HouseId_Data_Code"/>
+                        <input type="hidden" value="@item.Schedule_Item_Log_Time" id="SheduleTime_@item.BV_HouseId_Data_Code" />
+                        <input id="chk_@item.BV_HouseId_Data_Code" type="checkbox" name="chkType" class="checkboxAll" onchange="selectCurrent(this);" value="@item.BV_HouseId_Data_Code" />
+                    </td>
+                    <td>
+                        @item.Program_Episode_ID
+                    </td>
+                    <td>
+                        @item.BV_Title
+                    </td>
+                   <td style="text-align:center;">
+                       <input id="chkIgnore_@item.BV_HouseId_Data_Code" type="checkbox" name="IsIgnore" class="checkboxIgnore" onchange="SelectIgnore(this)" value="@item.BV_HouseId_Data_Code"/>
+                   </td>
+                    <td>
+                        <input type="text" disabled="disabled" class="txtMaptoDeal" name="Title_Name" id="Mapped_Deal_Title_Code_@item.BV_HouseId_Data_Code" autocomplete="on" onkeyup="GetTitles(this)" onblur="return validateEpisode(this,@item.Episode_No,@item.BV_HouseId_Data_Code)" />
+                        <input type="hidden"  id="hdnDealTitleCode_@item.BV_HouseId_Data_Code" name="Mapped_Deal_Title_Code" class="DealTtileCode" />
+                        <input type="text" class="txttitleCode" Style="display: none;" name="Mapped_itle_Code" id="Mapped_Title_Code_@item.BV_HouseId_Data_Code" />
+                        <input type="text" id="lblEpisodeStart" name="lblEpisodeStart" style="display:none" />
+                        <input type="text" id="lblEpisodeEnd" name="lblEpisodeEnd" style="display:none" />
+                    </td>
+                    <td>
+                        @*@item.Episode_No*@
+
+                        @*<label class="EpisodeNo" id="Episode_No_@item.BV_HouseId_Data_Code" name="Episode_No">@item.Episode_No</label>*@
+                        <input type="text"  value="@item.Episode_No" id="Episode_No_@item.BV_HouseId_Data_Code" name="Episode_No" class="EpisodeNo" readonly="readonly"/>
+                        <input type="hidden" id="hdnEpisodeNo" value="@item.Episode_No" />
+                        
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+ 

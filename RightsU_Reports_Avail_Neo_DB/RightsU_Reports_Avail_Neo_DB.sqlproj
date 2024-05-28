@@ -1,0 +1,162 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Name>RightsU_Reports_Avail_Neo_DB</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>4.1</ProjectVersion>
+    <ProjectGuid>{cdfa934a-59f4-4afa-a755-fd20cdf5d40b}</ProjectGuid>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql130DatabaseSchemaProvider</DSP>
+    <OutputType>Database</OutputType>
+    <RootPath>
+    </RootPath>
+    <RootNamespace>RightsU_Reports_Avail_Neo_DB</RootNamespace>
+    <AssemblyName>RightsU_Reports_Avail_Neo_DB</AssemblyName>
+    <ModelCollation>1033,CI</ModelCollation>
+    <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
+    <DeployToDatabase>True</DeployToDatabase>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetLanguage>CS</TargetLanguage>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <SqlServerVerification>False</SqlServerVerification>
+    <IncludeCompositeObjects>True</IncludeCompositeObjects>
+    <TargetDatabaseSet>True</TargetDatabaseSet>
+    <DefaultCollation>Latin1_General_CI_AI</DefaultCollation>
+    <DefaultFilegroup>PRIMARY</DefaultFilegroup>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+    <!-- Default to the v11.0 targets path if the targets file for the current VS version is not found -->
+    <SSDTExists Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">True</SSDTExists>
+    <VisualStudioVersion Condition="'$(SSDTExists)' == ''">11.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Condition="'$(SQLDBExtensionsRefPath)' != ''" Project="$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <ItemGroup>
+    <Folder Include="Properties" />
+    <Folder Include="dbo\" />
+    <Folder Include="dbo\Tables\" />
+    <Folder Include="dbo\Views\" />
+    <Folder Include="dbo\Functions\" />
+    <Folder Include="dbo\Stored Procedures\" />
+    <Folder Include="dbo\User Defined Types\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="dbo\Tables\ssis_monitor_configure.sql" />
+    <Build Include="dbo\Tables\Avail_Countries.sql" />
+    <Build Include="dbo\Tables\Avail_Dates.sql" />
+    <Build Include="dbo\Tables\Avail_Languages.sql" />
+    <Build Include="dbo\Tables\Avail_Titles.sql" />
+    <Build Include="dbo\Tables\Avail_Platforms.sql" />
+    <Build Include="dbo\Tables\AvailData.sql" />
+    <Build Include="dbo\Tables\Avail_Report_Schedule.sql" />
+    <Build Include="dbo\Tables\AvailData_04Oct.sql" />
+    <Build Include="dbo\Tables\Avail_Title_Data.sql" />
+    <Build Include="dbo\Tables\tempCriteria.sql" />
+    <Build Include="dbo\Views\Deal_Type.sql" />
+    <Build Include="dbo\Views\Milestone_Type.sql" />
+    <Build Include="dbo\Views\Acq_Deal.sql" />
+    <Build Include="dbo\Views\Acq_Deal_Ancillary.sql" />
+    <Build Include="dbo\Views\Acq_Deal_Ancillary_Platform.sql" />
+    <Build Include="dbo\Views\Acq_Deal_ancillary_Title.sql" />
+    <Build Include="dbo\Views\Acq_Deal_Movie.sql" />
+    <Build Include="dbo\Views\Acq_Deal_Rights.sql" />
+    <Build Include="dbo\Views\Acq_Deal_Rights_Dubbing.sql" />
+    <Build Include="dbo\Views\Acq_Deal_Rights_Holdback.sql" />
+    <Build Include="dbo\Views\Acq_Deal_Rights_Holdback_Dubbing.sql" />
+    <Build Include="dbo\Views\Acq_Deal_Rights_Holdback_Platform.sql" />
+    <Build Include="dbo\Views\Acq_Deal_Rights_Holdback_Subtitling.sql" />
+    <Build Include="dbo\Views\Acq_Deal_Rights_Holdback_Territory.sql" />
+    <Build Include="dbo\Views\Acq_Deal_Rights_Platform.sql" />
+    <Build Include="dbo\Views\Acq_Deal_Rights_Subtitling.sql" />
+    <Build Include="dbo\Views\Acq_Deal_Rights_Territory.sql" />
+    <Build Include="dbo\Views\Acq_Deal_Rights_Title.sql" />
+    <Build Include="dbo\Views\Ancillary_Type.sql" />
+    <Build Include="dbo\Views\Attrib_Group.sql" />
+    <Build Include="dbo\Views\Category.sql" />
+    <Build Include="dbo\Views\Country.sql" />
+    <Build Include="dbo\Views\Genres.sql" />
+    <Build Include="dbo\Views\Language.sql" />
+    <Build Include="dbo\Views\Language_Group.sql" />
+    <Build Include="dbo\Views\Language_Group_Details.sql" />
+    <Build Include="dbo\Views\Platform.sql" />
+    <Build Include="dbo\Views\Platform_Attrib_Group.sql" />
+    <Build Include="dbo\Views\Platform_Group.sql" />
+    <Build Include="dbo\Views\Role.sql" />
+    <Build Include="dbo\Views\Sub_License.sql" />
+    <Build Include="dbo\Views\Syn_Acq_Mapping.sql" />
+    <Build Include="dbo\Views\Syn_Deal.sql" />
+    <Build Include="dbo\Views\Syn_Deal_Movie.sql" />
+    <Build Include="dbo\Views\Syn_Deal_Rights.sql" />
+    <Build Include="dbo\Views\Syn_Deal_Rights_Dubbing.sql" />
+    <Build Include="dbo\Views\Syn_Deal_Rights_Platform.sql" />
+    <Build Include="dbo\Views\Syn_Deal_Rights_Subtitling.sql" />
+    <Build Include="dbo\Views\Syn_Deal_Rights_Territory.sql" />
+    <Build Include="dbo\Views\Syn_Deal_Rights_Title.sql" />
+    <Build Include="dbo\Views\System_Parameter_New.sql" />
+    <Build Include="dbo\Views\Talent.sql" />
+    <Build Include="dbo\Views\Talent_Role.sql" />
+    <Build Include="dbo\Views\Territory.sql" />
+    <Build Include="dbo\Views\Territory_Details.sql" />
+    <Build Include="dbo\Views\Title.sql" />
+    <Build Include="dbo\Views\Title_Geners.sql" />
+    <Build Include="dbo\Views\Title_Release.sql" />
+    <Build Include="dbo\Views\Title_Release_Platforms.sql" />
+    <Build Include="dbo\Views\Title_Release_Region.sql" />
+    <Build Include="dbo\Views\Title_Talent.sql" />
+    <Build Include="dbo\Views\Report_Territory.sql" />
+    <Build Include="dbo\Views\Report_Territory_Country.sql" />
+    <Build Include="dbo\Functions\UFN_Calculate_Term.sql" />
+    <Build Include="dbo\Functions\UFN_Get_Rights_Term.sql" />
+    <Build Include="dbo\Functions\UFN_Arrange_Codes.sql" />
+    <Build Include="dbo\Functions\UFNGetGenresForTitle.sql" />
+    <Build Include="dbo\Functions\UFNGetTalentForTitle.sql" />
+    <Build Include="dbo\Functions\UFNGETSYNRHB.sql" />
+    <Build Include="dbo\Functions\UFN_Get_Language_With_Parent.sql" />
+    <Build Include="dbo\Functions\fn_Split_withdelemiter.sql" />
+    <Build Include="dbo\Functions\UFN_Get_Platform_Group.sql" />
+    <Build Include="dbo\Functions\UFN_Get_Platform_With_Parent.sql" />
+    <Build Include="dbo\Functions\UFN_Get_Report_Territory.sql" />
+    <Build Include="dbo\Stored Procedures\USPITGetTitleViewAvailability.sql" />
+    <Build Include="dbo\Stored Procedures\USP_Get_Title_Availability_LanguageWise_Filter.sql" />
+    <Build Include="dbo\Stored Procedures\USPAvailability.sql" />
+    <Build Include="dbo\Stored Procedures\USPGetTitleForAvailRefresh.sql" />
+    <Build Include="dbo\Stored Procedures\USPInsertAvailData.sql" />
+    <Build Include="dbo\Stored Procedures\USPInsertAvailError.sql" />
+    <Build Include="dbo\Stored Procedures\USPProcessAvailData.sql" />
+    <Build Include="dbo\Stored Procedures\USPITGetAvailTitleGrid.sql" />
+    <Build Include="dbo\Stored Procedures\USPMaintainAvailData.sql" />
+    <Build Include="dbo\Stored Procedures\USPITAvail.sql" />
+    <Build Include="dbo\Stored Procedures\USPITAvailAncillary.sql" />
+    <Build Include="dbo\Stored Procedures\USPITGetAvailTitle.sql" />
+    <Build Include="dbo\Stored Procedures\USPITGetAvailTitleAncillary.sql" />
+    <Build Include="dbo\User Defined Types\Avail_Data_UDT.sql" />
+    <Build Include="dbo\User Defined Types\TitleCriteria.sql" />
+    <Build Include="dbo\Stored Procedures\USPClusterDef.sql" />
+  </ItemGroup>
+</Project>

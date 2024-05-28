@@ -1,0 +1,586 @@
+﻿
+@using UTOFrameWork.FrameworkClasses
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+
+<script>
+    var Module_Code = @GlobalParams.ModuleCodeForDeliveryTracking, SysLanguageCode = @ViewBag.LangCode ;
+    var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T", URL_LoadTab = "", TabName = "M", IncludeHoldover = "N", PageNo = 1;
+    arr = [];
+    var URL_SearchDeliveryTracking = '@Url.Action("SearchDeliveryTracking", "DeliveryTracking")';
+    var URL_BindMoviesList = '@Url.Action("BindMoviesList", "DeliveryTracking")';
+    var URL_BindShowsList = '@Url.Action("BindShowsList", "DeliveryTracking")';
+    var URL_SaveDelivery = '@Url.Action("SaveDelivery", "DeliveryTracking")';
+
+    $(document).ready(function () {
+        debugger;
+        if (LayoutDirection_G == "RTL") {
+
+            $('#ddlSortType_chosen').css("text-align", "right");
+        }
+        else {
+
+            $('#ddlSortType_chosen').css("text-align", "left");
+        }
+        addNumeric();
+        SearchDeliveryTracking(TabName, "", "", "", "", "", IncludeHoldover)
+
+        $('.Holdover').on("click", function () {
+            debugger;
+            if ($(this).prop("checked")) {
+                $('#txtPageSize_POD').val(10)
+                IncludeHoldover = "Y";
+            }
+            else {
+                $('#txtPageSize_POD').val(10)
+                IncludeHoldover = "N";
+            }
+        });
+    });
+
+    function addNumeric() {
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
+
+    function OpenTab(NewTab) {
+        debugger;
+        if ($('.checkboxLst:checked').length > 0) {
+            showAlert("E", "You cannot change tab, Please deselect titles and try again.");
+            return false;
+        }
+        if (NewTab == "M") {
+            $("[id*='tab']").removeClass('active');
+            $("#tabMv").addClass('active');
+            $("#Holdover").prop("checked", false);
+            TabName = NewTab;
+        }
+        if (NewTab == "S") {
+            $("[id*='tab']").removeClass('active');
+            $("#tabShw").addClass('active');
+            $("#Holdover").prop("checked", false);
+            TabName = NewTab;
+        }
+        IncludeHoldover = "N";
+        SearchDeliveryTracking(TabName, "", "", "", "", "", IncludeHoldover);
+    }
+
+    function SearchDeliveryTracking(TabName, Client, CycleDate, Lab, Distributor, Display, IncludeHoldover) {
+        debugger;
+
+        $.ajax({
+            type: "POST",
+            url: URL_SearchDeliveryTracking,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                TabName: TabName,
+                Client: Client,
+                CycleDate: CycleDate,
+                Lab: Lab,
+                Distributor: Distributor,
+                Display: Display,
+                IncludeHoldover: IncludeHoldover
+            }),
+            async: false,
+            success: function (result) {
+                $('#hdnPageNo').text(PageNo);
+                $('#hdnPageNo').val(PageNo);
+                $('#lblRecordCount').text(result.Record_Count);
+                $("#hdnRecordCount").val(result.Record_Count);
+                SetPaging();
+
+                BindMoviesList(TabName, 0)
+            }
+        });
+    }
+
+    function BindMoviesList(CommandName, id) {
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_BindMoviesList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+                sortType: sort_Type,
+                CommandName: CommandName,
+                id: id
+            }),
+            success: function (result) {
+                $('#divBindList').empty();
+                $('#divBindList').html(result);
+                ClearInputs();
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function BindShowsList() {
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_BindShowsList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+                sortType: sort_Type
+            }),
+            success: function (result) {
+                $('#divBindList').empty();
+                $('#divBindList').html(result);
+
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function SaveDeliveryTracking() {
+        debugger;
+        showLoading();
+        PageNo = $('#hdnPageNo').val();
+        var deliveryTrackingList = new Array();
+
+        var PosterValue = $('#chk_Poster').is(':checked') == true ? "Yes" : "No";
+        var StillValue = $('#chk_Still').is(':checked') == true ? "Yes" : "No";
+        var TrailerValue = $('#chk_Trailer').is(':checked') == true ? "Yes" : "No";
+        var EditedPosterValue = $('#chk_EditedPoster').is(':checked') == true ? "Yes" : "No";
+        var EditedStillValue = $('#chk_EditedStill').is(':checked') == true ? "Yes" : "No";
+        var DeliveryDateValue = $('#txt_DeliveryDate').val();
+        var PO_Status = $('#ddlPoStatus').val();
+
+        $.each($("#tblMoviesList tbody tr"), function (index, value) {
+            debugger;
+
+            index = index + 1;
+            var Material_Tracking_Code = $('#' + index + '_hdnCnt').val();            
+            if ($('#chk_' + Material_Tracking_Code).is(':checked') == true) {
+                debugger;
+
+                deliveryTrackingList.push({
+                    Al_Material_Tracking_Code: Material_Tracking_Code,
+                    Poster: PosterValue,
+                    Still: StillValue,
+                    Trailer: TrailerValue,
+                    Edited_Poster: EditedPosterValue,
+                    Edited_Still: EditedStillValue,
+                    Delivery_Date: DeliveryDateValue,
+                    PO_Status: PO_Status
+                })
+            }
+        })
+
+        if (deliveryTrackingList.length == 0)
+        {
+            hideLoading();
+            showAlert('E', "Please Select atleast one title.")
+            return false;
+        }
+
+        if ($('#txt_DeliveryDate').val() && ValidateDate() == false) {
+            hideLoading();
+            showAlert('E', "Please Enter date in DD-MMM-YYYY format.")
+            return false;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: URL_SaveDelivery,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            //async: false,
+            data: JSON.stringify({
+                lst: deliveryTrackingList
+            }),
+            success: function (result) {
+                debugger;
+                hideLoading();
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Status == "S") {
+                        showAlert("S", result.Message);
+
+                        var Client = $('#ddlClient').val();
+                        var CycleDate = $('#CycleDate').val();
+                        var Lab = $('#ddlLab').val();
+                        var Distributor = $('#Distributor').val();
+                        var Display = $('#ddlDisplayItem').val();
+                        $('#hdnPageNo').val(PageNo);
+
+                        SearchDeliveryTracking(TabName, Client, CycleDate, Lab, Distributor, Display, IncludeHoldover);
+                        //SearchDeliveryTracking(TabName, "", "", "", "", "", IncludeHoldover);
+                    }
+                    else
+                        showAlert("E", result.Message);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        })
+    }
+
+    function ExportToExcel() {
+        debugger;
+        var StrSearchCriteria = "";
+        var Module_Name = "Delivery Tracking";
+        var ClientCode = $('#ddlClient').val();
+        var CycleDate = $('#CycleDate').val();
+        var LabCode = $('#ddlLab').val();
+        var DistributorCode = $('#Distributor').val();
+        var Display = $('#ddlDisplayItem').val();
+
+        window.location.href = '@Url.Action("ExportToExcel", "Global")?Module_Code=' + Module_Code + '&SysLanguageCode=' + SysLanguageCode + '&Module_Name=' + Module_Name + '&sortColumnOrder=' + sort_Type + '&StrSearchCriteria=' + StrSearchCriteria + '&TabName=' + TabName + '&IncludeHoldover=' + IncludeHoldover + '&ClientCode=' + ClientCode + '&CycleDate=' + CycleDate + '&LabCode=' + LabCode + '&DistributorCode=' + DistributorCode + '&Display=' + Display;
+    }
+
+</script>
+
+<script>
+
+    function btnSearch_OnClick() {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var Client = $('#ddlClient').val();
+        var CycleDate = $('#CycleDate').val();
+        var Lab = $('#ddlLab').val();
+        var Distributor = $('#Distributor').val();
+        var Display = $('#ddlDisplayItem').val();
+
+        SearchDeliveryTracking(TabName, Client, CycleDate, Lab, Distributor, Display, IncludeHoldover);
+    }
+
+    function btnShowAll_OnClick() {
+        debugger;
+
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        PageNo = 1;
+        if (!ValidatePageSize())
+            return false;
+
+        $('#ddlClient').val('').trigger('chosen:updated');
+        $('#CycleDate').val('');
+        $('#ddlLab').val('').trigger('chosen:updated');
+        $('#Distributor').val('').trigger('chosen:updated');
+        $('#ddlDisplayItem').val('').trigger('chosen:updated');
+        $("#Holdover").prop("checked", false);
+        IncludeHoldover = "N";
+
+        SearchDeliveryTracking(TabName, "", "", "", "", "", IncludeHoldover);
+    }
+
+    function SetPaging() {
+        debugger;
+
+        IsCall = 'N';
+        var pageNo = parseInt($('#hdnPageNo').val());
+        var recordCount = parseInt($('#hdnRecordCount').val());
+        var pagePerBatch = parseInt($('#hdnPagePerBatch').val());
+        var recordPerPage = parseInt($('#txtPageSize').val());
+
+        var cnt = pageNo * recordPerPage;
+        if (cnt >= recordCount) {
+            var v1 = parseInt(recordCount / recordPerPage);
+            if ((v1 * recordPerPage) == recordCount)
+                pageNo = v1;
+            else
+                pageNo = v1 + 1;
+        }
+
+        if (pageNo == 0)
+            pageNo = 1;
+
+        var index = pageNo - 1;
+        $('#hdnPageNo').val(pageNo);
+
+        var opt = null;
+        opt = { callback: pageselectCallback };
+        opt["items_per_page"] = recordPerPage;
+        opt["num_display_entries"] = pagePerBatch;
+        opt["num"] = 30;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = index;
+        $("#Pagination").pagination(recordCount, opt);
+    }
+
+    function pageselectCallback(page_index, jq) {
+        debugger;
+        //if ($('.checkboxLst:checked').length > 0) {
+        //    showAlert("E", "You cannot change page, Please deselect titles and try again.");
+        //    return false;
+        //}
+
+        $('.required').removeClass('required');
+
+        if (!ValidatePageSize())
+            return false;
+
+        var pageNo = page_index + 1
+        $('#hdnPageNo').val(pageNo);
+        if (IsCall == 'Y') {
+            BindMoviesList(TabName, 0)
+        }
+        else {
+            IsCall = 'Y';
+        }
+    }
+
+    function txtPageSize_OnChange() {
+        debugger;
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        if (!ValidatePageSize())
+            return false;
+        BindMoviesList(TabName, 0)
+
+        SetPaging();
+    }
+
+    function ValidatePageSize() {
+        debugger;
+        var recordPerPage = $('#txtPageSize').val()
+        if ($(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize').attr('required', true)
+        return false
+    }
+
+    function ClearInputs() {
+        debugger;
+        $('#txt_DeliveryDate').val('');
+        $('#ddlPoStatus').val('').trigger('chosen:updated');
+        $('#chk_Poster').prop("checked", false);
+        $('#chk_Still').prop("checked", false);
+        $('#chk_Trailer').prop("checked", false);
+        $('#chk_EditedPoster').prop("checked", false);
+        $('#chk_EditedStill').prop("checked", false);
+    }
+
+    function ValidateDate() {
+        debugger;
+        var dtValue = $('#txt_DeliveryDate').val();
+        var dtRegex = new RegExp("^([0]?[1-9]|[1-2]\\d|3[0-1])-(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)-[1-2]\\d{3}$", 'i');
+        return dtRegex.test(dtValue);
+    }
+
+</script>
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="">
+                <div class="title_block dotted_border clearfix">
+                    <h2 class="pull-left">
+                        Delivery Tracking
+                    </h2>
+                    <div class="right_nav pull-right">
+                        <ul>
+                            <li>
+                                <a title="@objMessageKey.SaveToExcel" class="glyphicon glyphicon-floppy-save" style="cursor:pointer; text-decoration:underline; " onclick="ExportToExcel()"></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="search_area" style="background-color: #eee; padding:5px;">
+                    <table class="table">
+                        <tr>
+                            <td style="width:10%;vertical-align: middle;text-align:left;">
+                                Client :
+                            </td>
+                            <td style="width:20%;vertical-align: middle;">
+                                @Html.DropDownList("lstClients", (IEnumerable<SelectListItem>)ViewBag.ddlClient, "Please Select", htmlAttributes: new { @id = "ddlClient", @class = "form_input chosen-select" })
+                            </td>
+                            <td style="width:10%;vertical-align: middle;text-align:left;">
+                                Distributor :
+                            </td>
+                            <td style="width:20%;vertical-align: middle;">
+                                @Html.DropDownList("lstDistributors", (IEnumerable<SelectListItem>)ViewBag.ddlDistributor, "Please Select", htmlAttributes: new { @id = "Distributor", @class = "form_input chosen-select" })
+                            </td>
+                            <td style="width:10%;vertical-align: middle;text-align:left;">
+                                Cycle :
+                            </td>
+                            <td style="width:10%;vertical-align: middle;">
+                                <input type="month" id="CycleDate" name="start"
+                                       min="2001-01" value="" style="height:27px;">
+                            </td>
+                            <td style="width:15%;vertical-align: middle;text-align:center;"></td>
+                        </tr>
+                        <tr>
+                            <td style="width:10%;vertical-align: middle;text-align:left;">
+                                Lab :
+                            </td>
+                            <td style="width:20%;vertical-align: middle;">
+                                @Html.DropDownList("lstLab", (IEnumerable<SelectListItem>)ViewBag.ddlLab, "Please Select", htmlAttributes: new { @id = "ddlLab", @class = "form_input chosen-select" })
+                            </td>
+                            <td style="width:10%;vertical-align: middle;text-align:left;">
+                                Display :
+                            </td>
+                            <td style="width:20%;vertical-align: middle;">
+                                @{
+                                    var Displayitems = new List<SelectListItem>();
+                                    Displayitems.Add(new SelectListItem() { Text = "Pending", Value = "P" });
+                                    Displayitems.Add(new SelectListItem() { Text = "Completed", Value = "C" });
+                                }
+                                @Html.DropDownList("DropDownListValue", Displayitems, "Please Select", htmlAttributes: new { @id = "ddlDisplayItem", @class = "form_input chosen-select", @Style = "width:100%;" })
+                            </td>
+                            <td colspan="2" style="width:20%;vertical-align: middle;">
+                                <input type="checkbox" id="Holdover" class="checkbox-inline Holdover" style="width:20px;height:20px;" />&nbsp;
+                                @*</td>
+                                    <td style="width:10%;vertical-align: middle;text-align:left;">*@
+                                Include Holdover
+                            </td>
+                            <td style="width:15%;vertical-align: middle;text-align:center;">
+                                <input type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearch_OnClick()">
+                                <input type="button" id="btnShowAll" class="button" value="@objMessageKey.ShowAll" onclick="btnShowAll_OnClick()">
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="grid_area">
+                    @*<div style="border-bottom: 1px dotted #777; display:none;"></div>*@
+                    @*<div class="paging_area clearfix">*@
+                    <div class="pull-right">
+                        <span>Total Records: </span>
+                        <span style="padding-right:100px;" id="lblRecordCount"></span>
+                        <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                        <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                        <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+                        <div id="Pagination" class="pagination">
+                        </div>
+                        <span>
+                            Page Size:
+                            <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="30" autocomplete="off" onchange="txtPageSize_OnChange()" onblur="setDefaultPaging('txtPageSize')">
+                        </span>
+                    </div>
+                    <div class="navigation_tabs">
+                        <div class="tabbable" id="divAlternateConfig" style="padding-top:10px;">
+                            @*<div class="pull-right" style="padding-right:100px;">
+                    <input type="checkbox" id="Holdover" class="checkbox-inline" />
+                    <input type="hidden" id="HiddenPoCode" />
+                    <input type="hidden" id="HiddenPrCode" />
+                    <b>Include Holdover</b>
+                </div>*@
+                            <input type="hidden" id="hdnTabName" value="TA" />
+                            <ul class="nav nav-tabs nav-tab pull-left" id="ulalternate">
+                                <li class="active" id="tabMv">
+                                    <a data-toggle="tab" href="#" role="tab" data-tabname="TA" data-configitem="0" onclick="OpenTab('M')">@objMessageKey.Movies</a>
+                                </li>
+                                <li id="tabShw">
+                                    <a data-toggle="tab" href="#" role="tab" data-tabname="TA" data-configitem="0" onclick="OpenTab('S')">@objMessageKey.TVShows</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="tab-content clearfix table-wrapper scale_table_container">
+                        <div class="scale_table_block" style="max-height: 400px; overflow-y: auto;">
+                            <input type="hidden" id="hdnAction" value="" />
+                            <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
+                            <div id="divBindList" class="deal clearfix">
+
+                            </div>
+                        </div>
+                        <div id="EditableFields">
+                            <table class="table">
+                                <tr>
+                                    <td style="vertical-align: middle;width: 10%;text-align: center;">
+                                        <b>Delivered Date :</b>
+                                    </td>
+                                    <td style="vertical-align: middle;width: 10%;">
+                                        <input type="text" id="txt_DeliveryDate" placeholder="DD-MMM-YYYY" autocomplete="off" />
+                                    </td>
+                                    <td style="vertical-align: middle;width: 10%;text-align: center;">
+                                        <b>PO Status :</b>
+                                    </td>
+                                    <td style="vertical-align: middle;width: 10%;">
+                                        @{
+                                            var Listitems = new List<SelectListItem>();
+                                            Listitems.Add(new SelectListItem() { Text = "Sent", Value = "Sent" });
+                                            Listitems.Add(new SelectListItem() { Text = "Not Sent", Value = "Not Sent" });
+                                        }
+                                        @Html.DropDownList("DropDownLists", Listitems, "Please Select", htmlAttributes: new { @id = "ddlPoStatus", @class = "form_input", @Style = "width:100%;" })
+                                    </td>
+                                    <td style="vertical-align: middle;width: 10%;text-align: center;">
+                                        <b>Poster :</b>&nbsp;&nbsp;&nbsp;
+
+                                        <input type="checkbox" id="chk_Poster" class="checkbox-inline" />
+                                    </td>
+                                    <td style="vertical-align: middle;width: 10%;text-align: center;">
+                                        <b>Still :</b>&nbsp;&nbsp;&nbsp;
+
+                                        <input type="checkbox" id="chk_Still" class="checkbox-inline" />
+                                    </td>
+                                    <td style="vertical-align: middle;width: 10%;text-align: center;">
+                                        <b>Trailer :</b>&nbsp;&nbsp;&nbsp;
+
+                                        <input type="checkbox" id="chk_Trailer" class="checkbox-inline" />
+                                    </td>
+                                    <td style="vertical-align: middle;width: 10%;text-align: center;">
+                                        <b>Edited Poster :</b>&nbsp;&nbsp;&nbsp;
+
+                                        <input type="checkbox" id="chk_EditedPoster" class="checkbox-inline" />
+                                    </td>
+                                    <td style="vertical-align: middle;width: 10%;text-align: center;">
+                                        <b>Edited Still :</b>&nbsp;&nbsp;&nbsp;
+
+                                        <input type="checkbox" id="chk_EditedStill" class="checkbox-inline" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>             
+                @*<div class="modal_block_full" style="margin-top: 10px;">*@
+                <div class="form_links">
+                    <ul class="modal_block clearfix" style="padding-left:10px;">
+                        <li>
+                            <input type="button" style="width: 100px;" class="btn btn-primary" value="Save" onclick="SaveDeliveryTracking()" />
+                        </li>
+                    </ul>
+                </div>
+                @*</div>*@
+            </div>
+        </div>
+    </section>
+</div>

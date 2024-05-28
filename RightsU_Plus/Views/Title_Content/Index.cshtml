@@ -1,0 +1,1431 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }   
+}
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<link type="text/css" rel="stylesheet" href="~/CSS/jquery.timeentry.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/jquery.plugin.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script type="text/javascript" src="~/JS_Core/jquery.timeentry.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script>
+    var IsCall = 'Y';
+    var Command_Name = '';
+    var Mode_G="";
+    var RecordPerPage_G = '';
+    if(@ViewBag.RecordPerPage == 0){
+        RecordPerPage_G='10';
+    }
+    else{
+        RecordPerPage_G = @ViewBag.RecordPerPage;
+    }
+    var URL_BindProgramList = '@Url.Action("BindProgramList", "Title_Content")';
+    var URL_SearchProgram = '@Url.Action("SearchProgram", "Title_Content")';
+    var URL_SearchMusicTrack = '@Url.Action("SearchMusicTrack", "Title_Content")';
+    var URL_BindMusicTrackList = '@Url.Action("BindMusicTrackList", "Title_Content")';
+    var URL_BindContentMusicLinkList = '@Url.Action("BindContentMusicLinkList", "Title_Content")';
+    var URL_AddToContentMusicLink = '@Url.Action("AddToContentMusicLink", "Title_Content")';
+    var URL_SaveContentMusicLink = '@Url.Action("SaveContentMusicLink", "Title_Content")';
+    var URL_SaveContent = '@Url.Action("SaveContent", "Title_Content")';
+    var URL_ClosePopup = '@Url.Action("ClosePopup", "Title_Content")';
+    var URL_AssignMusic = '@Url.Action("AssignMusic", "Title_Content")';
+    var URL_PopulateContent = '@Url.Action("PopulateContent", "Title_Content")'
+    var URL_BindRestrictionRemarkList = '@Url.Action("BindRestrictionRemarkList", "Title_Content")'
+    var URL_BindPartialPage = '@Url.Action("BindPartialPage", "Title_Content")'
+    var URL_SearchAssignedMusicTrack = '@Url.Action("SearchAssignedMusicTrack", "Title_Content")';
+    var Mode="";
+    var frameLimit = @ViewBag.FrameLimit;
+    var URL_Reload_Current_Page = '@Url.Action("Index", "Title_Content")';
+
+    $(document).ready(function () {
+        BindPartialPage("LIST_PAGE", "@ViewBag.IsMenu", null, null, null, null, null)
+    });
+
+    /* START : JavaScript Common Code */
+    function BindPartialPage(key, IsMenu, titleContentCode, rowNo, episode, duration,mode)
+    {
+        Mode_G = mode;
+        var titleName = "";
+        if(key != "LIST_PAGE")
+        {
+            titleName = $('#hdnContentName_' + rowNo).val();
+            if (!ValidatePageSize('txtPageSize'))
+                return false;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindPartialPage,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            async:false,
+            data: JSON.stringify({
+                key: key,
+                mode: mode,
+                IsMenu: IsMenu
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else
+                {
+                    $('#divPartialTab').html(result);
+                    if(key == "LIST_PAGE")
+                    {
+                        var searchText = $.trim($('#searchCommon').val());
+                        var episodeFrom = $.trim($('#txtEpisodeFrom').val());
+                        var episodeTo = $.trim($('#txtEpisodeTo').val());
+
+                        if(episodeFrom == "")
+                            episodeFrom = 0;
+                        if(episodeTo == "")
+                            episodeTo = 0;
+
+                        SearchProgram(true, searchText, episodeFrom, episodeTo);
+                        BindProgramList();
+                        initializeChosen();
+                        addNumeric();
+                    }
+                    else
+                    {
+                        Mode=mode;
+                        $('#lblRecordCountSMT').text("0");
+                        $('#txtSearchMusicTrack').val("");
+                        if(mode == "V")
+                            $('#lblHeading').text("@objMessageKey.AssignedMusicTrackTo " + titleName + " - " + episode + " ( " + duration + " @objMessageKey.mins)");
+                        else
+                        {
+                            $('#lblHeading').text("@objMessageKey.AssignMusicTrackTo " + titleName + " - " + episode + " ( " + duration + " @objMessageKey.mins )");
+                            BindMusicTrackList();
+                        }
+                        SetPaging("SEARCH_MUSIC_TRACK");
+
+
+                        $('#hdnTitleContentCode').val(titleContentCode);
+                        AssignMusic_OnClick(titleContentCode, rowNo, episode, duration,mode)
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function addNumeric() {
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+
+        $(".episodeRange").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 9999,
+            min: 1
+        });
+
+        $(".numeric_Frame").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: frameLimit - 1,
+            min: 0
+        });
+
+        $(".numeric_Duration").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: true,
+            max: 999,
+            min: 1
+        });
+    }
+    function SetPaging(callFor) {
+        debugger;
+        IsCall = 'N';
+
+        var pageNo = 1, recordCount = 0, pagePerBatch=0, recordPerPage=0;
+        if(callFor == "ASSIGN_MUSIC_TRACK")
+        {
+            pageNo = parseInt($('#hdnPageNoAMT').val());
+            recordCount = parseInt($('#hdnRecordCountAMT').val());
+            pagePerBatch = parseInt($('#hdnPagePerBatchAMT').val());
+            recordPerPage = parseInt($('#txtPageSizeAMT').val());
+        }
+        else if(callFor=="SEARCH_MUSIC_TRACK")
+        {
+            pageNo = parseInt($('#hdnPageNoSMT').val());
+            recordCount = parseInt($('#hdnRecordCountSMT').val());
+            pagePerBatch = parseInt($('#hdnPagePerBatchSMT').val());
+            recordPerPage = parseInt($('#txtPageSizeSMT').val());
+        }
+        else
+        {
+            pageNo = parseInt($('#hdnPageNo').val());
+            recordCount = parseInt($('#hdnRecordCount').val());
+            pagePerBatch = parseInt($('#hdnPagePerBatch').val());
+            recordPerPage = parseInt(RecordPerPage_G);
+        }
+
+        var cnt = pageNo * recordPerPage;
+        if (cnt >= recordCount) {
+            var v1 = parseInt(recordCount / recordPerPage);
+            if ((v1 * recordPerPage) == recordCount)
+                pageNo = v1;
+            else
+                pageNo = v1 + 1;
+        }
+
+        if (pageNo == 0)
+            pageNo = 1;
+
+        var index = pageNo - 1;
+        var opt = null;
+
+        if(callFor=="LIST_PAGE")
+        {
+            $('#hdnPageNo').val(pageNo);
+            opt = { callback: pageselectCallback };
+        }
+        else if(callFor=="SEARCH_MUSIC_TRACK")
+        {
+            $('#hdnPageNoSMT').val(pageNo);
+            opt = { callback: pageselectCallback_SearchMusicTrack};
+        }
+        else if(callFor == "ASSIGN_MUSIC_TRACK")
+        {
+            debugger;
+            $('#hdnPageNoAMT').val(pageNo);
+            opt = { callback: pageselectCallback_AssignMusicTrack};
+        }
+
+        opt["items_per_page"] = recordPerPage;
+        opt["num_display_entries"] = pagePerBatch;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = index;
+
+        if(callFor == "ASSIGN_MUSIC_TRACK")
+        {
+            $("#PaginationAMT").pagination(recordCount, opt);
+        }
+        else if(callFor=="SEARCH_MUSIC_TRACK")
+        {
+            $("#PaginationSMT").pagination(recordCount, opt);
+        }
+        else
+            $("#Pagination").pagination(recordCount, opt);
+    }
+    function txtPageSize_OnChange(txtID ,mode) {
+        debugger;
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        if (!ValidatePageSize(txtID))
+            return false;
+
+        if(txtID == "txtPageSize")
+        {
+            RecordPerPage_G = $('#txtPageSize').val();
+            BindProgramList();
+            SetPaging("LIST_PAGE");
+        }
+        else if(txtID == "txtPageSizeSMT")
+        {
+            BindMusicTrackList();
+            SetPaging("SEARCH_MUSIC_TRACK");
+        }
+        else if(txtID == "txtPageSizeAMT")
+        {
+            if(mode != "V")
+            {
+                if(SaveAssignedMusic('PC'))
+                {
+                    BindContentMusicLinkList();
+                    SetPaging("ASSIGN_MUSIC_TRACK");
+                }
+            }
+            else
+            {
+                BindContentMusicLinkList();
+                SetPaging("ASSIGN_MUSIC_TRACK");
+            }
+        }
+    }
+    function setDefaultPaging(txtId) {
+        debugger
+        var pageSize = $('#' + txtId).val();
+        if (pageSize < 1 || pageSize == "") {
+            $('#' + txtId).val('10');
+            if (txtId == "txtPageSize") {
+                RecordPerPage_G = $('#txtPageSize').val();
+                BindProgramList();
+                SetPaging("LIST_PAGE");
+            }
+            else if (txtId == "txtPageSizeSMT") {
+                BindMusicTrackList();
+                SetPaging("SEARCH_MUSIC_TRACK");
+            }
+            else if (txtId == "txtPageSizeAMT") {
+                if (Mode_G != "V") {
+                    if (SaveAssignedMusic('PC')) {
+                        BindContentMusicLinkList();
+                        SetPaging("ASSIGN_MUSIC_TRACK");
+                    }
+                }
+                else {
+                    BindContentMusicLinkList();
+                    SetPaging("ASSIGN_MUSIC_TRACK");
+                }
+            }
+        }
+    }
+    function ValidatePageSize(txtID) {
+        var recordPerPage = $('#' + txtID).val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#'+ txtID).attr('required', true)
+
+        return false
+    }
+    function handleOk() {
+        if (Command_Name == "SAVE")
+            SaveAssignedMusic("S");
+        else if (Command_Name == "CANCEL")
+            btnCancel_OnClick('AM', true);
+    }
+    function handleCancel() {
+        Command_Name = ''
+    }
+    /* END : JavaScript Common Code */
+
+    /* START : JavaScript code for _Title_Content page */
+    function populateContent(evt) {
+        var selectedtxt = $('#searchCommon').val()
+        var txt = selectedtxt.split('﹐');
+        var iscomplete = true;
+        if (txt[txt.length - 1].trim() == "")
+            iscomplete = false;
+        if (iscomplete) {
+            $("#searchCommon").autocomplete({
+                focus: function () {
+                    // prevent value inserted on focus
+                    return false;
+                },
+                search: function (e, u) {
+                    $(this).addClass('loader');
+                },
+                source: function (request, response) {
+                    var param = {
+                        searchPrefix: $('#searchCommon').val()
+                    };
+                    $.ajax({
+                        url: URL_PopulateContent,
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+                            if (data.length == 0) {
+                                data[0] = 'Result Not Found';
+                                response($.map(data, function (v, i) {
+                                    $('#searchCommon').removeClass('loader');
+                                    return {
+                                        label: 'Result Not Found',
+                                        val: '0'
+                                    }
+                                }))
+                            }
+                            else {
+                                response($.map(data, function (v, i) {
+                                    $('#searchCommon').removeClass('loader');
+                                    return {
+                                        label: v.Content_Name,
+                                        val: v.Content_Name
+                                    }
+                                }))
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            alert("Error" + textStatus);
+                        }
+                    });
+                },
+                select: function (event, i) {
+                    var text = this.value.split(/﹐\s*/);
+                    text.pop();
+                    text.push(i.item.value);
+                    text.push("");
+                    this.value = text;
+                    this.value = text.join("﹐");
+                    return false;
+                },
+                minLength: 2,
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("position", "absolute");
+                    $(".ui-autocomplete").css("max-height", "200px");
+                    $(".ui-autocomplete").css("overflow-y", "auto");
+                    $(".ui-autocomplete").css("overflow-x", "hidden");
+                    $(".ui-autocomplete").css("z-index", "2147483647");
+                },
+
+            });
+        }
+        else
+            return false;
+    }
+    function BindProgramList(changeMu) {
+        var recordPerPage = '';
+        var pageNo = $('#hdnPageNo').val();
+        if(RecordPerPage_G == $('#txtPageSize').val()){
+            recordPerPage = $('#txtPageSize').val();
+        }
+        else{
+            recordPerPage = RecordPerPage_G;
+        }
+        var titleContentCode=0;
+        if(changeMu!='Y')
+            titleContentCode = $('#hdnTitleContentCode').val();
+        $.ajax({
+            type: "POST",
+            url: URL_BindProgramList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+                contentCodeForEdit: titleContentCode
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                $('#dvMusic_Program_List').html(result);
+                addNumeric();
+                initializeTooltip();
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function SearchProgram(onLoad, searchText, episodeFrom, episodeTo,changeMu) {
+        debugger;
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: URL_SearchProgram,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                searchText: searchText,
+                episodeFrom: episodeFrom,
+                episodeTo: episodeTo
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if(changeMu!='Y')
+                    {
+                        $('#hdnPageNo').text(1);
+                        $('#lblRecordCount').text(result.Record_Count);
+                        $("#hdnRecordCount").val(result.Record_Count);
+                    }
+                    if (result.Record_Count <= 0 && !onLoad)
+                        showAlert("E", "Record not found");
+                    SetPaging("LIST_PAGE");
+                    BindProgramList(changeMu);
+                    hideLoading();
+                    debugger;
+                    if (result.ListSearchedFromTitle == 'Y') {
+                        $("#BackToTitleBtn").attr("style", "display:block");
+                        $("#BackToTitleBtn").attr("onclick", "window.location.href = '" + result.TitleUrl + "'");
+                        $("#searchCommon").val(result.PopulateSearchBox);
+                        $("#hdnSearchBox").val(result.PopulateSearchBox);
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+    function pageselectCallback(page_index, jq) {
+        $('.required').removeClass('required');
+
+        if (!ValidatePageSize('txtPageSize'))
+            return false;
+
+        var pageNo = page_index + 1
+        $('#hdnPageNo').val(pageNo);
+        if (IsCall == 'Y')
+            BindProgramList();
+        else
+            IsCall = 'Y';
+    }
+    function EditContent_OnClick(titleContentCode)
+    {
+        if (!ValidatePageSize('txtPageSize'))
+            return false;
+
+        $('#hdnTitleContentCode').val(titleContentCode);
+        BindProgramList();
+    }
+    function UpdateContent_OnClick(rowNo)
+    {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        var returnVal = true;
+        var titleContentCode = $('#hdnTitleContentCode').val();
+        var contentName = $.trim($('#txtContentName_' + rowNo).val());
+        var duration = $.trim($('#txtDuration_' + rowNo).val());
+
+        if(contentName == "")
+        {
+            $('#txtContentName_' + rowNo).attr('required', true);
+            returnVal = false;
+        }
+
+        if(duration == "")
+        {
+            $('#txtDuration_' + rowNo).attr('required', true);
+            returnVal = false;
+        }
+        else
+        {
+            var strReg = /^[0-9]+(\.[0-5][0-9]?)?$/;
+            if(!strReg.test(duration))
+            {
+                $('#txtDuration_' + rowNo).addClass('required');
+                returnVal = false;
+                showAlert('E', "Invalid Duration");
+            }
+        }
+
+        if(returnVal)
+        {
+            $.ajax({
+                type: "POST",
+                url: URL_SaveContent,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    titleContentCode: titleContentCode,
+                    contentName: contentName,
+                    duration: duration
+                }),
+                async: false,
+                success: function (result) {
+
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        if (result.Status == "S")
+                        {
+                            showAlert('S', result.Message);
+                            $('#hdnTitleContentCode').val(0);
+                            BindProgramList();
+                        }
+                        else if (result.Status == "E")
+                        {
+                            showAlert('E', result.Message);
+                            returnVal = false;
+                        }
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+        return returnVal;
+    }
+    function btnSearch_OnClick() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        if (!ValidatePageSize('txtPageSize'))
+            return false;
+
+        var searchText = $.trim($('#searchCommon').val());
+        var episodeFrom = $.trim($('#txtEpisodeFrom').val());
+        var episodeTo = $.trim($('#txtEpisodeTo').val());
+
+        var returnVal = true;
+
+        if (searchText == '') {
+            $('#searchCommon').attr('required', true)
+            returnVal = false;
+        }
+        //Commented by akshay
+        //if (episodeFrom == '') {
+        //    $('#txtEpisodeFrom').attr('required', true)
+        //    returnVal = false;
+        //}
+        //if (episodeTo == '') {
+        //    $('#txtEpisodeTo').attr('required', true)
+        //    returnVal = false;
+        //}
+
+        if (episodeFrom == '') { episodeFrom = 0; }
+        if (episodeTo == '') { episodeTo = 0; }
+
+        if (parseInt(episodeFrom) > parseInt(episodeTo) && parseInt(episodeTo) > 0) {
+            $('#txtEpisodeTo').addClass('required');
+            showAlert("E", "@objMessageKey.EpisodeFromcannotbegreaterthenEpisodeTo");
+            returnVal = false;
+        }
+
+        if (returnVal)
+            SearchProgram(false, searchText, episodeFrom, episodeTo);
+        else
+            return false;
+    }
+    /* END : JavaScript code for _Title_Content page */
+
+    /* START : JavaScript code for _Assign_Music page */
+    function pageselectCallback_SearchMusicTrack(page_index, jq) {
+
+        if (!ValidatePageSize('txtPageSizeSMT'))
+            return false;
+
+        var pageNo = page_index + 1
+        $('#hdnPageNoSMT').val(pageNo);
+        if (IsCall == 'Y')
+            BindMusicTrackList();
+        else
+            IsCall = 'Y';
+    }
+    function pageselectCallback_AssignMusicTrack(page_index, jq) {
+        if (!ValidatePageSize('txtPageSizeAMT'))
+            return false;
+
+        var pageNo = page_index + 1
+        $('#hdnPageNoAMT').val(pageNo);
+        if (IsCall == 'Y')
+        {
+            if(Mode_G != "V")
+            {
+                if(SaveAssignedMusic('PC'))
+                    BindContentMusicLinkList();
+            }
+            else
+            {
+                BindContentMusicLinkList();
+            }
+        }
+
+        else
+            IsCall = 'Y';
+    }
+    function AssignMusic_OnClick(titleContentCode, rowNo, episode, duration,mode) {
+        $.ajax({
+            type: "POST",
+            url: URL_AssignMusic,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            async:false,
+            data: JSON.stringify({
+                titleContentCode: titleContentCode
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                SearchAssignedMusicTrack("", "SHOW_ALL");
+                BindContentMusicLinkList();
+                SetPaging("ASSIGN_MUSIC_TRACK")
+                $('#popAssignMusic').modal();
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function CancelContent_OnClick()
+    {
+        $('#hdnTitleContentCode').val(0);
+        BindProgramList();
+    }
+    function BackToListPage() {
+        $('#hdnTitleContentCode').val(0);
+        BindPartialPage("LIST_PAGE", "N", null, null, null, null, null)
+    }
+    function BindMusicTrackList() {
+        var pageNo = $('#hdnPageNoSMT').val();
+        var recordPerPage = $('#txtPageSizeSMT').val();
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindMusicTrackList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                $('#divSearchedMusicList').html(result);
+                initializeTooltip();
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function BindContentMusicLinkList() {
+        var pageNo = $('#hdnPageNoAMT').val();
+        var recordPerPage = $('#txtPageSizeAMT').val();
+        $.ajax({
+            type: "POST",
+            url: URL_BindContentMusicLinkList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+                mode:Mode
+            }),
+            success: function (result) {
+                $('#divSelectedMusicList').empty();
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                $('#divSelectedMusicList').html(result);
+                $('#lblRecordCountPopupV')
+                addNumeric();
+                initializeTooltip();
+                BindCheckboxEventForContentLinkMusic();
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function SearchMusicTrack_OnClick() {
+        $("[required='required']").removeAttr("required");
+        var searchText = $.trim($('#txtSearchMusicTrack').val());
+
+        if (!ValidatePageSize('txtPageSizeSMT'))
+            return false;
+
+        var returnVal = true;
+        if (searchText == '') {
+            $('#txtSearchMusicTrack').attr('required', true)
+            returnVal = false;
+        }
+
+        if (returnVal)
+        {
+            var titleContentCode = $('#hdnTitleContentCode').val();
+            SearchMusicTrack(searchText, true)
+        }
+    }
+    function SearchMusicTrack(searchText, fetchData)
+    {
+        $.ajax({
+            type: "POST",
+            url: URL_SearchMusicTrack,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                searchText: searchText,
+                fetchData: fetchData
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#lblRecordCountSMT').text(result.Record_Count);
+                    $("#hdnRecordCountSMT").val(result.Record_Count);
+                    BindMusicTrackList();
+                    SetPaging("SEARCH_MUSIC_TRACK");
+                    if(fetchData)
+                        $('#hdnPageNoSMT').val(1);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+
+    }
+    function SearchAssignedMusicTrack_OnClick(key, mode) {
+        debugger;
+        $("[required='required']").removeAttr("required");
+
+        if (!ValidatePageSize('txtPageSizeAMT'))
+            return false;
+
+        var returnVal = true;
+        var searchText = "";
+        var commandName = "";
+        if(key == "S")
+        {
+            commandName = "SEARCH"
+            $("[required='required']").removeAttr("required");
+            searchText = $.trim($('#txtSearchASM').val());
+            if (searchText == '') {
+                $('#txtSearchASM').attr('required', true)
+                returnVal = false;
+            }
+        }
+        else
+        {
+            commandName = "SHOW_ALL";
+            $('#txtSearchASM').val('');
+        }
+
+        if (returnVal)
+        {
+            if(mode != "V")
+                SaveAssignedMusic("PC");
+            SearchAssignedMusicTrack(searchText, commandName)
+        }
+    }
+    function SearchAssignedMusicTrack(searchText, commandName)
+    {
+        selectedContentLinkGUID = $("#hdnSelectedContentLinkGUID").val();
+        $.ajax({
+            type: "POST",
+            url: URL_SearchAssignedMusicTrack,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                searchText: searchText,
+                commandName: commandName,
+                SelectedContentLinkGUID: selectedContentLinkGUID
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger;
+                    $('#lblRecordCountAMT').text(result.Record_Count);
+                    $("#hdnRecordCountAMT").val(result.Record_Count);
+                    $("#hdnAllContentLinkGUID").val(result.AllContentLinkGUID);
+                    $("#hdnSelectedContentLinkGUID").val(result.SelectedContentLinkGUID);
+                    BindContentMusicLinkList()
+                    SetPaging("ASSIGN_MUSIC_TRACK");
+                    $('#hdnPageNoAMT').val(1);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function trMusicTrack_OnDblClick(dummyGuid)
+    {
+        var musicTrackList = new Array();
+        musicTrackList.push(dummyGuid);
+        SaveAssignedMusic("ST");
+        $.ajax({
+            type: "POST",
+            url: URL_AddToContentMusicLink,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                musicTrackList: musicTrackList
+            }),
+            async: false,
+            success: function (result) {
+
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Status == "S") {
+                        SearchMusicTrack("", false)
+                        $('#lblRecordCountAMT').text(result.Linked_Record_Count);
+                        $("#hdnRecordCountAMT").val(result.Linked_Record_Count);
+                        $('#hdnPageNoAMT').val(1);
+                        SearchAssignedMusicTrack("", "RESET_COUNT");
+                        SetPaging("ASSIGN_MUSIC_TRACK");
+                    }
+                    if (result.Status == "E") {
+                        showAlert('E', "Error in AddToContentMusicLink method");
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function btnSave_OnClick() {
+        if ($(":checkbox:checked").length > 0) {
+            showAlert('E', "@objMessageKey.Pleaseuncheckthecheckboxtosavedata");
+        }
+        else {
+            $('.required').removeClass('required');
+            var i = 1, removeCount = 0, addEditCount = 0;
+            var returnVal =  true;
+            var tblMusicLink = $("#tblMusicLink tr:not(:has(th))");
+            tblMusicLink.each(function () {
+                isChecked = $("#chkMusicLink_" + i).prop("checked");
+                if(!isChecked)
+                {
+                    addEditCount++;
+                    var isValid = calculateDuration(i, true, true)
+                    if(!isValid)
+                        returnVal = false;
+                }
+                else
+                    removeCount++;
+                i++;
+            });
+
+            if(returnVal)
+            {
+                if (removeCount == 0 && addEditCount == 0) {
+                    showAlert("I", "You have not linked any music track, Do you still want to continue?", "OKCANCEL");
+                    Command_Name = "SAVE";
+                    return false;
+                }
+                else
+                {
+                    SaveAssignedMusic("S")
+                }
+            }
+        }
+    }
+    function SaveAssignedMusic(callOn)
+    {
+        debugger
+        var returnVal =  true;
+        $('.required').removeClass('required');
+        var i = 1;
+        var lstCML = new Array();
+        var SelectedContentLinkGUID = "";
+        var tblMusicLink = $("#tblMusicLink tr:not(:has(th))");
+        var length = 0
+        var recordEffectedCount = parseInt($('#hdnRecordEffectedCount').val());
+
+        tblMusicLink.each(function () {
+            var _dummyGuid = $("#hdnDummyGuid_" + i).val();
+
+            var isChecked = $("#chkMusicLink_" + i).prop("checked");
+            if(!(callOn == "RT" && isChecked))
+            {
+                var isValid = true;
+                var showError = false;
+                if(callOn == "PC")
+                    showError = true;
+
+                if(callOn != "S")
+                    isValid = calculateDuration(i, showError, true)
+
+                if(isValid || callOn == "ST")
+                {
+                    debugger
+                    var _musicTitleCode = 0, _from = "", _fromFrame = "", _to = "", _toFrame = "", _duration = "", _durationFrame = "",_versionCode= 0;
+                    var _titleContentCode = parseInt($("#hdnTitleContentCode").val());
+                    _musicTitleCode = parseInt($("#hdnMusicCode_" + i).val());
+                    _versionCode = $('#ddlVersion_' + i).val();
+                    _from = $("#txtFrom_" + i).val();
+                    _fromFrame = $("#txtFrameFrom_" + i).val();
+                    _to = $("#txtTo_" + i).val();
+                    _toFrame = $("#txtFrameTo_" + i).val();
+                    _duration = $("#lblDuration_" + i).val();
+                    _durationFrame = $("#lblDurationFrame_" + i).val();
+
+                    lstCML.push({
+                        Title_Content_Code: _titleContentCode, Music_Title_Code: _musicTitleCode, _Dummy_Guid: _dummyGuid,
+                        From: _from, From_Frame: _fromFrame, To: _to, To_Frame: _toFrame, Duration: _duration, Duration_Frame: _durationFrame, Version_Code: _versionCode
+                    });
+                }
+                else if(callOn == "PC")
+                    returnVal = false;
+                i++;
+            }
+        });
+        if(callOn == "RT")
+        {
+            length = $("input:checkbox[id*='chkMusicLink']:checked").length;
+            SelectedContentLinkGUID = $("#hdnSelectedContentLinkGUID").val();
+        }
+
+        if(recordEffectedCount > 0 || lstCML.length > 0 || length > 0)
+        {
+            $.ajax({
+                type: "POST",
+                url: URL_SaveContentMusicLink,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    lstCML: lstCML,
+                    SelectedContentLinkGUID: SelectedContentLinkGUID,
+                    callOn: callOn
+                }),
+                async: false,
+                success: function (result) {
+
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        if (result.Status == "S")
+                        {
+                            $('#hdnRecordEffectedCount').val(result.RecordEffectedCount)
+                            if(callOn =="S")
+                            {
+                                Command_Name = "";
+                                if(result.RestrictionRemarkCount > 0)
+                                {
+                                    $('#popRestrictionRemarks').modal();
+                                    BindRestrictionRemarkList();
+                                }
+                                else
+                                {
+                                    showAlert('S', "@objMessageKey.DataSavedsuccessfully");
+                                    BackToListPage();
+                                }
+                            }
+                        }
+                        else if (result.Status == "E") {
+                            showAlert('E', "Error in SaveContentMusicLink method");
+                            returnVal = false;
+                        }
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+        else if(callOn == "S")
+            btnCancel_OnClick('AM', true);
+
+        return returnVal;
+    }
+    function btnRemoveTitle_OnClick()
+    {
+        if (!ValidatePageSize('txtPageSizeAMT'))
+            return false;
+
+        length = $("table tr[id*='trMusicLink']").length
+        if (length == 0) {
+
+            var length = $("table tr[id*='trMusicTrack']").length
+            if (length == 0) {
+                showAlert("E", "Please search Music Track");
+                return false;
+            }
+
+            showAlert("E", "Please add Music Track");
+            return false;
+        }
+
+        var length = $("input:checkbox[id*='chkMusicLink']:checked").length
+        if(length == 0)
+        {
+            showAlert("E", "@objMessageKey.PleaseselectAssignedMusicTrackforremove");
+            return false;
+        }
+        else
+        {
+            SaveAssignedMusic("RT");
+            SearchMusicTrack("", false)
+            SearchAssignedMusicTrack("", "RESET_COUNT");
+        }
+    }
+    function btnCancel_OnClick(callFor, isConfirmed)
+    {
+        if(isConfirmed)
+        {
+            $.ajax({
+                type: "POST",
+                url: URL_ClosePopup,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    callFor: callFor
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        if (result.Status == "S")
+                        {
+                            if(callFor == "RR")
+                            {
+                                $('#popRestrictionRemarks').modal('hide');
+                                $('#divRestrictionRemarks').empty();
+                                showAlert('S', "@objMessageKey.DataSavedsuccessfully");
+                            }
+
+                            BackToListPage();
+                        }
+                        else if (result.Status == "E")
+                            showAlert('E', "Error in ClosePopup method");
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+        else
+        {
+            showAlert("I", "@objMessageKey.AllUnsavedDataWillBeLostStillWantToGoAhead?", "OKCANCEL");
+            Command_Name = "CANCEL";
+            return false;
+        }
+    }
+    function BindRestrictionRemarkList()
+    {
+        $.ajax({
+            type: "POST",
+            url: URL_BindRestrictionRemarkList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                pageNo: 1,
+                recordPerPage: 1
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                $('#divRestrictionRemarks').html(result);
+                initializeExpander();
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function BindCheckboxEventForContentLinkMusic() {
+        debugger;
+        var arrSelectedCodes = $("#hdnSelectedContentLinkGUID").val().split(',');
+        var allCodes = $("#hdnAllContentLinkGUID").val();
+
+        var newSelectedCodes = ",";
+        var count = 0;
+        for (i = 0; i < arrSelectedCodes.length; i++) {
+            var code = arrSelectedCodes[i].trim();
+            if(code != "")
+            {
+                if(allCodes.indexOf("," + code + ",") > -1)
+                {
+                    count++;
+                    newSelectedCodes = newSelectedCodes + code + ",";
+                }
+            }
+        }
+
+        $("#hdnSelectedContentLinkGUID").val(newSelectedCodes);
+
+        $("input[id*='chkMusicLink']:checkbox").each(function(){
+            var code = $(this).val();
+            if(newSelectedCodes.indexOf("," + code + ",") > -1)
+                $(this).prop('checked', true);
+        });
+
+        var totalLength = $("input[id*='chkMusicLink']:checkbox").length;
+        var checkedLength = $("input[id*='chkMusicLink']:checkbox:checked").length;
+        $("#chkAllMusicLink").prop('checked', (totalLength == checkedLength && checkedLength > 0));
+
+        $("input[id*='chkMusicLink']:checkbox").click(function () {
+            debugger
+            var code = $(this).val();
+            var selectedCodes = $("#hdnSelectedContentLinkGUID").val().trim();
+            if(selectedCodes == '')
+                selectedCodes = ","
+            if($(this).is(':checked'))
+            {
+                selectedCodes = selectedCodes + code + ",";
+                $("#hdnSelectedContentLinkGUID").val(selectedCodes);
+            }
+            else
+            {
+                selectedCodes = selectedCodes.replace("," + code + ",", ",");
+                $("#hdnSelectedContentLinkGUID").val(selectedCodes);
+            }
+
+            var totalLength = $("input[id*='chkMusicLink']:checkbox").length;
+            var checkedLength = $("input[id*='chkMusicLink']:checkbox:checked").length;
+            $("#chkAllMusicLink").prop('checked', (totalLength == checkedLength && checkedLength > 0));
+        });
+
+        $("#chkAllMusicLink").click(function () {
+            debugger
+            var chkAll_Checked = $(this).is(':checked');
+            var selectedCodes = $("#hdnSelectedContentLinkGUID").val().trim();
+            $("input[id*='chkMusicLink']:checkbox").each(function(){
+                debugger
+                var code = $(this).val();
+                if(chkAll_Checked)
+                    selectedCodes = selectedCodes + code + ",";
+                else
+                    selectedCodes = selectedCodes.replace("," + code + ",", ",");
+
+                $(this).prop('checked', chkAll_Checked);
+            });
+
+            $("#hdnSelectedContentLinkGUID").val(selectedCodes);
+        });
+    }
+
+    /* END : JavaScript code for _Assign_Music page */
+
+    /* START : Others Methods */
+    function calculateDuration(rowNo, showError, validateOnly) {
+        debugger;
+        var returnVal = true;
+        var timeFrom = $("#txtFrom_" + rowNo).val();
+        var fromFrame = $("#txtFrameFrom_" + rowNo).val();
+        var timeTo = $("#txtTo_" + rowNo).val();
+        var toFrame = $("#txtFrameTo_" + rowNo).val();
+        var duration =   $("#lblDuration_" + rowNo).val();
+        var version = $('#ddlVersion_' +rowNo).val();
+        if(version == null || version == "")
+        {
+            $('#ddlVersion_' + rowNo).addClass('required');
+            returnVal = false;
+        }
+
+        if (duration == "00:00" || duration == "00:00:00") {
+            var arrFrom = timeFrom.split(":");
+            var arrTo = timeTo.split(":");
+            if (timeFrom == "00:00:00") {
+                returnVal = false;
+                if(showError)
+                    $("#txtFrom_" + rowNo).addClass('required');
+            }
+            if(arrFrom.length == 2)
+                timeFrom = arrFrom[0] + ":" + arrFrom[1] + ":00"
+
+            if (fromFrame == "") {
+                fromFrame = "00";
+            }
+            $("#txtFrameFrom_" + rowNo).val(FormatNumberLength(fromFrame, 2));
+            if (timeTo == "00:00:00") {
+                returnVal = false;
+                if (showError)
+                    $("#txtTo_" + rowNo).addClass('required');
+            }
+            if(arrTo.length == 2)
+                timeTo = arrTo[0] + ":" + arrTo[1] + ":00"
+
+            if (toFrame == "") {
+                toFrame = "00";
+            }
+            $("#txtFrameTo_" + rowNo).val(FormatNumberLength(toFrame, 2));
+            if (returnVal) {
+                var totalSec_From = ConvertToSeconds(timeFrom);
+                var totalSec_To = ConvertToSeconds(timeTo);
+                var diffSec = totalSec_To - totalSec_From;
+                if (diffSec <= 0) {
+                    returnVal = false;
+                    if (showError) {
+                        $("#txtTo_" + rowNo).addClass('required');
+                        showAlert("E", "Invalid Duration");
+                    }
+                }
+                if (returnVal && !validateOnly) {
+                    var frameLimit = $("#hdnFrameLimit").val();
+                    var durationFrame = 0;
+                    if(parseInt(toFrame) < parseInt(fromFrame))
+                    {
+                        diffSec = diffSec - 1;
+                        durationFrame = parseInt(frameLimit) - parseInt(fromFrame)
+                        durationFrame = durationFrame + parseInt(toFrame);
+                    }
+                    else
+                        durationFrame = parseInt(toFrame) - parseInt(fromFrame)
+                    var balDuration = GetTimeInFormat(diffSec);
+                    $("#lblDuration_" + rowNo).val(balDuration);
+                    $("#lblDurationFrame_" + rowNo).val(FormatNumberLength(durationFrame, 2));
+                }
+            }
+            return returnVal;
+        }
+        else {
+            if ((timeFrom != "00:00:00" && timeFrom != "00:00") || (timeTo != "00:00:00" && timeTo != "00:00")) {
+                var arrFrom = timeFrom.split(":");
+                var arrTo = timeTo.split(":");
+
+                if (timeFrom == "00:00:00" || timeFrom == "00:00") {
+                    returnVal = false;
+                    if(showError)
+                        $("#txtFrom_" + rowNo).addClass('required');
+                }
+                if(arrFrom.length == 2)
+                    timeFrom = arrFrom[0] + ":" + arrFrom[1] + ":00"
+
+                if (fromFrame == "") {
+                    fromFrame = "00";
+                }
+                $("#txtFrameFrom_" + rowNo).val(FormatNumberLength(fromFrame, 2));
+
+                if (timeTo == "00:00:00" || timeTo == "00:00") {
+                    returnVal = false;
+                    if (showError)
+                        $("#txtTo_" + rowNo).addClass('required');
+                }
+                if(arrTo.length == 2)
+                    timeTo = arrTo[0] + ":" + arrTo[1] + ":00"
+
+                if (toFrame == "") {
+                    toFrame = "00";
+                }
+                $("#txtFrameTo_" + rowNo).val(FormatNumberLength(toFrame, 2));
+
+                if (returnVal) {
+                    var totalSec_From = ConvertToSeconds(timeFrom);
+                    var totalSec_To = ConvertToSeconds(timeTo);
+                    var diffSec = totalSec_To - totalSec_From;
+                    if (diffSec <= 0 ) {
+                        returnVal = false;
+                        if (showError) {
+                            $("#txtTo_" + rowNo).addClass('required');
+                            showAlert("E", "Invalid Duration");
+                        }
+                    }
+                    if (returnVal && !validateOnly) {
+                        var frameLimit = $("#hdnFrameLimit").val();
+                        var durationFrame = 0;
+                        if(parseInt(toFrame) < parseInt(fromFrame))
+                        {
+                            diffSec = diffSec - 1;
+                            durationFrame = parseInt(frameLimit) - parseInt(fromFrame)
+                            durationFrame = durationFrame + parseInt(toFrame);
+                        }
+                        else
+                            durationFrame = parseInt(toFrame) - parseInt(fromFrame)
+
+                        var balDuration = GetTimeInFormat(diffSec);
+                        $("#lblDuration_" + rowNo).val(balDuration);
+                        $("#lblDurationFrame_" + rowNo).val(FormatNumberLength(durationFrame, 2));
+                    }
+                }
+                return returnVal;
+            }
+            else {
+
+                if (fromFrame != "00" || toFrame != "00"  ) {
+
+                    if (!validateOnly) {
+                        var frameLimit = $("#hdnFrameLimit").val();
+                        var durationFrame = 0;
+                        if(parseInt(toFrame) < parseInt(fromFrame))
+                        {
+                            diffSec = diffSec - 1;
+                            durationFrame = parseInt(frameLimit) - parseInt(fromFrame)
+                            durationFrame = durationFrame + parseInt(toFrame);
+                        }
+                        else
+                            durationFrame = parseInt(toFrame) - parseInt(fromFrame)
+
+                        var balDuration = GetTimeInFormat(diffSec);
+                        // $("#lblDuration_" + rowNo).val(balDuration);
+                        $("#lblDurationFrame_" + rowNo).val(FormatNumberLength(durationFrame, 2));
+                    }
+                }
+
+                returnVal = true;
+                return returnVal;
+            }
+        }
+    }
+    function ConvertToSeconds(time) {
+        var arr = time.split(':');
+        var hr = parseInt(arr[0], 10) * 3600;
+        var mm = parseInt(arr[1], 10) * 60;
+        var ss = parseInt(arr[2], 10);
+        var totsec = hr + mm + ss;
+        return totsec;
+    }
+    function GetTimeInFormat(sec) {
+        var val1;
+        var val2;
+        var hh = 00;
+        var mm = 00;
+        if (sec >= 3600) {
+            val1 = parseFloat(sec) / 3600;
+            hh = parseInt(val1, 10);
+            sec = sec - (hh * 3600);
+        }
+        if (sec >= 60) {
+            val2 = parseFloat(sec) / 60;
+            mm = parseInt(val2, 10);
+            sec = sec - (mm * 60);
+        }
+
+        var time = FormatNumberLength(hh, 2) + ':' + FormatNumberLength(mm, 2) + ':' + FormatNumberLength(sec, 2);
+        return time;
+    }
+    function FormatNumberLength(num, length) {
+        var r = "" + num;
+        while (r.length < length) {
+            r = "0" + r;
+        }
+        return r;
+    }
+    function hideChannel(){
+        $('.MoreActionDiv').hide('slow');
+    }
+    /* END : Others Methods */
+</script>
+<body>
+    <div class="main_section" onclick="hideChannel()">
+        <section class="rightsU_container clearfix">
+            <div class="container acq main_col">
+                <div id="divPartialTab">
+                </div>
+                <div style=" padding-top:1%;">
+                    <button id="BackToTitleBtn" class="btn btn-primary" onclick="" style="display:none">
+                        Back To Title
+                    </button>
+                </div>
+            </div>
+        </section>
+    </div>
+    <input type="hidden" id="hdnTitleContentCode" value="0" />
+    <input type="hidden" id="hdnFrameLimit" value="@ViewBag.FrameLimit" />
+</body>

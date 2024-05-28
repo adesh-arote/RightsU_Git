@@ -1,0 +1,131 @@
+﻿@model List<RightsU_Entities.Material_Type>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<table class="table table-bordered table-hover" id="tblMaterial_Type">
+    <thead>
+        <tr>
+            <th style="width:70%;">@objMessageKey.MaterialType</th>
+            <th style="width:15%;">@objMessageKey.Status</th>
+            <th style="width:15%;">@objMessageKey.Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (TempData["Action"] == "AddMaterialType")
+        {
+            <tr>
+                <td>
+                    @Html.TextBox("MaterialTypeName", "", new { style = "width:90% ", maxlength = "25" })
+                </td>
+                <td align="center">
+                    <span>@objMessageKey.Active</span>
+                </td>
+                <td align="center">
+                    <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" style="cursor: pointer;" onclick="SaveUpdateMaterialType(0)"></a>
+                    <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" style="cursor: pointer;" onclick="CancelMaterialType()"></a>
+                </td>
+            </tr>
+        }
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                string strActive = objMessageKey.Active;
+                if (item.Is_Active == "N")
+                {
+                    strActive = objMessageKey.Deactive;
+                }
+                if (TempData["Action"] == "EditMaterialType" && item.Material_Type_Code == Convert.ToInt32(TempData["idMaterialType"]))
+                {
+                    <tr>
+                        <td>
+                            @Html.TextBoxFor(model => item.Material_Type_Name, new { style = "width:90% ", maxlength = 25, id = "Material_Type_NameEdit" })
+                            @Html.HiddenFor(model => item.Material_Type_Code, new { id = "Material_Type_CodeEdit", style = "width:90%;" })
+                        </td>
+                        <td align="center">
+                            <span>@strActive</span>
+                        </td>
+                        <td align="center">
+                            <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" style="cursor: pointer;" onclick="SaveUpdateMaterialType(@item.Material_Type_Code)"></a>
+                            <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" style="cursor: pointer;" onclick="CancelMaterialType()"></a>
+                        </td>
+                    </tr>
+
+                }
+                else
+                {
+                    <tr>
+                        <td>
+                            <span>@item.Material_Type_Name</span>
+                        </td>
+                        <td align="center">
+                            <span>@strActive</span>
+                        </td>
+                        <td align="center">
+                            @{  bool canDeactive = true;
+                              string toolTipMsg = "";
+                              if (item.Acq_Deal_Material.Count > 0)
+                              {
+                                  canDeactive = false;
+                                  toolTipMsg = objMessageKey.CannotdeactivatethisMaterialTypeasitisusedinAcquisitionDeal;
+                              }
+                              else if (item.Syn_Deal_Material.Count > 0)
+                              {
+                                  canDeactive = false;
+                                  toolTipMsg = objMessageKey.CannotdeactivatethisMaterialTypeasitisusedinSyndicationDeal;
+                              }
+                            }
+
+                            @if (item.Is_Active == "Y")
+                            {
+                                if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForEdit + "~"))
+                                {
+                                    <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer;" onclick="CheckRecordLock(@item.Material_Type_Code,'EDIT')"></a>
+                                }
+                                if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForDeactivate + "~"))
+                                {
+                                    if (canDeactive)
+                                    {
+                                        <a title="@objMessageKey.Deactivate" class="glyphicon glyphicon-thumbs-down" style="cursor: pointer;" onclick="ActiveDeactiveMaterialType(@item.Material_Type_Code, 'N')"></a>
+                                    }
+                                    else
+                                    {
+                                        <a title="@toolTipMsg" class="glyphicon glyphicon-thumbs-down disabled" onclick="return false;"></a>
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForActivate + "~"))
+                                {
+                                    <a title="@objMessageKey.CannoteditthisMaterialTypeasitisdeactivated" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
+                                    <a title="@objMessageKey.Activate" class="glyphicon glyphicon-thumbs-up" style="cursor: pointer;" onclick="ActiveDeactiveMaterialType(@item.Material_Type_Code, 'Y')"></a>
+
+                                }
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+        }
+        else
+        {
+            if (TempData["Action"] != "AddMaterialType")
+            {
+                <tr>
+                    <td colspan="5">@objMessageKey.Norecordfound</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+<script>
+    $("#MaterialTypeName,#searchCommon,#Material_Type_NameEdit").keypress(function (event) {
+        var regex = new RegExp("^[a-zA-Z0-9 ]+$");
+        var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+        if (!regex.test(key)) {event.preventDefault(); return false;}});
+</script>

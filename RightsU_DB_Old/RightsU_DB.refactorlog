@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="04854f50-ac05-4e67-b518-96846c1e2842" ChangeDateTime="11/23/2015 12:44:18">
+    <Property Name="ElementName" Value="[dbo].[DM_Music_Title].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[DM_Music_Title]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="IntCode" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="f951ea91-7ff1-4ed8-bc1f-fa36505bb722" ChangeDateTime="12/11/2015 06:30:15">
+    <Property Name="ElementName" Value="[dbo].[Acq_Deal_Termination_Details].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Acq_Deal_Termination_Details]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Acq_Deal_Termination_Details_Code" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="92210302-da31-4008-847d-62eb85eebb16" ChangeDateTime="12/11/2015 06:44:56">
+    <Property Name="ElementName" Value="[dbo].[BMS_Process_Deals].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[BMS_Process_Deals]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="BMS_Process_Deals_Code" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="0d9ba6d2-0bba-4e07-808e-0c4a26c8d904" ChangeDateTime="08/09/2017 07:07:27">
+    <Property Name="ElementName" Value="[dbo].[BMS_Schedule_Exception].[BMS_Schedule_Process_Data_Code]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[BMS_Schedule_Exception]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="BV_Schedule_Transaction_Code" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="4e43e273-5e1a-451d-9c8a-88edb1421597" ChangeDateTime="08/09/2017 07:08:25">
+    <Property Name="ElementName" Value="[dbo].[BMS_Schedule_Runs].[BMS_Schedule_Process_Data_Code]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[BMS_Schedule_Runs]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="BV_Schedule_Transaction_Code" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="1f37ee7b-7736-4937-99c0-af55a0b3c91c" ChangeDateTime="08/28/2017 07:51:22">
+    <Property Name="ElementName" Value="[dbo].[BMS_Schedule_Process_Data_Temp].[Channel_Content_Run_Code ]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[BMS_Schedule_Process_Data_Temp]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Content_Channel_Run_Code" />
+  </Operation>
+</Operations>

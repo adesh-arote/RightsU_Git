@@ -1,0 +1,219 @@
+﻿@using RightsU_BLL;
+
+@model List<RightsU_Entities.MHRequestDetail>
+@{
+
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    var genList = new Genre_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").ToList();
+}
+<script>
+    $(document).ready(function () {
+        initializeTooltip();
+         if ('@ViewBag.key' == "VIEW")
+         {
+              $('#chkAllOther').prop("disabled", true);
+         }
+        $("input[id*='chkAllOther']:checkbox").click(function () {
+                 debugger;
+            $('input[name=chkbox]').each(function (e) {
+                     debugger;
+                     var name = $(this)[0].id.slice(18);
+                     var id = $(this)[0].id;
+                     var className = $(this)[0].className;
+                if (className != 'N' && className != 'Y' && className != '') {
+                    if ($("input[id*='chkAllOther']:checkbox").prop("checked")) {
+                        $('#' + id).prop('checked',true);
+                    }
+                    else {
+                        $('#' + id).prop('checked',false);
+                    }
+                     }
+                 });
+        });
+    });
+
+</script>
+
+<table class="table table-bordered table-hover" id="tblConsume">
+    <thead>
+        <tr>
+            <th><input type="checkbox" id="chkAllOther" /></th>
+            <th style="width:15%;">Music Track</th>
+            <th style="width:15%;">Music Label</th>
+            <th style="width:10%;">Genre</th>
+            <th style="width:10%;">Talent</th>
+            <th style="width:10%;">Tag</th>
+            <th style="width:15%;">Remarks</th>
+            <th style="width:10%;">Validation</th>
+            <th style="width:15%;">Error Message</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count > 0)
+        {
+            string GenresName = "";
+            int count = 0;
+            bool isApr = false;
+            bool chkDis = false;
+            count = (ViewBag.PageSize * (ViewBag.PageNo - 1)) + 1;
+            foreach (var item in Model)
+            {
+                if (item.IsApprove != null)
+                {
+                    isApr = item.IsApprove == "O" || item.IsApprove == "Y" || item.IsApprove == "N" ? true : false;
+                    chkDis = item.IsApprove == "Y" ? true : false;
+                }
+                <tr id="tr_@count">
+                    <td hidden>
+                        @count
+                    </td>
+                    <td align="center">
+                        <input type="hidden" id="Statuskey" value="@ViewBag.key" />
+                        <input type="hidden" id="hdnMHRD_@count" value="@item.MHRequestDetailsCode" />
+                        @Html.CheckBox("chkbox", isApr, new { @id = "chkCreateNewOther_" + count, @class = "" + item.IsApprove })
+                    </td>
+                    <td>
+                        @item.Music_Title.Music_Title_Name
+                    </td>
+                    <td>
+
+                        @string.Join(", ", (item.Music_Title.Music_Title_Label.Select(x => x.Music_Label.Music_Label_Name).Distinct().ToArray()))
+                    </td>
+                    <td>
+                        @{
+                            if (item.Music_Title.Genres_Code != null)
+                            {
+                                int genresCode = Convert.ToInt32(item.Music_Title.Genres_Code);
+                                GenresName = genList.Where(x => x.Genres_Code == genresCode).Select(x => x.Genres_Name).FirstOrDefault();
+                            }
+                        }
+                        @GenresName
+                    </td>
+                    <td>
+                        @string.Join(", ", (item.Music_Title.Music_Title_Talent.Select(x => x.Talent.Talent_Name).Distinct().ToArray()))
+                    </td>
+                    <td>  @item.Music_Title.Music_Tag </td>
+                    <td>
+                        @if (ViewBag.key != "VIEW")
+                        {
+                            <input type="text" id="MHRDRemarks_@count" value="@item.Remarks" />
+                        }
+                        else
+                        {
+                            @item.Remarks
+                        }
+                    </td>
+                    <td align="center">
+                        @if (item.IsValid == "Y")
+                        {
+                            <a title="Valid" data-placement="left" style="cursor:default;color: green;" id="Valid_@item.MHRequestDetailsCode" class="glyphicon glyphicon-ok"></a>
+                            <a data-placement="left" style="cursor:default;display:none;color: red;" id="NotValid_@item.MHRequestDetailsCode" class="glyphicon glyphicon-remove"></a>
+                        }
+                        else if (item.IsValid == "N")
+                        {
+                            <a title="Valid" data-placement="left" style="cursor:default;display:none;color: green;" id="Valid_@item.MHRequestDetailsCode" class="glyphicon glyphicon-ok"></a>
+                            <a data-placement="left" style="cursor:default;color: red;" id="NotValid_@item.MHRequestDetailsCode" class="glyphicon glyphicon-remove"></a>@* title="@item.ValidationMessage"*@
+                        }
+                        else
+                        {
+                            <a title="Valid" data-placement="left" style="cursor:default;display:none;color: green;" id="Valid_@item.MHRequestDetailsCode" class="glyphicon glyphicon-ok"></a>
+                            <a data-placement="left" style="cursor:default;display:none;color: red;" id="NotValid_@item.MHRequestDetailsCode" class="glyphicon glyphicon-remove"></a>
+                        }
+                    </td>
+                    <td>
+                        @if (item.IsValid == "N")
+                        {
+                            <span> @item.ValidationMessage</span>
+                        }
+                        else
+                        {
+                            <span>NA</span>
+                        }
+                    </td>
+                </tr>
+                count++;
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="8">No Record Found</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<script>
+    //function ValidateRequest(MHRequestCode) {
+    //    debugger;
+    //    showLoading();
+    //    $.ajax({
+    //        type: "POST",
+    //        url: URL_ValidateRequest,
+    //        traditional: true,
+    //        enctype: 'multipart/form-data',
+    //        contentType: "application/json; charset=utf-8",
+    //        data: JSON.stringify({
+    //            MHRequest: MHRequestCode
+    //        }),
+    //        success: function (result) {
+    //            debugger;
+    //            if (result == "true") {
+    //                redirectToLogin();
+    //            }
+    //            else {
+    //                $(result.validatedList).each(function (index, item) {
+    //                    if (this.IsValid == 'N') {
+    //                        $('#NotValid_' + this.MHRequestDetailsCode).show();
+    //                        $('#NotValid_' + this.MHRequestDetailsCode).prop('data-original-title', this.Message);
+    //                        $('#NotValid_' + this.MHRequestDetailsCode).prop('title', this.Message);
+    //                        $('#Valid_' + this.MHRequestDetailsCode).hide();
+    //                    }
+    //                    else if (this.IsValid == 'Y') {
+    //                        $('#Valid_' + this.MHRequestDetailsCode).show();
+    //                        $('#NotValid_' + this.MHRequestDetailsCode).hide();
+    //                    }
+    //                });
+    //                hideLoading();
+    //            }
+    //        },
+    //        error: function (result) {
+    //            alert('Error: ' + result.responseText);
+    //        }
+    //    });
+    //}
+
+    $('input[name=chkbox]').each(function (e) {
+        debugger;
+        var name = $(this)[0].id.slice(18);
+        var id = $(this)[0].id;
+        var className = $(this)[0].className;
+        if ($(this)[0].checked && className == 'Y') {
+
+            $('#' + id).css("outline-color", "green");
+            $('#' + id).css("outline-style", "solid");
+            $('#' + id).css("outline-width", "2px");
+            $('#' + id).css("outline-offset", "-2px");
+            $('#' + id).prop("disabled", true);
+            $('#tr_' + name).css('background-color', '#e1e3e8');
+
+        }
+        else if ($(this)[0].checked && className == 'N') {
+            $('#' + id).css("outline-color", "red");
+            $('#' + id).css("outline-style", "solid");
+            $('#' + id).css("outline-width", "2px");
+            $('#' + id).css("outline-offset", "-2px");
+            $('#' + id).prop("disabled", true);
+            $('#tr_' + name).css('background-color', '#e1e3e8');
+        }
+        else {
+            if ($('#Statuskey').val() == "VIEW" && className != '') {
+                $('#' + id).prop("disabled", true);
+            }
+            $('#tr_' + name).css('background-color', 'white');
+        }
+    });
+</script>

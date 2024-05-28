@@ -1,0 +1,558 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+
+
+<style>
+    #imgTitle {
+        cursor: pointer;
+        max-height: 300px;
+    }
+
+    .uploadFile {
+        display: none !important;
+    }
+
+    .chosen-container {
+        position: relative;
+        display: inline-block;
+        vertical-align: middle;
+        font-size: 13px;
+        zoom: 1;
+        width: 74% !important;
+        *display: inline;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+    }
+
+    
+</style>
+<script>
+    $(document).ready(function () {
+        debugger;
+        $('.ddlSumo').SumoSelect();
+        addNumeric();
+        SearchTitles("", "", "", "", "", "");
+
+        $("#fileSize").val(@ViewBag.FileSize);
+    });
+
+    function addNumeric() {
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
+</script>
+<script>
+    var URL_PopulateTitle = '@Url.Action("PopulateContent", "DM_Title_Master_Import")'
+    var URL_SearchTitleList = '@Url.Action("SearchTitles", "DM_Title_Master_Import")';
+    var URL_BindTitleList = '@Url.Action("BindTitlesList", "DM_Title_Master_Import")';
+    var URL_SaveTitlePoster = '@Url.Action("SaveTitlePoster", "DM_Title_Master_Import")';
+    var URL_SaveFile = '@Url.Action("SaveFile", "DM_Title_Master_Import")';
+
+    //Auto Search
+    function populateContent(evt) {
+        var selectedtxt = $('#searchCommon').val()
+        var txt = selectedtxt.split('﹐');
+        var iscomplete = true;
+        if (txt[txt.length - 1].trim() == "")
+            iscomplete = false;
+        if (iscomplete) {
+            $("#searchCommon").autocomplete({
+                focus: function () {
+                    // prevent value inserted on focus
+                    return false;
+                },
+                search: function (e, u) {
+                    $(this).addClass('loader');
+                },
+                source: function (request, response) {
+                    debugger;
+                    var param = {
+                        searchPrefix: $('#searchCommon').val()
+                    };
+                    $.ajax({
+                        url: URL_PopulateTitle,
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+                            debugger;
+                            if (data.length == 0) {
+                                data[0] = 'Result Not Found';
+                                response($.map(data, function (v, i) {
+                                    $('#searchCommon').removeClass('loader');
+                                    return {
+                                        label: 'Result Not Found',
+                                        val: '0'
+                                    }
+                                }))
+                            }
+                            else {
+                                response($.map(data, function (v, i) {
+                                    $('#searchCommon').removeClass('loader');
+                                    return {
+                                        label: v.Title_Name,
+                                        val: v.Title_Code
+                                    }
+                                }))
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            alert("Error" + textStatus);
+                        }
+                    });
+                },
+                select: function (event, i) {
+                    var text = this.value.split(/﹐\s*/);
+                    text.pop();
+                    text.push(i.item.value);
+                    text.push("");
+                    this.value = text;
+                    this.value = text.join("﹐");
+                    return false;
+                },
+                minLength: 2,
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("position", "absolute");
+                    $(".ui-autocomplete").css("max-height", "200px");
+                    $(".ui-autocomplete").css("overflow-y", "auto");
+                    $(".ui-autocomplete").css("overflow-x", "hidden");
+                    $(".ui-autocomplete").css("z-index", "2147483647");
+                },
+
+            });
+        }
+        else
+            return false;
+    }
+
+    function btnSearch_OnClick() {
+        debugger;
+        if ($('.checkboxLst:checked').length > 0) {
+            showAlert("E", "You cannot change page, Please deselect titles and try again.");
+            return false;
+        }
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var Title = $('#searchCommon').val();
+        if ($('#ddlLanguage').val() != null)
+            var Language = $('#ddlLanguage').val().join(",");
+        if ($('#ddlStarCast').val() != null)
+            var StarCast = $('#ddlStarCast').val().join(",");
+        if ($('#ddlGenre').val() != null)
+            var Genre = $('#ddlGenre').val().join(",");
+        if ($('#ddlTitleType').val() != null)
+            var TitleType = $('#ddlTitleType').val().join(",");
+
+        var Display = $('#ddlDisplayItem').val();
+
+        SearchTitles(Title, Language, StarCast, Genre, TitleType, Display);
+    }
+
+    function btnShowAll_OnClick() {
+        debugger;
+        if ($('.checkboxLst:checked').length > 0) {
+            showAlert("E", "You cannot change page, Please deselect titles and try again.");
+            return false;
+        }
+
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        if (!ValidatePageSize())
+            return false;
+
+
+        $('#searchCommon').val('').trigger('chosen:updated');
+        $('#ddlLanguage').val('').trigger('chosen:updated');
+        $('#ddlStarCast').val('').trigger('chosen:updated');
+        $('#ddlGenre').val('').trigger('chosen:updated');
+        $('#ddlTitleType').val('').trigger('chosen:updated');
+        $('#ddlDisplayItem').val('').trigger('chosen:updated');
+
+        $('#ddlTitleType').SumoSelect();
+        $('#ddlTitleType')[0].sumo.reload();
+        $('#ddlGenre').SumoSelect();
+        $('#ddlGenre')[0].sumo.reload();
+        $('#ddlStarCast').SumoSelect();
+        $('#ddlStarCast')[0].sumo.reload();
+        $('#ddlLanguage').SumoSelect();
+        $('#ddlLanguage')[0].sumo.reload();
+
+
+        SearchTitles("", "", "", "", "", "");
+    }
+
+    function SearchTitles(Title, Language, StarCast, Genre, TitleType, Display) {
+        debugger;
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: URL_SearchTitleList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Title: Title,
+                Title_language_Code: Language,
+                Title_Star_Cast: StarCast,
+                Title_Genre_Code: Genre,
+                Title_Type: TitleType,
+                Poster_Status: Display,
+            }),
+            async: false,
+            success: function (result) {
+                hideLoading();
+                $('#hdnPageNo').text(1);
+                $('#hdnPageNo').val(1);
+                $('#PageValidation').val("0");
+                $('#lblRecordCount').text(result.Record_Count);
+                $("#hdnRecordCount").val(result.Record_Count);
+                SetPaging();
+
+                BindTitleList(0)
+            }
+        });
+    }
+
+    function BindTitleList(id) {
+        debugger;
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindTitleList,
+            traditional: true,
+            enctype: "multipart/form-data",
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+                id: id
+            }),
+            success: function (result) {
+                $('#divBindList').empty();
+                $('#divBindList').html(result);
+               // ClearInputs();
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function SetPaging() {
+        debugger;
+
+        IsCall = 'N';
+        var pageNo = parseInt($('#hdnPageNo').val());
+        var recordCount = parseInt($('#hdnRecordCount').val());
+        var pagePerBatch = parseInt($('#hdnPagePerBatch').val());
+        var recordPerPage = parseInt($('#txtPageSize').val());
+
+        var cnt = pageNo * recordPerPage;
+        if (cnt >= recordCount) {
+            var v1 = parseInt(recordCount / recordPerPage);
+            if ((v1 * recordPerPage) == recordCount)
+                pageNo = v1;
+            else
+                pageNo = v1 + 1;
+        }
+
+        if (pageNo == 0)
+            pageNo = 1;
+
+        var index = pageNo - 1;
+        $('#hdnPageNo').val(pageNo);
+
+        var opt = null;
+        opt = { callback: pageselectCallback };
+        opt["items_per_page"] = recordPerPage;
+        opt["num_display_entries"] = pagePerBatch;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = index;
+        $("#Pagination").pagination(recordCount, opt);
+    }
+
+    
+    
+    function pageselectCallback(page_index, jq) {
+        debugger;
+        var Pagevalidation = $('#PageValidation').val();
+        if ($('.checkboxLst:checked').length > 0 && Pagevalidation == "1") {
+            showAlert("E", "You cannot change page, Please deselect titles and try again.");
+            $('#PageValidation').val("2")
+            SetPaging();
+           // SearchTitles("", "", "", "", "", "");
+            return false;
+        }
+
+        $('.required').removeClass('required');
+
+        if (!ValidatePageSize())
+            return false;
+
+        $('#PageValidation').val("1")
+        var pageNo = page_index + 1
+        $('#hdnPageNo').val(pageNo);
+        if (IsCall == 'Y') {
+            BindTitleList(0)
+        }
+        else {
+            IsCall = 'Y';
+        }
+    }
+
+    function txtPageSize_OnChange() {
+        debugger;
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        if (!ValidatePageSize())
+            return false;
+        BindTitleList(0)
+
+        SetPaging();
+    }
+
+    function ValidatePageSize() {
+        debugger;
+        var recordPerPage = $('#txtPageSize').val()
+        if ($(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize').attr('required', true)
+        return false
+    }
+
+    
+
+    function SaveTitlePoster() {
+        debugger;
+        showLoading();
+        var TitlePosterList = new Array();
+        var ISNullFile = false;
+        $.each($("#tblPosterList tbody tr"), function (index, value) {
+            const fileNo = index;
+            index = index + 1;
+             
+            var TitleCode = $('#' + index + '_hdnCnt').val();
+            var Title_Image = $('#imgTitle_' + TitleCode)
+           
+            if ($('#chk_' + TitleCode).is(':checked') == true) {
+                if ($("#uploadFile_" + TitleCode).get(0).files.length == 0) {
+                    ISNullFile = true;
+                  
+                }
+               
+                TitlePosterList.push({
+                    Title_Code : TitleCode,
+                    Title_Image : ""
+                })
+            }
+        })
+        if (ISNullFile == true) {
+            hideLoading();
+            showAlert('E', "Upload files for checked checkboxes.")
+            return false;
+        }
+        if (TitlePosterList.length == 0) {
+            hideLoading();
+            showAlert('E', "Please Select atleast one title.")
+            return false;
+        }
+        else {
+            SaveFile(TitlePosterList);
+        }
+
+       
+      
+    }
+
+
+    function SaveFile(TitlePosterList) {
+        debugger;
+        var data = new FormData();
+        if (TitlePosterList.length != 0) {
+            for (i = 0; i < TitlePosterList.length; i++) {
+                var files = $("#uploadFile_" + TitlePosterList[i].Title_Code).get(0).files;
+                if (files.length > 0) {
+                    data.append("InputFile[" + i + "]", files[0]);
+                    data.append("Title_Code[" + i + "]", TitlePosterList[i].Title_Code);
+            }
+        }
+            $.ajax({
+                url: URL_SaveFile,
+                type: "POST",
+                processData: false,
+                contentType: false,
+                data: data,
+                success: function (result) {
+                    debugger;
+                    hideLoading();
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else if (result == "Y") {
+                        debugger;
+                        showAlert("S", "Title Posters updated successfully");
+
+                        var Title = $('#searchCommon').val();
+                        if ($('#ddlLanguage').val() != null)
+                            var Language = $('#ddlLanguage').val().join(",");
+                        if ($('#ddlStarCast').val() != null)
+                            var StarCast = $('#ddlStarCast').val().join(",");
+                        if ($('#ddlGenre').val() != null)
+                            var Genre = $('#ddlGenre').val().join(",");
+                        if ($('#ddlTitleType').val() != null)
+                            var TitleType = $('#ddlTitleType').val().join(",");
+
+                        var Display = $('#ddlDisplayItem').val();
+
+                        SearchTitles(Title, Language, StarCast, Genre, TitleType, Display);
+                    }
+                },
+                error: function (er) {
+                }
+            });
+        }
+    }
+  
+</script>
+<input type="hidden" id="fileSize" />
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="">
+                <div class="title_block dotted_border clearfix">
+                    <h2 class="pull-left">
+                        Bulk Poster Upload
+                    </h2>
+                </div>
+                <div class="search_area" style="background-color: #eee; padding:5px;">
+                    <table class="table">
+                        <tr>
+                            <td style="width:10%;vertical-align: middle;text-align:left;">
+                                Title :
+                            </td>
+                            <td style="width:20%;vertical-align: middle;">
+                                <input type="text" name="srchCommon" id="searchCommon" class="search" style="width:74%" placeholder="Please Select" onkeyup="populateContent(this)" />
+
+                                @*@Html.DropDownList("lstTitle", (IEnumerable<SelectListItem>)ViewBag.LanguageList as MultiSelectList, "Please Select", htmlAttributes: new { @id = "lstTitle", @multiple = "multiple", @class = "ddlSumo" })*@
+                            </td>
+                            <td style="width:10%;vertical-align: middle;text-align:left;">
+                                Title Language :
+                            </td>
+                            <td style="width:20%;vertical-align: middle;">
+                                @*@Html.DropDownList("lstLanguage", (IEnumerable<SelectListItem>)ViewBag.LanguageList as MultiSelectList, htmlAttributes: new { @id = "ddlLanguage", @multiple = "multiple", @class = "ddlSumo" })*@
+                                @Html.DropDownList("lstLanguage", ViewBag.LanguageList as MultiSelectList, new { @id = "ddlLanguage", @multiple = "multiple", @class = "ddlSumo" })
+
+                            </td>
+                            <td style="width:10%;vertical-align: middle;text-align:left;">
+                                Star Cast :
+                            </td>
+                            <td style="width:20%;vertical-align: middle;">
+                                @Html.DropDownList("ddlStarCast", ViewBag.StarCastList as MultiSelectList, new { @id = "ddlStarCast", @multiple = "multiple", @class = "ddlSumo" })
+                                @*@Html.Hidden("hdnStarCast")*@
+                                @*@Html.DropDownList("lstStarCast", (IEnumerable<SelectListItem>)ViewBag.StarCastList as MultiSelectList, htmlAttributes: new { @id = "ddlStarCast", @multiple = "multiple", @class = "ddlSumo" })*@
+                                @*@Html.DropDownList("ddlStarCast", ViewBag.StarCastList as MultiSelectList, new { @id = "ddlStarCast", @multiple = "multiple", @class = "ddlSumo" })*@
+                                @*@Html.DropDownList("ddlGenre", (IEnumerable<SelectListItem>)ViewBag.StarCastList as MultiSelectList, new { @id = "ddlGenre", @multiple = "multiple", @class = "ddlSumo" })*@
+
+                            </td>
+                            <td style="width:20%;"></td>
+                        </tr>
+                        <tr>
+                            <td style="width:10%;vertical-align: middle;text-align:left;">
+                                Genre :
+                            </td>
+                            <td style="width:20%;vertical-align: middle;">
+                                @*@Html.DropDownList("lstGenre", (IEnumerable<SelectListItem>)ViewBag.GenreList as MultiSelectList, htmlAttributes: new { @id = "ddlGenre", @multiple = "multiple", @class = "ddlSumo" })*@
+                                @Html.DropDownList("ddlGenre", ViewBag.GenreList as MultiSelectList, new { @id = "ddlGenre", @multiple = "multiple", @class = "ddlSumo" })
+                            </td>
+                            <td style="width:10%;vertical-align: middle;text-align:left;">
+                                Title Type :
+                            </td>
+                            <td style="width:20%;vertical-align: middle;">
+                                @*@Html.DropDownList("lstTitleType", (IEnumerable<SelectListItem>)ViewBag.TitleTypeList as MultiSelectList, htmlAttributes: new { @id = "ddlTitleType", @multiple = "multiple", @class = "ddlSumo" })*@
+                                @Html.DropDownList("lstTitleType", ViewBag.TitleTypeList as MultiSelectList, new { @id = "ddlTitleType", @multiple = "multiple", @class = "ddlSumo" })
+                            </td>
+                            <td style="width:10%;vertical-align: middle;text-align:left;">
+                                Poster Status :
+                            </td>
+                            <td style="width:20%;vertical-align: middle;">
+                                @{
+                                    var Displayitems = new List<SelectListItem>();
+                                    Displayitems.Add(new SelectListItem() { Text = "Yes", Value = "Y" });
+                                    Displayitems.Add(new SelectListItem() { Text = "No", Value = "N" });
+                                }
+                                @Html.DropDownList("DropDownListValue", Displayitems, "Please Select", htmlAttributes: new { @id = "ddlDisplayItem", @class = "form_input chosen-select", @Style = "width:74%;" })
+                            </td>
+                            <td style="width:15%;vertical-align: middle;text-align:center;">
+                                <input type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearch_OnClick()">
+                                <input type="button" id="btnShowAll" class="button" value="@objMessageKey.ShowAll" onclick="btnShowAll_OnClick()">
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="grid_area">
+                    <div class="paging_area clearfix">
+                        <span class="pull-left">@objMessageKey.TotalRecords: </span>
+                        <span class="pull-left" id="lblRecordCount"></span>
+                        <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                        <input type="hidden" id="PageValidation" name="PageValidation" value="0" />
+                        <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                        <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+                        <div id="Pagination" class="pagination">
+                        </div>
+                        <span class="pull-right">
+                            @objMessageKey.PageSize:
+                            <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" autocomplete="off" onchange="txtPageSize_OnChange()" onblur="setDefaultPaging('txtPageSize')">
+                        </span>
+                    </div>
+                </div>
+                <div class="tab-content clearfix table-wrapper scale_table_container">
+                    <div class="scale_table_block" style="max-height: 400px; overflow-y: auto;">
+                        <input type="hidden" id="hdnAction" value="" />
+                        <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
+                        <div id="divBindList" class="deal clearfix">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="form_links">
+                    <ul class="modal_block clearfix" style="padding-left:10px;">
+                        <li>
+                            <input type="button" class="btn btn-primary" value="Save" onclick="SaveTitlePoster()" />
+                            <input type="button" value="@objMessageKey.Back" id="btnBack" onclick="@("window.location.href='" + @Url.Action("titleImport", "Title") + "'");" class="btn btn-primary"/>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

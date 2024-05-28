@@ -1,0 +1,195 @@
+@font-face { /*http://www.fontpalace.com/font-download/Musical%2BNotes/*/
+    font-family: 'MusicalNotes';
+	/* src: url('MusicalNotes.ttf') format('truetype'); */
+	/* url('fonts/MusicalNotes.ttf') format('truetype'); */
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face { font-family: 'MusicalNotes'; src: local('MusicalNotes'); }
+.mf {
+    display: inline-block;
+    font-size: 25px;
+	font: normal normal normal 25px/1 MusicalNotes;
+	cursor:pointer;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+	color:#ffffff;
+	font-family: 'MusicalNotes';
+}
+/* .mf-musicNote1:before {
+    content: "A";
+	color:#ffffff;
+} */
+.imgScroll-top {
+ height:100%;	
+ overflow: hidden;
+ position: relative;
+ top:0;
+ background-color:transparent;
+}
+.imgScroll-top .inner {
+ position: absolute;
+ width: 100%;
+ height: 100%;
+ margin: 0;
+ line-height: 50px;
+ text-align: center;
+ /* Starting position */
+ -moz-transform:translateY(100%);
+ -webkit-transform:translateY(100%);	
+ transform:translateY(100%);
+ /* Apply animation to this element */	
+ -moz-animation: imgScroll-top 8s linear infinite;
+ -webkit-animation: imgScroll-top 8s linear infinite;
+ animation: imgScroll-top 8s linear infinite;
+}
+.imgScroll-top .inner2 {
+ position: absolute;
+ width: 100%;
+ height: 100%;
+ margin: 0px;
+ line-height: 50px;
+ text-align: center;
+ /* Starting position */
+ -moz-transform:translateY(100%);
+ -webkit-transform:translateY(100%);	
+ transform:translateY(100%);
+ /* Apply animation to this element */	
+ -moz-animation: imgScroll-top 25s linear infinite;
+ -webkit-animation: imgScroll-top 25s linear infinite;
+ animation: imgScroll-top 25s linear infinite;
+}
+.imgScroll-top .inner3 {
+ position: absolute;
+ width: 100%;
+ height: 100%;
+ margin: 0px;
+ line-height: 50px;
+ text-align: center;
+ /* Starting position */
+ -moz-transform:translateY(100%);
+ -webkit-transform:translateY(100%);	
+ transform:translateY(100%);
+ /* Apply animation to this element */	
+ -moz-animation: imgScroll-top 10s linear infinite;
+ -webkit-animation: imgScroll-top 10s linear infinite;
+ animation: imgScroll-top 10s linear infinite;
+}
+.imgScroll-top .inner4 {
+ position: absolute;
+ width: 100%;
+ height: 100%;
+ margin: 0px;
+ line-height: 50px;
+ text-align: center;
+ /* Starting position */
+ -moz-transform:translateY(100%);
+ -webkit-transform:translateY(100%);	
+ transform:translateY(100%);
+ /* Apply animation to this element */	
+ -moz-animation: imgScroll-top 30s linear infinite;
+ -webkit-animation: imgScroll-top 30s linear infinite;
+ animation: imgScroll-top 30s linear infinite;
+}
+.imgScroll-top .inner5 {
+ position: absolute;
+ width: 100%;
+ height: 100%;
+ margin: 0px;
+ line-height: 50px;
+ text-align: center;
+ /* Starting position */
+ -moz-transform:translateY(100%);
+ -webkit-transform:translateY(100%);	
+ transform:translateY(100%);
+ /* Apply animation to this element */	
+ -moz-animation: imgScroll-top 16s linear infinite;
+ -webkit-animation: imgScroll-top 16s linear infinite;
+ animation: imgScroll-top 16s linear infinite;
+}
+.imgScroll-top .inner6 {
+ position: absolute;
+ width: 100%;
+ height: 100%;
+ margin: 0px;
+ line-height: 50px;
+ text-align: center;
+ /* Starting position */
+ -moz-transform:translateY(100%);
+ -webkit-transform:translateY(100%);	
+ transform:translateY(100%);
+ /* Apply animation to this element */	
+ -moz-animation: imgScroll-top 5s linear infinite;
+ -webkit-animation: imgScroll-top 5s linear infinite;
+ animation: imgScroll-top 5s linear infinite;
+}
+.imgScroll-top .inner7 {
+ position: absolute;
+ width: 100%;
+ height: 100%;
+ margin: 0px;
+ line-height: 50px;
+ text-align: center;
+ /* Starting position */
+ -moz-transform:translateY(100%);
+ -webkit-transform:translateY(100%);	
+ transform:translateY(100%);
+ /* Apply animation to this element */	
+ -moz-animation: imgScroll-top 20s linear infinite;
+ -webkit-animation: imgScroll-top 20s linear infinite;
+ animation: imgScroll-top 20s linear infinite;
+}
+.imgScroll-top .inner8 {
+ position: absolute;
+ width: 100%;
+ height: 100%;
+ margin: 0px;
+ line-height: 50px;
+ text-align: center;
+ /* Starting position */
+ -moz-transform:translateY(100%);
+ -webkit-transform:translateY(100%);	
+ transform:translateY(100%);
+ /* Apply animation to this element */	
+ -moz-animation: imgScroll-top 13s linear infinite;
+ -webkit-animation: imgScroll-top 13s linear infinite;
+ animation: imgScroll-top 13s linear infinite;
+}
+.imgScroll-top .inner9 {
+ position: absolute;
+ width: 100%;
+ height: 100%;
+ margin:0px;
+ line-height: 50px;
+ text-align: center;
+ /* Starting position */
+ -moz-transform:translateY(100%);
+ -webkit-transform:translateY(100%);	
+ transform:translateY(100%);
+ /* Apply animation to this element */	
+ -moz-animation: imgScroll-top 21s linear infinite;
+ -webkit-animation: imgScroll-top 21s linear infinite;
+ animation: imgScroll-top 21s linear infinite;
+}
+/* Move it (define the animation) */
+@-moz-keyframes imgScroll-top {
+ 0%   { -moz-transform: translateY(100%); }
+ 100% { -moz-transform: translateY(-100%); }
+}
+@-webkit-keyframes imgScroll-top {
+ 0%   { -webkit-transform: translateY(100%); }
+ 100% { -webkit-transform: translateY(-100%); }
+}
+@keyframes imgScroll-top {
+ 0%   { 
+ -moz-transform: translateY(100%); /* Browser bug fix */
+ -webkit-transform: translateY(100%); /* Browser bug fix */
+ transform: translateY(100%); 		
+ }
+ 100% { 
+ -moz-transform: translateY(-100%); /* Browser bug fix */
+ -webkit-transform: translateY(-100%); /* Browser bug fix */
+ transform: translateY(-100%); 
+ }
+}

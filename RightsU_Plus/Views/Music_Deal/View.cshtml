@@ -1,0 +1,742 @@
+﻿@model RightsU_Entities.Music_Deal
+@using UTOFrameWork.FrameworkClasses
+@{
+    ViewBag.Title = "Index";
+    var j = (string)ViewBag.Music_Platform_Tree;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+    RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
+    if (Session[RightsU_Entities.RightsU_Session.MUSIC_DEAL_SCHEMA] != null)
+    {
+        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.MUSIC_DEAL_SCHEMA];
+        objSchema.Deal_Workflow_Flag = objSchema.Deal_Workflow_Flag.Trim();
+    }
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }    
+}
+<script type="text/javascript" src="~/JS_Core/autoNumeric-1.8.1.js"></script>
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
+
+<script>
+    var URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")';
+    var URL_Release_Lock = '@Url.Action("Release_Lock", "Global")';
+    var URL_BindMusicPlatformTreeView = '@Url.Action("BindMusicPlatformTree", "Music_Deal")';
+    var recordLockingCode = @ViewBag.RecordLockingCode;
+
+    $(document).ready(function () { 
+        debugger;
+        BindMusicPlatform();
+        if ('RTL'=='@objMessageKey.LayoutDirection') {
+            $("#tabRightRule , #divLinkShowList , #tabstatusHistory , #tabRights ,#tabGeneral").css('direction','rtl');
+            $(".bottom_action").css('float','right');
+            $(".divBlock .remarks_General").css({float:'left',paddingLeft:'85%'})
+            $(".divBlock .bold").css('padding-left','94%');
+
+        }
+        $('#hdnRecordLockingCode').val(recordLockingCode)
+        if (recordLockingCode > 0)
+            Call_RefreshRecordReleaseTime(recordLockingCode, URL_Refresh_Lock);
+
+        $("#cost").autoNumeric('init', { vMax: '99999999999.99', dGroup: 2 });      
+    });
+    function BindMusicPlatform() {
+        debugger;
+        $("#hdnTVCodes").val('@j');
+        $.ajax({
+            type: "POST",
+            url: URL_BindMusicPlatformTreeView,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                MusicPlatformCodes: $("#hdnTVCodes").val()
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                $('#tree').html(result);
+            },
+            error: function (result) { }
+        });
+    }
+</script>
+<style>
+     .container .top_area {
+        margin-bottom: 10px;
+    }
+
+   .stampBg {
+        background-image: none !important;
+        height: 0 !important;
+        width: auto !important;
+        float: right;
+    }
+
+     .stampBg h4 {
+            transform: none !important;
+            float: right;
+            width: auto !important;
+     }
+    #Tree_Filter_Rights_Platform {   
+        width:500px;
+        position:relative!important;
+    }
+    #Rights_Platform{
+        margin:0px 0px 0px 0px!important;
+    }
+      #tabRights .ui-fancytree {
+        height: 164px;
+        overflow-y: auto;
+        width: 500px;
+    }
+    .four_column td:nth-child(2n) {
+        width: 35% !important;
+    }
+
+    .four_column td:nth-child(2n+1) {
+        width: 15% !important;
+        font-weight: 700 !important;
+    }
+
+    #tblRights tr {
+        height: 25px;
+    }
+
+    .main_section {
+        overflow: auto;
+    }
+
+    #divStatusHistory {
+        overflow: auto;
+        max-height: 200px;
+    }
+
+    .MoreActionDiv {
+        padding: 2px;
+        background: #ffffff; /*#2B5F8E;*/
+        width: 200px;
+        height: inherit;
+        box-shadow: 0 0 5px #aaa;
+        font-size: 12px;
+        color: #000;
+        text-align: left;
+        position: absolute;
+        z-index: 99;
+        right: 550px;
+        display: none;
+    }
+</style>
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col" onclick="hideChannelCategory()">
+            <div id="divTopBand" class="top_area">
+                <h2 class="pull-left" style="font-size:30px">
+                    @if (ViewBag.Mode == GlobalParams.DEAL_MODE_APPROVE)
+                    {
+                        <label>@objMessageKey.ApproveMusicDeal</label>
+                    }
+                    else
+                    {
+                        <label>@objMessageKey.ViewMusicDeal</label>
+                    }
+                    </h2>
+                    @{
+                        if (objSchema.Deal_Code > 0)
+                        {
+                            objSchema.Deal_Workflow_Status = new RightsU_BLL.USP_Service(objLoginEntity.ConnectionStringName).USP_Get_Deal_DealWorkFlowStatus(objSchema.Deal_Code, objSchema.Deal_Workflow_Flag, 143, "M").First();
+                        }
+                        else
+                        {
+                            objSchema.Deal_Workflow_Status = objMessageKey.NewDeal;
+                        }
+                    }
+                    @if (objSchema.Deal_Workflow_Flag == "O" || objSchema.Deal_Workflow_Flag == GlobalParams.dealWorkFlowStatus_New ||
+     objSchema.Deal_Workflow_Flag == GlobalParams.dealWorkFlowStatus_Ammended)
+                    {
+
+                        <div class="stampBg approved nobackground" id="divStamp">
+                            <h4 title="@objMessageKey.WorkflowStatus">
+                                @Html.Label("Deal_Status", objSchema.Deal_Workflow_Status, new { @id = "lblWorkflowStatus" })
+                            </h4>
+                        </div>
+
+                    }
+                    else if (objSchema.Deal_Workflow_Flag == GlobalParams.dealWorkFlowStatus_Approved)
+                    {
+
+                        <div class="stampBg approved nobackground" id="divStamp">
+                            <h4 title="@objMessageKey.WorkflowStatus">
+                                @Html.Label("Deal_Status", objSchema.Deal_Workflow_Status, new { @id = "lblWorkflowStatus" })
+                            </h4>
+                        </div>
+
+                    }
+                    else if (objSchema.Deal_Workflow_Flag == GlobalParams.dealWorkFlowStatus_Waiting)
+                    {
+
+                        <div class="stampBg pending nobackground" id="divStamp">
+                            <h4 title="@objMessageKey.WorkflowStatus">
+                                @Html.Label("Deal_Status", objSchema.Deal_Workflow_Status, new { @id = "lblWorkflowStatus" })
+                            </h4>
+                        </div>
+
+                    }
+                    else if (objSchema.Deal_Workflow_Flag == GlobalParams.dealWorkFlowStatus_Declined)
+                    {
+
+                        <div class="stampBg rejected nobackground" id="divStamp">
+                            <h4 title="@objMessageKey.WorkflowStatus">
+                                @Html.Label("Deal_Status", objSchema.Deal_Workflow_Status, new { @id = "lblWorkflowStatus" })
+                            </h4>
+                        </div>
+
+                    }
+                    else if (objSchema.Deal_Workflow_Flag == "RO")
+                    {
+                        <div class="stampBg approved nobackground" id="divStamp">
+                            <h4 title="@objMessageKey.WorkflowStatus">
+                                @Html.Label("Deal_Status", objSchema.Deal_Workflow_Status, new { @id = "lblWorkflowStatus" })
+                            </h4>
+                        </div>
+                    }
+            </div>
+            <div class="grid_area">
+                <div class="navigation_tabs">
+                    <div class="tabbable">
+                        <ul class="nav nav-tabs nav-tab pull-left">
+                            <li class="active">
+                                <a data-toggle="tab" href="#" role="tab">@objMessageKey.General</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content clearfix table-wrapper scale_table_container">
+                            <div class="tab-pane active" id="tabGeneral">
+                                <div class="scale_table_block">
+                                    <table class="four_column table" style="margin-top:10px">
+                                        <tbody>
+                                            <tr style="height:35px">
+                                                <td class="td_label">@objMessageKey.DealNo</td>
+                                                <td>
+                                                    @Html.Label(Model.Agreement_No)
+                                                    @Html.Label("Version #: VN " + Model.Version)
+                                                    @Html.HiddenFor(m => Model.Music_Deal_Code)
+                                                    @Html.Hidden("hdnRecordLockingCode", ViewBag.RecordLockingCode as string, new { @id = "hdnRecordLockingCode" })
+
+                                                </td>
+                                                @if (ViewBag.IsMuciVersionSPN == "N" && Model.Deal_Tag_Code != null)
+                                                {
+                                                    <td>Status</td>
+                                                    <td>
+                                                       @Model.Deal_Tag.Deal_Tag_Description 
+                                                    </td>
+                                                }
+                                            </tr>
+                                            <tr>
+                                                <td>@objMessageKey.Description</td>
+                                                <td>
+                                                    <div class="expandable">
+                                                        @Model.Description
+                                                    </div>
+                                                </td>
+                                                <td>@objMessageKey.AgreementDate</td>
+                                                <td>
+                                                    <span>@string.Format("{0:" + GlobalParams.DateFormat_Display + "}", Model.Agreement_Date).Replace("/", "-")</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>@objMessageKey.MusicLabel</td>
+                                                <td>
+                                                    @Model.Music_Label.Music_Label_Name
+                                                </td>
+                                                <td>@objMessageKey.MusicType</td>
+                                                <td>
+                                                    @if (Model.Title_Type == "L")
+                                                    {
+                                                        <span>@objMessageKey.Library</span>
+                                                    }
+                                                    else if (Model.Title_Type == "P")
+                                                    {
+                                                        <span>@objMessageKey.Premier</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>@objMessageKey.NA</span>
+                                                    }
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>@objMessageKey.TrackLanguage</td>
+                                                <td>
+                                                    <div>
+                                                        @string.Join(", ", Model.Music_Deal_Language.Select(x => x.Music_Language.Language_Name).ToArray())
+                                                    </div>
+                                                </td>
+                                                <td>@objMessageKey.DurationRestrictionPerSong</td>
+                                                <td>
+                                                    @Model.Duration  (MM:SS)
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>@objMessageKey.Licensee/@objMessageKey.Assignee</td>
+                                                <td>
+                                                    @Model.Entity.Entity_Name
+                                                </td>
+                                                <td>@objMessageKey.Licensor</td>
+                                                <td>
+                                                    <span style="font-weight: 800">@Model.Vendor.Vendor_Name</span>
+                                                    <div class="expandable">
+                                                        @string.Join(", ", Model.Music_Deal_Vendor.Where(x => x.Vendor_Code != Model.Primary_Vendor_Code).Select(s => s.Vendor.Vendor_Name).ToArray())
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>@objMessageKey.BusinessUnit</td>
+                                                <td>
+                                                    @Model.Business_Unit.Business_Unit_Name
+                                                </td>
+                                                <td>@objMessageKey.ReferenceNo</td>
+                                                <td>
+                                                    @Model.Reference_No
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>@objMessageKey.AgreementCost</td>
+                                                <td>
+                                                    <span id="cost">@Model.Agreement_Cost</span>
+                                                </td>
+                                                <td>@objMessageKey.DealFor</td>
+                                                <td>
+                                                    @string.Join(", ", Model.Music_Deal_DealType.Select(s => s.Deal_Type.Deal_Type_Name).ToArray())
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="grid_area">
+                <div class="navigation_tabs">
+                    <div class="tabbable">
+                        <ul class="nav nav-tabs nav-tab pull-left">
+                            <li class="active">
+                                <a data-toggle="tab" href="#" role="tab">@objMessageKey.Rights</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content clearfix table-wrapper scale_table_container">
+                            <div class="tab-pane active" id="tabRights">
+                                <table>
+                                    <tbody>
+                                        <tr class="scale_table_block">
+                                          <td style="width:54%">
+                                              <div style="margin-left:10px;">
+                                                  <table id="tblRights">
+                                                      <tbody>
+                                                          <tr>
+                                                              <td style="width:22%"><b>@objMessageKey.Period</b></td>
+                                                              <td>
+                                                                  <label>@objMessageKey.StartDate  : </label>
+                                                                  <span>@string.Format("{0:" + GlobalParams.DateFormat_Display + "}", Model.Rights_Start_Date).Replace("/", "-")</span>
+                                                                  &nbsp;&nbsp; <label>@objMessageKey.Term : </label>
+                                                                  @{
+                                                                      string termYY = "0", termMM = "0";
+                                                                      string[] arrTerms = Model.Term.Split('.');
+                                                                      if (arrTerms.Length > 0)
+                                                                      {
+                                                                          termYY = arrTerms[0];
+                                                                      }
+                                                                      if (arrTerms.Length > 1)
+                                                                      {
+                                                                          termMM = arrTerms[1];
+                                                                      }
+
+                                                                      <label>@termYY &nbsp;@objMessageKey.Years </label>
+                                                                      <label>@termMM &nbsp;@objMessageKey.Months </label>
+                                                                  }
+                                                                  &nbsp; &nbsp; <label>@objMessageKey.EndDate : </label>
+                                                                  <span>@string.Format("{0:" + GlobalParams.DateFormat_Display + "}", Model.Rights_End_Date).Replace("/", "-")</span>
+                                                              </td>
+                                                          </tr>
+                                                          <tr>
+                                                              <td><b>@objMessageKey.Noofsongs</b></td>
+
+                                                              <td>
+                                                                  @if (Model.Run_Type == "U")
+                                                                  {
+                                                                      <span>@objMessageKey.Unlimited</span>
+                                                                  }
+                                                                  else
+                                                                  {
+                                                                      <span>@objMessageKey.Limited</span>
+                                                                  }
+                                                                  &nbsp;
+                                                                  @if (Model.Run_Type == "L")
+                                                                  {
+                                                                      @Model.No_Of_Songs
+                                                                  }
+                                                              </td>
+                                                          </tr>
+                                                          <tr>
+                                                              <td>
+                                                                  <b>Deal For</b>
+                                                              </td>
+                                                              <td>
+                                                                  @if (Model.Channel_Category != null)
+                                                                  {
+                                                                      <b>@objMessageKey.ChannelCategory</b>
+                                                                  }
+                                                                  else
+                                                                  {
+                                                                      <b>@objMessageKey.Channel</b>
+                                                                  }
+                                                              
+                                                                  <div>
+                                                                      @if (Model.Channel_Category != null)
+                                                                      {
+                                                                          <span>@Model.Channel_Category.Channel_Category_Name</span>
+                                                                          <b>:</b>
+                                                                          <span><b>@objMessageKey.ViewCategoryChannels :</b></span>
+                                                                          <a id="show_hide" class="glyphicon glyphicon-triangle-right show_hide"></a>
+                                                                          <div id="extent" class="MoreActionDiv" style="display:none;">
+                                                                              <span id="lblChannelNames">@string.Join(", ", Model.Music_Deal_Channel.Select(x => x.Channel.Channel_Name).ToArray())</span>
+                                                                          </div>
+                                                                      }
+                                                                      else
+                                                                      {
+                                                                          <span id="lblChannelNames" class="expandable">
+                                                                              @string.Join(", ", Model.Music_Deal_Channel.Select(x => x.Channel.Channel_Name).ToArray())
+                                                                          </span>
+                                                                      }
+                                                                  </div>
+                                                              </td>
+                                                          </tr>
+                                                          <tr>
+                                                              <td><b>@objMessageKey.Type</b></td>
+                                                              <td>
+                                                                  @if (Model.Channel_Type == "S")
+                                                                  {
+                                                                      <span>@objMessageKey.Shared</span>
+                                                                  }
+                                                                  else
+                                                                  {
+                                                                      <span>@objMessageKey.ChannelWise</span>
+                                                                  }
+                                                              </td>
+                                                          </tr>
+                                                      </tbody>
+                                                  </table>
+
+                                                  @if (Model.Channel_Type == "C")
+                                                  {
+
+                                                      <div class="scale_table_block" id="divSubChannel">
+
+                                                          @Html.Partial("~/Views/Music_Deal/_ChannelList.cshtml", Model.Music_Deal_Channel.ToList())
+                                                      </div>
+
+                                                  }
+
+                                                  <table>
+                                                      <tbody>
+                                                          <tr>
+                                                              <td style="width:22%"><b>@objMessageKey.CountryExclusion</b></td>
+                                                              <td>
+                                                                  <div>
+                                                                      @string.Join(", ", Model.Music_Deal_Country.Select(x => x.Country.Country_Name).ToArray())
+                                                                  </div>
+                                                              </td>
+                                                          </tr>
+                                                      </tbody>
+                                                  </table>
+                                              </div>
+                                          </td>
+                                                @if (ViewBag.IsMuciVersionSPN == "Y")
+                                                {
+                                                <td style="vertical-align:top">
+                                                    <table>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td valign="top" rowspan="4">
+                                                                    <label class="bold" for="platform">@objMessageKey.Platform  @objMessageKey.Rights</label>
+                                                                    <div class="platform_wrapper" id="divTree">
+                                                                        <div id="tree" class="treeClass">
+                                                                        </div>
+                                                                    </div>
+                                                                    <input type="hidden" id="hdnTVCodes" name="hdnTVCodes" />
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                                } 
+                                        </tr> 
+                                    </tbody>
+                                </table>
+
+
+
+
+
+                              
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="grid_area">
+                <div class="navigation_tabs">
+                    <div class="tabbable">
+                        <ul class="nav nav-tabs nav-tab pull-left">
+                            <li class="active">
+                                <a data-toggle="tab" href="#" role="tab">@objMessageKey.RightRule</a>
+                            </li>
+                        </ul>
+                        <div>
+                            @if (Model.Right_Rule_Type == "U")
+                            {
+                                <span>@objMessageKey.Unlimited</span>
+                            }
+                            else
+                            {
+                                <span>@objMessageKey.Limited</span>
+                            }
+                        </div>
+                        <div class="tab-content clearfix table-wrapper scale_table_container">
+                            <div class="tab-pane active" id="tabRightRule">
+                                <div class="scale_table_block">
+                                    <table class="table table-bordered table-hover" id="tblRightRule">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:40%;">@objMessageKey.Rule</th>
+                                                <th style="width:15%;">@objMessageKey.DayStartTime</th>
+                                                <th style="width:15%;">@objMessageKey.Playsperday</th>
+                                                <th style="width:15%;">@objMessageKey.DurationofDay</th>
+                                                <th style="width:15%;">@objMessageKey.NoofRepeat</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                @if (Model.Right_Rule != null)
+                                                {
+                                                    <td>
+                                                        @Model.Right_Rule.Right_Rule_Name
+                                                    </td>
+                                                    if (Model.Right_Rule.IS_First_Air == true)
+                                                    {
+                                                        <td>@objMessageKey.FromFirstAir</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td align="center">@Model.Right_Rule.Start_Time</td>
+                                                    }
+                                                    <td align="center">@Model.Right_Rule.Play_Per_Day</td>
+                                                    <td align="center">@Model.Right_Rule.Duration_Of_Day</td>
+                                                    <td align="center">@Model.Right_Rule.No_Of_Repeat</td>
+                                                }
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="grid_area">
+                <div class="navigation_tabs">
+                    <div class="tabbable">
+                        <ul class="nav nav-tabs nav-tab pull-left">
+                            <li class="active">
+                                <a data-toggle="tab" href="#" role="tab">@objMessageKey.LinkShow</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content clearfix table-wrapper scale_table_container">
+                            <div class="tab-pane active" id="tabLinkShow">
+                                <div id="divLinkShowList">
+                                    @*@if (Model.Link_Show_Type != "SP")
+                                        {*@
+                                    <table class="four_column table">
+                                        <tr>
+                                            <td style="width:6%!important">@objMessageKey.LinkShowType</td>
+                                            <td>
+                                                @if (@Model.Link_Show_Type == "AS")
+                                                {
+                                                    <label>@objMessageKey.AllShows</label>
+                                                }
+                                                else if (Model.Link_Show_Type == "AF")
+                                                {
+                                                    <label>@objMessageKey.AllFiction</label>
+                                                }
+                                                else if (Model.Link_Show_Type == "AN")
+                                                {
+                                                    <label>@objMessageKey.AllNonFiction</label>
+                                                }
+                                                else if (Model.Link_Show_Type == "AE")
+                                                {
+                                                    <label>@objMessageKey.AllEvent</label>
+                                                }
+                                                else
+                                                {
+                                                    <label>@objMessageKey.Specific</label>
+                                                }
+
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    @*}*@
+                                    @if (Model.Link_Show_Type == "SP")
+                                    {
+                                        @Html.Partial("~/Views/Music_Deal/_LinkShowList.cshtml", (object)ViewBag.LinkShowList)
+
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="grid_area">
+                <div class="navigation_tabs">
+                    <div class="tabbable">
+                        <ul class="nav nav-tabs nav-tab pull-left">
+                            <li class="active">
+                                <a data-toggle="tab" href="#" role="tab">@objMessageKey.StatusHistory</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content clearfix table-wrapper scale_table_container">
+                            <div class="tab-pane active" id="tabstatusHistory">
+                                <div class="scale_table_block" id="divStatusHistory">
+                                    <table class="table table-bordered table-hover" id="tblStatusHistory">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:20%;">@objMessageKey.Status</th>
+                                                <th style="width:20%;">@objMessageKey.ChangedOn</th>
+                                                <th style="width:30%;">@objMessageKey.ChangedBy</th>
+                                                <th style="width:30%">@objMessageKey.StatusHistoryRemarks</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+                                            @if (ViewBag.Status_History.Count > 0)
+                                            {
+                                                foreach (RightsU_Entities.USP_List_Status_History_Result objStatusHistory in ViewBag.Status_History)
+                                                {
+                                                    <tr>
+                                                        <td>@objStatusHistory.Status</td>
+                                                        @{
+                                                    string dt = Convert.ToDateTime(objStatusHistory.Date).ToString("dd-MMM-yyyy hh:mm:ss tt");
+                                                        }
+                                                        <td>@dt</td>
+                                                        <td>@objStatusHistory.By</td>
+                                                        <td>
+                                                            <div class="expandable">
+                                                                @objStatusHistory.Remarks
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @*<div class="scale_table_block">
+                <div class="divBlock">
+                    <div class="bold" style="padding-right: 100%;">@objMessageKey.Remarks</div>
+                    <div class="remarks_General">
+                        @{
+                            if (!string.IsNullOrEmpty(Model.Remarks))
+                            {
+                                @Html.Raw(Model.Remarks.Replace("\n", "<br />"))
+                            }
+                        }
+                    </div>
+                </div>
+            </div>*@
+
+            <div class="grid_area">
+                <div class="navigation_tabs">
+                    <div class="tabbable">
+                        <span style="float:right;" id="spnRemarkLength"></span>
+                        <ul class="nav nav-tabs nav-tab pull-left">
+                            <li class="active">
+                                <a data-toggle="tab" href="#tabrights" role="tab">@objMessageKey.Remarks</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content clearfix table-wrapper scale_table_container">
+                            <div class="tab-pane active" id="tabrights">
+                                <div class="scale_table_block">
+                                    @{
+                                        if (!string.IsNullOrEmpty(Model.Remarks))
+                                        {
+                                            @Html.Raw(Model.Remarks.Replace("\n", "<br />"))
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @if (ViewBag.Mode == GlobalParams.DEAL_MODE_APPROVE)
+            {
+                @Html.Partial("_Music_Approved_List")
+            }
+            else
+            {
+                <div class="bottom_action">
+                    <ul class="form_link_nav clearfix">
+                        <li style="margin-top:10px;">
+                            <input type="button" id="btnCancel" class="btn btn-primary" name="CANCEL" value="@objMessageKey.Cancel" onclick="CancelSaveDeal()" />
+                        </li>
+                    </ul>
+                </div>
+
+            }
+        </div>
+
+    </section>
+</div>
+
+<script>
+    var URL_Cancel = '@Url.Action("Cancel", "Music_Deal")';
+    function CancelSaveDeal() {
+        location.href = URL_Cancel;
+    }
+    $('.remarks_General').expander({
+        slicePoint: 520,
+        expandPrefix: '',
+        expandText: '...read more',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+    $(document).ready(function () {
+        $('.show_hide').click(function () {
+            $('.MoreActionDiv').slideUp();
+            $(this).parent().find('.MoreActionDiv').slideToggle('fast');
+            return false;
+        });
+    });
+    function hideChannelCategory()
+    {
+        $('.MoreActionDiv').hide('slow');
+    }
+</script>

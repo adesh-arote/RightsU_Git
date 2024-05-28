@@ -1,0 +1,27 @@
+﻿CREATE TABLE [dbo].[MHRequest] (
+    [MHRequestCode]       BIGINT          IDENTITY (1, 1) NOT NULL,
+    [MHRequestTypeCode]   INT             NULL,
+    [RequestID]           NVARCHAR (20)   NULL,
+    [VendorCode]          INT             NULL,
+    [ChannelCode]         INT             NULL,
+    [TitleCode]           INT             NULL,
+    [EpisodeFrom]         INT             NULL,
+    [EpisodeTo]           INT             NULL,
+    [TelecastFrom]        DATE            NULL,
+    [TelecastTo]          DATE            NULL,
+    [UsersCode]           INT             NULL,
+    [Remarks]             NVARCHAR (4000) NULL,
+    [RequestedDate]       DATETIME        CONSTRAINT [DF_MHRequest_RequestedDate] DEFAULT (getdate()) NULL,
+    [SpecialInstruction]  NVARCHAR (4000) NULL,
+    [MHRequestStatusCode] INT             CONSTRAINT [DF_MHRequest_MHRequestStatusCode] DEFAULT ((2)) NULL,
+    [ApprovedOn]          DATETIME        NULL,
+    [ApprovedBy]          INT             NULL,
+    [InternalRemarks]     NVARCHAR (MAX)  NULL,
+    CONSTRAINT [PK_MHRequest] PRIMARY KEY CLUSTERED ([MHRequestCode] ASC),
+    CONSTRAINT [FK_MHRequest_Channel] FOREIGN KEY ([ChannelCode]) REFERENCES [dbo].[Channel] ([Channel_Code]),
+    CONSTRAINT [FK_MHRequest_MHRequestStatus] FOREIGN KEY ([MHRequestStatusCode]) REFERENCES [dbo].[MHRequestStatus] ([MHRequestStatusCode]),
+    CONSTRAINT [FK_MHRequest_MHRequestType] FOREIGN KEY ([MHRequestTypeCode]) REFERENCES [dbo].[MHRequestType] ([MHRequestTypeCode]),
+    CONSTRAINT [FK_MHRequest_Title] FOREIGN KEY ([TitleCode]) REFERENCES [dbo].[Title] ([Title_Code]),
+    CONSTRAINT [FK_MHRequest_Vendor] FOREIGN KEY ([VendorCode]) REFERENCES [dbo].[Vendor] ([Vendor_Code])
+);
+

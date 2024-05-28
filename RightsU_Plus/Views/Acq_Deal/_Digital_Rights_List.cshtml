@@ -1,0 +1,786 @@
+﻿@*<meta charset="utf-8">
+    <title>RightsU</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <link rel="icon" type="image/ico" href="../img/u-to.ico">
+    <link type="text/css" rel="stylesheet" href="../css/jquery-ui.css">
+    <link type="text/css" rel="stylesheet" href="../css/ui.fancytree.css">
+    <link type="text/css" rel="stylesheet" href="../css/common.css">
+    <link type="text/css" rel="stylesheet" href="../css/responsive.css" media="screen and (max-width:960px) and (max-height:640px)">
+    <link type="text/css" rel="stylesheet" href="../chosen/chosen.min.css">
+    <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="../js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="../js/jquery.expander.js"></script>
+    <script type="text/javascript" src="../js/jquery.fancytree.js"></script>
+    <script type="text/javascript" src="../chosen/chosen.jquery.min.js"></script>
+    <script type="text/javascript" src="../js/common.concat.js">
+    </script>*@
+
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
+<style></style>
+<script>
+    var URL_BindPlatformTree = '@Url.Action("BindPlatformTreeView", "Digital_Rights")';
+    $(document).ready(function () {
+        $('#btnCancelAddEdit1').hide();
+        $(".treeClass").fancytree({
+            //extensions: ["select"],
+            checkbox: true,
+            selectMode: 3,
+            //source: treeData,
+            loadChildren: function (event, ctx) {
+                ctx.node.fixSelection3AfterClick();
+            },
+
+            select: function (event, data) {
+                //   Get a list of all selected nodes, and convert to a key array:
+                var selKeys = $.map(data.tree.getSelectedNodes(), function (node) {
+                    return node.key;
+                });
+
+                $("#echoSelection3").text(selKeys.join(", "));
+
+                // Get a list of all selected TOP nodes
+                var selRootNodes = data.tree.getSelectedNodes(true);
+                // ... and convert to a key array:
+                var selRootKeys = $.map(selRootNodes, function (node) {
+                    return node.key;
+                });
+                $("#echoSelectionRootKeys3").text(selRootKeys.join(", "));
+                $("#echoSelectionRoots3").text(selRootNodes.join(", "));
+            },
+            dblclick: function (event, data) {
+                data.node.toggleSelected();
+            },
+            keydown: function (event, data) {
+                if (event.which === 32) {
+                    data.node.toggleSelected();
+                    return false;
+                }
+            },
+        });
+
+
+
+        //$('.clsPlatformPopup').on('click', function (e) {
+        //    $.ajax({
+        //        type: "POST",
+        //        url: URL_BindPlatformTree,
+        //        traditional: true,
+        //        enctype: 'multipart/form-data',
+        //        contentType: "application/json; charset=utf-8",
+        //        dataType: "html",
+        //        data: JSON.stringify({
+        //            strPlatform: "1,2",
+        //            Mode : "V"
+        //        }),
+        //        success: function (result) {
+        //            if (result == "true") {
+        //                redirectToLogin();
+        //            }
+        //            else {
+        //                $('#popupFadeP').fadeIn();
+        //                $('#divTree').html(result);
+
+        //                initializeChosen();
+        //            }
+        //        },
+        //        error: function (result) {
+        //            alert('Error: ' + result.responseText);
+        //        }
+        //    });
+        //});
+
+
+        $('#btnAddDigitalRights').click(function () {
+            $('#AddEditDigitalRightsDiv').show();
+            $('#DigitalRightsDiv').hide();
+            $('#btnCancelAddEdit1').show();
+            //BindPlatformTree();
+        })
+
+        $('#btnCancelAddEdit').click(function () {
+            $('#AddEditDigitalRightsDiv').hide();
+            $('#DigitalRightsDiv').show();
+        })
+
+        $('#btnCancelAddEdit1').click(function () {
+            $('#AddEditDigitalRightsDiv').hide();
+            $('#EditDigitalRightsDiv').hide();
+            $('#DigitalRightsDiv').show();
+            $('#btnCancelAddEdit1').hide();
+        })
+
+        $('#EditDigital1').click(function () {
+            $('#EditDigitalRightsDiv').show();
+            $('#AddEditDigitalRightsDiv').hide();
+            $('#DigitalRightsDiv').hide();
+            $('#btnCancelAddEdit1').show();
+            //BindPlatformTreeEdit();
+        })
+
+
+        //var tree = $(".treeClass").fancytree();
+        //tree.getNodeByKey('vf1').selected;
+    });
+    function ValidateSave() {
+
+        var tabName = $('#hdnTabName').val();
+        BindPartialTabs(tabName);
+
+        return Isvalid;
+    }
+    function ClosePopup() {
+        $('#popupFadeP').hide('slow');
+    }
+    //function BindPlatformTree() {
+    //    $.ajax({
+    //        type: "POST",
+    //        url: URL_BindPlatformTree,
+    //        traditional: true,
+    //        enctype: 'multipart/form-data',
+    //        contentType: "application/json; charset=utf-8",
+    //        dataType: "html",
+    //        data: JSON.stringify({
+    //            strPlatform: "",
+    //            Mode : "A"
+    //        }),
+    //        success: function (result) {
+    //            if (result == "true") {
+    //                redirectToLogin();
+    //            }
+    //            else {
+    //                    $('#divTree1').html(result);
+
+    //                initializeChosen();
+    //            }
+    //        },
+    //        error: function (result) {
+    //            alert('Error: ' + result.responseText);
+    //        }
+    //    });
+    //}
+    //function BindPlatformTreeEdit() {
+    //    debugger;
+    //    $.ajax({
+    //        type: "POST",
+    //        url: URL_BindPlatformTree,
+    //        traditional: true,
+    //        enctype: 'multipart/form-data',
+    //        contentType: "application/json; charset=utf-8",
+    //        dataType: "html",
+    //        data: JSON.stringify({
+    //            strPlatform: "1,2",
+    //            Mode : ""
+    //        }),
+    //        success: function (result) {
+    //            if (result == "true") {
+    //                redirectToLogin();
+    //            }
+    //            else {
+    //                $('#divTree2').empty();
+    //                $('#divTree2').html(result);
+
+    //                initializeChosen();
+    //            }
+    //        },
+    //        error: function (result) {
+    //            alert('Error: ' + result.responseText);
+    //        }
+    //    });
+    //}
+</script>
+
+<style>
+    .tree {
+        white-space: normal !important;
+    }
+
+    #popupFadeP {
+        display: none;
+        max-width: 400px;
+        border: #bbb 1px solid;
+        height: 311px;
+        z-index: 100;
+    }
+
+    ul.fancytree-container {
+        height: 183px !important;
+    }
+</style>
+<div class="grid_area" id="DigitalRightsDiv">
+    <div class="navigation_tabs">
+        <div class="tabbable">
+            <div class="tab-content clearfix table-wrapper scale_table_container acq">
+                <div class="tab-pane active" id="tabStatHist">
+                    <div class="scale_table_block">
+
+                        <div class="">
+                            @*onclick="location.href='@Url.Action("AddEditDigitalRights", "Digital_Rights")'"*@
+
+                            @* for html purpose *@
+                            <input type="hidden" id="hdn_IsActive" value="@ViewBag.IsActive" />
+
+
+                        </div>
+                        <div class="search_area">
+                            <table class="table">
+                                <tr>
+                                    <td class="bold" style="width:9%; text-align:left;"> Search Text: </td>
+                                    <td style="width:1%;"><input class="text" id="" type="text" value=""></td>
+
+                                    <td style="width:20%;"><input type="button" class="button" value="Search"> <input type="button" class="button" value="Show All"></td>
+                                    <td style="text-align:right">
+                                        <input type="button" id="btnAddDigitalRights" class="btn btn-primary" value="Add">
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="paging_area clearfix">
+                            <span class="pull-left">Total Records: 1</span>
+                            <span class="pull-left" id="lblRecordCount"></span>
+
+                            <div id="Pagination" class="pagination"><span class="current prev">&lt;&lt;</span><span class="current">1</span><span class="current next">&gt;&gt;</span></div>
+
+                            <span class="pull-right">
+                                Page Size:
+                                <input type="text" id="txtPageSizeSMT" name="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="txtPageSize_OnChange('txtPageSizeSMT')">
+                            </span>
+                        </div>
+
+
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="width:3%">Sr.No.</th>
+                                    <th style="width:25%">Title</th>
+                                    @*<th style="width:20%">Platform</th>*@
+                                    <th style="width:7%">Region</th>
+                                    <th style="width:20%">Period / Term</th>
+                                    <th style="width:20%">On Demand Rights</th>
+                                    <th style="width:5%">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Memories</td>
+                                    @*<td>Theatrical <a href="#" data-target="" data-toggle="modal" id="1_ViewPlatform" title="" class="glyphicon glyphicon-triangle-right clsPlatformPopup" data-original-title="View Platforms"></a></td>*@
+                                    <td>World</td>
+                                    <td>13-Feb-2017 To 12-Feb-2019</td>
+                                    <td>Video Format <a href="#" data-target="#popViewDigitalRights" data-toggle="modal" id="1_ViewDigitalRights" title="" class="glyphicon glyphicon-triangle-right clsPlatformPopup" data-original-title="View Digital Rights"></a></td>
+                                    <td>
+                                        <a title="Edit" href="#" id="EditDigital1" class="glyphicon glyphicon-pencil"></a>
+                                        <a title="Delete" href="#" class="glyphicon glyphicon-trash"></a>
+                                    </td>
+                                </tr>
+                                <tr style="display:none">
+                                    <td>2</td>
+                                    <td>Memories</td>
+                                    @*<td>Theatrical <a id="2_ViewPlatform" title="" class="glyphicon glyphicon-triangle-right clsPlatformPopup" data-original-title="View Platforms"></a></td>*@
+                                    <td>World</td>
+                                    <td>24-Apr-2012 To 23-Apr-2017</td>
+                                    <td>Video Format <a id="2_ViewDigitalRights" title="" class="glyphicon glyphicon-triangle-right clsPlatformPopup" data-original-title="View Digital Rights"></a></td>
+                                    <td>
+                                        <a title="Edit" href="#" class="glyphicon glyphicon-pencil"></a>
+                                        <a title="Delete" href="#" class="glyphicon glyphicon-trash"></a>
+                                    </td>
+                                </tr>
+                                <tr style="display:none">
+                                    <td>3</td>
+                                    <td>Memories</td>
+                                    @*<td>Theatrical <a id="3_ViewPlatform" title="" class="glyphicon glyphicon-triangle-right clsPlatformPopup" data-original-title="View Platforms"></a></td>*@
+                                    <td>World</td>
+                                    <td>16-Jun-2012 To 15-Jun-2017</td>
+                                    <td>Video Format <a id="3_ViewDigitalRights" title="" class="glyphicon glyphicon-triangle-right clsPlatformPopup" data-original-title="View Digital Rights"></a></td>
+                                    <td>
+                                        <a title="Edit" href="#" class="glyphicon glyphicon-pencil"></a>
+                                        <a title="Delete" href="#" class="glyphicon glyphicon-trash"></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+
+                <div class="bottom_action">
+                    <ul class="form_link_nav clearfix">
+                        <li>
+                            <input type="button" id="btnCancelDeal" class="btn btn-primary" value="Cancel"
+                                   onclick="location.href='@Url.Action("Cancel", "Acq_Status_History")    '">
+                        </li>
+                    </ul>
+                </div>
+                <input type="hidden" id="hdnTabName" name="hdnTabName" />
+            </div>
+        </div>
+    </div>
+</div>
+<div class="grid_area" style="display:none;" id="AddEditDigitalRightsDiv">
+    <div class="navigation_tabs">
+        <div class="tabbable">
+            <div class="tab-content clearfix table-wrapper scale_table_container acq">
+                <div class="tab-pane active" id="tabStatHist">
+                    <div class="scale_table_block">
+                        <table>
+                            <tr>
+                                <td width="50%" valign="top">
+                                    <label class="bold">Titles</label>
+                                    <select name="ddlPTitle" id="ddlPTitle" class="form_input chosen-select" multiple>
+                                        <option value="1">Memories</option>
+                                    </select>
+                                    <br><br>
+                                    <label class="bold">Period</label>
+                                    <select id="" class="form_input chosen-select">
+                                        <option value="2">13-Feb-2017 To 12-Feb-2019</option>
+                                        <option value="10">22-Feb-2017 To 21-Feb-2019</option>
+                                        <option value="17">06-Mar-2017 To 05-Mar-20197</option>
+                                    </select>
+                                    <br><br>
+                                    <label class="bold">Region</label>
+                                    <div>
+                                        <label class="radio-inline">
+                                            <input type="radio" name="optRegion" id="rdoCountry" value="C" />
+                                            Country
+                                        </label>
+                                        <label class="radio-inline">
+                                            <input type="radio" name="optRegion" id="rdoTerritory" value="T" checked />
+                                            Territory
+                                        </label>
+                                    </div>
+                                    <div id="divCountry" style="display: none">
+                                        <select id="ddlCountry" class="form_input chosen-select" multiple>
+                                            <option>Afghanistan</option>
+                                            <option>Armenia</option>
+                                            <option>Australia</option>
+                                            <option>Bangladesh</option>
+                                            <option>Canada</option>
+                                            <option>China</option>
+                                            <option>Denmark</option>
+                                            <option>Egypt</option>
+                                            <option>Germany</option>
+                                            <option>India</option>
+                                            <option>Italy</option>
+                                            <option>Japan</option>
+                                            <option>Mexico</option>
+                                            <option>Nepal</option>
+                                            <option>Netherlands</option>
+                                            <option>Pakistan</option>
+                                            <option>Qatar</option>
+                                            <option>Russia</option>
+                                            <option>Singapore</option>
+                                            <option>South Africa</option>
+                                            <option>Spain</option>
+                                            <option>Switzerland</option>
+                                            <option>Thailand</option>
+                                            <option>UAE</option>
+                                            <option>UK</option>
+                                            <option>US</option>
+                                        </select>
+                                    </div>
+                                    <div id="divTerritory">
+                                        <select id="ddlTerritory" class="form_input chosen-select" multiple>
+                                            <option value="6">World</option>
+                                            <option value="7">Middle East</option>
+                                            <option value="8">Asia-Pacific</option>
+                                            <option value="9">Europe</option>
+                                            <option value="9">North America</option>
+                                            <option value="9">South America</option>
+                                            <option value="9">Africa</option>
+                                            <option value="9">Australia</option>
+                                        </select>
+                                    </div>
+
+                                </td>
+                                <td valign="top" width="50%">
+                                    <div class="platform_wrapper">
+                                        <label class="bold" for="platform">On Demand Rights</label>
+                                        <div id="tree" class="treeClass">
+                                            <ul id="treeData" style="display:none">
+                                                <li id="digital1" class="folder expanded">
+                                                    Video Format
+                                                    <ul>
+                                                        <li id="vf1">4K
+                                                        <li id="vf2">3D
+                                                        <li id="vf3">2D
+                                                        <li id="vf4">SD
+                                                        <li id="vf5">HD
+                                                    </ul>
+                                                </li>
+                                                <li id="digital2" class="folder">
+                                                    Device Restriction
+                                                    <ul>
+                                                        <li id="dr1">Tab
+                                                        <li id="dr2">Smart Phone
+                                                        <li id="dr3">iPad
+                                                        <li id="dr4">Apple Tv
+                                                        <li id="dr5">Android Tv
+                                                        <li id="dr6">Smart Tv
+                                                    </ul>
+                                                </li>
+                                                <li id="digital3" class="folder">
+                                                    Service Type
+                                                    <ul>
+                                                        <li id="st1">Streaming
+                                                        <li id="st2">Download
+                                                    </ul>
+                                                </li>
+                                                <li id="digital4" class="folder">
+                                                    Operating System
+                                                    <ul>
+                                                        <li id="os1">IOS
+                                                        <li id="os2">Android
+                                                    </ul>
+                                                </li>
+                                                <li id="digital5" class="folder">
+                                                    Streams
+                                                    <ul>
+                                                        <li id="s1">
+                                                            ViuClip
+                                                            @*<li id="s2">VOOT Kids
+                                                                <li id="s3">JIO
+                                                                <li id="s4">3rd Party*@
+                                                    </ul>
+                                                </li>
+                                                <li id="digital6" class="folder">
+                                                    Cast
+                                                    <ul>
+                                                        <li id="c1">Chrome Cast
+                                                        <li id="c2">Mirror
+                                                        <li id="c3">Dongal To Cast
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </div>
+
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">
+                                    <br>
+                                    <div class="platform_wrapper">
+                                        <div class="tabbable">
+                                            <ul class="nav nav-tabs nav-tab pull-left">
+                                                <li class="active">
+                                                    <a data-toggle="tab" href="#tabPlatfrom" role="tab">On Demand Restriction Remarks</a>
+                                                </li>
+                                            </ul>
+                                            <div class="tab-content clearfix table-wrapper scale_table_container">
+                                                <div class="tab-pane active scale_table_block" id="tabPlatfrom">
+                                                    <textarea name="txtPaymentTerms" id="txtPaymentTerms" class="textarea" onkeyup="countChar(this)"></textarea>
+                                                    <div class="divBlock">
+                                                        <div class="charNum">4000</div>
+                                                        <div style="">characters left</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid_area" style="display:none;" id="EditDigitalRightsDiv">
+    <div class="navigation_tabs">
+        <div class="tabbable">
+            <div class="tab-content clearfix table-wrapper scale_table_container acq">
+                <div class="tab-pane active" id="tabStatHist">
+                    <div class="scale_table_block">
+                        <table>
+                            <tr>
+                                <td width="50%" valign="top">
+                                    <label class="bold">Titles</label>
+                                    <select name="ddlPTitle" id="ddlPTitle" class="form_input chosen-select" multiple>
+                                        <option value="1" selected>Memories</option>
+                                    </select>
+                                    <br><br>
+                                    <label class="bold">Period</label>
+                                    <select id="" class="form_input chosen-select">
+                                        <option value="2">13-Feb-2017 To 12-Feb-2019</option>
+                                        <option value="10">22-Feb-2017 To 21-Feb-2019</option>
+                                        <option value="17">06-Mar-2017 To 05-Mar-20197</option>
+                                    </select>
+                                    <br><br>
+                                    <label class="bold">Region</label>
+                                    <div>
+                                        <label class="radio-inline">
+                                            <input type="radio" name="optRegion" id="rdoCountry" value="C" />
+                                            Country
+                                        </label>
+                                        <label class="radio-inline">
+                                            <input type="radio" name="optRegion" id="rdoTerritory" value="T" checked />
+                                            Territory
+                                        </label>
+                                    </div>
+                                    <div id="divCountry" style="display: none">
+                                        <select id="ddlCountry" class="form_input chosen-select" multiple>
+                                            <option>Afghanistan</option>
+                                            <option>Armenia</option>
+                                            <option>Australia</option>
+                                            <option>Bangladesh</option>
+                                            <option>Canada</option>
+                                            <option>China</option>
+                                            <option>Denmark</option>
+                                            <option>Egypt</option>
+                                            <option>Germany</option>
+                                            <option>India</option>
+                                            <option>Italy</option>
+                                            <option>Japan</option>
+                                            <option>Mexico</option>
+                                            <option>Nepal</option>
+                                            <option>Netherlands</option>
+                                            <option>Pakistan</option>
+                                            <option>Qatar</option>
+                                            <option>Russia</option>
+                                            <option>Singapore</option>
+                                            <option>South Africa</option>
+                                            <option>Spain</option>
+                                            <option>Switzerland</option>
+                                            <option>Thailand</option>
+                                            <option>UAE</option>
+                                            <option>UK</option>
+                                            <option>US</option>
+                                        </select>
+                                    </div>
+                                    <div id="divTerritory">
+                                        <select id="ddlTerritory" class="form_input chosen-select" multiple>
+                                            <option value="6" selected>World</option>
+                                            <option value="7">Middle East</option>
+                                            <option value="8">Asia-Pacific</option>
+                                            <option value="9">Europe</option>
+                                            <option value="9">North America</option>
+                                            <option value="9">South America</option>
+                                            <option value="9">Africa</option>
+                                            <option value="9">Australia</option>
+                                        </select>
+                                    </div>
+
+                                </td>
+                                <td valign="top" width="50%">
+                                    <div class="platform_wrapper">
+                                        <label class="bold" for="platform">On Demand Rights</label>
+                                        <div id="tree" class="treeClass">
+                                            <ul id="treeData" style="display:none">
+                                                <li id="digital1" class="folder expanded">
+                                                    Video Format
+                                                    <ul>
+                                                        <li id="vf1">4K
+                                                        <li id="vf2">3D
+                                                        <li id="vf3">2D
+                                                        <li id="vf4">SD
+                                                        <li id="vf5">HD
+                                                    </ul>
+                                                </li>
+                                                <li id="digital2" class="folder">
+                                                    Device Restriction
+                                                    <ul>
+                                                        <li id="dr1">Tab
+                                                        <li id="dr2">Smart Phone
+                                                        <li id="dr3">iPad
+                                                        <li id="dr4">Apple Tv
+                                                        <li id="dr5">Android Tv
+                                                        <li id="dr6">Smart Tv
+                                                    </ul>
+                                                </li>
+                                                <li id="digital3" class="folder">
+                                                    Service Type
+                                                    <ul>
+                                                        <li id="st1">Streaming
+                                                        <li id="st2">Download
+                                                    </ul>
+                                                </li>
+                                                <li id="digital4" class="folder">
+                                                    Operating System
+                                                    <ul>
+                                                        <li id="os1">IOS
+                                                        <li id="os2">Android
+                                                    </ul>
+                                                </li>
+                                                <li id="digital5" class="folder">
+                                                    Streams
+                                                    <ul>
+                                                        <li id="s1">
+                                                            ViuClip
+                                                            @*<li id="s2">VOOT Kids
+                                                                <li id="s3">JIO
+                                                                <li id="s4">3rd Party*@
+                                                    </ul>
+                                                </li>
+                                                <li id="digital6" class="folder">
+                                                    Cast
+                                                    <ul>
+                                                        <li id="c1">Chrome Cast
+                                                        <li id="c2">Mirror
+                                                        <li id="c3">Dongal To Cast
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </div>
+
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">
+                                    <br>
+                                    <div class="platform_wrapper">
+                                        <div class="tabbable">
+                                            <ul class="nav nav-tabs nav-tab pull-left">
+                                                <li class="active">
+                                                    <a data-toggle="tab" href="#tabPlatfrom" role="tab">On Demand Restriction Remarks</a>
+                                                </li>
+                                            </ul>
+                                            <div class="tab-content clearfix table-wrapper scale_table_container">
+                                                <div class="tab-pane active scale_table_block" id="tabPlatfrom">
+                                                    <textarea name="txtPaymentTerms" id="txtPaymentTerms" class="textarea" onkeyup="countChar(this)"></textarea>
+                                                    <div class="divBlock">
+                                                        <div class="charNum">4000</div>
+                                                        <div style="">characters left</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="bottom_action">
+    <ul class="form_link_nav clearfix">
+        <li>
+            <input type="button" id="btnCancelAddEdit1" class="btn btn-primary" value="Cancel" />
+
+        </li>
+    </ul>
+</div>
+<input type="hidden" id="hdnTabName" name="hdnTabName" />
+
+
+@*<div id="popupFadeP" style="margin-top:-186px;margin-left:343px;">
+        <div class="modal-dialog">
+            <div class="modal-content clearfix">
+                <form class="form">
+                    <div class="form_fields">
+                        <div class="modal_block modal_header">
+                            <a class="close" onclick="ClosePopup()">
+                                <span style="margin-right:6px;">×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h5 style="margin-bottom:10px;margin-left:7px;">Platform Matrix</h5>
+                            <input type="hidden" id="hdnPGCodes" name="hdnPGCodes" />
+                            <div id="divTree" class="platform_wrapper" style="overflow:auto;">
+                                <div id="tree" class="treeClass">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>*@
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade in small_popup" id="popViewDigitalRights" role="dialog" tabindex="-1" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form" id="movie_popup">
+                <div class="form_wrapper">
+                    <div class="form_fields acq">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>Digital Rights</h2>
+                        </div>
+                        <div class="modal_block">
+                            <div id="tree4" class="treeClass">
+                                <ul id="treeData" style="display: none;">
+                                    <li id="1" class="folder expanded">
+                                        Digital Rights Matrix
+                                        <ul>
+                                            <li id="1_1" class="folder">
+                                                Video Format
+                                                <ul>
+                                                    <li id="1_1_1">4k
+                                                    <li id="1_1_2">3D
+                                                </ul>
+                                            </li>
+                                            <li id="1_2" class="folder">
+                                                Device Restriction
+                                                <ul>
+                                                    <li id="1_2_1">Tab
+                                                    <li id="1_2_2">Smart Phone
+                                                </ul>
+                                            </li>
+                                            <li id="1_3" class="folder">
+                                                Service Type
+                                                <ul>
+                                                    <li id="1_3_1">Streaming
+                                                    <li id="1_3_2">Download
+                                                </ul>
+                                            </li>
+                                            <li id="1_4" class="folder">
+                                                O.S
+                                                <ul>
+                                                    <li id="1_4_1">IOS
+                                                </ul>
+                                            </li>
+                                            <li id="1_5" class="folder">
+                                                Streams
+                                                <ul>
+                                                    <li id="1_5_1">VOOT
+                                                </ul>
+                                            </li>
+                                            <li id="1_6" class="folder">
+                                                CAST
+                                                <ul>
+                                                    <li id="1_6_1">ChromeCast
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li>
+                                        <a data-dismiss="modal" class="btn btn-primary" href="#">Save</a>
+                                    </li>
+                                    <li>
+                                        <a data-dismiss="modal" class="btn btn-primary" href="#">cancel</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+
+</script>

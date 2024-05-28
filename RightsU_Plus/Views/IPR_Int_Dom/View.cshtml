@@ -1,0 +1,885 @@
+﻿@model RightsU_Entities.IPR_REP
+@using System.Configuration;
+@using UTOFrameWork.FrameworkClasses
+@{
+    ViewBag.Title = "View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<string> lstFrq = (List<string>)ViewBag.Frq_List;
+    string FileName = string.Empty;
+    RightsU_Entities.IPR_REP_ATTACHMENTS objAtt = Model.IPR_REP_ATTACHMENTS.Where(a => a.Flag == "M").FirstOrDefault();
+    if (objAtt != null)
+    {
+        FileName = objAtt.File_Name;
+    }
+    ViewData["Mode"] = "V";
+}
+
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css">
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script type="text/javascript" src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<style type="text/css">
+   #Tree_Filter_IPR_Class {   
+        width:511px;
+        position:relative!important;
+    }
+    #IPR_Class{
+        margin:0px 0px 0px 0px!important;
+    }
+    #tabRights .ui-fancytree {
+        height: 685px;
+        overflow-y: auto;
+        width: 510px !important;
+    }
+
+    .scale_table_block {
+        /*margin-bottom: 10px;*/
+        background-color: #fff;
+        padding: 0px !important;
+    }
+
+    .tdbackgourd {
+        background-color: #EEE;
+    }
+
+    .card {
+        background: #fff;
+        border-radius: 2px;
+        display: inline-block;
+        margin-left: 3px;
+        margin-right: 3px;
+        position: relative;
+    }
+
+    .cardheader {
+        background-color: #80878e;
+        padding: 5px 5px 5px 10px;
+        color: white;
+        margin: 0px;
+        width: 100%;
+    }
+
+    .firstBox {
+        margin-top: 5px;
+        width: 99.3%;
+        /*max-height: 1000px;*/
+    }
+
+    td {
+        padding: 5px 0px;
+    }
+
+    .chosen-container {
+        margin: 2px 0px;
+        width: 87% !important;
+    }
+
+    #oppByDetail, #oppParty {
+        width: 49.3%;
+        height: 426px;
+    }
+
+    #publicationDetail {
+        width: 99.3%;
+        height: 195px;
+    }
+
+    #procesuctionDetail_OppBy, #procesuctionDetail_OppAgainst {
+        width: 99.3%;
+        height: 370px;
+    }
+
+    #attachment, #hearing, #statusHistory {
+        width: 99.3%;
+    }
+
+
+    textarea {
+        overflow: auto;
+        width: 95% !important;
+        height: 60px !important;
+    }
+
+    .form-control {
+        display: inline-block !important;
+    }
+
+    .container .top_area {
+        border-bottom: none !important;
+    }
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+        initializeExpander();
+        $('.numbertext').numeric({ allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            maxPreDecimalPlaces: 3,
+            maxDecimalPlaces: 0 });
+
+        if(@Model.IPR_Rep_Code > 0)
+        {
+            $('#hdnClassCodes').val('@ViewBag.ClassCodes');
+
+            if('@Model.Proposed_Or_Date' == 'P')
+            {
+
+            }
+        }
+       
+        BindPlatform();
+    });
+    function clickOnImage(For,SystemFileName)
+    {
+        var f=For;
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("checkDownloadFile", "IPR_Int_Dom")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            async: false,
+            data: JSON.stringify({
+                For:f,
+                systemFileName:SystemFileName
+            }),
+            success: function (result) {
+                var s=SystemFileName;
+                if(result=="")
+                    showAlert('S',"Image Not Found",'OK');
+                else
+                {
+                    var parameter="?For="+For+"&systemFileName="+SystemFileName;
+                    var URL = '@Url.Action("DownloadFile", "IPR_Int_Dom", new { SearchedTitle = "Searched_Text" })';
+                    URL = URL.replace("Searched_Text",parameter);
+                    window.location.href = URL;
+                    //window.location = "~/IPR_Int_Dom/DownloadFile?For="+For+"&systemFileName="+SystemFileName;
+                }
+            },
+            error: function (result) {
+            }
+        });
+    }
+    function BindPlatform()
+    {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindClassTreeView", "IPR_Int_Dom")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data : JSON.stringify({
+                strPlatform: $("#hdnClassCodes").val().split(',')
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                $('#tree').html(result);
+            },
+            error: function (result) {}
+        });
+    }
+
+
+    function OnCancelClick()
+    {
+        location.href='@Url.Action("Cancel", "IPR_Int_Dom", new { TABNAME = Model.IPR_For })'
+    }
+</script>
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container ipr main_col">
+            <div class="top_area">
+                <div class="title_block dotted_border clearfix">
+                    <h2 class="pull-left">
+                        @if (Model.IPR_For == "D")
+                        {
+                            @:View IPR Application <span>( Domestic )</span>
+                                }
+                        else
+                        {
+                            @:View IPR Application<span>( International )</span>
+                                }
+                    </h2>
+                </div>
+                    <table class="table_brif table" style="background:#e2e1e0" id="tabRights">
+                        <tbody>
+                            <tr>
+                                <td>
+
+                                    @*<div class="tab-pane active" id="tabRights">*@
+                                    @*<div class="scale_table_block">*@
+                                    <div class="card firstBox">
+                                        <table width="100%" class="table">
+                                            <tr>
+                                                <td style="width:15%">
+                                                    <b>Trade Mark No</b>
+                                                    @Html.HiddenFor(m => m.IPR_Rep_Code)
+                                                    @Html.HiddenFor(m => m.IPR_For)
+                                                    <input type="hidden" id="hdnIsSubmit" name="hdnIsSubmit" />
+                                                </td >
+                                                @if (Model.Trademark_No != "" && Model.Trademark_No != null)
+                                                {
+                                                    <td colspan="2" style="width:35%">
+                                                        @Model.Trademark_No
+                                                    </td>
+                                                }
+                                                else
+                                                {
+                                                    <td colspan="2">
+                                                        New&nbsp;&nbsp;&nbsp; @Model.Version
+                                                    </td>
+                                                }
+                                                <td rowspan="21" width="50%">
+                                                    <div class="platform_wrapper">
+                                                        <div id="tree" class="treeClass">
+                                                           
+                                                        </div>
+                                                        <input type="hidden" id="hdnClassCodes" name="hdnClassCodes" value="@(string.Join(" ,", Model.IPR_REP_CLASS.Select(s=> s.IPR_Class_Code)))" />
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <b>Trade Mark</b>
+                                                </td>
+                                                <td colspan="2">
+                                                    @Model.Trademark
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Type</b></td>
+                                                <td colspan="2">
+                                                    @if (Model.IPR_Type_Code != null)
+                                                    {
+                                                        @Model.IPR_TYPE.Type
+                                                    }
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Business Unit</b></td>
+                                                <td colspan="2">
+                                                    <div class="expandable">
+                                                        @ViewBag.BusinessUnitList
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Channel</b></td>
+                                                <td colspan="2">
+                                                    <div class="expandable">
+                                                        @ViewBag.ChannelList
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Attachment</b></td>
+                                                <td>
+                                                    @*<button id="btnUpload" class="button" type="button" onclick="return AddAttachment('M');">Add Attachment</button>*@
+                                                </td>
+                                                <td rowspan="3">
+                                                    @if (ViewBag.ImageShow)
+                                                    {
+                                                        if (ViewBag.imagePage == "")
+                                                        {
+                                                            <img id="imgLogo" style="height: 100px; width: 180px;" src="~/Images/NoImageFound.jpg" />
+                                                        }
+                                                        else
+                                                        {
+                                                            <img id="imgLogo" style="height: 100px; width: 180px;" src="@Url.Content(ViewBag.imagePage)" />
+
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <img id="imgLogo" style="height: 100px; width: 180px;" src="~/Images/NoImageFound.jpg" />
+                                                    }
+                                                </td>
+
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <b>Application No</b>
+                                                </td>
+                                                <td>
+                                                    @Model.Application_No
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <b>Application Date</b>
+                                                </td>
+                                                <td>
+                                                    @if (Model.Application_Date != null)
+                                                    {
+                                                        @Model.Application_Date.Value.ToString("dd/MM/yyyy")
+                                                    }
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <b>Country</b>
+                                                </td>
+                                                @if (Model.IPR_For == "D")
+                                                {
+                                                    <td colspan="2">
+                                                        India
+                                                    </td>
+                                                }
+                                                else
+                                                {
+                                                    <td colspan="2">
+                                                        @if (Model.Country_Code != null)
+                                                        {
+                                                            @Model.IPR_Country.IPR_Country_Name
+                                                        }
+                                                    </td>
+                                                }
+                                            </tr>
+                                            <tr>
+                                                <td><b>Date of Use</b></td>
+                                                <td colspan="2">
+                                                    @if (Model.Proposed_Or_Date == "D")
+                                                    {
+                                                        if (Model.Date_Of_Use != null)
+                                                        {
+                                                            @Model.Date_Of_Use.Value.ToString("dd/MM/yyyy")
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        @:Proposed to be used
+                                                }
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <b>Date of Actual Use</b>
+                                                </td>
+                                                <td colspan="2">
+                                                    @if (Model.Date_Of_Actual_Use != null)
+                                                    {
+                                                        @Model.Date_Of_Actual_Use.Value.ToString("dd/MM/yyyy")
+                                                    }
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <b>Application Status</b>
+                                                </td>
+                                                <td colspan="2">
+                                                    @if (Model.Application_Status_Code != null)
+                                                    {
+                                                        @Model.IPR_APP_STATUS.App_Status
+                                                    }
+                                                   </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <b>Renewed Until</b>
+                                                </td>
+                                                <td colspan="2">
+                                                    @if (Model.Renewed_Until != null)
+                                                    {
+                                                        @Model.Renewed_Until.Value.ToString("dd/MM/yyyy")
+                                                    }
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <b>Applicant</b>
+                                                </td>
+                                                <td colspan="2">
+                                                    @if (Model.Applicant_Code != null)
+                                                    {
+                                                        @Model.IPR_ENTITY.Entity
+                                                    }
+                                                </td>
+                                            </tr>
+                                            @if (Model.IPR_For == "I")
+                                            {
+                                                <tr>
+                                                    <td><b>International Trade Mark Attorney</b></td>
+                                                    <td colspan="2">
+                                                        <div class="expandable">
+                                                            @Model.International_Trademark_Attorney
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            }
+                                            <tr>
+                                                <td><b>Domestic Trade Mark Attorney</b></td>
+                                                <td colspan="2">
+                                                    <div class="expandable">
+                                                        @Model.Trademark_Attorney
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <b>Reminder email frequency (days)</b>
+                                                </td>
+                                                <td colspan="2">
+                                                   @lstFrq[0]&nbsp;@lstFrq[1]&nbsp;@lstFrq[2]&nbsp;@lstFrq[3]&nbsp;@lstFrq[4]&nbsp;@lstFrq[5]
+                                                </td>
+                                            </tr>
+                                            @if (Model.IPR_For == "I")
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <b> Date of Registration</b>
+                                                    </td>
+                                                    <td colspan="2">
+                                                        @if (Model.Date_Of_Registration != null)
+                                                        {
+                                                            @Model.Date_Of_Registration.Value.ToString("dd/MM/yyyy")
+                                                        }
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <b>Registration No</b>
+                                                    </td>
+                                                    <td colspan="2">
+                                                       @Model.Registration_No 
+                                                    </td>
+                                                </tr>
+                                            }
+                                            <tr>
+                                                <td>
+                                                    <b>Remarks</b>
+                                                </td>
+                                                <td colspan="2" >
+                                                    <div class="expandable">
+                                                        @Model.Comments
+                                                        </div>
+</td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <b>  Goods/Services Description</b>
+                                                </td>
+                                                <td colspan="2">
+                                                    <div class="expandable">
+                                                        @Model.Class_Comments
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="card" id="attachment">
+                                        <div class="card cardheader">
+                                            <b>Attachment</b>
+                                        </div>
+                                        <div id="divAttachments">
+                                            @Html.Partial("List_Attachment", Model.IPR_REP_ATTACHMENTS.Where(a => a.Flag == "G").ToList())
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="card" id="statusHistory">
+                                        <div class="card cardheader">
+                                            <b>Status History</b>
+                                        </div>
+                                        <table style="margin:10px; width:98%" class="table table-bordered table-hover">
+                                            <tr>
+                                                <td style="width:20%"><b>Status</b></td>
+                                                <td style="width:20%"><b>Changed On</b></td>
+                                                <td style="width:60%"><b>Changed By</b></td>
+                                            </tr>
+
+                                            @foreach (RightsU_Entities.USP_List_IPR_Status_History_Result objStatusHist in ViewBag.IPR_Status_History)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        @objStatusHist.IPR_Status
+                                                    </td>
+                                                    <td>
+                                                        @objStatusHist.Changed_On
+                                                    </td>
+                                                    <td>
+                                                        @objStatusHist.UserName
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </table>
+                                    </div>
+                                    <div class="bottom_action" style="margin-top:5px">
+                                        <ul class="form_link_nav clearfix">
+                                            <li>
+                                                <a type="button" id="btnCancelDeal" class="btn btn-primary" onclick="OnCancelClick();">Cancel</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <input type="hidden" id="hdnCommandName" />
+                                    <input type="hidden" id="hdnAttchRowIndex" />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+            </div>
+        </div>
+    </section>
+</div>
+
+@*<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container ipr main_col">
+            <div class="top_area">
+                <div class="title_block clearfix">
+                    <h2 class="pull-left">
+                        @if (Model.IPR_For == "D")
+                        {
+                            @:View IPR Application <span>( Domestic )</span>
+                                }
+                        else
+                        {
+                            @:View IPR Application<span>( International )</span>
+                                }
+                    </h2>
+                </div>
+            </div>
+            <div class="grid_area">
+                <div class="navigation_tabs">
+                    <div class="tabbable">
+
+                        <div class="tab-content clearfix table-wrapper scale_table_container">
+
+                            <div class="tab-pane active" id="tabRights">
+                                <div class="scale_table_block">
+                                    <table width="100%" class="table">
+                                        <tr>
+                                            <td valign="top">
+                                                Trade Mark No
+                                                @Html.HiddenFor(m => m.IPR_Rep_Code)
+                                                @Html.HiddenFor(m => m.IPR_For)
+                                                <input type="hidden" id="hdnIsSubmit" name="hdnIsSubmit" />
+                                            </td>
+                                            @if (Model.Trademark_No != "" && Model.Trademark_No != null)
+                                            {
+                                                <td colspan="2" valign="top">
+                                                    @Model.Trademark_No
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td colspan="2" valign="top">
+                                                    New&nbsp;&nbsp;&nbsp; @Model.Version
+                                                </td>
+                                            }
+                                            <td rowspan="17" width="50%" valign="top">
+                                                <div class="platform_wrapper">
+                                                    <div id="tree" class="treeClass">
+                                                        
+                                                    </div>
+                                                    <input type="hidden" id="hdnClassCodes" name="hdnClassCodes" value="@(string.Join(",", Model.IPR_REP_CLASS.Select(s => s.IPR_Class_Code)))" />
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td valign="top">
+                                                Trade Mark
+                                            </td>
+                                            <td colspan="2" valign="top">
+                                                @Model.Trademark
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td valign="top">Type</td>
+                                            <td colspan="2" valign="top">
+                                                @if (Model.IPR_Type_Code != null)
+                                                {
+                                                    @Model.IPR_TYPE.Type
+                                                }
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td valign="top">Business Unit</td>
+                                            <td colspan="2" valign="top">
+                                                <div class="expandable">
+                                                    @ViewBag.BusinessUnitList
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td valign="top">Channel</td>
+                                            <td colspan="2" valign="top">
+                                                <div class="expandable">
+                                                    @ViewBag.ChannelList
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td valign="top">Attachment</td>
+                                            <td valign="top">
+                                            
+                                            </td>
+                                            <td valign="top" rowspan="3">
+
+                                                @if (@ViewBag.ImageShow)
+                                                {
+                                                    <img id="imgLogo" style="height: 100px; width: 180px;" src="@Url.Content(ConfigurationManager.AppSettings["UploadFilePath"] + ViewBag.imagePage)" />
+                                                }
+                                                else
+                                                {
+                                                    <img id="imgLogo" style="height: 100px; width: 180px;" src="~/Images/NoImageFound.jpg" />
+                                                }
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td valign="top">
+                                                Application No
+                                            </td>
+                                            <td valign="top">
+                                                @Model.Application_No
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td valign="top">
+                                                Application Date
+                                            </td>
+                                            <td valign="top">
+                                                @if (Model.Application_Date != null)
+                                                {
+                                                    @Model.Application_Date.Value.ToString("dd/MM/yyyy")
+                                                }
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td valign="top">
+                                                Country
+                                            </td>
+                                            @if (Model.IPR_For == "D")
+                                            {
+                                                <td valign="top" colspan="2">
+                                                    India
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td valign="top" colspan="2">
+                                                    @if (Model.Country_Code != null)
+                                                    {
+                                                        @Model.IPR_Country.IPR_Country_Name
+                                                    }
+                                                </td>
+                                            }
+                                        </tr>
+                                        <tr>
+                                            <td valign="top">Date of Use</td>
+                                            <td valign="top" colspan="2">
+                                                @if (Model.Proposed_Or_Date == "D")
+                                                {
+                                                    if (Model.Date_Of_Use != null)
+                                                    {
+                                                        @Model.Date_Of_Use.Value.ToString("dd/MM/yyyy")
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    @:Proposed to be used
+                                                }
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td valign="top">
+                                                Date of Actual Use
+                                            </td>
+                                            <td valign="top" colspan="2">
+                                                @if (Model.Date_Of_Actual_Use != null)
+                                                {
+                                                    @Model.Date_Of_Actual_Use.Value.ToString("dd/MM/yyyy")
+                                                }
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td valign="top">
+                                                Application Status
+                                            </td>
+                                            <td valign="top" colspan="2">
+                                                @if (Model.Application_Status_Code != null)
+                                                {
+                                                    @Model.IPR_APP_STATUS.App_Status
+                                                }
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                            <td valign="top">
+                                                Renewed Until
+                                            </td>
+                                            <td valign="top" colspan="2">
+                                                @if (Model.Renewed_Until != null)
+                                                {
+                                                    @Model.Renewed_Until.Value.ToString("dd/MM/yyyy")
+                                                }
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td valign="top">
+                                                Applicant
+                                            </td>
+                                            <td valign="top" colspan="2">
+                                                @if (Model.Applicant_Code != null)
+                                                {
+                                                    @Model.IPR_ENTITY.Entity
+                                                }
+
+                                            </td>
+                                        </tr>
+                                        @if (Model.IPR_For == "I")
+                                        {
+                                            <tr>
+                                                <td valign="top">International Trade Mark Attorney</td>
+                                                <td valign="top" colspan="2">
+                                                    <div class="expandable">
+                                                        @Model.International_Trademark_Attorney
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                        <tr>
+                                            <td valign="top">Domestic Trade Mark Attorney</td>
+                                            <td valign="top" colspan="2">
+                                                <div class="expandable">
+                                                    @Model.Trademark_Attorney
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td valign="top">
+                                                Reminder email frequency (days)
+                                            </td>
+                                            <td valign="top" colspan="2">
+                                                @lstFrq[0]&nbsp;@lstFrq[1]&nbsp;@lstFrq[2]&nbsp;@lstFrq[3]&nbsp;@lstFrq[4]&nbsp;@lstFrq[5]
+                                            </td>
+                                        </tr>
+                                        @if (Model.IPR_For == "I")
+                                        {
+                                            <tr>
+                                                <td valign="top">
+                                                    Date of Registration
+                                                </td>
+                                                <td valign="top" colspan="2">
+                                                    @if (Model.Date_Of_Registration != null)
+                                                    {
+                                                        @Model.Date_Of_Registration.Value.ToString("dd/MM/yyyy")
+                                                    }
+
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td valign="top">
+                                                    Registration No
+                                                </td>
+                                                <td valign="top" colspan="2">
+                                                    @Model.Registration_No
+                                                </td>
+                                            </tr>
+                                        }
+                                        <tr>
+                                            <td valign="top">
+                                                Remarks
+                                            </td>
+                                            <td valign="top" colspan="2">
+                                                <div class="expandable">
+                                                    @Model.Comments
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td valign="top">
+                                                Goods/Services Description
+                                            </td>
+                                            <td valign="top" colspan="2">
+                                                <div class="expandable">
+                                                    @Model.Class_Comments
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="tdbackgourd">
+                                            <td colspan="4" valign="top">
+                                                <label class="bold">Attachment</label>
+                                            </td>
+                                        </tr>
+                                        <tr class="tdbackgourd">
+                                            <td colspan="4" valign="top">
+                                                <div class="tab-content clearfix table-wrapper scale_table_container">
+                                                    <div class="tab-pane active scale_table_block" id="divAttachments">
+                                                        @Html.Partial("List_Attachment", Model.IPR_REP_ATTACHMENTS.Where(a => a.Flag == "G").ToList(), ViewData)
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        <tr class="tdbackgourd">
+                                            <td colspan="4" valign="top">
+                                                <label class="bold">Status History</label>
+                                            </td>
+                                        </tr>
+                                        <tr class="tdbackgourd">
+                                            <td colspan="4" valign="top">
+                                                <div class="tab-content clearfix table-wrapper scale_table_container">
+                                                    <div class="tab-pane active scale_table_block">
+                                                        <table class="table table-bordered table-hover">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Status</th>
+                                                                    <th>Changed On</th>
+                                                                    <th>Changed By</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @foreach (RightsU_Entities.USP_List_IPR_Status_History_Result objStatusHist in ViewBag.IPR_Status_History)
+                                                                {
+                                                                    <tr>
+                                                                        <td>
+                                                                            @objStatusHist.IPR_Status
+                                                                        </td>
+                                                                        <td>
+                                                                            @objStatusHist.Changed_On
+                                                                        </td>
+                                                                        <td>
+                                                                            @objStatusHist.UserName
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="bottom_action">
+                                <ul class="form_link_nav clearfix">
+                                    <li>
+                                        <a type="button" id="btnCancelDeal" class="btn btn-primary" onclick="OnCancelClick();">Cancel</a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <input type="hidden" id="hdnCommandName" />
+                            <input type="hidden" id="hdnAttchRowIndex" />
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>*@

@@ -1,0 +1,92 @@
+﻿@{
+    ViewBag.Title = "AskExpert";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    table {
+        border-collapse: separate;
+    }
+</style>
+<script>
+    //$(document).ready(function () {
+    //    $("#ancFileName").attr('href', '../Help/Masters/Layout.html?Glossary_AskExpert');
+    //})
+</script>
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="top_area">
+                <h2 class="pull-left">Ask an Expert</h2>
+                <div class="right_nav pull-right">
+
+                </div>
+            </div>
+            <div id="divSearch" class="search_area clearfix" style="padding:10px;">
+                <table cellpadding="10" style="width:50%">
+                    <tr>
+                        <td style="width:20%">Subject</td>
+                        <td>
+                            <input type="text" id="txtSubject" style=" margin-bottom: 10px;" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width:20%">Query</td>
+                        <td>
+                            <textarea rows="5" cols="10" id="txtQuery" onkeypress="countChar(this)" maxlength=4000></textarea>
+                            <div class="divBlock">
+                                <div class="charNum">0/4000</div>
+                                <div style=""></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr style="">
+                        <td style="padding-top:10px" colspan="2">
+                            <input type="button" name="btnSubmit" id="btnSubmit" value="Submit Query" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+        </div>
+    </section>
+
+</div>
+<script>
+    $('#btnSubmit').click(function () {
+        debugger;
+        $("[required='required']").removeAttr("required");
+        if ($('#txtSubject').val() == undefined || $.trim($('#txtSubject').val()) == '') {
+            $('#txtSubject').attr('required', true);
+            return false;
+        }
+        if ($('#txtQuery').val() == undefined || $.trim($('#txtQuery').val()) == '') {
+            $('#txtQuery').attr('required', true);
+            return false;
+        }
+        var URL_AskExpert = '@Url.Action("SubmitQuery", "Glossary")';
+        $.ajax({
+            type: "POST",
+            url: URL_AskExpert,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                subject: $('#txtSubject').val(),
+                query: $('#txtQuery').val()
+            }),
+            async: false,
+            success: function (data) {
+                debugger;
+                if (data == "Y") {
+                    showAlert("success", "Query submitted successfully");
+                    $('#txtSubject,#txtQuery').val('');
+                    $('.charNum').text('0/4000');
+                }
+                else {
+                    showAlert("error", "Mail not sent. Please contact administrator.");
+                }
+            }
+
+        });
+    });
+</script>

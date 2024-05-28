@@ -1,0 +1,694 @@
+﻿@using RightsU_BLL;
+@model List<RightsU_Entities.Platform_Group>
+@using UTOFrameWork.FrameworkClasses
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }     
+}
+
+
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<script>
+    var IsCall = 'Y', Command_Name = "", sort_Type_G = "T",Module_Code_G =@ViewBag.code, SysLanguageCode_G = '@ViewBag.LangCode';
+    var pos = null;
+    var URL_BindPlatform_GroupList = '@Url.Action("BindPlatform_GroupList", "Platform_Group")';
+    var URL_SearchPlatform_Group = '@Url.Action("SearchPlatform_Group", "Platform_Group")';
+    var URL_SearchPlatform = '@Url.Action("SearchPlatform", "Platform_Group")';
+    var URL_ActiveDeactivePlatform_Group = '@Url.Action("ActiveDeactivePlatform_Group", "Platform_Group")';
+    var URL_SavePlatform_Group = '@Url.Action("SavePlatform_Group", "Platform_Group")';
+    var URL_AddEditPlatform_Group = '@Url.Action("AddEditPlatform_Group", "Platform_Group")';
+    var URL_BindPlatformTreePopup = '@Url.Action("BindPlatformTreePopup", "Platform_Group")';
+
+
+    var URL_CheckRecordLock = '@Url.Action("CheckRecordLock", "Platform_Group")';
+    var URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")';
+    var URL_Release_Lock = '@Url.Action("Release_Lock", "Global")';
+    var  URL_Reload_Current_Page = '@Url.Action("Index", "Platform_Group")';
+
+
+
+    $(document).ready(function () {
+        if(LayoutDirection_G == "RTL")
+        {
+            $('#btnUser').css("float","right");
+            $('#txtSort').css("text-align", "left");
+            $('#ddlSortType_chosen').css("text-align", "right");
+        }
+        else
+        {
+            $('#btnUser').css("float","left");
+            $('#txtSort').css("text-align","right");
+            $('#ddlSortType_chosen').css("text-align", "left");
+        }
+        addNumeric();
+        $('#searchCommon').keypress(function (e) {
+            if (e.keyCode == 13) {
+                btnSearch_OnClick()
+                return false;
+            }
+        });
+        SearchPlatform_Group("");
+
+        $("#ddlSortType").change(function () {
+            $('#hdnPageNo').val(1);
+            sort_Type_G = $('#ddlSortType').val();
+            SearchPlatform_Group($('#searchCommon').val());
+        });
+    });
+
+    function addNumeric() {
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
+    function SetPaging() {
+        IsCall = 'N';
+        var pageNo = parseInt($('#hdnPageNo').val());
+        var recordCount = parseInt($('#hdnRecordCount').val());
+        var pagePerBatch = parseInt($('#hdnPagePerBatch').val());
+        var recordPerPage = parseInt($('#txtPageSize').val());
+
+        var cnt = pageNo * recordPerPage;
+        if (cnt >= recordCount) {
+            var v1 = parseInt(recordCount / recordPerPage);
+            if ((v1 * recordPerPage) == recordCount)
+                pageNo = v1;
+            else
+                pageNo = v1 + 1;
+        }
+
+        if (pageNo == 0)
+            pageNo = 1;
+
+        var index = pageNo - 1;
+        $('#hdnPageNo').val(pageNo);
+
+        var opt = null;
+        opt = { callback: pageselectCallback };
+        opt["items_per_page"] = recordPerPage;
+        opt["num_display_entries"] = pagePerBatch;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = index;
+        $("#Pagination").pagination(recordCount, opt);
+    }
+    function pageselectCallback(page_index, jq) {
+        if (checkCurrentAction()) {
+            $('.required').removeClass('required');
+
+            if (!ValidatePageSize())
+                return false;
+
+            var pageNo = page_index + 1
+            $('#hdnPageNo').val(pageNo);
+            if (IsCall == 'Y')
+                BindPlatform_GroupList(0, "");
+            else
+                IsCall = 'Y';
+        }
+    }
+    function txtPageSize_OnChange() {
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        if (!ValidatePageSize())
+            return false;
+
+        BindPlatform_GroupList(0, "");
+        SetPaging();
+    }
+    function ValidatePageSize() {
+        var recordPerPage = $('#txtPageSize').val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize').attr('required', true)
+        return false
+    }
+    function pageBinding() {
+        BindPlatform_GroupList(0, "");
+        SetPaging();
+    }
+    function btnSearch_OnClick() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        if (!checkCurrentAction())
+            return false;
+
+        if (!ValidatePageSize())
+            return false;
+
+
+        var searchText = $.trim($('#searchCommon').val());
+
+        if (searchText == '') {
+            $('#searchCommon').val('').attr('required', true)
+            return false;
+        }
+        SearchPlatform_Group(searchText);
+    }
+    function btnShowAll_OnClick() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        if (!checkCurrentAction())
+            return false;
+        if (!ValidatePageSize())
+            return false;
+        $('#hdnPageNo').val(1);
+        $('#searchCommon').attr('required', false)
+
+        sort_Type_G = "T";
+        $("#ddlSortType").find("option").attr("selected", false);
+        $("#ddlSortType").val('T').trigger("chosen:updated");
+
+        $('#searchCommon').val('');
+        SearchPlatform_Group("");
+    }
+    function BindPlatform_GroupList(Platform_Group_Code, commandName) {
+
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindPlatform_GroupList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+                Platform_Group_Code: Platform_Group_Code,
+                commandName: commandName,
+                sortType : sort_Type_G
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divPlatform_GroupList').empty();
+                    $('#divPlatform_GroupList').html(result);
+                    initializeExpander();
+                    initializeChosen();
+                    initializeTooltip();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function SearchPlatform_Group(searchText) {
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: URL_SearchPlatform_Group,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                searchText: searchText
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+
+                    $('#hdnPageNo').text(1);
+                    $('#lblRecordCount').text(result.Record_Count);
+                    $("#hdnRecordCount").val(result.Record_Count);
+                    SetPaging()
+                    BindPlatform_GroupList(0, "");
+                    hideLoading();
+                }
+            },
+            error: function (result) {
+
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+    function btnSearchPlatform_OnClick() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        if (!checkCurrentAction())
+            return false;
+
+        if (!ValidatePageSize())
+            return false;
+
+
+        var searchText = $.trim($('#searchPlatform').val());
+
+        if (searchText == '') {
+            $('#searchPlatform').val('').attr('required', true)
+            return false;
+        }
+        SearchPlatform(searchText);
+    }
+    function btnShowAllPlatform_OnClick() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        if (!checkCurrentAction())
+            return false;
+        if (!ValidatePageSize())
+            return false;
+
+        $('#searchPlatform').val('');
+        SearchPlatform("");
+    }
+    function SearchPlatform(searchText) {
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: URL_SearchPlatform,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                searchText: searchText
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger
+                    $('#hdnPageNo').text(1);
+                    $('#lblRecordCount').text(result.Record_Count);
+                    $("#hdnRecordCount").val(result.Record_Count);
+                    SetPaging()
+                    BindPlatform_GroupList(0, "");
+                    hideLoading();
+                }
+            },
+            error: function (result) {
+
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+    function ActiveDeactivePlatform_Group(Platform_Group_Code, doActive) {
+        $.ajax({
+            type: "POST",
+            url: URL_ActiveDeactivePlatform_Group,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Platform_Group_Code: Platform_Group_Code,
+                doActive: doActive
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Status == "S") {
+                        showAlert("S", result.Message);
+                        if ($("#searchCommon").val() != "") {
+                            SearchPlatform($("#searchCommon").val())
+                        }
+                        else {
+                            BindPlatform_GroupList(0, "");
+                        }
+
+                    }
+                    else {
+                        showAlert("E", result.Message);
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+    function AddEditPlatform_Group(Platform_Group_Code, commandName) {
+
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        if (checkCurrentAction() && ValidatePageSize()) {
+
+            BindPlatform_GroupList(Platform_Group_Code, commandName);
+            $('#hdnAction').val(commandName)
+        }
+        $.ajax({
+            type: "POST",
+            url: URL_AddEditPlatform_Group,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Platform_Group_Code: Platform_Group_Code
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#popup').modal();
+                    $('#pupupHtml').empty();
+                    $('#pupupHtml').html(result);
+                    initializeChosen();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+    function SavePlatform_Group(Platform_Group_Code) {
+
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        if (!ValidatePageSize())
+            return false;
+
+        var Platform_Group_Name = $.trim($('#txtPlatform_GroupName').val());
+        var Record_Code = $('#hdnRecodLockingCode').val();
+
+        var LanguageCode = $('#ddlLanguage').val();
+
+        if (Platform_Group_Name == '') {
+            $('#txtPlatform_GroupName').val('').attr('required', true)
+            return false;
+        }
+
+        var languageCodes = $('#ddlLanguage').val();
+        if (languageCodes == null)
+        {
+            $('#ddlLanguage').addClass("required");
+            return false;
+        }
+
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: URL_SavePlatform_Group,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+
+                Platform_Group_Code: Platform_Group_Code,
+                Platform_Group_Name: Platform_Group_Name,
+                LanguageCodes: LanguageCode,
+                Record_Code: Record_Code
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+
+                    if (result.Status == "S") {
+                        $('#hdnAction').val("");
+                        showAlert("s", result.Message);
+                        if ($("#searchCommon").val() != "") {
+                            SearchPlatform_Group($("#searchCommon").val())
+                        }
+                        else {
+                            BindPlatform_GroupList(0, "");
+                        }
+                        hideLoading();
+                    }
+                    else {
+                        showAlert("E", result.Message);
+                        hideLoading();
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+    function checkCurrentAction() {
+
+        var action = $.trim($('#hdnAction').val());
+        if (action == "ADD") {
+            showAlert("I", "@objMessageKey.CompleteAddOperationFirst")
+            return false;
+        }
+        else if (action == "EDIT") {
+            showAlert("I", "@objMessageKey.CompleteEditOperationFirst")
+            return false;
+        }
+        return true;
+    }
+    function Cancel() {
+        var recordLockingCode = parseInt($('#hdnRecodLockingCode').val())
+        if (recordLockingCode > 0)
+            ReleaseRecordLock(recordLockingCode, URL_Release_Lock);
+
+        $('#hdnAction').val("")
+        BindPlatform_GroupList(0, "");
+    }
+    function ClosePopup() {
+        var recordLockingCode = parseInt($('#hdnRecodLockingCode').val())
+        if (recordLockingCode > 0)
+            ReleaseRecordLock(recordLockingCode, URL_Release_Lock);
+
+        $('#hdnAction').val("");
+        $('#popup').modal('hide');
+        $('#pupupHtml').empty();
+    }
+    function FadeOutPopup() {
+        $('#divPlatformTree').empty();
+        //if(LayoutDirection_G == "RTL")
+        //    $('#popupFade').offset({top: pos.top, right: pos.right}).fadeOut()
+        //else
+        $('#popupFade').offset({ top: pos.top, left: pos.left }).fadeOut();
+
+        return false;
+    }
+
+
+    //-------------------------------Record Locking--------------------------------
+    function CheckRecordLock(Platform_Group_Code, commandName) {
+
+        $.ajax({
+            type: "POST",
+            url: URL_CheckRecordLock,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Platform_Group_Code: Platform_Group_Code,
+                commandName: commandName
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Is_Locked == "Y") {
+                        AddEditPlatform_Group(Platform_Group_Code, commandName);
+                        $('#hdnRecodLockingCode').val(result.Record_Locking_Code); // This syntax must be after AddEditCountry() this
+                        Call_RefreshRecordReleaseTime(result.Record_Locking_Code, URL_Refresh_Lock);
+                    }
+                    else
+                        showAlert("E", result.Message);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+    function ExportToExcel()
+    {
+        var type = "";
+        var Module_Name = "Platform Group";
+        type = $('#ddlSortType').val();
+        var StrSearchCriteria = $.trim($('#searchCommon').val());
+        window.location.href = '@Url.Action("ExportToExcel", "Global")?Module_Code='+Module_Code_G + '&SysLanguageCode=' + SysLanguageCode_G +  '&Module_Name='+Module_Name+ '&sortColumnOrder='+type  + '&StrSearchCriteria=' + StrSearchCriteria;
+    }
+</script>
+<style>
+    #popupFade {
+        position: absolute;
+        display: none;
+        width: 315px;
+        overflow: hidden;
+        border: #bbb 1px solid;
+        z-index:100;
+    }
+
+        #popupFade .modal-dialog ul.fancytree-container {
+            height: 100%;
+            border: 0;
+        }
+
+        #popupFade form .modal_block {
+            padding: 3px 10px;
+        }
+
+        #popupFade #Rights_Platform {
+                width:300px;
+            max-height: 300px;
+            overflow-y:auto;
+             margin:0px 0px 0px 0px!important;
+        }
+       #popupFade #Tree_Filter_Rights_Platform {   
+        width:315px;
+        margin-left:-10px;
+        position:relative!important;
+    }
+           #ddlSortType_chosen {
+        max-width: 46%;
+        text-align:left;
+    }
+   #popupFade .modal_header{
+        background:#c3c3c3;
+    }
+</style>
+<div class="main_section" onclick="FadeOutPopup()">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="">
+                <div class="title_block dotted_border clearfix">
+                    <h2 class="pull-left">
+                        @objMessageKey.PlatformGroupList
+                        <span></span>
+                    </h2>
+                    <div class="right_nav pull-right">
+                        <ul>
+                            <li id="btnUser">
+                                @if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForAdd + "~"))
+                                {
+                                    <a class="btn btn-primary" onclick="AddEditPlatform_Group(0, 'ADD')">@objMessageKey.Add</a>
+                                }
+                            </li>
+                            <li>
+                                @if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForExportToExcel.ToString() + "~"))
+                                {
+                                    <a title="@objMessageKey.SaveToExcel" class="glyphicon glyphicon-floppy-save" style="cursor:pointer; text-decoration:underline; " onclick="ExportToExcel()">
+                                    </a>
+                                }
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="search_area" style="background-color: #eee; padding:5px;">
+                    <table class="table">
+                        <tr>
+                            <td style="width:14%;text-align:center;padding-top:8px;">
+                                @objMessageKey.PlatformGroupName:
+                            </td>
+                            <td style="width:22%;">
+                                <input type="text" placeholder="@objMessageKey.PlatformGroupName" name="srchCommon" id="searchCommon" class="search" style="width:100%" maxlength="50" onclick="checkCurrentAction()" />
+                            </td>
+                            <td>
+                                <input type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearch_OnClick()">
+                                <input type="button" id="btnShowAll" class="button" value="@objMessageKey.ShowAll" onclick="btnShowAll_OnClick()">
+                            </td>
+                            <td style="width:38%;" id="txtSort">
+                                @objMessageKey.SortBy :
+                                @Html.DropDownList("SortType", (List<SelectListItem>)ViewBag.SortType, new { @id = "ddlSortType", @class = "form_input chosen-select" })
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="grid_area">
+                    <div style="border-bottom: 1px dotted #777; display:none;"></div>
+                    <div class="paging_area clearfix">
+                        <span class="pull-left">@objMessageKey.TotalRecords: </span>
+                        <span class="pull-left" id="lblRecordCount" style="font-weight:bold"></span>
+                        <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                        <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                        <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+
+                        <div id="Pagination" class="pagination">
+                        </div>
+                        <span class="pull-right">
+                            <b>@objMessageKey.PageSize:</b>
+                            <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="txtPageSize_OnChange()"
+                                   onfocus=" checkcurrentaction()" onblur="setDefaultPaging('txtPageSize')">
+                        </span>
+                    </div>
+                    <div class="tab-content clearfix table-wrapper scale_table_container">
+                        <div class="scale_table_block">
+
+                            <input type="hidden" id="hdnPlatform_GroupCode" value="0" />
+                            <input type="hidden" id="hdnAction" name="hdnAction" value="" />
+                            <div id="divPlatform_GroupList" class="deal clearfix">
+                                @Html.Partial("~/Views/Platform_Group/_Platform_Group.cshtml", Model)
+                            </div>
+                            
+                        </div>
+                    </div>
+                   
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix" >
+            <div class="form_fields acq" id="pupupHtml" style="height:555px;">
+                @*//----------Div Tree------*@
+            </div>
+        </div>
+    </div>
+</div>
+<div id="popupFade">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form">
+                <div class="form_fields">
+                    <div class="modal_block modal_header">
+                        <a class="close" onclick="FadeOutPopup()">
+                            <span>×</span>
+                            <span class="sr-only">Close</span>
+                        </a>
+                        <h5>@objMessageKey.PlatformMatrix</h5>
+                    </div>
+                    <div class="modal_block treeClass" id="divPlatformTree" >
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+

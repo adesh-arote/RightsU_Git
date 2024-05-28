@@ -1,0 +1,136 @@
+﻿@model List<RightsU_Entities.Acq_Deal_Sport>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+@using UTOFrameWork.FrameworkClasses
+<link type="text/css" rel="stylesheet" href="~/JS_Core/jquery.expander.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]">
+<link type="text/css" rel="stylesheet" href="~/CSS/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]">
+<script type="text/javascript">
+    $(document).ready(function () {
+
+    });
+</script>
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th style="width: 20%;">@objMessageKey.Title</th>
+            <th style="width: 6%;">@objMessageKey.ContentDelivery</th>
+            <th style="width: 8%;">@objMessageKey.ModeofBroadcast</th>
+            <th style="width: 10%;">@objMessageKey.ObligationtoBroadcast</th>
+            <th style="width: 25%;">@objMessageKey.StandaloneDigital</th>
+            <th style="width: 15%;">@objMessageKey.SimulcastDigital</th>
+            <th style="width: 6%;">@objMessageKey.Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            string NewTitle = "";
+            string Content_Delivery = "";
+            string Obligation_Broadcast = "";
+
+            foreach (var item in Model)
+            {
+                if (ViewBag.Deal_Type_Condition == GlobalParams.Deal_Program)
+                {
+                    NewTitle = string.Join(", ", (item.Acq_Deal_Sport_Title.Select(s => s.Title.Title_Name + " ( " + s.Episode_From + " - " + s.Episode_To + " )").ToArray()));
+                }
+                else if (ViewBag.Deal_Type_Condition == GlobalParams.Deal_Music)
+                {
+                    NewTitle = string.Join(", ", (item.Acq_Deal_Sport_Title.Select(s => s.Title.Title_Name + (Convert.ToString(s.Episode_From) == "0" ? " ( Unlimited ) " : " ( " + s.Episode_From + " )")).ToArray()));
+                }
+                else
+                {
+                    NewTitle = string.Join(", ", (item.Acq_Deal_Sport_Title.Select(s => s.Title.Title_Name).ToArray()));
+                }
+
+                <tr>
+                    <td>
+                        <div class="expandable">
+                            @NewTitle
+                            <a href="#"><span></span></a>
+                        </div>
+                    </td>
+                    <td>
+                        @if (item.Content_Delivery == "LV")
+                        {
+                            Content_Delivery = "Live";
+                        }
+                        else if (item.Content_Delivery == "RC")
+                        {
+                            Content_Delivery = "Recorded";
+                        }
+                        @Content_Delivery
+                    </td>
+                    <td>
+                        @if (item.Acq_Deal_Sport_Broadcast.Where(x => x.Type == "MO").Select(s => s.Broadcast_Mode.Broadcast_Mode_Name).ToArray().Count() == 0)
+                        {
+                            <span>@objMessageKey.NO</span>
+                        }
+                        else
+                        {
+                            <div class="expandable">
+                                @string.Join(", ", (item.Acq_Deal_Sport_Broadcast.Where(x => x.Type == "MO").Select(s => s.Broadcast_Mode.Broadcast_Mode_Name).ToArray()))
+                                <a href="#"><span></span></a>
+                            </div>
+                        }
+                    </td>
+                    <td>
+                        @if (item.Acq_Deal_Sport_Broadcast.Where(x => x.Type == "OB").Select(s => s.Broadcast_Mode.Broadcast_Mode_Name).ToArray().Count() == 0)
+                        {
+                            <span>@objMessageKey.NO</span>
+                        }
+                        else
+                        {
+                            <div class="expandable">
+                                @string.Join(", ", (item.Acq_Deal_Sport_Broadcast.Where(x => x.Type == "OB").Select(s => s.Broadcast_Mode.Broadcast_Mode_Name).ToArray()))
+                                <a href="#"><span></span></a>
+                            </div>
+                        }
+                    </td>
+                    <td>
+                        @if (item.Acq_Deal_Sport_Platform.Where(x => x.Type == "ST").Select(s => s.Platform.Platform_Hiearachy).ToArray().Count() == 0)
+                        {
+                            <span>@objMessageKey.NO</span>
+                        }
+                        else
+                        {
+                            <div class="expandable">
+                                @string.Join(", ", (item.Acq_Deal_Sport_Platform.Where(x => x.Type == "ST").Select(s => s.Platform.Platform_Hiearachy).ToArray()))
+                                <a href="#"><span></span></a>
+                            </div>
+                        }
+                    </td>
+                    <td>
+                        @if (item.Acq_Deal_Sport_Platform.Where(x => x.Type == "SM").Select(s => s.Platform.Platform_Hiearachy).ToArray().Count() == 0)
+                        {
+                            <span>@objMessageKey.NO</span>
+                        }
+                        else
+                        {
+                            <div class="expandable">
+                                @string.Join(", ", (item.Acq_Deal_Sport_Platform.Where(x => x.Type == "SM").Select(s => s.Platform.Platform_Hiearachy).ToArray()))
+                                <a href="#"><span></span></a>
+                            </div>
+                        }
+                    </td>
+                    <td>
+                        @if (ViewBag.Mode == GlobalParams.DEAL_MODE_VIEW || ViewBag.Mode == GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL || ViewBag.Mode == GlobalParams.DEAL_MODE_APPROVE)
+                        {
+                            <a title="@objMessageKey.View" href="#" class="glyphicon glyphicon-eye-open" data-toggle="modal" onclick="EditSportsRight(@item.Acq_Deal_Sport_Code,'View');"></a>
+                        }
+                        else
+                        {
+                            <a title="" href="#" class="glyphicon glyphicon-pencil" data-original-title="Edit" onclick="return EditSportsRight(@item.Acq_Deal_Sport_Code,'Edit');"></a>
+                            <a title="" href="#" class="glyphicon glyphicon-trash" data-original-title="Delete" onclick='return OnDeleteClick(@item.Acq_Deal_Sport_Code);'></a>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

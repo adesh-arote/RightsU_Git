@@ -1,0 +1,647 @@
+﻿@model List<RightsU_Entities.Syn_Deal_Rights_Promoter>
+@using UTOFrameWork.FrameworkClasses;
+@{
+    var j = (string)ViewBag.Promoter_Group_Codes;
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    RightsU_BLL.Promoter_Group_Service objPGService = new RightsU_BLL.Promoter_Group_Service(objLoginEntity.ConnectionStringName);
+    RightsU_BLL.Promoter_Remarks_Service objPRService = new RightsU_BLL.Promoter_Remarks_Service(objLoginEntity.ConnectionStringName);
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script>
+    var URL_Edit_Promoter = '@Url.Action("Edit_Promoter", "Syn_Rights_Promoter")';
+    var URL_Save_Promoter = '@Url.Action("Save_Promoter", "Syn_Rights_Promoter")';
+    var URL_AddRemarks = '@Url.Action("Save_Remarks", "Syn_Rights_Promoter")';
+    var URL_BindPromoterTree = '@Url.Action("BindPromoterGroupTree", "Syn_Rights_Promoter")';
+    var URL_ValidPromoterTree = '@Url.Action("ValidPromoterTree", "Syn_Rights_Promoter")';
+    var URL_GetPromoterCodes = '@Url.Action("GetPromoterCodes", "Syn_Rights_Promoter")';
+    var dummyID, RemarkID_G, Promoter_Codes_G = "", Tree_Type_G = "";
+
+    function ClosePopup() {
+        if (Tree_Type_G == "E") {
+            var PromoterCount = $('#Promoter_MatrixplatformCnt').text();
+            $('#' + dummyID).text(PromoterCount + "@objMessageKey.Promoters");
+            Promoter_Codes_G = $("#hdnPGCodes").val();
+        }
+        $('#popupFadeP').hide('slow');
+    }
+
+    function Edit_Promoter(Counter) {
+        dummyID = Counter;
+        if ($('#hdnEditRecord').val() == '') {
+            $('#hdnEditRecord').val('Edit');
+            $.ajax({
+                type: "POST",
+                url: URL_Edit_Promoter,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                data: JSON.stringify({
+                    DummyProperty: Counter
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    $('a[href="#tabHoldback"]').prop("disabled", true);
+                    $('a[href="#tabRestriction"]').prop("disabled", true);
+                    $('a[href="#tabBlackout"]').prop("disabled", true);
+                    $('#tabPromoter').html(result);
+                    GetPromoterCodes(Counter);
+                    if ($('#spnPromotercount').text() == '0') {
+                        if ($('#hdnPromoter').val() == 'Y') {
+                            $('#Promoter_Flag').prop('checked', true);
+                        }
+                        else {
+                            $('#Promoter_Flag').prop('checked', false);
+                        }
+                        $('#Promoter_Flag').prop('disabled', false);
+                    }
+                    else {
+                        $('#Promoter_Flag').prop('checked', false);
+                        $('#Promoter_Flag').prop('disabled', true);
+
+                    }
+                    $('#ddlRemarks_' + Counter).SumoSelect();
+                    $('#ddlRemarks_' + Counter)[0].sumo.reload();
+                    initializeDatepicker();
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+        else
+            showAlert('E', '@objMessageKey.PleasecompletetheAddEditfirst');
+    }
+    function Save_Promoter(Counter) {
+        var IsValid = true;
+        var Promoter = $("#hdnPGCodes").val();
+        if (Promoter == "" || Promoter == "0") {
+            Promoter = Promoter_Codes_G
+        }
+
+        var Remarks = $('#ddlRemarks_' + Counter).val();
+        if (Promoter == "") {
+            showAlert('E', '@objMessageKey.PleaseselectPromoter')
+        }
+        else if (Remarks == null) {
+            showAlert('E', '@objMessageKey.PleaseselectRemarks')
+        }
+        else {
+            $.ajax({
+                type: "POST",
+                url: URL_Save_Promoter,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    PromoterCode: Promoter,
+                    RemarkCode: Remarks,
+                    DummyProperty: Counter
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    if (result.message == 'Success') {
+                        $('#hdnEditRecord').val('');
+                        if (result.mode == "A") {
+                            var count = parseInt($('#spnPromotercount').text());
+                            count += 1;
+                            $('#spnPromotercount').text(count);
+
+                        }
+                        $('a[href="#tabHoldback"]').prop("disabled", false);
+                        $('a[href="#tabRestriction"]').prop("disabled", false);
+                        $('a[href="#tabBlackout"]').prop("disabled", false);
+                        Bind_Promoter();
+                        hideLoading();
+
+                    }
+                    else {
+                        showAlert('E', result)
+                    }
+                },
+                error: function (result) {
+                    hideLoading();
+                    alert('Error Validate_Save_Rights: ' + result.responseText);
+                }
+            });
+        }
+    }
+
+    function Delete_Promoter(Counter) {
+        if ($('#hdnEditRecord').val() == '') {
+            $('#hdnDummyPropPro').val(Counter);
+            showAlert('I', '@objMessageKey.AreyousureyouwanttodeletethisPromoter', 'OKCANCEL');
+        }
+        else
+            showAlert('E', '@objMessageKey.PleasecompletetheAddEditfirst');
+    }
+
+    function Cancel_Promoter() {
+        $('#hdnEditRecord').val('');
+        $('a[href="#tabHoldback"]').prop("disabled", false);
+        $('a[href="#tabRestriction"]').prop("disabled", false);
+        $('a[href="#tabBlackout"]').prop("disabled", false);
+    }
+    function AddRemarks(RemarkId) {
+        RemarkID_G = RemarkId;
+        $("#txtRestriction_Remarks").val('');
+        $("#popAddRemarks").modal();
+    }
+    function validate() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var Promoter_Remarks = $.trim($('#txtRestriction_Remarks').val());
+        if (Promoter_Remarks == "") {
+            $("#txtRestriction_Remarks").val('');
+            $("#txtRestriction_Remarks").attr('required', true);
+            return false;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: URL_AddRemarks,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Remark_Name: Promoter_Remarks
+            }),
+            success: function (result) {
+
+                if (result.Status == "S") {
+                    debugger;
+                    showAlert("S", result.Message);
+                    $("#popAddRemarks").modal('hide');
+                    $('#' + RemarkID_G).append("<option selected='selected' value=" + result.Value + ">" + result.Text + "</option>");
+                    $('#' + RemarkID_G)[0].sumo.reload();
+
+                }
+                else {
+                    showAlert("E", result.Message);
+                    ("#popAddRemarks").modal();
+                }
+            },
+            error: function (result) { }
+        });
+    }
+    function GetPromoterCodes(Counter) {
+        $.ajax({
+            type: "POST",
+            url: URL_GetPromoterCodes,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                DummyProperty: Counter
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    Promoter_Codes_G = result.PromoterCodes
+                }
+            },
+            error: function (result) {
+                hideLoading();
+                alert('Error Validate_Save_Rights: ' + result.responseText);
+            }
+        });
+    }
+    $('.clsPromoterPopup').on('click', function (e) {
+        debugger;
+        e.preventDefault();
+        var btdId = e.target.id;
+        var codes = "";
+        pos = $('#' + btdId).offset();
+        $("#hdnPGCodes").val('@j');
+        if ($('#hdnPGCodes').val() != Promoter_Codes_G && Promoter_Codes_G != '') {
+            codes = Promoter_Codes_G;
+        }
+        else {
+            codes = $('#hdnPGCodes').val();
+        }
+        var text = $('#' + btdId).hasClass('View');
+        if (text == true) {
+            Tree_Type_G = "V";
+            codes = "";
+        }
+        else {
+            Tree_Type_G = "E";
+        }
+
+        var IsValidSave = true;
+        if ($("#Mode").val() != "V") {
+            //------------------ PLATFORM
+
+            if ($("#hdnTVCodes").val() == '') {
+                IsValidSave = false;
+                $("#tree").attr('required', true);
+                $("#tree").addClass('required');
+            }
+
+            //------------------ COUNTRY
+
+            var regionType = $("#rdoCountryHB").prop('checked') ? $("#rdoCountryHB").val() : $("#rdoTerritoryHB").val();
+            $("#hdnRegion_Type").val(regionType);
+
+            var selectedRegion = '';
+            if ($("#lbTerritory option:selected").length > 0) {
+                $("#lbTerritory option:selected").each(function () {
+                    if (selectedRegion == '')
+                        selectedRegion = $(this).val();
+                    else
+                        selectedRegion = selectedRegion + ',' + $(this).val();
+                });
+            }
+
+
+            if ($('input[type=radio][name=hdnExclusive]:checked').val() == undefined) {
+                IsValidSave = false;
+                $('#divExclusiveRights').addClass('required');
+            }
+
+            if ($('input[type=radio][name=rdoSublicensing]:checked').val() == undefined) {
+                IsValidSave = false;
+                $('#divSublicensingOptions').addClass('required');
+            }
+            else if ($('input[type=radio][name=rdoSublicensing]:checked').val() == "Y") {
+                if ($('#Sub_License_Code').val() == null) {
+                    IsValidSave = false;
+                    $('#Sub_License_Code').attr('required', true);
+                }
+            }
+
+            if (selectedRegion == '') {
+                IsValidSave = false;
+                $(".lbTerritory").attr('required', true);
+                $(".lbTerritory").addClass('required');
+            }
+
+            //------------------ END
+
+            var ErrorMsg = '';
+
+            //------------------ PERIOD
+
+            var Term = $('#Right_Type').val();
+            Term = Term == "U" ? "P" : Term;
+            if (Term == "Y") {
+                var txtStartDate = $('#Start_Date');
+                var txtEndDate = $('#End_Date');
+                var isTentative = false;
+                if ($('#Is_Tentative').prop('checked'))
+                    isTentative = true;
+
+                if (txtStartDate.val() == "") {
+                    IsValidSave = false;
+                    $("#Start_Date").attr('required', true);
+                }
+
+                if (txtEndDate.val() == "" && isTentative == false) {
+                    IsValidSave = false;
+                    $("#End_Date").attr('required', true);
+                }
+
+                if (txtStartDate.val() != "" && txtEndDate.val() != "" && compareDates_DMY(txtStartDate.val(), txtEndDate.val()) < 0) {
+                    IsValidSave = false;
+                    $("#Start_Date").attr('required', true);
+                    $("#End_Date").attr('required', true);
+                    txtROFRDays.val('');
+                    ErrorMsg = ShowMessage.StartDateLessThanEndDate;
+                }
+
+                var txtYear = $('#Term_YY').val();
+                var txtMonth = $('#Term_MM').val();
+                if (isTentative == true && (txtYear == null || txtYear == '0' || txtYear == undefined || txtYear == '') && (txtMonth == null || txtMonth == '0' || txtMonth == undefined || txtMonth == '')) {
+                    IsValidSave = false;
+                    showAlert("E", ShowMessage.PleaseEnterValidTerm);
+                }
+            }
+            else if (Term == "P") {
+                if ($('#txtPerpetuity_Date').val() == "" || $('#txtPerpetuity_Date').val() == "DD/MM/YYYY") {
+                    IsValidSave = false;
+                    $("#txtPerpetuity_Date").attr('required', true);
+                }
+
+                if ($('#txtPerpetuity_EndDate').val() == "" || $('#txtPerpetuity_EndDate').val() == "DD/MM/YYYY") {
+                    IsValidSave = false;
+                    $("#txtPerpetuity_EndDate").attr('required', true);
+                }
+            }
+
+            //------------------ END
+
+            if (IsValidSave == false) {
+                return;
+            }
+        }
+        
+
+        var Is_Title_Language_Right, rdoTerritoryHB,rdoSubGroup ,rdoDubGroup , lbTitles, lbTerritory, lbSub_Language, lbDub_Language, Start_Date = "", End_Date = "", Perpetuity_Date = "";
+        var hdnTVCodes = $("#hdnTVCodes").val();
+        
+        if ($("#Mode").val() == "V") {
+            var Term = $("#hdn_Term").val();
+            Term = Term == "U" ? "P" : Term;
+
+            lbTitles = $("#lbTitles").val().split(",");
+            lbTerritory = $("#lbTerritory").val().split(",");
+            lbSub_Language = $("#lbSub_Language").val().split(",");
+            lbDub_Language = $("#lbDub_Language").val().split(",");
+
+            if (Term == "Y") {
+                Start_Date = $("#Start_Date").val().slice(0, -9);
+                End_Date = $("#End_Date").val().slice(0, -9);
+            }
+            else if (Term == "P") {
+                Perpetuity_Date = $("#Start_Date").val().slice(0, -9);
+            }
+            Is_Title_Language_Right = $("#Is_Title_Language_Right").val();
+            rdoTerritoryHB = $("#rdoTerritoryHB").val() == "G" ? "Y" : "N";
+            rdoSubGroup = $("#rdoSubLG").val() == true ? "Y" : "N";
+            rdoDubGroup = $("#rdoDubbingLG").val() == true ? "Y" : "N";
+        }
+        else {
+            lbTitles = $("#lbTitles").val();
+            lbTerritory = $("#lbTerritory").val();
+            lbSub_Language = $("#lbSub_Language").val();
+            lbDub_Language = $("#lbDub_Language").val();
+            if (Term == "Y") {
+                Start_Date = $("#Start_Date").val();
+                End_Date = $("#End_Date").val();
+            }
+            else if (Term == "P") {
+                Perpetuity_Date = $('#txtPerpetuity_Date').val()
+            }        
+            Is_Title_Language_Right = $("#Is_Title_Language_Right")[0].checked == true ? "Y" : "N";
+            rdoTerritoryHB = $("#rdoTerritoryHB")[0].checked == true ? "Y" : "N";
+            rdoSubGroup = $("#rdoSubLG")[0].checked == true ? "Y" : "N";
+            rdoDubGroup = $("#rdoDubbingLG")[0].checked == true ? "Y" : "N";
+            
+        }
+
+        if (lbTitles == undefined || lbTerritory == undefined || Is_Title_Language_Right == undefined || rdoTerritoryHB == undefined) {
+            return;
+        }
+        if (lbSub_Language == undefined) {
+            lbSub_Language = "";
+        }
+        if (lbDub_Language == undefined) {
+            lbDub_Language = "";
+        }
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindPromoterTree,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                PromoterGroupCode: codes,
+                DummyProperty: btdId,
+                lbTitles: lbTitles,
+                lbTerritory: lbTerritory,
+                rdoSubGroup: rdoSubGroup,
+                rdoDubGroup: rdoDubGroup,
+                lbSub_Language: lbSub_Language,
+                lbDub_Language: lbDub_Language,
+                Start_Date: Start_Date,
+                End_Date: End_Date,
+                Perpetuity_Date: Perpetuity_Date,
+                hdnTVCodes: hdnTVCodes,
+                Is_Title_Language_Right: Is_Title_Language_Right,
+                rdoTerritoryHB: rdoTerritoryHB,
+                Term: Term
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger;
+                    $('#divTree').empty();
+                    $('#divTree').html(result);
+                    pos.left = 206;
+                    $('#popupFadeP').offset({ top: pos.top, left: pos.left }).fadeIn();
+                    $('#popupFadeP').offset({ top: pos.top, left: pos.left }).fadeIn();
+                    initializeChosen();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    });
+
+    function isValidPomoterRights() {
+
+    }
+
+    $("#popupFadeP").click(function (event) {
+        event.stopPropagation();
+    });
+</script>
+<style>
+    .rightsU_footer {
+        z-index: 0 !important;
+    }
+
+    #popupFadeP {
+        position: absolute;
+        display: none;
+        max-width: 300px;
+        border: #bbb 1px solid;
+        z-index: 100;
+        min-width: 281px;
+    }
+
+        #popupFadeP .modal-dialog ul.fancytree-container {
+            height: 100%;
+            border: 0;
+            max-height: 300px;
+        }
+
+        #popupFadeP form .modal_block {
+            padding: 3px 1px;
+        }
+
+        #popupFadeP #Promoter_Matrix {
+            max-height: 300px !important;
+        }
+</style>
+<form id="frm_Save_Promoter" method="post">
+    <table class="table table-bordered table-hover" id="tblPromoter">
+        <thead>
+            <tr>
+                <th style="text-align:center;width:45%!important;">@objMessageKey.PromoterGroup</th>
+                <th style="text-align:center;width:45%!important">@objMessageKey.PromoterRestrictionRemarks</th>
+                @if (ViewBag.CommandName_PR != GlobalParams.DEAL_MODE_VIEW && @ViewBag.CommandName_PR != GlobalParams.DEAL_MODE_APPROVE)
+                {
+                    <th style="text-align:center;width:10%!important;">@objMessageKey.Action</th>
+                }
+            </tr>
+        </thead>
+        @if (ViewBag.CommandName_PR == "ADD")
+        {
+
+            <tr id="trAddEditBO" class="hideCT" style="display:none;">
+                <td style="height:52px !important;padding-top:10px;">
+                    <a id="0_aviewplatform" href="#" title="" class="clsPromoterPopup" data-original-title="@objMessageKey.ViewPromoter" style="text-decoration:underline"> @objMessageKey.Promoters</a>
+                </td>
+                <td style="padding-top:10px;">
+                    <div id="divRemarks_0" style="position:absolute;right:213px;">
+                        @Html.DropDownList("ddlRemarks", ViewBag.RemarksList as MultiSelectList, new { @id = "ddlRemarks_0", @multiple = "multiple", @width = "400px" })
+                        <a class="red_icon glyphicon glyphicon-plus" title="" onclick="AddRemarks('ddlRemarks_0');" data-original-title="@objMessageKey.AddPromoterRestrictionRemarks"></a>
+                    </div>
+                </td>
+                <td style="text-align:center;">
+                    <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" onclick="return Save_Promoter('0');"></a>
+                    <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" onclick="Cancel_Promoter();Bind_Promoter();"></a>
+                </td>
+            </tr>
+        }
+
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                string Counter = "0", strRemarks = "", strPromoter = "";
+                Counter = item.strDummyProp;
+                <tr>
+
+                    @if (ViewBag.DummyProperty == item.strDummyProp)
+                    {
+                        strPromoter = string.Join(", ", item.Syn_Deal_Rights_Promoter_Group.Where(w => w.EntityState != RightsU_Entities.State.Deleted)
+                           .Select(p => (p.Promoter_Group ?? objPGService.GetById((int)p.Promoter_Group_Code)).Promoter_Group_Name).ToList());
+                        strPromoter = strPromoter.Split(',')[0];
+                        <td style="height:52px !important;padding-top:10px;">
+                            <a id="@Counter" +_aviewplatform" href="#" title="" class="clsPromoterPopup" data-original-title="@objMessageKey.ViewPromoter" style="text-decoration:underline"> @item.TotalCount @objMessageKey.Promoters </a>
+                        </td>
+                        <td style="padding-top:10px;">
+                            <div id="divRemarks_E" style="position:absolute;right:213px;">
+                                @Html.DropDownList("ddlRemarks", ViewBag.RemarksList as MultiSelectList, new { @id = "ddlRemarks_" + Counter, @multiple = "multiple" })
+                                <a class="red_icon glyphicon glyphicon-plus" title="" onclick="AddRemarks('ddlRemarks_@Counter');" data-original-title="@objMessageKey.AddPromoterRestrictionRemarks"></a>
+                            </div>
+                        </td>
+                        <td style="text-align:center;">
+                            <a title="@objMessageKey.Update" class="glyphicon glyphicon-ok-circle" onclick="return Save_Promoter('@Counter');"></a>
+                            <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" onclick="Cancel_Promoter();Bind_Promoter();"></a>
+                        </td>
+                    }
+                    else
+                    {
+                        strRemarks = string.Join(", ", item.Syn_Deal_Rights_Promoter_Remarks.Where(w => w.EntityState != RightsU_Entities.State.Deleted)
+                            .Select(p => (p.Promoter_Remarks ?? objPRService.GetById((int)p.Promoter_Remarks_Code)).Promoter_Remark_Desc).ToList());
+                        <td>
+                            <a id="@Counter" +_aviewplatform" href="#" title="" class="clsPromoterPopup View" data-original-title="@objMessageKey.ViewPromoter" style="text-decoration:underline">@item.TotalCount @objMessageKey.Promoters</a>
+                        </td>
+
+                        <td>
+                            @strRemarks
+                        </td>
+                        if (ViewBag.CommandName_PR != GlobalParams.DEAL_MODE_VIEW && @ViewBag.CommandName_PR != GlobalParams.DEAL_MODE_APPROVE)
+                        {
+                            <td style="text-align:center;">
+                                <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" onclick="return Edit_Promoter('@Counter');"></a>
+                                <a title="@objMessageKey.Delete" class="glyphicon glyphicon-trash" onclick="return Delete_Promoter('@Counter');"></a>
+                            </td>
+                        }
+                    }
+                </tr>
+            }
+        }
+        @Html.Hidden("hdnDummyPropPro")
+
+    </table>
+    <div>
+        @if (ViewBag.CommandName_PR != GlobalParams.DEAL_MODE_VIEW && @ViewBag.CommandName_PR != GlobalParams.DEAL_MODE_APPROVE)
+        {
+            @Html.CheckBox("Promoter_Flag", (ViewBag.Promoter_Flag == "Y" ? true : false), new { @onclick = "PromoterChange()" })
+        }
+        else
+        {
+            @Html.CheckBox("Promoter_Flag", (ViewBag.Promoter_Flag == "Y" ? true : false), new { @disabled = "disabled" })
+        }
+        @objMessageKey.NoPromoterRightsfortheselectedcombinationofRight
+        @Html.Hidden("hdnPromoter_Flag", (ViewBag.Promoter_Flag == "Y" ? true : false))
+
+    </div>
+</form>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade in small_popup" id="popAddRemarks" role="dialog" tabindex="-1" aria-hidden="false" style="height:163px;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form" id="Remarks_popup">
+                <div>
+                    <div class="form_fields">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>×</span>
+                                <span class="sr-only">@objMessageKey.Close</span>
+                            </a>
+                            <h2>@objMessageKey.AddPromoterRestrictionRemarks</h2>
+                        </div>
+                        <div class="modal_block">
+                            <ul class="form_fields_wrapper add_restriction_remarks_popup">
+                                <li>
+                                    <label><b>@objMessageKey.PromoterRestrictionRemarks</b></label>
+                                    <input class="bigTextBox" id="txtRestriction_Remarks" name="txtRestriction_Remarks" type="text" maxlength="100" ondrop="return false;" style="width:90%;" />
+
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li class="poptalent">
+                                        <a class="btn btn-primary" href="#" onclick="return validate()">@objMessageKey.Save</a>
+                                    </li>
+                                    <li class="poptalent">
+                                        <a class="btn btn-primary" href="#" data-dismiss="modal">@objMessageKey.Cancel</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="popupFadeP">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form">
+                <div class="form_fields">
+                    <div class="modal_block modal_header">
+                        <a class="close" onclick="ClosePopup()">
+                            <span style="margin-right:6px;">×</span>
+                            <span class="sr-only">@objMessageKey.Close</span>
+                        </a>
+                        <h5 style="margin-bottom:10px;margin-left:7px;">@objMessageKey.PromoterMatrix</h5>
+                        <input type="hidden" id="hdnPGCodes" name="hdnPGCodes" />
+                        <div id="divTree" class="platform_wrapper" style="overflow:auto;">
+                            <div id="tree" class="treeClass">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

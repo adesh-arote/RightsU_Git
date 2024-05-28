@@ -1,0 +1,311 @@
+﻿CREATE PROCEDURE [dbo].[USP_Acq_Deal_Right_Clone] 
+	@New_Acq_Deal_Code INT,
+	@Acq_Deal_Rights_Code INT,
+	@Acq_Deal_Rights_Title_Code INT,
+	@Title_Code INT,
+	@Is_Program CHAR(1) = 'N'
+
+AS
+-- =============================================
+-- Author:		Akshay Rane
+-- Create date: 25 January 2019
+-- Last Updated Date : 24 June 2019
+-- Description:	This USP used to clone remaining deal tables
+-- Changed Description:	Added support for Program clone
+-- =============================================
+BEGIN
+	Declare @Loglevel int;
+
+	select @Loglevel = Parameter_Value from System_Parameter_New where Parameter_Name='loglevel'
+
+	if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_Acq_Deal_Right_Clone]', 'Step 1', 0, 'Started Procedure', 0, ''
+		-- SET NOCOUNT ON added to prevent extra result sets from
+		SET NOCOUNT ON;
+
+		--DECLARE
+		--@New_Acq_Deal_Code INT = 15440,
+		--@Acq_Deal_Rights_Code INT = 26929,
+		--@Acq_Deal_Rights_Title_Code INT = 35848,
+		--@Title_Code INT = 30140,
+		--@Is_Program CHAR(1) = 'Y'
+
+
+		DECLARE @New_Acq_Deal_Rights_Code INT = 0
+
+		BEGIN
+		INSERT INTO Acq_Deal_Rights(Acq_Deal_Code, Is_Exclusive, Is_Title_Language_Right, Is_Sub_License, Sub_License_Code, Is_Theatrical_Right,
+			Right_Type, Is_Tentative, Term, Right_Start_Date, Right_End_Date, Milestone_Type_Code, Milestone_No_Of_Unit, Milestone_Unit_Type, Is_ROFR,
+			ROFR_Date, Restriction_Remarks, Effective_Start_Date, Actual_Right_Start_Date, Actual_Right_End_Date, Inserted_By, Inserted_On, 
+			Last_Updated_Time, Last_Action_By,Original_Right_Type,Promoter_Flag, Right_Status)
+		Select @New_Acq_Deal_Code, Is_Exclusive, Is_Title_Language_Right, Is_Sub_License, Sub_License_Code, Is_Theatrical_Right,
+			Right_Type, Is_Tentative, Term, Right_Start_Date, Right_End_Date, Milestone_Type_Code, Milestone_No_Of_Unit, Milestone_Unit_Type, Is_ROFR,
+			ROFR_Date, Restriction_Remarks, Effective_Start_Date, Actual_Right_Start_Date, Actual_Right_End_Date, Inserted_By, Inserted_On, 
+			Last_Updated_Time, Last_Action_By,Original_Right_Type,Promoter_Flag, 'P'
+		From Acq_Deal_Rights (NOLOCK) WHERE Acq_Deal_Rights_Code = @Acq_Deal_Rights_Code
+	
+		SELECT @New_Acq_Deal_Rights_Code = IDENT_CURRENT('Acq_Deal_Rights')
+
+		/**************** Insert into AT_Acq_Deal_Rights_Title ****************/ 
+
+		IF(@Is_Program  <> 'Y')
+		BEGIN
+			INSERT INTO Acq_Deal_Rights_Title (Acq_Deal_Rights_Code, Title_Code, Episode_From, Episode_To)
+			SELECT @New_Acq_Deal_Rights_Code, ADRT.Title_Code, ADRT.Episode_From, ADRT.Episode_To
+			FROM Acq_Deal_Rights_Title ADRT (NOLOCK) 
+			--INNER JOIN @Deal_Rights_Title DRT ON ADRT.Acq_Deal_Rights_Code = DRT.Deal_Rights_Code AND ADRT.Acq_Deal_Rights_Title_Code = DRT.Episode_From
+			Where Acq_Deal_Rights_Code = @Acq_Deal_Rights_Code and Title_Code = @Title_Code
+
+			DELETE FROM Acq_Deal_Rights_Title WHERE Acq_Deal_Rights_Code = @Acq_Deal_Rights_Code and Title_Code = @Title_Code
+		END
+		ELSE IF (@Is_Program  = 'Y')
+		BEGIN
+			INSERT INTO Acq_Deal_Rights_Title (Acq_Deal_Rights_Code, Title_Code, Episode_From, Episode_To)
+			SELECT @New_Acq_Deal_Rights_Code, ADRT.Title_Code, ADRT.Episode_From, ADRT.Episode_To
+			FROM Acq_Deal_Rights_Title ADRT (NOLOCK)
+			--INNER JOIN @Deal_Rights_Title DRT ON ADRT.Acq_Deal_Rights_Code = DRT.Deal_Rights_Code AND ADRT.Acq_Deal_Rights_Title_Code = DRT.Episode_From
+			Where Acq_Deal_Rights_Title_Code = @Acq_Deal_Rights_Title_Code and Title_Code = @Title_Code
+
+			DELETE FROM Acq_Deal_Rights_Title WHERE Acq_Deal_Rights_Title_Code = @Acq_Deal_Rights_Title_Code and Title_Code = @Title_Code
+		END
+
+		/**************** Insert into AT_Acq_Deal_Rights_Title_Eps ****************/ 
+
+		IF(@Is_Program  <> 'Y')
+		BEGIN
+			INSERT INTO Acq_Deal_Rights_Title_Eps (
+				Acq_Deal_Rights_Title_Code, EPS_No)
+			SELECT
+				AtADRT.Acq_Deal_Rights_Title_Code, ADRTE.EPS_No
+			FROM Acq_Deal_Rights_Title_EPS ADRTE (NOLOCK)
+				INNER JOIN Acq_Deal_Rights_Title ADRT (NOLOCK) ON ADRTE.Acq_Deal_Rights_Title_Code = ADRT.Acq_Deal_Rights_Title_Code
+			--	INNER JOIN @Deal_Rights_Title DRT ON ADRT.Acq_Deal_Rights_Code = DRT.Deal_Rights_Code AND ADRT.Acq_Deal_Rights_Title_Code = DRT.Episode_From
+				INNER JOIN Acq_Deal_Rights_Title AtADRT On 
+					CAST(ISNULL(AtADRT.Title_Code, '') AS VARCHAR) + '~' +  CAST(ISNULL(AtADRT.Episode_From, '') AS VARCHAR) + '~' +  CAST(ISNULL(AtADRT.Episode_To, '') AS VARCHAR) =
+					CAST(ISNULL(ADRT.Title_Code, '') AS VARCHAR) + '~' +  CAST(ISNULL(ADRT.Episode_From, '') AS VARCHAR) + '~' +  CAST(ISNULL(ADRT.Episode_To, '') AS VARCHAR)
+			WHERE ADRT.Acq_Deal_Rights_Code = @Acq_Deal_Rights_Code AND AtADRT.Acq_Deal_Rights_Code = @New_Acq_Deal_Rights_Code	
+		END
+		ELSE IF (@Is_Program  = 'Y')
+
+		BEGIN
+			INSERT INTO Acq_Deal_Rights_Title_Eps (
+				Acq_Deal_Rights_Title_Code, EPS_No)
+			SELECT
+				AtADRT.Acq_Deal_Rights_Title_Code, ADRTE.EPS_No
+			FROM Acq_Deal_Rights_Title_EPS ADRTE (NOLOCK)
+				INNER JOIN Acq_Deal_Rights_Title ADRT (NOLOCK) ON ADRTE.Acq_Deal_Rights_Title_Code = ADRT.Acq_Deal_Rights_Title_Code
+				INNER JOIN Acq_Deal_Rights_Title AtADRT On  
+					CAST(ISNULL(AtADRT.Title_Code, '') AS VARCHAR) + '~' +  CAST(ISNULL(AtADRT.Episode_From, '') AS VARCHAR) + '~' +  CAST(ISNULL(AtADRT.Episode_To, '') AS VARCHAR) =
+					CAST(ISNULL(ADRT.Title_Code, '') AS VARCHAR) + '~' +  CAST(ISNULL(ADRT.Episode_From, '') AS VARCHAR) + '~' +  CAST(ISNULL(ADRT.Episode_To, '') AS VARCHAR)
+			WHERE ADRT.Acq_Deal_Rights_Title_Code = @Acq_Deal_Rights_Title_Code AND AtADRT.Acq_Deal_Rights_Code = @New_Acq_Deal_Rights_Code
+		END
+		/**************** Insert into AT_Acq_Deal_Rights_Platform ****************/ 
+
+		INSERT INTO Acq_Deal_Rights_Platform (Acq_Deal_Rights_Code, Platform_Code)	
+		SELECT @New_Acq_Deal_Rights_Code, ADRP.Platform_Code
+		FROM Acq_Deal_Rights_Platform ADRP (NOLOCK) Where Acq_Deal_Rights_Code = @Acq_Deal_Rights_Code
+
+		/**************** Insert into AT_Acq_Deal_Rights_Territory ****************/ 
+
+		INSERT INTO Acq_Deal_Rights_Territory (Acq_Deal_Rights_Code, Territory_Code, Territory_Type, Country_Code)	
+		SELECT @New_Acq_Deal_Rights_Code, ADRT.Territory_Code, ADRT.Territory_Type, ADRT.Country_Code
+		FROM Acq_Deal_Rights_Territory ADRT (NOLOCK) Where Acq_Deal_Rights_Code = @Acq_Deal_Rights_Code
+
+		/**************** Insert into AT_Acq_Deal_Rights_Subtitling ****************/ 
+		INSERT INTO Acq_Deal_Rights_Subtitling (Acq_Deal_Rights_Code, Language_Code, Language_Group_Code, Language_Type)	
+		SELECT @New_Acq_Deal_Rights_Code, ADRS.Language_Code, ADRS.Language_Group_Code, ADRS.Language_Type
+		FROM Acq_Deal_Rights_Subtitling ADRS (NOLOCK) Where Acq_Deal_Rights_Code = @Acq_Deal_Rights_Code
+
+		/**************** Insert into AT_Acq_Deal_Rights_Dubbing ****************/ 
+
+		INSERT INTO Acq_Deal_Rights_Dubbing (Acq_Deal_Rights_Code, Language_Code, Language_Group_Code, Language_Type)	
+		SELECT @New_Acq_Deal_Rights_Code, ADRD.Language_Code, ADRD.Language_Group_Code, ADRD.Language_Type
+		FROM Acq_Deal_Rights_Dubbing ADRD (NOLOCK) Where Acq_Deal_Rights_Code = @Acq_Deal_Rights_Code
+
+		/**************** Insert into AT_Acq_Deal_Rights_Holdback ****************/ 
+
+		INSERT INTO Acq_Deal_Rights_Holdback (Acq_Deal_Rights_Code, 
+			Holdback_Type, HB_Run_After_Release_No, HB_Run_After_Release_Units, 
+			Holdback_On_Platform_Code, Holdback_Release_Date, Holdback_Comment, Is_Title_Language_Right)
+		SELECT @New_Acq_Deal_Rights_Code, 
+			ADRH.Holdback_Type, ADRH.HB_Run_After_Release_No, ADRH.HB_Run_After_Release_Units, 
+			ADRH.Holdback_On_Platform_Code, ADRH.Holdback_Release_Date, ADRH.Holdback_Comment, ADRH.Is_Title_Language_Right
+		FROM Acq_Deal_Rights_Holdback ADRH (NOLOCK) Where Acq_Deal_Rights_Code = @Acq_Deal_Rights_Code
+
+		/******** Insert into AT_Acq_Deal_Rights_Holdback_Dubbing ********/ 
+
+		INSERT INTO Acq_Deal_Rights_Holdback_Dubbing (
+			Acq_Deal_Rights_Holdback_Code, Language_Code)
+		SELECT
+			AtADRH.Acq_Deal_Rights_Holdback_Code, ADRHD.Language_Code
+		FROM Acq_Deal_Rights_Holdback_Dubbing ADRHD (NOLOCK) INNER JOIN Acq_Deal_Rights_Holdback ADRH (NOLOCK) ON ADRHD.Acq_Deal_Rights_Holdback_Code = ADRH.Acq_Deal_Rights_Holdback_Code
+			INNER JOIN Acq_Deal_Rights_Holdback AtADRH (NOLOCK) ON
+				CAST(ISNULL(AtADRH.HB_Run_After_Release_No, '') AS VARCHAR) + '~' + ISNULL(AtADRH.HB_Run_After_Release_Units, '') + '~' +
+				ISNULL(AtADRH.Holdback_Comment, '') + '~' + CAST(ISNULL(AtADRH.Holdback_On_Platform_Code, '') AS VARCHAR) + '~' +
+				CAST(ISNULL(AtADRH.Holdback_Release_Date, '') AS VARCHAR) + '~' + ISNULL(AtADRH.Holdback_Type, '') + '~' + ISNULL(AtADRH.Is_Title_Language_Right, '') 
+				=
+				CAST(ISNULL(ADRH.HB_Run_After_Release_No, '') AS VARCHAR) + '~' + ISNULL(ADRH.HB_Run_After_Release_Units, '') + '~' +
+				ISNULL(ADRH.Holdback_Comment, '') + '~' + CAST(ISNULL(ADRH.Holdback_On_Platform_Code, '') AS VARCHAR) + '~' +
+				CAST(ISNULL(ADRH.Holdback_Release_Date, '') AS VARCHAR) + '~' + ISNULL(ADRH.Holdback_Type, '') + '~' + ISNULL(ADRH.Is_Title_Language_Right, '')
+				WHERE ADRH.Acq_Deal_Rights_Code = @Acq_Deal_Rights_Code AND AtADRH.Acq_Deal_Rights_Code = @New_Acq_Deal_Rights_Code
+
+
+		/******** Insert into AT_Acq_Deal_Rights_Holdback_Platform ********/ 
+
+		INSERT INTO Acq_Deal_Rights_Holdback_Platform (
+			Acq_Deal_Rights_Holdback_Code, Platform_Code)
+		SELECT
+			AtADRH.Acq_Deal_Rights_Holdback_Code, ADRHP.Platform_Code
+		FROM Acq_Deal_Rights_Holdback_Platform ADRHP (NOLOCK) INNER JOIN Acq_Deal_Rights_Holdback ADRH (NOLOCK) ON ADRHP.Acq_Deal_Rights_Holdback_Code = ADRH.Acq_Deal_Rights_Holdback_Code
+			INNER JOIN Acq_Deal_Rights_Holdback AtADRH ON 
+				CAST(ISNULL(AtADRH.HB_Run_After_Release_No, '') AS VARCHAR) + '~' + ISNULL(AtADRH.HB_Run_After_Release_Units, '') + '~' +
+				ISNULL(AtADRH.Holdback_Comment, '') + '~' + CAST(ISNULL(AtADRH.Holdback_On_Platform_Code, '') AS VARCHAR) + '~' +
+				CAST(ISNULL(AtADRH.Holdback_Release_Date, '') AS VARCHAR) + '~' + ISNULL(AtADRH.Holdback_Type, '') + '~' + ISNULL(AtADRH.Is_Title_Language_Right, '') 
+				=
+				CAST(ISNULL(ADRH.HB_Run_After_Release_No, '') AS VARCHAR) + '~' + ISNULL(ADRH.HB_Run_After_Release_Units, '') + '~' +
+				ISNULL(ADRH.Holdback_Comment, '') + '~' + CAST(ISNULL(ADRH.Holdback_On_Platform_Code, '') AS VARCHAR) + '~' +
+				CAST(ISNULL(ADRH.Holdback_Release_Date, '') AS VARCHAR) + '~' + ISNULL(ADRH.Holdback_Type, '') + '~' + ISNULL(ADRH.Is_Title_Language_Right, '') 
+				WHERE ADRH.Acq_Deal_Rights_Code = @Acq_Deal_Rights_Code AND AtADRH.Acq_Deal_Rights_Code = @New_Acq_Deal_Rights_Code
+
+		/******** Insert into AT_Acq_Deal_Rights_Holdback_Subtitling ********/ 
+		INSERT INTO Acq_Deal_Rights_Holdback_Subtitling (
+			Acq_Deal_Rights_Holdback_Code, Language_Code)
+		SELECT
+			AtADRH.Acq_Deal_Rights_Holdback_Code, ADRHS.Language_Code
+		FROM Acq_Deal_Rights_Holdback_Subtitling ADRHS (NOLOCK) INNER JOIN Acq_Deal_Rights_Holdback ADRH (NOLOCK) ON ADRHS.Acq_Deal_Rights_Holdback_Code = ADRH.Acq_Deal_Rights_Holdback_Code
+			INNER JOIN Acq_Deal_Rights_Holdback AtADRH ON
+				CAST(ISNULL(AtADRH.HB_Run_After_Release_No, '') AS VARCHAR) + '~' + ISNULL(AtADRH.HB_Run_After_Release_Units, '') + '~' +
+				ISNULL(AtADRH.Holdback_Comment, '') + '~' + CAST(ISNULL(AtADRH.Holdback_On_Platform_Code, '') AS VARCHAR) + '~' +
+				CAST(ISNULL(AtADRH.Holdback_Release_Date, '') AS VARCHAR) + '~' + ISNULL(AtADRH.Holdback_Type, '') + '~' + ISNULL(AtADRH.Is_Title_Language_Right, '') 
+				=
+				CAST(ISNULL(ADRH.HB_Run_After_Release_No, '') AS VARCHAR) + '~' + ISNULL(ADRH.HB_Run_After_Release_Units, '') + '~' +
+				ISNULL(ADRH.Holdback_Comment, '') + '~' + CAST(ISNULL(ADRH.Holdback_On_Platform_Code, '') AS VARCHAR) + '~' +
+				CAST(ISNULL(ADRH.Holdback_Release_Date, '') AS VARCHAR) + '~' + ISNULL(ADRH.Holdback_Type, '') + '~' + ISNULL(ADRH.Is_Title_Language_Right, '')
+				WHERE ADRH.Acq_Deal_Rights_Code = @Acq_Deal_Rights_Code AND AtADRH.Acq_Deal_Rights_Code = @New_Acq_Deal_Rights_Code
+
+		/******** Insert into AT_Acq_Deal_Rights_Holdback_Territory ********/ 
+
+		INSERT INTO Acq_Deal_Rights_Holdback_Territory (
+			Acq_Deal_Rights_Holdback_Code, Territory_Type, Country_Code, Territory_Code)
+		SELECT
+			AtADRH.Acq_Deal_Rights_Holdback_Code, Territory_Type, Country_Code, Territory_Code
+		FROM Acq_Deal_Rights_Holdback_Territory ADRHT (NOLOCK) INNER JOIN Acq_Deal_Rights_Holdback ADRH (NOLOCK) ON ADRHT.Acq_Deal_Rights_Holdback_Code = ADRH.Acq_Deal_Rights_Holdback_Code
+			INNER JOIN Acq_Deal_Rights_Holdback AtADRH (NOLOCK) ON
+				CAST(ISNULL(AtADRH.HB_Run_After_Release_No, '') AS VARCHAR) + '~' + ISNULL(AtADRH.HB_Run_After_Release_Units, '') + '~' +
+				ISNULL(AtADRH.Holdback_Comment, '') + '~' + CAST(ISNULL(AtADRH.Holdback_On_Platform_Code, '') AS VARCHAR) + '~' +
+				CAST(ISNULL(AtADRH.Holdback_Release_Date, '') AS VARCHAR) + '~' + ISNULL(AtADRH.Holdback_Type, '') + '~' + ISNULL(AtADRH.Is_Title_Language_Right, '') 
+				=
+				CAST(ISNULL(ADRH.HB_Run_After_Release_No, '') AS VARCHAR) + '~' + ISNULL(ADRH.HB_Run_After_Release_Units, '') + '~' +
+				ISNULL(ADRH.Holdback_Comment, '') + '~' + CAST(ISNULL(ADRH.Holdback_On_Platform_Code, '') AS VARCHAR) + '~' +
+				CAST(ISNULL(ADRH.Holdback_Release_Date, '') AS VARCHAR) + '~' + ISNULL(ADRH.Holdback_Type, '') + '~' + ISNULL(ADRH.Is_Title_Language_Right, '') 
+				WHERE ADRH.Acq_Deal_Rights_Code = @Acq_Deal_Rights_Code AND AtADRH.Acq_Deal_Rights_Code = @New_Acq_Deal_Rights_Code
+
+		/**************** Insert into AT_Acq_Deal_Rights_Blackout ****************/ 
+
+		INSERT INTO Acq_Deal_Rights_Blackout (
+			Acq_Deal_Rights_Code, 
+			Start_Date, End_Date, Inserted_By, Inserted_On, Last_Updated_Time, Last_Action_By)
+		SELECT 
+			@New_Acq_Deal_Rights_Code, 
+			ADRB.Start_Date, ADRB.End_Date, ADRB.Inserted_By, ADRB.Inserted_On, ADRB.Last_Updated_Time, ADRB.Last_Action_By
+		FROM Acq_Deal_Rights_Blackout ADRB (NOLOCK) WHERE ADRB.Acq_Deal_Rights_Code = @Acq_Deal_Rights_Code
+
+		/******** Insert into AT_Acq_Deal_Rights_Blackout_Dubbing ********/ 
+
+		INSERT INTO Acq_Deal_Rights_Blackout_Dubbing (
+			Acq_Deal_Rights_Blackout_Code, Language_Code)
+		SELECT
+			AtADRB.Acq_Deal_Rights_Blackout_Code, ADRBD.Language_Code
+		FROM Acq_Deal_Rights_Blackout_Dubbing ADRBD (NOLOCK) INNER JOIN Acq_Deal_Rights_Blackout ADRB (NOLOCK) ON ADRBD.Acq_Deal_Rights_Blackout_Code = ADRB.Acq_Deal_Rights_Blackout_Code
+			INNER JOIN Acq_Deal_Rights_Blackout AtADRB (NOLOCK) ON
+				CAST(ISNULL(AtADRB.Start_Date, '') AS VARCHAR) + '~' + CAST(ISNULL(AtADRB.End_Date, '') AS VARCHAR) + '~' +
+				CAST(ISNULL(AtADRB.Inserted_By, '') AS VARCHAR) + '~' + CAST(ISNULL(AtADRB.Inserted_On, '') AS VARCHAR)  + '~' + 
+				CAST(ISNULL(AtADRB.Last_Action_By, '') AS VARCHAR)  + '~' + CAST(ISNULL(AtADRB.Last_Updated_Time, '') AS VARCHAR) 
+				=
+				CAST(ISNULL(ADRB.Start_Date, '') AS VARCHAR) + '~' + CAST(ISNULL(ADRB.End_Date, '') AS VARCHAR) + '~' +
+				CAST(ISNULL(ADRB.Inserted_By, '') AS VARCHAR) + '~' + CAST(ISNULL(ADRB.Inserted_On, '') AS VARCHAR)  + '~' + 
+				CAST(ISNULL(ADRB.Last_Action_By, '') AS VARCHAR)  + '~' + CAST(ISNULL(ADRB.Last_Updated_Time, '') AS VARCHAR)
+				WHERE ADRB.Acq_Deal_Rights_Code = @Acq_Deal_Rights_Code AND AtADRB.Acq_Deal_Rights_Code = @New_Acq_Deal_Rights_Code
+
+		/******** Insert into AT_Acq_Deal_Rights_Blackout_Platform ********/ 
+
+		INSERT INTO Acq_Deal_Rights_Blackout_Platform (
+			Acq_Deal_Rights_Blackout_Code, Platform_Code)
+		SELECT
+			AtADRB.Acq_Deal_Rights_Blackout_Code, ADRBP.Platform_Code
+		FROM Acq_Deal_Rights_Blackout_Platform ADRBP (NOLOCK) INNER JOIN Acq_Deal_Rights_Blackout ADRB (NOLOCK) ON ADRBP.Acq_Deal_Rights_Blackout_Code = ADRB.Acq_Deal_Rights_Blackout_Code
+			INNER JOIN Acq_Deal_Rights_Blackout AtADRB (NOLOCK) ON 
+				CAST(ISNULL(AtADRB.Start_Date, '') AS VARCHAR) + '~' + CAST(ISNULL(AtADRB.End_Date, '') AS VARCHAR) + '~' +
+				CAST(ISNULL(AtADRB.Inserted_By, '') AS VARCHAR) + '~' + CAST(ISNULL(AtADRB.Inserted_On, '') AS VARCHAR)  + '~' + 
+				CAST(ISNULL(AtADRB.Last_Action_By, '') AS VARCHAR)  + '~' + CAST(ISNULL(AtADRB.Last_Updated_Time, '') AS VARCHAR) 
+				=
+				CAST(ISNULL(ADRB.Start_Date, '') AS VARCHAR) + '~' + CAST(ISNULL(ADRB.End_Date, '') AS VARCHAR) + '~' +
+				CAST(ISNULL(ADRB.Inserted_By, '') AS VARCHAR) + '~' + CAST(ISNULL(ADRB.Inserted_On, '') AS VARCHAR)  + '~' + 
+				CAST(ISNULL(ADRB.Last_Action_By, '') AS VARCHAR)  + '~' + CAST(ISNULL(ADRB.Last_Updated_Time, '') AS VARCHAR) 
+				WHERE ADRB.Acq_Deal_Rights_Code = @Acq_Deal_Rights_Code AND AtADRB.Acq_Deal_Rights_Code = @New_Acq_Deal_Rights_Code
+
+		/******** Insert into AT_Acq_Deal_Rights_Blackout_Subtitling ********/ 
+
+		INSERT INTO Acq_Deal_Rights_Blackout_Subtitling(
+			Acq_Deal_Rights_Blackout_Code, Language_Code)
+		SELECT
+			AtADRB.Acq_Deal_Rights_Blackout_Code, ADRBS.Language_Code
+		FROM Acq_Deal_Rights_Blackout_Subtitling ADRBS (NOLOCK) INNER JOIN Acq_Deal_Rights_Blackout ADRB (NOLOCK) ON ADRBS.Acq_Deal_Rights_Blackout_Code = ADRB.Acq_Deal_Rights_Blackout_Code
+			INNER JOIN Acq_Deal_Rights_Blackout AtADRB ON 
+				CAST(ISNULL(AtADRB.Start_Date, '') AS VARCHAR) + '~' + CAST(ISNULL(AtADRB.End_Date, '') AS VARCHAR) + '~' +
+				CAST(ISNULL(AtADRB.Inserted_By, '') AS VARCHAR) + '~' + CAST(ISNULL(AtADRB.Inserted_On, '') AS VARCHAR)  + '~' + 
+				CAST(ISNULL(AtADRB.Last_Action_By, '') AS VARCHAR)  + '~' + CAST(ISNULL(AtADRB.Last_Updated_Time, '') AS VARCHAR) 
+				=
+				CAST(ISNULL(ADRB.Start_Date, '') AS VARCHAR) + '~' + CAST(ISNULL(ADRB.End_Date, '') AS VARCHAR) + '~' +
+				CAST(ISNULL(ADRB.Inserted_By, '') AS VARCHAR) + '~' + CAST(ISNULL(ADRB.Inserted_On, '') AS VARCHAR)  + '~' + 
+				CAST(ISNULL(ADRB.Last_Action_By, '') AS VARCHAR)  + '~' + CAST(ISNULL(ADRB.Last_Updated_Time, '') AS VARCHAR) 
+				WHERE ADRB.Acq_Deal_Rights_Code = @Acq_Deal_Rights_Code AND AtADRB.Acq_Deal_Rights_Code = @New_Acq_Deal_Rights_Code
+
+		/******** Insert into AT_Acq_Deal_Rights_Blackout_Territory ********/ 
+
+		INSERT INTO Acq_Deal_Rights_Blackout_Territory(
+			Acq_Deal_Rights_Blackout_Code, Country_Code, Territory_Code, Territory_Type)
+		SELECT
+			AtADRB.Acq_Deal_Rights_Blackout_Code, ADRBT.Country_Code, ADRBT.Territory_Code, ADRBT.Territory_Type
+		FROM Acq_Deal_Rights_Blackout_Territory ADRBT (NOLOCK) INNER JOIN Acq_Deal_Rights_Blackout ADRB (NOLOCK) ON ADRBT.Acq_Deal_Rights_Blackout_Code = ADRB.Acq_Deal_Rights_Blackout_Code
+			INNER JOIN Acq_Deal_Rights_Blackout AtADRB ON
+				CAST(ISNULL(AtADRB.Start_Date, '') AS VARCHAR) + '~' + CAST(ISNULL(AtADRB.End_Date, '') AS VARCHAR) + '~' +
+				CAST(ISNULL(AtADRB.Inserted_By, '') AS VARCHAR) + '~' + CAST(ISNULL(AtADRB.Inserted_On, '') AS VARCHAR)  + '~' + 
+				CAST(ISNULL(AtADRB.Last_Action_By, '') AS VARCHAR)  + '~' + CAST(ISNULL(AtADRB.Last_Updated_Time, '') AS VARCHAR) 
+				=
+				CAST(ISNULL(ADRB.Start_Date, '') AS VARCHAR) + '~' + CAST(ISNULL(ADRB.End_Date, '') AS VARCHAR) + '~' +
+				CAST(ISNULL(ADRB.Inserted_By, '') AS VARCHAR) + '~' + CAST(ISNULL(ADRB.Inserted_On, '') AS VARCHAR)  + '~' + 
+				CAST(ISNULL(ADRB.Last_Action_By, '') AS VARCHAR)  + '~' + CAST(ISNULL(ADRB.Last_Updated_Time, '') AS VARCHAR) 
+		WHERE ADRB.Acq_Deal_Rights_Code = @Acq_Deal_Rights_Code AND AtADRB.Acq_Deal_Rights_Code = @New_Acq_Deal_Rights_Code
+
+
+		/**************** Insert into AT_Acq_Deal_Rights_Promoter****************/ 
+
+		INSERT INTO Acq_Deal_Rights_Promoter (
+			Acq_Deal_Rights_Code, 
+			 Inserted_By, Inserted_On, Last_Updated_Time, Last_Action_By)
+		SELECT 
+			@New_Acq_Deal_Rights_Code,
+			 ADRP.Inserted_By, ADRP.Inserted_On, ADRP.Last_Updated_Time, ADRP.Last_Action_By
+		FROM Acq_Deal_Rights_Promoter ADRP (NOLOCK) WHERE ADRP.Acq_Deal_Rights_Code = @Acq_Deal_Rights_Code
+
+		/******** Insert into AT_Acq_Deal_Rights_Promoter_Group ********/ 
+
+		INSERT INTO Acq_Deal_Rights_Promoter_Group (
+			Acq_Deal_Rights_Promoter_Code, Promoter_Group_Code)
+		SELECT
+			AtADRP.Acq_Deal_Rights_Promoter_Code, ADRPG.Promoter_Group_Code
+		FROM Acq_Deal_Rights_Promoter_Group ADRPG (NOLOCK) INNER JOIN Acq_Deal_Rights_Promoter ADRP (NOLOCK) ON ADRPG.Acq_Deal_Rights_Promoter_Code = ADRP.Acq_Deal_Rights_Promoter_Code
+			INNER JOIN Acq_Deal_Rights_Promoter AtADRP (NOLOCK) ON
+				CAST(ISNULL(AtADRP.Inserted_By, '') AS VARCHAR) + '~' + CAST(ISNULL(AtADRP.Inserted_On, '') AS VARCHAR)  + '~' + 
+				CAST(ISNULL(AtADRP.Last_Action_By, '') AS VARCHAR)  + '~' + CAST(ISNULL(AtADRP.Last_Updated_Time, '') AS VARCHAR) 
+				=
+				CAST(ISNULL(ADRP.Inserted_By, '') AS VARCHAR) + '~' + CAST(ISNULL(ADRP.Inserted_On, '') AS VARCHAR)  + '~' + 
+				CAST(ISNULL(ADRP.Last_Action_By, '') AS VARCHAR)  + '~' + CAST(ISNULL(ADRP.Last_Updated_Time, '') AS VARCHAR)
+		WHERE ADRP.Acq_Deal_Rights_Code = @Acq_Deal_Rights_Code AND AtADRP.Acq_Deal_Rights_Code = @New_Acq_Deal_Rights_Code
+
+		END
+
+		SELECT CAST(@New_Acq_Deal_Rights_Code AS NVARCHAR(MAX))  AS Acq_Deal_Rights_Code
+
+	if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_Acq_Deal_Right_Clone]', 'Step 2', 0, 'Procedure Excution Completed', 0, ''
+END

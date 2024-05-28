@@ -1,0 +1,279 @@
+﻿@model IEnumerable<RightsU_Entities.USP_List_Music_Deal_Result>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }     
+}
+@using UTOFrameWork.FrameworkClasses;
+<script>
+    $('.expand_DealTitles').expander({
+        slicePoint: 33,
+        expandPrefix: '',
+        expandText: '...read more',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+
+    $(document).ready(function () {
+        if ('@objMessageKey.LayoutDirection' == 'RTL') {
+
+            $('.MoreActionDiv').css('right', '94%');
+
+        }
+        $('#hdnRecordCount').val('@ViewBag.RecordCount');
+        $('#lblRecordCount').text('@ViewBag.RecordCount');
+        $('#hdnPageNo').val('@ViewBag.PageNo');
+        initializeExpander();
+        SetPaging();
+
+        $('.show_hide').click(function () {
+            $(".tooltip").stop().fadeIn();
+            $('.MoreActionDiv').slideUp();
+            $(this).parent().find('.MoreActionDiv').slideToggle('fast');
+            return false;
+        }, function () {
+            $(".tooltip").stop().fadeOut();
+            $('.MoreActionDiv').slideUp();
+            $(this).parent().find('.MoreActionDiv').slideToggle('fast');
+            return false;
+        });
+    });
+
+
+</script>
+<style>
+    .MoreActionDiv {
+        padding: 2px;
+        background: #ffffff; /*#2B5F8E;*/
+        width: 40px;
+        height: inherit;
+        box-shadow: 0 0 5px #aaa;
+        font-size: 15px;
+        color: #fff;
+        text-align: center;
+        position: absolute;
+        z-index: 99;
+        right: 32px;
+       
+    }
+
+    
+
+</style>
+<div class="grid_area deal clearfix">
+    @{
+        int tempCount = 0;
+        int counter = 0;
+        foreach (var item in Model)
+        {
+            tempCount = tempCount + 1;
+            counter += 1;
+            <div class="grid_item">
+                <ul>
+
+                    <li class="deal_no">
+                        <h4><span class="pull-left" title=@objMessageKey.AgreementNo><a href="#" onclick="window.location.href='@Url.Action("ButtonEvents", "Music_Deal_List", new { CommandName = GlobalParams.DEAL_MODE_VIEW, Music_Deal_Code = item.Music_Deal_Code }) '">@Html.Label("id", item.Agreement_No, new { style = "cursor:pointer;" })</a></span></h4>
+                        <span class="deal_version" title="Version No.">V-@item.Version</span>
+                    </li>
+                    <li><span class="seperator">| </span></li>
+                    <li class="deal_desc" title='@objMessageKey.Description'>
+                        <div class="expandable">
+                            @item.Description
+                        </div>
+                    </li>
+                    <li><span class="seperator">| </span></li>
+                    <li class="channels" title=@objMessageKey.Channels>
+                        @if (string.IsNullOrEmpty(item.Channel_Names))
+                        {
+                            <span class="not-available">NA</span>
+                        }
+                        else
+                        {
+                            <div class="expandable">
+                                <span>@item.Channel_Names</span>
+                            </div>
+                        }
+                    </li>
+                    <li><span class="seperator">| </span></li>
+                    <li class="agreement_date" title=@objMessageKey.AgreementNo>
+                        <span>
+                            @string.Format("{0:" + GlobalParams.DateFormat_Display + "}", item.Agreement_Date)
+                        </span>
+                    </li>
+                    <li class="deal_status">
+                        <span title=@objMessageKey.DealStatus>@item.Deal_Tag_Description</span>
+                        <span class="deal_workflow_status" title=@objMessageKey.WorkflowStatus>@item.Final_Deal_Workflow_Status</span>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="deal_title" title="@objMessageKey.MusicLabel">
+                        <div class="expandable">
+                            @item.Music_Label_Name
+                        </div>
+                    </li>
+                    <li class="deal_licensor" title="@objMessageKey.Licensor">@item.Primary_Vendor</li>
+                    <li class="deal_territory" title="@objMessageKey.TrackLanguage">
+                        @if (string.IsNullOrEmpty(item.Track_Languge_Name))
+                        {
+                            <span class="not-available">NA</span>
+                        }
+                        else
+                        {
+                            <div class="expandable">
+                                <span>@item.Track_Languge_Name</span>
+                            </div>
+                        }
+                    </li>
+                    <li class="deal_period" title="@objMessageKey.Period">
+                        @(string.Format("{0:" + GlobalParams.DateFormat_Display + "}", item.Rights_Start_Date)) To
+                        @(string.Format("{0:" + GlobalParams.DateFormat_Display + "}", item.Rights_End_Date))
+                    </li>
+                    <li class="deal_action" id="divAction_@tempCount">
+                        @{
+                            int Count = 0;
+                        }
+                        @if (item.Visible_Buttons_Code != null)
+                        {
+                            if (item.Visible_Buttons_Code.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForView + ","))
+                            {
+                                Count = Count + 1;
+                                <a title="@objMessageKey.View" id="View_@tempCount" class="glyphicon glyphicon-eye-open" href="@Url.Action("ButtonEvents", "Music_Deal_List", new { CommandName = GlobalParams.DEAL_MODE_VIEW, Music_Deal_Code = item.Music_Deal_Code })"></a>
+                                if (Count > 3)
+                                {
+                                    <script>
+                                        $("#extend_@tempCount").append($('#View_@tempCount'));
+                                    </script>
+                                }
+                            }
+                            if (item.Visible_Buttons_Code.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForEdit + ","))
+                            {
+                                Count = Count + 1;
+                                <a title="@objMessageKey.Edit" id="Edit_@tempCount" class="glyphicon glyphicon-pencil"
+                                   onclick="Ask_Confirmation('@GlobalParams.DEAL_MODE_EDIT', @item.Music_Deal_Code)"></a>
+                                if (Count > 3)
+                                {
+                                    <script>
+                                        $("#extend_@tempCount").append($('#Edit_@tempCount'));
+                                    </script>
+                                }
+                            }
+                            if (item.Visible_Buttons_Code.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForRightGranted + ","))
+                            {
+                                Count = Count + 1;
+                                <a title="@objMessageKey.RenewClone" id="RenewClone_@tempCount" class="glyphicon glyphicon-duplicate" href="@Url.Action("ButtonEvents", "Music_Deal_List", new { CommandName = GlobalParams.DEAL_MODE_CLONE, Music_Deal_Code = item.Music_Deal_Code })"></a>
+                                if (Count > 3)
+                                {
+                                    <script>
+                                        $("#extend_@tempCount").append($('#RenewClone_@tempCount'));
+                                    </script>
+                                }
+                            }
+                            if (item.Visible_Buttons_Code.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForAmendment + ","))
+                            {
+                                Count = Count + 1;
+                                <a title="@objMessageKey.Amendment" id="Amendment_@tempCount" class="glyphicon glyphicon-edit"
+                                   onclick="Ask_Confirmation('@GlobalParams.DEAL_MODE_AMENDMENT', @item.Music_Deal_Code)"></a>
+                                if (Count > 3)
+                                {
+                                    <script>
+                                        $("#extend_@tempCount").append($('#Amendment_@tempCount'));
+                                    </script>
+                                }
+                            }
+                            if (item.Visible_Buttons_Code.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForApprove + ","))
+                            {
+                                Count = Count + 1;
+                                if (item.IsZeroWorkFlow == "Y")
+                                {
+                                    <a title="@objMessageKey.Approve" id="Approve_@counter" class="glyphicon glyphicon-check" href="#" onclick="return Ask_Confirmation('@GlobalParams.DEAL_MODE_APPROVE', @item.Music_Deal_Code,'divAction_@tempCount','View_@tempCount')"></a>
+                                }
+                                else
+                                {
+                                    <a title="@objMessageKey.Approve" id="Approve_@counter" class="glyphicon glyphicon-check" href="#" onclick="return Ask_Confirmation('APPROVE_NEXT_PAGE', @item.Music_Deal_Code)"></a>
+                                }
+                                if (Count > 3)
+                                {
+                                    <script>
+                                        $("#extend_@tempCount").append($('#Approve_@tempCount'));
+                                    </script>
+                                }
+                            }
+                            if (item.Visible_Buttons_Code.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForSendForApproval + ","))
+                            {
+                                Count = Count + 1;
+                                string titleMessage = objMessageKey.SendForApproval; //"Send For Approval";
+                                if (item.Deal_Workflow_Status == "R")
+                                {
+                                    titleMessage = objMessageKey.ResendForApproval; //"Re-send For Approval";
+                                }
+                                <a title="@titleMessage" class="glyphicon glyphicon-send" id="sendForAuth_@tempCount" onclick="return Ask_Confirmation('@GlobalParams.DEAL_MODE_SEND_FOR_APPROVAL', @item.Music_Deal_Code,'divAction_@tempCount','View_@tempCount')"></a>
+                                if (Count > 3)
+                                {
+                                    <script>
+                                        $("#extend_@tempCount").append($('#sendForAuth_@tempCount'));
+                                    </script>
+                                }
+                            }
+                            if (item.Visible_Buttons_Code.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForRollback + ","))
+                            {
+                                double versionNo = Convert.ToDouble(item.Previous_Version);
+                                double curr_Version = Convert.ToDouble(item.Version);
+                                string btnName = "";
+                                if (curr_Version > 1)
+                                {
+                                    double prevVersionNo = versionNo;
+                                    string digitFormat = "";
+
+                                    if (versionNo < 9)
+                                    {
+                                        digitFormat = "000";
+                                    }
+                                    else if (versionNo < 99)
+                                    {
+                                        digitFormat = "00";
+                                    }
+                                    else if (versionNo < 999)
+                                    {
+                                        digitFormat = "0";
+                                    }
+                                    digitFormat = digitFormat + prevVersionNo.ToString();
+                                    // btnName = "Back To Version - " + digitFormat;
+                                    btnName = objMessageKey.BackToVersion +" - " + digitFormat;
+                                    
+                                    Count = Count + 1;
+                                    <a title="@btnName" id="btnName_@tempCount" href="#" class="glyphicon glyphicon-repeat" onclick="Ask_Confirmation('@GlobalParams.DEAL_MODE_ROLLBACK', @item.Music_Deal_Code, 0)"></a>
+                                    if (Count > 3)
+                                    {
+                                        <script>
+                                            $("#extend_@tempCount").append($('#btnName_@tempCount'));
+                                        </script>
+                                    }
+                                }
+                            }
+                            if (item.Visible_Buttons_Code.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForDelete + ","))
+                            {
+                                Count = Count + 1;
+                                <a title="@objMessageKey.Delete" id="Delete" href="#" class="glyphicon glyphicon-trash delete_@tempCount"
+                                   onclick="Ask_Confirmation('@GlobalParams.DEAL_MODE_DELETE', @item.Music_Deal_Code)"></a>
+                                if (Count > 3)
+                                {
+                                    <script>
+                                        $("#extend_@tempCount").append($('.delete_@tempCount'));
+                                    </script>
+                                }
+                            }
+                        }
+                        @if (Count > 3)
+                        {
+                            <a title="@objMessageKey.MoreAction" id="show_hide_@tempCount" href="#" class="glyphicon glyphicon-option-vertical show_hide"></a>
+                            <div id="extend_@tempCount" class="MoreActionDiv" style="display:none;">
+                            </div>
+                        }
+                    </li>
+                </ul>
+            </div>
+                            }
+    }
+</div>

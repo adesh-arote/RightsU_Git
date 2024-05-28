@@ -1,0 +1,171 @@
+﻿@model RightsU_Entities.Email_Config
+@using UTOFrameWork.FrameworkClasses;
+@{
+    RightsU_Entities.Email_Config_Detail objEmailConfigDetail = @Model.Email_Config_Detail == null ? null : @Model.Email_Config_Detail.FirstOrDefault();
+}
+<style>
+    #EmailFreq_chosen {
+        width: 100px !important;
+    }
+
+    #EmailFreqDays_chosen {
+        width: 100px !important;
+    }
+</style>
+<div class="top_area">
+    <h2 class="pull-left">Event Configuration : @Model.Email_Type</h2>
+</div>
+<br />
+<table>
+    <input type="hidden" value="" id="finalSave" />
+    <input type="hidden" value="@Model.Allow_Config" id="hdnAllowConfig" />
+    <input type="hidden" value="@Model.Email_Config_Code" id="hdnEmail_Config_Code" />
+    @*@if (Model.OnScreen_Notification == "Y")
+        {
+            <tr>
+                <td style="width:12%">
+                    @if (objEmailConfigDetail == null)
+                    {
+                        <input type="hidden" value="" id="hdnEmailConfigDetailCode" />
+                        <input type="checkbox" id="chkDisplay" value="Y" checked="checked" />
+                    }
+                    else
+                    {
+                        <input type="hidden" value="@objEmailConfigDetail.Email_Config_Detail_Code" id="hdnEmailConfigDetailCode" />
+                        if (objEmailConfigDetail.OnScreen_Notification == "Y")
+                        {
+
+                            <input type="checkbox" id="chkDisplay" value="Y" checked="checked" />
+                        }
+                        else
+                        {
+                            <input type="checkbox" id="chkDisplay" value="N" />
+                        }
+                    }
+                    <span>In App Notification </span>
+                </td>
+                <td></td>
+            </tr>
+        }*@
+    <tr>
+        <td style="width:12%">
+            @if (Model.Event_Type == "T")
+            {
+                <span>Time Base Event </span>
+            }
+            else
+            {
+                <span>System Base Event </span>
+            }
+
+        </td>
+        <td></td>
+    </tr>
+
+    @if (Model.Allow_Config == "Y")
+    {
+        if (Model.Notification_Frequency == "Y")
+        {
+            <tr>
+                <td><label class="bold">Email Frequency </label></td>
+                <td>
+                    @Html.DropDownList("Value", (List<SelectListItem>)ViewBag.ddlEmailFreq, new
+               {
+                   @id = "EmailFreq",
+                   style = "width:100px !important;",
+                   @class = "form_input chosen-select",
+                   @Onchange = "EmailFreqChange('P')"
+               })
+                    <label id="lblDay" class="bold">
+                        &nbsp;    Day&nbsp;
+                    </label>
+                    @Html.DropDownList("Value", (List<SelectListItem>)ViewBag.ddlEmailFreqDays, new
+               {
+                   @id = "EmailFreqDays",
+                   style = "width:100px !important;",
+                   @class = "form_input chosen-select"
+               })
+                    @if (objEmailConfigDetail != null)
+                    {
+                        if (objEmailConfigDetail.Notification_Time == null)
+                        {
+                            objEmailConfigDetail.Notification_Time = Convert.ToDateTime("12:00AM").TimeOfDay;
+                        }
+
+                        <label id="lblTime" class="bold">
+                            &nbsp;   Time &nbsp;
+                        </label><input type="text" id="txtTimeLag" value="@objEmailConfigDetail.Notification_Time" style="width: 75px;" />
+                    }
+                    else
+                    {
+
+                        <label id="lblTime" class="bold">
+                            &nbsp;  Time &nbsp;
+                        </label>
+                        <input type="text" id="txtTimeLag" value="12:00AM" style="width: 75px;" />
+                    }
+                </td>
+            </tr>
+        }
+    }
+</table>
+@if (Model.Allow_Config == "Y")
+{
+    <div class="pull-right">
+        @if (ViewBag.Show_Hide_Buttons.Contains("~" + GlobalParams.RightCodeForAdd + "~"))
+        {
+            <a title="ADD" data-original-title="Add" class="glyphicon glyphicon-plus" onclick="return BindUserGrid('ADD','');"></a>
+        }
+    </div>
+    <br />
+    <input type="hidden" id="IsAddEdit" />
+    <div id="divEmailUsers">
+
+    </div>
+    if (ViewBag.Days_Freq != null)
+    {
+        if (Model.Days_Config == "Y")
+        {
+            <br />
+            <div>
+                @*<span class="bold">Days Frequency :</span>*@
+                <table class="table table-bordered table-hover" style="width:200px">
+                    <thead>
+                        <tr>
+                            <th>Email Days Frequency</th>
+                        </tr>
+                    </thead>
+                    @foreach (var item in ViewBag.Days_Freq)
+                    {
+                        <tr>
+                            <td>
+                                @item
+                            </td>
+                        </tr>
+                    }
+
+                </table>
+            </div>
+        }
+    }
+}
+<br />
+
+<div class="bottom_action">
+    <ul class="form_link_nav clearfix">
+        <li>
+            <input type="button" class="btn-primary" value="Save" onclick="return save()" />
+        </li>
+        <li>
+            <input type="button" class="btn-primary" value="Cancel" onclick="return validateOnCancel()" />
+        </li>
+    </ul>
+</div>
+
+<script>
+    $(document).ready(function () {
+        initializeTooltip();
+        $('#txtTimeLag').timeEntry({ show24Hours: true, showSeconds: true });
+        EmailFreqChange('');
+    })
+</script>

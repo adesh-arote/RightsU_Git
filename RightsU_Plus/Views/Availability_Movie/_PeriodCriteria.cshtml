@@ -1,0 +1,733 @@
+﻿<script src="~/JS_Core/jquery-ui.js"></script>
+
+
+<script>
+    var URL_GetSysConfig = '@Url.Action("GetSysConfig", "Availability_Movie")';
+
+
+    $(document).ready(function () {
+        debugger;
+        isChecked();
+       
+        $('#stDate,#stMonth,#stYear,#enDate,#enMonth,#enYear').keypress(function () {
+            CheckNumeric(event);
+        });
+
+        $('#startDate,#endDate,#endDateFlexi,#startDateFlexi,#endDateFixed,#startDateFixed').keydown(function () {
+            debugger;
+            CheckNumeric(event);
+        })
+        //var currentDate = new Date();
+        //setMinMaxDatesFlexi('endDateFlexi', currentDate, '');
+
+
+
+        $('#startDate').change(function () {
+            debugger;
+            SetMinDt();
+            CalculateCustomDate("StartDate");
+            autoclose: true;
+        });
+
+        $('#endDate').change(function () {
+            debugger;
+                SetMaxDt();
+            CalculateCustomDate("EndDate");
+            autoclose: true;
+        });
+
+        $('#startDateFlexi').change(function () {
+            debugger;
+            SetMinDtFlexi();
+            autoclose: true;
+        });
+
+        $('#endDateFlexi').change(function () {
+            debugger;
+            SetMaxDtFlexi();
+            autoclose: true;
+        });
+
+        $('#startDateFixed').change(function () {
+            debugger;
+            SetMinDtFixed();
+            autoclose: true;
+        });
+
+        $('#endDateFixed').change(function () {
+            debugger;
+            SetMaxDtFixed();
+            autoclose: true;
+        });
+
+
+
+        initializeDatepicker();
+        $('#startDate,#startDateFlexi').datepicker("option", "dateFormat", "dd/mm/yy");
+        //$('#startDate,#startDateFlexi').datepicker("option", "dateFormat", "dd/mm/yy");
+        $('#startDateFixed').datepicker("option", "dateFormat", "dd/mm/yy");
+        $('#endDate,#endDateFlexi,#endDateFixed').datepicker("option", "dateFormat", "dd/mm/yy");
+
+        var currentDate = new Date();
+        $("#startDate").datepicker("setDate", currentDate);
+        $("#endDate").datepicker("setDate", currentDate);
+        GetSysConfig();
+        SetMaxDt();
+        SetMinDt();
+        
+        initializeDatepicker();
+        $('input[type=radio][name=GroupPeriod]').change(function () {
+            debugger
+            if (this.value == 'Minimum') {
+                $("#flexiDiv").hide();
+                $("#fixedDiv").hide();
+                $("#minDiv").show();
+                DisablePastDate("minimum");
+                //DisablePastDate("minimumEnd");
+            }
+            else if (this.value == 'Flexi') {
+                $("#flexiDiv").show();
+                $("#fixedDiv").hide();
+                $("#minDiv").hide();
+                DisablePastDate("flexi");
+                DisablePastDate("flexiEnd");
+            }
+            else if (this.value == 'Fixed') {
+                $("#flexiDiv").hide();
+                $("#fixedDiv").show();
+                $("#minDiv").hide();
+                DisablePastDate("fixed");
+                DisablePastDate("fixedEnd");
+            }
+
+        });
+    });
+
+
+    function CheckNumeric(e) {
+
+        if (window.event) // IE
+        {
+            if ((e.keyCode < 48 || e.keyCode > 57) & e.keyCode != 8) {
+                event.returnValue = false;
+                return false;
+
+            }
+            else if (e.keyCode == 8) {
+                event.returnValue = false;
+                return false;
+            }
+        }
+    }
+
+    function GetCurrentDate() {
+        debugger;
+        var today = new Date();
+        //var dd = today.getDate();
+        //var mm = today.getMonth() + 1; //January is 0!
+        //var yyyy = today.getFullYear();
+        //if (dd < 10) {
+        //    dd = '0' + dd
+        //}
+        //if (mm < 10) {
+        //    mm = '0' + mm
+        //}
+        //today = dd + '/' + mm + '/' + yyyy;
+        return today;
+    }
+
+
+    function monthDiff(startDate, endDate) {
+        debugger;
+
+        //endDate.setDate(endDate.getDate() + 1);
+
+        var months = (endDate.getFullYear() - startDate.getFullYear()) * 12;
+        months += endDate.getMonth() - startDate.getMonth();
+
+        // Subtract one month if b's date is less that a's.
+        if (endDate.getDate() < startDate.getDate())
+            months--;
+
+        return months;
+
+    }
+
+    function isChecked() {
+
+        $("#flexiDiv").hide();
+        $("#fixedDiv").hide();
+        $("#minDiv").show();
+
+    }
+
+    function GetSysConfig() {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_GetSysConfig,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: false,
+            //dataType: "html",
+            data: JSON.stringify({
+
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger;
+                    var x = result.dateConfig;
+                    if (x == "D") {
+                        $("#enDate").val(1);
+                    }
+                    else if (x == "Y") {
+                        $("#enYear").val(1);
+                    }
+                    else if (x == "Q") {
+                        $("#enMonth").val(3);
+                    }
+                    else if (x == "M") {
+                        $("#enMonth").val(1);
+                    }
+
+                    CalculateDate(x);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function CalculateDate(x) {
+        debugger;
+        if (x == "M") {
+            var date1 = $('#startDate').datepicker('getDate');
+            var date = new Date(Date.parse(date1));
+            date.setMonth(date.getMonth() + 1);
+
+            var newDate = date.toDateString();
+            newDate = new Date(Date.parse(newDate));
+
+            $('#endDate').datepicker('setDate', newDate);
+
+        }
+
+        else if (x == "D") {
+            var date1 = $('#startDate').datepicker('getDate');
+            var date = new Date(Date.parse(date1));
+            date.setDate(date.getDate() + 1);
+            var newDate = date.toDateString();
+            newDate = new Date(Date.parse(newDate));
+            $('#endDate').datepicker('setDate', newDate);
+        }
+
+        else if (x == "Q") {
+            var date1 = $('#startDate').datepicker('getDate');
+            var date = new Date(Date.parse(date1));
+            date.setMonth(date.getMonth() + 3);
+            var newDate = date.toDateString();
+            newDate = new Date(Date.parse(newDate));
+            $('#endDate').datepicker('setDate', newDate);
+
+        }
+
+        else if (x == "Y") {
+            var date1 = $('#startDate').datepicker('getDate');
+            var date = new Date(Date.parse(date1));
+            date.setYear(date.getFullYear() + 1);
+
+            var newDate = date.toDateString();
+            newDate = new Date(Date.parse(newDate));
+
+            $('#endDate').datepicker('setDate', newDate);
+
+        }
+    }
+
+    //function calculateGenDate(param1)
+    //{
+    //    debugger;
+    //    var date1 = $('#startDate').datepicker('getDate');
+    //    var date = new Date(Date.parse(date1));
+    //    date.setDate(date.getDate() + parseInt(param1));
+    //    var newDate = date.toDateString();
+    //    newDate = new Date(Date.parse(newDate));
+    //    $('#startDate').datepicker('setDate', newDate);
+    //}
+
+    function CalculateMinDate(param) {
+        debugger;
+        var a = 0;
+        var a1 = 0;
+
+        if (param == "stDate") {
+            a = $("#stDate").val();
+            a1 = a.trim();
+            var stMonth = $("#stMonth").val();
+            var stYear = $("#stYear").val();
+            var stMonth1 = stMonth.trim();
+            var stYear1 = stYear.trim();
+
+            if (a1 == "")
+                a1 = 0;
+            if (stMonth1 == "")
+                stMonth1 = 0;
+            if (stYear1 == "")
+                stYear1 = 0;
+
+            // var date1 = $('#startDate').datepicker('getDate');
+            var date1 = GetCurrentDate();
+            var date = new Date(Date.parse(date1));
+
+            date.setDate(date.getDate() + parseInt(a1));
+            date.setMonth(date.getMonth() + parseInt(stMonth1));
+            date.setFullYear(date.getFullYear() + parseInt(stYear1));
+            var newDate = date.toDateString();
+            newDate = new Date(Date.parse(newDate));
+            //$('#startDate').datepicker('setDate', newDate);
+
+            var enddate1 = $('#endDate').datepicker('getDate'); // for validation comparison
+            var enddate = new Date(Date.parse(enddate1));
+            if (newDate > enddate) {
+                showAlert('E', 'Start date should be Less than end date');
+
+                $('#stMonth').val('0');
+                $('#stDate').val('0');
+                $('#stYear').val('0');
+                $("#startDate").datepicker("setDate", GetCurrentDate());
+                return false;
+
+            }
+            else {
+                $('#startDate').datepicker('setDate', newDate);
+            }
+            SetMinDt();
+
+        }
+
+        else if (param == "stMonth") {
+            a = $("#stMonth").val();
+            a1 = a.trim();
+            var stDate = $("#stDate").val();
+            var stYear = $("#stYear").val();
+            var stDate1 = stDate.trim();
+            var stYear1 = stYear.trim();
+
+            if (a1 == "")
+                a1 = 0;
+            if (stDate1 == "")
+                stDate = 0;
+            if (stYear1 == "")
+                stYear1 = 0;
+
+
+            //  var date1 = $('#startDate').datepicker('getDate');
+            var date1 = GetCurrentDate();
+            var date = new Date(Date.parse(date1));
+            date.setMonth(date.getMonth() + parseInt(a1));
+            date.setDate(date.getDate() + parseInt(stDate1));
+            date.setFullYear(date.getFullYear() + parseInt(stYear1));
+            var newDate = date.toDateString();
+            newDate = new Date(Date.parse(newDate));
+           // $('#startDate').datepicker('setDate', newDate);
+
+            var enddate1 = $('#endDate').datepicker('getDate'); // for validation comparison
+            var enddate = new Date(Date.parse(enddate1));
+            if (newDate > enddate) {
+                showAlert('E', 'Start date should be Less than end date');
+                $('#stMonth').val('0');
+                $('#stDate').val('0');
+                $('#stYear').val('0');
+                $("#startDate").datepicker("setDate", GetCurrentDate());
+                return false;
+            }
+            else {
+                $('#startDate').datepicker('setDate', newDate);
+            }
+
+            SetMinDt();
+
+        }
+
+        else if (param == "stYear") {
+            a = $("#stYear").val();
+            a1 = a.trim();
+            var stMonth = $("#stMonth").val();
+            var stDate = $("#stDate").val();
+            var stMonth1 = stMonth.trim();
+            var stDate1 = stDate.trim();
+
+            if (a1 == "")
+                a1 = 0;
+            if (stMonth1 == "")
+                stMonth1 = 0;
+            if (stDate1 == "")
+                stDate1 = 0;
+
+            //var date1 = $('#startDate').datepicker('getDate');
+            var date1 = GetCurrentDate();
+            var date = new Date(Date.parse(date1));
+            date.setFullYear(date.getFullYear() + parseInt(a1));
+            date.setMonth(date.getMonth() + parseInt(stMonth1));
+            date.setDate(date.getDate() + parseInt(stDate1));
+            var newDate = date.toDateString();
+            newDate = new Date(Date.parse(newDate));
+            //$('#startDate').datepicker('setDate', newDate);
+
+            var enddate1 = $('#endDate').datepicker('getDate'); // for validation comparison
+            var enddate = new Date(Date.parse(enddate1));
+            if (newDate > enddate) {
+                showAlert('E', 'Start date should be Less than end date');
+                $('#stMonth').val('0');
+                $('#stDate').val('0');
+                $('#stYear').val('0');
+                $("#startDate").datepicker("setDate", GetCurrentDate());
+                return false;
+            }
+            else {
+                $('#startDate').datepicker('setDate', newDate);
+            }
+            SetMinDt();
+
+
+        }
+
+        else if (param == "enDate") {
+            a = $("#enDate").val();
+            a1 = a.trim();
+            var enMonth = $("#enMonth").val();
+            var enYear = $("#enYear").val();
+            var enMonth1 = enMonth.trim();
+            var enYear1 = enYear.trim();
+
+            if (a1 == "")
+                a1 = 0;
+            if (enMonth1 == "")
+                enMonth1 = 0;
+            if (enYear1 == "")
+                enYear1 = 0;
+
+            //var date1 = $('#startDate').datepicker('getDate');
+            var date1 = GetCurrentDate();
+            var date = new Date(Date.parse(date1));
+            date.setDate(date.getDate() + parseInt(a1));
+            date.setMonth(date.getMonth() + parseInt(enMonth1));
+            date.setFullYear(date.getFullYear() + parseInt(enYear1));
+            var newDate = date.toDateString();
+            newDate = new Date(Date.parse(newDate));
+            $('#endDate').datepicker('setDate', newDate);
+            SetMaxDt();
+
+        }
+
+        else if (param == "enMonth") {
+            a = $("#enMonth").val();
+            a1 = a.trim();
+            var enDate = $("#enDate").val();
+            var enYear = $("#enYear").val();
+            var enDate1 = enDate.trim();
+            var enYear1 = enYear.trim();
+
+            if (a1 == "")
+                a1 = 0;
+            if (enDate1 == "")
+                enDate = 0;
+            if (enYear1 == "")
+                enYear1 = 0;
+
+            //var date1 = $('#startDate').datepicker('getDate');
+            var date1 = GetCurrentDate();
+            var date = new Date(Date.parse(date1));
+            date.setMonth(date.getMonth() + parseInt(a1));
+            date.setDate(date.getDate() + parseInt(enDate1));
+            date.setFullYear(date.getFullYear() + parseInt(enYear1));
+            var newDate = date.toDateString();
+            newDate = new Date(Date.parse(newDate));
+            $('#endDate').datepicker('setDate', newDate);
+            SetMaxDt();
+
+        }
+
+        else if (param == "enYear") {
+            a = $("#enYear").val();
+            a1 = a.trim();
+            var enMonth = $("#enMonth").val();
+            var enDate = $("#enDate").val();
+            var enMonth1 = enMonth.trim();
+            var enDate1 = enDate.trim();
+
+            if (a1 == "")
+                a1 = 0;
+            if (enMonth1 == "")
+                enMonth1 = 0;
+            if (enDate1 == "")
+                enDate1 = 0;
+
+            //var date1 = $('#startDate').datepicker('getDate');
+            var date1 = GetCurrentDate();
+            var date = new Date(Date.parse(date1));
+            date.setFullYear(date.getFullYear() + parseInt(a1));
+            date.setMonth(date.getMonth() + parseInt(enMonth1));
+            date.setDate(date.getDate() + parseInt(enDate1));
+            var newDate = date.toDateString();
+            newDate = new Date(Date.parse(newDate));
+            $('#endDate').datepicker('setDate', newDate);
+            SetMaxDt();
+        }
+    }
+
+    function CalculateCustomDate(param) {
+        debugger
+
+        if (param == "EndDate") {
+            // //  var date1 = $('#startDate').datepicker('getDate');
+            //var date1 = GetCurrentDate();
+            //var date = new Date(Date.parse(date1));
+
+            //var endDate = $('#endDate').datepicker('getDate');
+            //var endDate1 = new Date(Date.parse(endDate));
+
+            //var endate = date.getDate() - endDate1.getDate();
+            //var enMonth = date.getMonth() - endDate1.getMonth();
+            //var enYear = date.getFullYear() - endDate1.getFullYear();
+            //$("#enDate").val(Math.abs(endate));
+            //$("#enMonth").val(Math.abs(enMonth));
+            //$("#enYear").val(Math.abs(enYear));
+
+            var StartDate = $('#endDate').datepicker('getDate');
+            var val = monthDiff(new Date(), StartDate);
+            var year = parseInt(val / 12);
+            var month = parseInt(val % 12);
+            StartDate.setMonth(StartDate.getMonth() - month);
+            var initDate = new Date(StartDate.setFullYear(StartDate.getFullYear() - year));
+            //initDate = new Date(initDate.setDate(initDate.getDate() + 1));
+            var days = parseInt((initDate - new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate())) / 86400000);
+
+            if (initDate.getDate() < new Date().getDate())
+                days = days + 1;
+
+            $('#enMonth').val(month);
+            $('#enDate').val(days);
+            $('#enYear').val(year);
+
+        }
+        else if (param == "StartDate") {
+            //   //var date1 = $('#startDate').datepicker('getDate');
+            //var date1 = GetCurrentDate();
+            //var date = new Date(Date.parse(date1));
+
+            //var startDate = $('#startDate').datepicker('getDate');
+            //var startDate1 = new Date(Date.parse(startDate));
+
+            //var stdate = date.getDate() - startDate1.getDate();
+            //var stMonth = date.getMonth() - startDate1.getMonth();
+            //var stYear = date.getFullYear() - startDate1.getFullYear();
+            //$("#stDate").val(Math.abs(stdate));
+            //$("#stMonth").val(Math.abs(stMonth));
+            //$("#stYear").val(Math.abs(stYear));
+
+            var StartDate = $('#startDate').datepicker('getDate');
+            var val = monthDiff(new Date(), StartDate);
+            var year = parseInt(val / 12);
+            var month = parseInt(val % 12);
+            StartDate.setMonth(StartDate.getMonth() - month);
+            var initDate = new Date(StartDate.setFullYear(StartDate.getFullYear() - year));
+            // initDate = new Date(initDate.setDate(initDate.getDate() + 1));
+            var days = parseInt((initDate - new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate())) / 86400000);
+
+            if (initDate.getDate() < new Date().getDate())
+                days = days + 1;
+
+            $('#stMonth').val(month);
+            $('#stDate').val(days);
+            $('#stYear').val(year);
+        }
+
+    }
+
+
+    function SetMaxDt() {
+        setMinMaxDates('startDate', '', $('#endDate').val());
+        DisablePastDate("minimum");
+    }
+    function SetMinDt() {
+        setMinMaxDates('endDate', $('#startDate').val(), '');
+    }
+
+    function SetMaxDtFlexi() {
+        debugger;
+        setMinMaxDatesFlexi('startDateFlexi', '', $('#endDateFlexi').val());
+        DisablePastDate("flexi");
+    }
+    function SetMinDtFlexi() {
+        debugger;
+        setMinMaxDatesFlexi('endDateFlexi', $('#startDateFlexi').val(), '');
+    }
+
+    function SetMaxDtFixed() {
+        setMinMaxDatesFixed('startDateFixed', '', $('#endDateFixed').val());
+        DisablePastDate("fixed");
+    }
+    function SetMinDtFixed() {
+        setMinMaxDatesFixed('endDateFixed', $('#startDateFixed').val(), '');
+    }
+
+    function setMinMaxDates(datepickerID, minDate, maxDate) {
+        $("#" + datepickerID).datepicker("option", "minDate", $.datepicker.parseDate("dd/mm/yy", minDate));
+        $("#" + datepickerID).datepicker("option", "maxDate", $.datepicker.parseDate("dd/mm/yy", maxDate));
+    }
+    function setMinMaxDatesFlexi(datepickerID, minDate, maxDate) {
+        debugger;
+        var miDate = new Date(minDate);
+        var mxDate = new Date(maxDate);
+        $("#" + datepickerID).datepicker("option", "minDate", $.datepicker.parseDate("dd/mm/yy", minDate));
+        $("#" + datepickerID).datepicker("option", "maxDate", $.datepicker.parseDate("dd/mm/yy", maxDate));
+
+    }
+    function setMinMaxDatesFixed(datepickerID, minDate, maxDate) {
+        debugger;
+        $("#" + datepickerID).datepicker("option", "minDate", $.datepicker.parseDate("dd/mm/yy", minDate));
+        $("#" + datepickerID).datepicker("option", "maxDate", $.datepicker.parseDate("dd/mm/yy", maxDate));
+    }
+
+    function DisablePastDate(callFrom) {
+        debugger;
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth() + 1; //January is 0!
+        var yyyy = today.getFullYear();
+        if (dd < 10) {
+            dd = '0' + dd
+        }
+        if (mm < 10) {
+            mm = '0' + mm
+        }
+        today = dd + '/' + mm + '/' + yyyy;
+        if (callFrom == "minimum")
+            setMinMaxDates('startDate', today, $('#endDate').val());
+        else if (callFrom == "minimumEnd")
+            setMinMaxDates('endDate', today, $('#startDate').val());
+
+        else if (callFrom == "flexi")
+            setMinMaxDatesFlexi('startDateFlexi', today, $('#endDateFlexi').val());
+        else if (callFrom == "flexiEnd")
+            setMinMaxDatesFlexi('endDateFlexi', today, $('#startDateFlexi').val());
+
+        else if (callFrom == "fixed")
+            setMinMaxDatesFixed('startDateFixed', today, $('#endDateFixed').val());
+        else if (callFrom == "fixedEnd")
+            setMinMaxDatesFixed('endDateFixed', today, $('#startDateFixed').val());
+    }
+</script>
+
+<style>
+    input.isDatepicker {
+        width: 100px !important;
+    }
+
+    .dateText {
+        width: 35px;
+    }
+
+    .ui-datepicker {
+        z-index: 99 !important;
+    }
+
+    td {
+        padding: 2px !important;
+    }
+</style>
+
+<div>
+    @Html.RadioButton("GroupPeriod", "Minimum", new { id = "rbgMinimum", @class = "genderclassAdd", @checked = "checked" })<span>Minimum</span>
+    @Html.RadioButton("GroupPeriod", "Flexi", new { id = "rbgFlexi", @class = "genderclassAdd" }) <span>Flexi</span>
+    @Html.RadioButton("GroupPeriod", "Fixed", new { id = "rbgFixed", @class = "genderclassAdd" })<span>Fixed</span>
+</div>
+
+<div id="minDiv" style="display:none">
+    <table>
+        <tr>
+            <td></td>
+            <td><label>DD</label></td>
+            <td>
+                <label>MM</label>
+            </td>
+            <td>
+                <label>YY</label>
+            </td>
+            <td></td>
+            <td>
+                Date
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Start Within
+            </td>
+            <td><input type="text" name="name" value="0" id="stDate" class="dateText" onblur="CalculateMinDate('stDate')" maxlength="3" /></td>
+            <td><input type="text" name="name" value="0" id="stMonth" class="dateText" onblur="CalculateMinDate('stMonth')" maxlength="3" /></td>
+            <td><input type="text" name="name" value="0" id="stYear" class="dateText" onblur="CalculateMinDate('stYear')" maxlength="3" /></td>
+            <td>
+                Start
+            </td>
+            <td>
+                <input type="text" name="name" value="" id="startDate" class="isDatepicker shortDate common" />@*onchange="SetMinDt()"*@
+            </td>
+
+        </tr>
+        <tr>
+            <td>
+                For Next
+            </td>
+            <td><input type="text" name="name" value="0" id="enDate" class="dateText" onblur="CalculateMinDate('enDate')" maxlength="3" /></td>
+            <td><input type="text" name="name" value="0" id="enMonth" class="dateText" onblur="CalculateMinDate('enMonth')" maxlength="3" /></td>
+            <td><input type="text" name="name" value="0" id="enYear" class="dateText" onblur="CalculateMinDate('enYear')" maxlength="3" /></td>
+            <td>
+                End
+            </td>
+            <td>
+                <input type="text" name="name" value="" id="endDate" class="isDatepicker shortDate common" />@*onchange="SetMaxDt()"*@
+            </td>
+
+        </tr>
+    </table>
+</div>
+<div id="flexiDiv" style="display:none">
+    <table>
+        <tr>
+            <td style="text-align:right">Available From:</td>
+            <td style="text-align:left">
+                <input type="text" name="name" value="" id="startDateFlexi" class="isDatepicker" placeholder="DD/MM/YYY" />@*onchange="SetMinDtFlexi()"*@
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align:right">To:</td>
+            <td style="text-align:left">
+                <input type="text" name="name" value="" id="endDateFlexi" class="isDatepicker" placeholder="DD/MM/YYY" />@*onchange="SetMaxDtFlexi()"*@
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div id="fixedDiv" style="display:none">
+    <table>
+        <tr>
+            <td style="text-align:right">Available From:</td>
+            <td style="text-align:left">
+                <input type="text" name="name" value="" id="startDateFixed" class="isDatepicker shortDate common" placeholder="DD/MM/YYY" />@*onchange="SetMinDtFixed()"*@
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align:right">To:</td>
+            <td style="text-align:left">
+                <input type="text" name="name" value="" id="endDateFixed" class="isDatepicker shortDate common" placeholder="DD/MM/YYY" />@*onchange="SetMaxDtFixed()"*@
+            </td>
+        </tr>
+    </table>
+</div>
+<input type="hidden" name="name" value="Y" id="hdncallFromPeriod" />

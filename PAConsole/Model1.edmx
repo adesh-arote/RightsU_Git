@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="RightsU_Plus_TestingModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Acq_Adv_Ancillary_Report">
+          <Key>
+            <PropertyRef Name="Acq_Adv_Ancillary_Report_Code" />
+          </Key>
+          <Property Name="Acq_Adv_Ancillary_Report_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Agreement_No" Type="varchar(max)" />
+          <Property Name="Title_Codes" Type="varchar(max)" />
+          <Property Name="Platform_Codes" Type="varchar(max)" />
+          <Property Name="Business_Unit_Code" Type="int" />
+          <Property Name="IncludeExpired" Type="varchar(max)" />
+          <Property Name="Date_Format" Type="nvarchar" MaxLength="2000" />
+          <Property Name="DateTime_Format" Type="nvarchar" MaxLength="2000" />
+          <Property Name="Created_By" Type="nvarchar" MaxLength="2000" />
+          <Property Name="SysLanguageCode" Type="int" />
+          <Property Name="Report_Name" Type="nvarchar" MaxLength="2000" />
+          <Property Name="Accessibility" Type="char" MaxLength="10" />
+          <Property Name="File_Name" Type="nvarchar" MaxLength="2000" />
+          <Property Name="Process_Start" Type="datetime" />
+          <Property Name="Process_End" Type="datetime" />
+          <Property Name="Report_Status" Type="char" MaxLength="1" />
+          <Property Name="Error_Message" Type="nvarchar(max)" />
+          <Property Name="Generated_By" Type="int" />
+          <Property Name="Generated_On" Type="datetime" />
+          <Property Name="Ancillary_Type_Codes" Type="varchar(max)" />
+        </EntityType>
+        <EntityContainer Name="RightsU_Plus_TestingModelStoreContainer">
+          <EntitySet Name="Acq_Adv_Ancillary_Report" EntityType="Self.Acq_Adv_Ancillary_Report" Schema="dbo" store:Type="Tables" />
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="RightsU_Plus_TestingModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Acq_Adv_Ancillary_Report">
+          <Key>
+            <PropertyRef Name="Acq_Adv_Ancillary_Report_Code" />
+          </Key>
+          <Property Name="Acq_Adv_Ancillary_Report_Code" Type="Int32" Nullable="false" />
+          <Property Name="Agreement_No" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Title_Codes" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Platform_Codes" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Business_Unit_Code" Type="Int32" />
+          <Property Name="IncludeExpired" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Date_Format" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
+          <Property Name="DateTime_Format" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
+          <Property Name="Created_By" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
+          <Property Name="SysLanguageCode" Type="Int32" />
+          <Property Name="Report_Name" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
+          <Property Name="Accessibility" Type="String" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="File_Name" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
+          <Property Name="Process_Start" Type="DateTime" Precision="3" />
+          <Property Name="Process_End" Type="DateTime" Precision="3" />
+          <Property Name="Report_Status" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Error_Message" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Generated_By" Type="Int32" />
+          <Property Name="Generated_On" Type="DateTime" Precision="3" />
+          <Property Name="Ancillary_Type_Codes" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityContainer Name="RightsU_Plus_TestingEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Acq_Adv_Ancillary_Report" EntityType="Self.Acq_Adv_Ancillary_Report" />
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="RightsU_Plus_TestingModelStoreContainer" CdmEntityContainer="RightsU_Plus_TestingEntities">
+          <EntitySetMapping Name="Acq_Adv_Ancillary_Report">
+            <EntityTypeMapping TypeName="RightsU_Plus_TestingModel.Acq_Adv_Ancillary_Report">
+              <MappingFragment StoreEntitySet="Acq_Adv_Ancillary_Report">
+                <ScalarProperty Name="Ancillary_Type_Codes" ColumnName="Ancillary_Type_Codes" />
+                <ScalarProperty Name="Acq_Adv_Ancillary_Report_Code" ColumnName="Acq_Adv_Ancillary_Report_Code" />
+                <ScalarProperty Name="Agreement_No" ColumnName="Agreement_No" />
+                <ScalarProperty Name="Title_Codes" ColumnName="Title_Codes" />
+                <ScalarProperty Name="Platform_Codes" ColumnName="Platform_Codes" />
+                <ScalarProperty Name="Business_Unit_Code" ColumnName="Business_Unit_Code" />
+                <ScalarProperty Name="IncludeExpired" ColumnName="IncludeExpired" />
+                <ScalarProperty Name="Date_Format" ColumnName="Date_Format" />
+                <ScalarProperty Name="DateTime_Format" ColumnName="DateTime_Format" />
+                <ScalarProperty Name="Created_By" ColumnName="Created_By" />
+                <ScalarProperty Name="SysLanguageCode" ColumnName="SysLanguageCode" />
+                <ScalarProperty Name="Report_Name" ColumnName="Report_Name" />
+                <ScalarProperty Name="Accessibility" ColumnName="Accessibility" />
+                <ScalarProperty Name="File_Name" ColumnName="File_Name" />
+                <ScalarProperty Name="Process_Start" ColumnName="Process_Start" />
+                <ScalarProperty Name="Process_End" ColumnName="Process_End" />
+                <ScalarProperty Name="Report_Status" ColumnName="Report_Status" />
+                <ScalarProperty Name="Error_Message" ColumnName="Error_Message" />
+                <ScalarProperty Name="Generated_By" ColumnName="Generated_By" />
+                <ScalarProperty Name="Generated_On" ColumnName="Generated_On" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

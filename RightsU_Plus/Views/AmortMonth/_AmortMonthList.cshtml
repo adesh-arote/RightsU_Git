@@ -1,0 +1,110 @@
+﻿@model List<RightsU_Plus.Controllers.AmortMonthController.Amort_Month_Data>
+
+<script>
+</script>
+<table class="table table-bordered table-hover" id="tblGenres">
+    <thead>
+        <tr>
+            <th style="width:50%;">Month</th>
+            <th style="width:30%;">Status</th>
+            <th style="width:20%;">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count > 0)
+        {
+            string strOpen = "Open Month", strResuest = "In Request", strPending = "Data Generation Pending", strInProcess = "Data Generation In Process",
+                strReady = "Data Generation Ready", strCompleted = "Month Closed", strError = "Error";
+            int count = 0;
+            string month = "";
+
+            foreach (var item in Model)
+            {
+
+                if (count == 0)
+                {
+                    month = "Nov 2018";
+                }
+                else if (count == 1)
+                {
+                    month = "Oct 2018";
+                }
+                else if (count == 2)
+                {
+                    month = "Sep 2018";
+                }
+                else if (count == 3)
+                {
+                    month = "Aug 2018";
+                }
+
+                count++;
+                <tr>
+                    <td align="left">
+
+                        <span>@month</span>
+                        @*<span>@item.Month</span>*@
+                    </td>
+                    <td align="center">
+                        @if (item.status == "O")
+                        {
+                            @strOpen;
+                        }
+                        else if (item.status == "R")
+                        {
+                            @strResuest
+                        }
+                        else if (item.status == "P")
+                        {
+                            @strPending
+                        }
+                        else if (item.status == "I")
+                        {
+                            @strInProcess
+                        }
+                        else if (item.status == "D")
+                        {
+                            @strReady
+                        }
+                        else if (item.status == "C")
+                        {
+                            @strCompleted
+                        }
+                        else
+                        {
+                            @strError
+                        }
+                    </td>
+                    <td align="center">
+                        @if (item.status == "O")
+                        {
+                            <a title="Preview and close" class="glyphicon glyphicon-eye-close"></a>
+                        }
+                        else if (item.status == "R")
+                        {
+                            <img id="imgLoading" title="In Process" src="~/Images/square_dots_loading.gif" style="height: 26px;" />
+                        }
+                        else if (item.status == "P")
+                        {
+                            <img id="imgLoading" title="In Process" src="~/Images/square_dots_loading.gif" style="height: 26px;" />
+                        }
+                        else if (item.status == "I")
+                        {
+                            <a title="Recalculate/Re-Process" class="glyphicon glyphicon-refresh"></a>
+                        }
+                        else if (item.status == "D")
+                        {
+                            <img id="imgLoading" title="In Process" src="~/Images/square_dots_loading.gif" style="height: 26px;" />
+                        }
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="3">No Records Found</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,27 @@
+﻿CREATE TABLE [dbo].[AcqRightsData_Final_Revert] (
+    [ACQ_deal_code]                 INT          NULL,
+    [ACQ_deal_movie_code]           INT          NULL,
+    [ACQ_deal_movie_rights_code]    INT          NULL,
+    [ACQ_deal_run_code]             INT          NULL,
+    [ChannelCode]                   INT          NULL,
+    [Run_Type]                      CHAR (1)     COLLATE Latin1_General_CI_AI NULL,
+    [Run_Definition_Type]           VARCHAR (10) COLLATE Latin1_General_CI_AI NULL,
+    [is_yearwise_definition]        CHAR (1)     COLLATE Latin1_General_CI_AI NULL,
+    [no_of_runs]                    INT          NULL,
+    [no_of_runs_sched]              INT          NULL,
+    [title_code]                    INT          NULL,
+    [DoNotConsume]                  VARCHAR (10) COLLATE Latin1_General_CI_AI NULL,
+    [RightPeriodFor]                VARCHAR (10) COLLATE Latin1_General_CI_AI NULL,
+    [no_of_AsRuns]                  INT          NULL,
+    [ChannelWise_NoOfRuns]          INT          NULL,
+    [ChannelWise_NoOfRuns_Schedule] INT          NULL,
+    [Content_Channel_Run_Code]      INT          NULL,
+    [ChannelWise_no_of_AsRuns]      INT          NULL,
+    [Agreement_Date]                DATETIME     NULL,
+    [MinDealSignedDate]             DATETIME     NULL,
+    [MaxDealSignedDate]             DATETIME     NULL,
+    [MaxDealCode]                   INT          NULL,
+    [MinDealCode]                   INT          NULL,
+    [Deal_Type]                     CHAR (1)     COLLATE Latin1_General_CI_AI NULL
+);
+

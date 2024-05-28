@@ -1,0 +1,31 @@
+﻿/* Rights List Tab */
+
+.deal .grid_item {
+    border-left: 0px;
+    padding: 3px 2px 0px 0px;
+    /* border-bottom: 1px solid #dedede; */
+}
+.deal .grid_item_tab {
+    float: left;
+    width: 100%;
+}
+.grid_item .expandable li {float: none;line-height: initial;list-style: none;margin: 0;}
+.grid_item .expandable li:before {content: "\0BB \020";}
+.grid_item ul {padding: 0; line-height: 28px;}
+.grid_item > ul {padding: 0 0 0 5px;float: left;list-style: none;margin:0}
+.grid_item > ul > li {width: 22%;float: left;list-style: none;}
+.grid_item > ul > li:first-child {width: 34%;}
+.grid_item > ul > li.title {font-family: Oswald; font-size: 1.11em; width: 27%;}
+.grid_item > ul > li.period {width: 38%;}
+.grid_item > ul > li.yes_no {width: 22%; text-align: right;}
+.grid_item > ul > li.action {text-align: right; width: 13%;}
+.grid_item > ul > li.action a {margin: 3px 6px 0 0;}
+.yes_no .seperator {padding: 0;font-size: 16px;line-height: 15px;}
+
+.divRightsList > .scale_table_block > table th:first-child {width: 22%;}
+.divRightsList > .scale_table_block > table th:nth-child(2) {width: 30%;}
+.divRightsList > .scale_table_block > table th:last-child {width: 24%;}
+
+#tabRights .scale_table_block tr:first-child td {padding: 3px;}
+
+.modal_block {max-height: 500px;overflow: auto;}

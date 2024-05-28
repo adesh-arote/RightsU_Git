@@ -1,0 +1,68 @@
+﻿@model List<RightsU_Entities.USP_List_Status_History_Result>
+@using UTOFrameWork.FrameworkClasses
+@using System.Configuration;
+@{
+    Layout = null;
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }  
+}
+
+
+<div class="modal-dialog">
+    <div class="modal-content clearfix">
+        <form class="form" id="new_syndication_bundle_form">
+            <div class="form_wrapper">
+                <div class="form_fields acq">
+                    <div class="modal_block modal_header">
+                        <a class="close" data-dismiss="modal" href="#">
+                            <span>×</span>
+                            <span class="sr-only">Close</span>
+                        </a>
+                        <h2>@ViewBag.HeadingName @objMessageKey.View - @objMessageKey.StatusHistory</h2>
+                        <span></span>
+                    </div>
+                    <div class="modal_block">
+                        <ul>
+                            <li>
+                                <table class="table table-bordered table-hover">
+                                    <tr>
+                                        <th>@objMessageKey.Date</th>
+                                        <th>@objMessageKey.User</th>
+                                        <th>@objMessageKey.Status</th>
+                                        <th>@objMessageKey.Remarks</th>
+                                    </tr>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @if (item.Date != null)
+                                                {
+                                                    @Convert.ToDateTime(item.Date).ToString("dd-MMM-yyyy")
+                                                }
+                                            </td>
+                                            <td style="direction:ltr;">@item.By</td>
+                                            <td>@item.Status</td>
+                                            <td>@item.Remarks</td>
+                                        </tr>
+                                    }
+                                </table>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="modal_block_full">
+                        <div class="form_links">
+                            <ul class="modal_block clearfix">
+                                <li>
+                                    <a data-dismiss="modal" class="btn-primary" href="#">@objMessageKey.Cancel</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

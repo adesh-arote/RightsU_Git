@@ -1,0 +1,40 @@
+﻿
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+
+
+<div class="modal_block modal_header">
+    <a class="close" onclick="ClosePopup()">
+        <span>X</span>
+        <span class="sr-only">Close</span>
+    </a>
+    <h2>
+        @if (ViewBag.EventType != null)
+        {
+            @ViewBag.EventType
+        }
+        else
+        {
+            <h2>No Event</h2>
+        }
+    </h2>
+</div>
+<div class="modal_block">
+    <div class="tab-content clearfix table-wrapper scale_table_container">
+        <div class="scale_table_block scrollable-content-Html">
+            @Html.Raw(ViewBag.Html)
+        </div>
+    </div>
+</div>
+<div class="modal_block_full" style="margin-top: 10px;">
+    <div class="form_links">
+        <ul class="modal_block clearfix" style="padding-left:10px;padding-top: 10px;">
+            <li>
+                <input type="button" class="btn btn-primary" value="Cancel" onclick="ClosePopup()" />
+            </li>
+        </ul>
+    </div>
+</div>
+

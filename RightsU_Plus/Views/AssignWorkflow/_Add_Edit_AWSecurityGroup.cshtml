@@ -1,0 +1,177 @@
+﻿@model List<RightsU_Entities.Workflow_Role>
+@{
+    List<RightsU_Entities.Security_Group> lstSecurityGroup = new List<RightsU_Entities.Security_Group>();
+    if (ViewData["SecurityGroup"] != "" && ViewData["SecurityGroup"] != null)
+    {
+        lstSecurityGroup = (List<RightsU_Entities.Security_Group>)ViewData["SecurityGroup"];
+    }
+
+    List<RightsU_Entities.User> lstUser = new List<RightsU_Entities.User>();
+    if (ViewData["User"] != "" && ViewData["User"] != null)
+    {
+        lstUser = (List<RightsU_Entities.User>)ViewData["User"];
+    }
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+}
+<div class="tab-content clearfix table-wrapper scale_table_container">
+    <div class="scale_table_block">
+        <table class="table table-bordered table-hover" id="tblApprovalWorkflow">
+            <thead>
+                <tr>
+                    <th style="width:15%;">Level No.</th>
+                    <th style="width:20%;">Security Group</th>
+                    <th style="width:50%;">User(s)</th>
+                    <th style="width:15%;">Reminder Days</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @{int rowNumber = 1;
+                    int BUCode = ViewBag.BUCode;}
+                @if (Model.Count > 0)
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td align="center">
+                                <span>@rowNumber</span>
+                            </td>
+                            @{
+                                int SGCode = 0;
+                                int? GC = item.Group_Code;
+                                foreach (var objSG in lstSecurityGroup)
+                                {
+                                    SGCode = objSG.Security_Group_Code;
+                                    if (GC == SGCode)
+                                    {
+                                        string strRoles = "";
+                                        if (lstUser.Count > 0)
+                                        {
+
+                                            List<RightsU_Entities.Users_Business_Unit> lst_Users_Business_Unit_Service = new List<RightsU_Entities.Users_Business_Unit>();
+                                            lst_Users_Business_Unit_Service = new RightsU_BLL.Users_Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(z => true).Where(x => x.Users_Code != null).ToList();
+                                            var query = lst_Users_Business_Unit_Service.Where(x => x.User.Security_Group_Code == GC && x.Business_Unit_Code == BUCode).Select(s => s.User.Login_Name).ToArray();
+                                            // string strRoles = "";
+                                            if (lstUser.Count > 0)
+                                            {
+                                                strRoles = string.Join(", ", lst_Users_Business_Unit_Service.Where(x => x.User.Security_Group_Code == GC && x.Business_Unit_Code == BUCode).Select(s => s.User.Login_Name).ToArray());
+                                            }
+
+                                            // strRoles = string.Join(", ", lstUser.Where(x => x.Security_Group_Code == SGCode).Select(s => s.Login_Name).ToArray());
+                                        }
+                                        <td>
+                                            <span>@objSG.Security_Group_Name</span>
+                                        </td>
+                                        <td>
+                                            <span>@strRoles</span>
+                                        </td>
+                                        <td style="text-align:center">
+                                            @if (ViewBag.Status == "V")
+                                            {
+                                                RightsU_Entities.Workflow_Module objWorkflow_Module = new RightsU_BLL.Workflow_Module_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Workflow_Code == item.Workflow_Code && x.Is_Active == "Y").FirstOrDefault();
+                                                var v = item.Workflow_Module_Role.Where(y => y.Workflow_Module_Code== objWorkflow_Module.Workflow_Module_Code).Select(x => x.Reminder_Days).FirstOrDefault();
+                                                <span>@v</span>
+                                            }
+                                            else
+                                            {
+                                                @Html.TextBox("Reminder_Days", item.Reminder_Days, new { style = "width:40px", maxlength = "3", id = "Reminder_Days" + rowNumber, onkeyup = "UpdateList(" + @rowNumber + ")" })
+                                                @Html.Hidden("Workflow_Role_Code", @item.Workflow_Role_Code, new { id = "Workflow_Role_Code" + @rowNumber })
+                                            }
+                                        </td>
+                                        break;
+                                    }
+                                }
+
+                            }
+                        </tr>
+
+                                    rowNumber++;
+                                }
+                                @Html.Hidden("rowCount", rowNumber, new { id = "rowCount" })
+                                }
+                                else
+                                {
+                                    if (TempData["Action"] != "AddWorkFlowSG")
+                                    {
+                                        <tr>
+                                            <td colspan="4">No record found</td>
+                                        </tr>
+                                    }
+                                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+    var URL_SearchUser = '@Url.Action("SearchUser", "ApprovalWorkflow")';
+    var URL_UpdateList = '@Url.Action("UpdateList", "AssignWorkflow")';
+    $(document).ready(function () {
+        debugger;
+        $("#Security_Group_Code,#Security_Group_Code_Edit").change(function () {
+            debugger;
+            var SGCode = this.value;
+            if (SGCode > 0) {
+                SearchUser(SGCode)
+            }
+            else {
+                if (SGCode == 0) {
+                    $('#UserAdd').text("");
+                    $('#UserEdit').text("");
+                }
+            }
+        });
+        function SearchUser(SGCode) {
+            debugger
+            $.ajax({
+                type: "POST",
+                url: URL_SearchUser,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    SGCode: SGCode
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        $('#UserAdd').text(result.UserList);
+                        $('#UserEdit').text(result.UserList);
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    });
+    function UpdateList(rowCount) {
+        var Reminder_Days = $('#Reminder_Days' + rowCount).val();
+        var Workflow_Role_Code = $('#Workflow_Role_Code' + rowCount).val();
+        $.ajax({
+            type: "POST",
+            url: URL_UpdateList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                WFRCode: Workflow_Role_Code, ReminderDays: Reminder_Days
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+</script>

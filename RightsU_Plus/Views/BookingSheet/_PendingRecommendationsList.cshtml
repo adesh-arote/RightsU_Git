@@ -1,0 +1,55 @@
+﻿@model List<RightsU_Entities.USPAL_GetReCommendationList_Result>
+@using UTOFrameWork.FrameworkClasses
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th style="width:20%">Client Name</th>
+            <th style="width:20%">Proposal - CY</th>
+            <th style="width:20%">Cycle</th>
+            <th style="width: 15%;">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count() > 0)
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Vendor_Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Proposal_CY)
+                    </td>
+                    <td style="text-align:center">
+                        @Html.DisplayFor(modelItem => item.Cycle)
+                    </td>
+                    <td style="text-align:center">
+                        @if (item.IsMinimum == "Y")
+                        {
+                            <input type="button" title="Generate Booking Sheet" class="btn btn-primary" value="Generate Booking Sheet" style="cursor: pointer;" onclick="GenerateBookingSheet(@item.AL_Recommendation_Code)" />
+                        }
+                        else if (item.IsMinimum == "N")
+                        {
+                            <input type="button" title="Generate Booking Sheet" class="btn btn-primary disabled" value="Generate Booking Sheet" style="cursor: pointer;" />
+                        }
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="9">@objMessageKey.Norecordfound</td>
+            </tr>
+        }
+    </tbody>
+</table>

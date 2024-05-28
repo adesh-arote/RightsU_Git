@@ -1,0 +1,153 @@
+/*!
+	RightsU - Rights Management System (New Design)
+	DP and Rushabh Gohil (UTO Solutions)
+	25.Sept.2014
+ */
+
+
+.container {
+    /* width:640px; */
+    width: 92%;
+    min-height: 480px;
+}
+
+.header-nav {
+    padding: 4px 4px 0px 60px;
+    height: 48px;
+}
+
+.rightsU_header {
+    height: 48px;
+}
+
+.rightsU_footer {
+    height: 30px;
+}
+
+    .rightsU_footer ul li {
+        padding: 6px 0;
+    }
+
+.footer_logo {
+    display: none;
+}
+
+.tag_line {
+    display: none;
+}
+
+.user_img > img {
+    width: 80%;
+}
+
+.navigation {
+    width: 60px;
+}
+
+    .navigation a {
+        font-size: 23px;
+        padding: 15px 19px;
+    }
+
+    .navigation .check_button .count {
+        right: 32px;
+        top: 12px;
+    }
+
+.leftPanel {
+    top: 48px;
+    -webkit-box-shadow: 3px -9px 7px rgba(0,0,0,0.1);
+}
+
+    .leftPanel h4 {
+        right: 32px;
+        top: 12px;
+        margin-bottom: -15px;
+    }
+
+span.Reviewclose {
+    font-size: 0.8em;
+    top: -8px;
+}
+
+.forReview > li > span {
+    left: 0;
+    font-size: 14px;
+}
+
+ul.forReview > li > a > ul {
+    height: 62px;
+}
+
+    ul.forReview > li > a > ul > li {
+        width: 100% !important;
+        text-align: left !important;
+        font-size: 0.8em;
+    }
+
+h4, .h4 {
+    font-size: 15px;
+}
+
+h5, .h5 {
+    font-size: 13px;
+}
+
+li.deal_type {
+    width: 12%;
+}
+
+li.deal_status {
+    width: 21%;
+    padding-left: 0;
+}
+
+li.deal_action {
+    width: 16%;
+}
+
+li.deal_period {
+    width: 16%;
+}
+
+li.deal_licensor {
+    width: 26%;
+}
+
+li.deal_territory {
+    width: 28%;
+}
+
+.movie_brif {
+    padding: 0px 0 50px;
+}
+
+    .movie_brif h1.pull-left {
+        font-size: 2em;
+    }
+
+.movie_deal {
+    transform: scale(0.8);
+}
+
+.intro {
+    font-size: 0.9em;
+}
+
+    .intro .td_label {
+        width: 75px;
+        margin-right: 12px;
+        width: 75px;
+        margin-right: 12px;
+    }
+
+.stamp {
+    transform: rotate(34deg);
+    font-size: 0.8em;
+    margin-top: 40%;
+}
+
+img.clientLogo {
+    height: 40px;
+    max-width: 140px;
+}

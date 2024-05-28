@@ -1,0 +1,65 @@
+﻿@using RightsU_Entities
+@model List<USP_GetContentsMusicData_Result>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}           
+<script>
+    $(document).ready(function () {
+        $('#hdnPageNo').val('@ViewBag.PageNo');
+        $('#txtPageSize').val('@ViewBag.PageSize');
+        $('#hdnRecordCount').val('@ViewBag.RecordCount');
+        $('#lblRecordCount').text('@ViewBag.RecordCount');
+
+        if ('@ViewBag.TabChanged' == 'Y') {
+            $('#txtSearchText_MV').val('@ViewBag.SearchText');
+            var versionCodes = ('@ViewBag.Version').split(',');
+            $('#ddlVersion_MV').val(versionCodes).trigger('chosen:updated');
+        }
+
+        SetPaging();
+        initializeTooltip();
+        initializeExpander();
+    });
+</script>
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th style="width:20%;">@objMessageKey.Content</th>
+            <th style="width:10%;">@objMessageKey.Version</th>
+            <th style="width:15%;">@objMessageKey.MusicTrack</th>
+            <th style="width:15%;">@objMessageKey.MovieName</th>
+            <th style="width:15%;">@objMessageKey.MusicLabel</th>
+            <th style="width:8%;">@objMessageKey.TCIn</th>
+            <th style="width:8%;">@objMessageKey.TCOut</th>
+            <th style="width:8%;">@objMessageKey.Duration</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td><span>@ViewBag.Title_Name </span>- Episode @ViewBag.Episode_No</td>
+                    <td>@item.Version</td>
+                    <td>@item.Music_Title_Name</td>
+                    <td>@item.Movie_Album</td>
+                    <td>@item.Music_Label_Name</td>
+                    <td style="text-align:center;">@item.From</td>
+                    <td style="text-align:center;">@item.To</td>
+                    <td style="text-align:center">@item.Duration</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="8">No record found</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,94 @@
+﻿@model List<RightsU_Entities.USPTATSLAList_Result>
+
+<script src="~/JS_Core/jquery.sumoselect.js"></script>
+<link href="~/CSS/sumoselect.css" rel="stylesheet" />
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+
+<script>
+
+    $(document).ready(function () {
+        BindSLAMatrix('',0,'List');
+    })
+
+</script>
+
+<style>
+    #ddlBusinessUnit_chosen {
+        width: 50% !important;
+    }
+
+    #ddlDealType_chosen {
+        width: 50% !important;
+    }
+</style>
+
+<input type="hidden" name="TATSLACode" id="hdnTATSLACode" value="@ViewBag.tatSLACode">
+<div class="">
+    <div class="title_block dotted_border clearfix">
+        <h2 class="pull-left">
+            Add Edit SLA
+            <span></span>
+        </h2>
+    </div>
+
+    <table class="table_brif table">
+        <tbody>
+            <tr>
+                <td>
+                    <b> SLA Name :</b>
+                </td>
+                <td>
+                    <input type="text" id="txtSLAName" name="SLAName" value="@ViewBag.SLAName" />
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <b> Business Unit :</b>
+                </td>
+                <td>
+                    <div id="divddlBusinessUnit">
+                        @Html.DropDownList("ddlBusinessUnit", ViewBag.BusinessUnit as SelectList, "Select", new { @id = "ddlBusinessUnit", @class = "form_input chosen-select" })
+                    </div>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <b> Deal Type :</b>
+                </td>
+                <td>
+                    <div id="divddlDealType">
+                        @Html.DropDownList("ddlDealType", ViewBag.DealTypeCodes as SelectList, "Select", new { @id = "ddlDealType", @class = "form_input chosen-select" })
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="search_area" style="background-color:#eee">
+        <table class="table">
+            <tr>
+                <td style="width:15%; line-height:26px">
+                    <h4 class="pull-left">SLA Matrix</h4>
+                </td>
+
+                <td class="right_nav pull-right" style="margin-right:10px">
+                    <input type="button" value="Add" id="btnAddSLAMatrix" class="btn btn-primary" onclick="BindSLAMatrix('',0,'Add')">
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="divSLAMatrix">
+
+    </div>
+
+    <br />
+    <div>
+        <span><input type="button" id="btnSave" name="Save" value="Save" class="btn btn-primary" onclick="SaveSLA()" /> </span>
+        <span><input type="button" id="btnCancel" name="Cancel" value="Cancel" class="btn btn-primary" onclick="validateOnCancel()" /></span>
+    </div>
+</div>
+
+

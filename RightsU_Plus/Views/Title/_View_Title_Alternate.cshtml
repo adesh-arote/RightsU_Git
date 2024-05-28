@@ -1,0 +1,263 @@
+﻿@using RightsU_BLL;
+@model RightsU_Entities.Title_Alternate
+@using System.Configuration;
+@using UTOFrameWork.FrameworkClasses
+@{
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    RightsU_BLL.Language_Service objLS = new RightsU_BLL.Language_Service(objLoginEntity.ConnectionStringName);
+    RightsU_BLL.Talent_Service objT = new RightsU_BLL.Talent_Service(objLoginEntity.ConnectionStringName);
+    RightsU_BLL.Program_Service objP = new RightsU_BLL.Program_Service(objLoginEntity.ConnectionStringName);
+    var lstTalent = new RightsU_BLL.USP_Service(objLoginEntity.ConnectionStringName).USP_Get_Talent_Name().ToList();
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script>
+    function btnAlternateCancel() {
+        var URL = '@Url.Action("List", "Title_List", new { CallFrom = "T", Page_No = "Code" })';
+        URL = URL.replace("Title_Name", '@ViewBag.SearchedTitle');
+        URL = URL.replace("Code", '@ViewBag.PageNo');
+        URL = URL.replace("amp;", "");
+        window.location.href = URL;
+
+    }
+    $(document).ready(function () {
+        if ('RTL' == '@objMessageKey.LayoutDirection') 
+            $('.poptalent').css("float", "Right");
+        else
+            $('.poptalent').css("float", "left");
+        initializeExpander();
+    });
+</script>
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="scale_table_block" dir="@ViewBag.Direction">
+            <table class="table_brif table">
+                <tbody>
+                    <tr>
+                        <td class="intro_pic">
+                            <div>
+                                @if (Model.Title_Image != null)
+                                {   <img src="@Url.Content(ConfigurationManager.AppSettings["TitleImagePath"] + @Model.Title_Image)" alt="Image" />}
+                                else
+                                {
+                                    if (Model.Deal_Type_Code == GlobalParams.Deal_Type_Music)
+                                    { <a href="javascript:void(0)"><img src="~/Images/musicIcon.png" alt="Image" /></a> }
+                                    else if (Model.Deal_Type_Code == GlobalParams.Deal_Type_Content)
+                                    {<a href="javascript:void(0)"><img src="~/Images/program.png" alt="Image" /></a> }
+                                    else if (Model.Deal_Type_Code == GlobalParams.Deal_Type_Format_Program)
+                                    {<a href="javascript:void(0)"><img src="~/Images/formatShow.png" alt="Image" /></a> }
+                                    else if (Model.Deal_Type_Code == GlobalParams.Deal_Type_Event)
+                                    {<a href="javascript:void(0)"><img src="~/Images/Event.png" alt="Image" /></a> }
+                                    else
+                                    {<a href="javascript:void(0)"><img src="~/Images/movieIcon.png" alt="Image" /></a> }
+                                }
+                            </div>
+                        </td>
+                        <td class="intro">
+                            <table class="four_column table">
+                                <tr>
+                                    <td>@objMessageKey.TitleType</td>
+                                    <td>
+                                        @Model.Deal_Type.Deal_Type_Name
+                                    </td>
+                                    <td>
+                                        @objMessageKey.Program
+                                    </td>
+                                    <td>
+                                        @{
+                                            int? title_Code = Model.Title_Code;
+                                            int? Program_Code = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Code == title_Code).Select(s => s.Program_Code).FirstOrDefault();
+                                            string Program_Name = objMessageKey.NO + " " + objMessageKey.Program;
+                                            if (Program_Code > 0 && Program_Code != null && Program_Code.ToString() != "")
+                                            {
+                                                Program_Name = objP.GetById(Program_Code ?? 0).Program_Name;
+                                            }
+                                            }
+                                            @Html.Label("ProgramName", Program_Name)
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td>@objMessageKey.Title</td>
+                                    <td class="expandable">
+                                        @Model.Title_Name
+                                    </td>
+                                    <td>@objMessageKey.OriginalTitle</td>
+                                    @{
+                                        string originaltitle = objMessageKey.NA;
+                                        if (@Model.Original_Title != null && @Model.Original_Title != "")
+                                        {
+                                            originaltitle = Model.Original_Title;
+                                        }
+                                    }
+                                    <td class="expandable">
+                                        @originaltitle
+                                    </td>
+                                </tr>
+                                <tr>
+                                    @if (ViewBag.Direction == "RTL")
+                                    {
+                                        <td>@objMessageKey.DurationInMin&#x200E;</td>@*(Duration (Min*@
+                                    }
+                                    else
+                                    {
+                                        <td>@objMessageKey.DurationInMin</td>
+                                    }
+                                    @{
+                                        Decimal? Duration_In_Min = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Code == title_Code).Select(s => s.Duration_In_Min).FirstOrDefault();
+                                    }
+                                    <td>
+                                       @Duration_In_Min
+                                    </td>
+                                    <td>@objMessageKey.YearOfRelease</td>
+                                    @{
+                                        string YOR = objMessageKey.NA;
+                                        if (@Model.Year_Of_Production != null && @Model.Year_Of_Production.ToString() != "")
+                                        {
+                                            YOR = Model.Year_Of_Production.ToString();
+                                        }
+                                    }
+                                    <td>
+                                        @YOR
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>@objMessageKey.TitleLangauge</td>
+                                    <td>
+                                        @{
+                                            string Language_Name = "";
+                                            if (@Model.Title_Language_Code > 0)
+                                            {
+                                                Language_Name = objLS.GetById(Model.Title_Language_Code ?? 0).Language_Name;
+                                            }
+                                        }
+                                        @Html.Label("TitleLanguage", Language_Name)
+                                    </td>
+                                    <td>@objMessageKey.OriginalLanguage</td>
+                                    <td>
+                                        @{
+                                            string Original_language = objMessageKey.NA;
+                                            if (@Model.Original_Language_Code > 0 && @Model.Original_Language_Code != null && @Model.Original_Language_Code.ToString() != "")
+                                            {
+                                                Original_language = objLS.GetById(Model.Original_Language_Code ?? 0).Language_Name;
+                                            }
+                                        }
+                                        @Html.Label("Original_language", Original_language)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>@objMessageKey.ProducerName</td>
+                                         @{
+                                            string producername = objMessageKey.NA;
+                                            if (@ViewBag.ProduceList != null && @ViewBag.ProduceList != "")
+                                            {
+                                                producername = @ViewBag.ProduceList;
+                                            }
+                                            }
+                                    <td class="expandable">
+                                        @producername
+                                    </td>
+                                    <td>@objMessageKey.DirectorName</td>
+                                    @{
+                                        string directorname = objMessageKey.NO + " " + objMessageKey.Director;
+                                        if (@ViewBag.DirectorList != null && @ViewBag.DirectorList != "")
+                                        {
+                                            directorname = @ViewBag.DirectorList;
+                                        }
+                                    }
+                                    <td class="expandable">
+                                        @directorname
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>@objMessageKey.CountryOfOrigin</td>
+                                    <td class="expandable">
+                                        @ViewBag.CountryList
+                                    </td>
+                                    <td>@objMessageKey.TitleGenres</td>
+                                    @{
+                                        string genresname = objMessageKey.NO + " " + objMessageKey.Genres;
+                                        if (@ViewBag.GenresList != null && @ViewBag.GenresList != "")
+                                        {
+                                            genresname = @ViewBag.GenresList;
+                                        }
+                                    }
+                                    <td class="expandable">
+                                        @genresname
+                                    </td>
+                                </tr>
+                                <tr>
+
+                                    @if (Model.Deal_Type_Code == GlobalParams.CodeForEmbeddedMusic)
+                                    {
+                                        <td>@objMessageKey.MusicLabel</td>
+                                        <td>@ViewBag.MusicLabelList</td>
+                                    }
+                                </tr>
+                                <tr>
+                                    <td>@objMessageKey.KeyStarCast</td>
+                                    @{
+                                        string talent = objMessageKey.NO + " " + objMessageKey.Talent;
+                                        if (@ViewBag.StarCastList != null && @ViewBag.StarCastList != "")
+                                        {
+                                            talent = @ViewBag.StarCastList;
+                                        }
+                                    }
+                                    <td colspan="3" class="expandable">
+                                        @talent
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>@objMessageKey.Synopsis</td>
+                                    @{
+                                        string synopsis = objMessageKey.NA;
+                                        if (@Model.Synopsis != null && @Model.Synopsis != "")
+                                        {
+                                            synopsis = Model.Synopsis;
+                                        }
+                                    }
+                                    <td class="expandable" id="tdsynopsis">
+                                        @synopsis
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+
+                                </tr>
+                            </table>
+
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        @if (ViewBag.Direction == "RTL")
+        { 
+            <div dir="@objMessageKey.LayoutDirection">
+                <div class="bottom_action">
+                    <ul class="form_link_nav clearfix">
+                        <li style="float:right">
+                            <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="return btnAlternateCancel();" />
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="bottom_action" style="float:left">
+                <ul class="form_link_nav clearfix">
+                    <li>
+                        <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="return btnAlternateCancel();" />
+                    </li>
+                </ul>
+            </div>
+        }
+    </section>
+</div>

@@ -1,0 +1,457 @@
+﻿@model RightsU_Entities.Syn_Deal_Rights_Holdback
+<style>
+    #popEditHB .fancytree-container {
+        height: 310px !important;
+        width: 410px;
+    }
+
+    .sumo_lbTerritory_Popup {
+        width: 434px !important;
+    }
+
+    .sumo_lb_Sub_Language_Popup {
+        width: 434px !important;
+    }
+
+    .sumo_lb_Dubb_Language_Popup {
+        width: 434px !important;
+    }
+
+    #Tree_Filter_Rights_HB_Platform {
+        width: 410px;
+        position: relative !important;
+    }
+
+    #Rights_HB_Platform {
+        margin: 0px 0px 0px 0px !important;
+    }
+    /*.chosen-choices{
+        max-height: 55px !important;
+        overflow-y: auto;
+
+    }*/
+</style>
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
+<script type="text/javascript">
+    var URL_Bind_Ddl_Controls = '@Url.Action("Bind_Ddl_Controls", "Syn_Rights_Holdback")';
+
+    @*var ShowMessage = {
+        "MsgPlaceSearch": '@objMessageKey.Search'
+    }*@
+    $(document).ready(function () {
+        initializeTooltip();
+        Bind_Ddl_Controls('@ViewBag.key');
+        $('#lbTerritory_Popup').SumoSelect();
+        $('#lb_Sub_Language_Popup').SumoSelect();
+        $('#lb_Dubb_Language_Popup').SumoSelect();
+        $('#HB_Run_After_Release_No').numeric({
+            allowMinus: true,
+            allowThouSep: false,
+            allowDecSep: false,
+            maxPreDecimalPlaces: 3,
+            maxDecimalPlaces: 1
+        });
+        if ('@ViewBag.CommandName_HB' == 'E') {
+            $('#hdnPlatform_Codes_HB').val('@ViewBag.SelectedPlatForm');
+
+            if ('@Model.Is_Original_Language' == 'Y')
+                $('#chk_Is_Title_Language_Right').prop('checked', true);
+            else
+                $('#chk_Is_Title_Language_Right').prop('checked', false);
+
+            $('#hdnHoldbackType').val('@Model.Holdback_Type');
+            var Holdback_Comment = document.getElementById('Holdback_Comment');
+            countChar(Holdback_Comment);
+        }
+
+        $('#hdnHBCounter').val('@ViewBag.DummyProperty');
+        initializeExpander();
+        setChosenWidth('#ddlHoldBackOnPlatform', '125px');
+        setChosenWidth('#lstReleaseUnit', '85px');
+        $('#lstReleaseUnit').change(function () {
+            setChosenWidth('#lstReleaseUnit', '85px');
+        });
+        $('#ddlHoldBackOnPlatform').change(function () {
+            setChosenWidth('#ddlHoldBackOnPlatform', '125px');
+        });
+    })
+    function Bind_Ddl_Controls(callfrom) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_Bind_Ddl_Controls,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger;
+
+                    $("#ddlHoldBackOnPlatform").empty();
+                    $("#ddlHoldBackOnPlatform").append($("<option>").val("").text(" -- Please Select --"));
+                    $(result.HoldbackOnPlatform).each(function (index, item) {
+                        var str = this.Text;
+                        var res = str.split("~");
+                        $('#ddlHoldBackOnPlatform')
+                          .append($("<option title='" + res[1] + "'></option>")
+                          .attr("value", this.Value)
+                          .text(res[0]));
+                    });
+                    if (callfrom == "U") {
+                        debugger;
+                        var code = '@ViewBag.Holdback_On_Platform_Code'
+                        if (code != "") {
+                            code = parseInt('@ViewBag.Holdback_On_Platform_Code');
+                            $("#ddlHoldBackOnPlatform").val(code).trigger("chosen:updated");
+                        }
+                        else {
+                            $("#ddlHoldBackOnPlatform").trigger("chosen:updated");
+                        }
+                    }
+                    else {
+                        $("#ddlHoldBackOnPlatform").trigger("chosen:updated");
+                    }
+
+
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function Save_Holdback(Counter) {
+        var IsValid = true;
+        if ($('#hdnPlatform_Codes_HB').val() == '') {
+            $('#tree2').addClass('required');
+            IsValid = false;
+        }
+        else
+            $('#tree2').removeClass('required');
+
+        if ($('#lbTerritory_Popup').val() == null) {
+            $(".lbTerritory_Popup").attr('required', true);
+            $(".lbTerritory_Popup").addClass('required');
+            IsValid = false;
+        }
+
+        if ($("#lb_Sub_Language_Popup").val() == null && $("#lb_Dubb_Language_Popup").val() == null && $('#chk_Is_Title_Language_Right').prop('checked') == false) {
+            showAlert('E', 'Please select atleast one language');
+            IsValid = false;
+        }
+        else
+            $('#ulLanguage').removeClass('required');
+
+        if ($('#hdnHoldbackType').val() == 'R' && IsValid) {
+            if ($("#HB_Run_After_Release_No").val() == '' || $("#lstReleaseUnit").val() == "0" || $("#ddlHoldBackOnPlatform").val() == '') {
+
+                if ($("#HB_Run_After_Release_No").val() == '')
+                    $("#HB_Run_After_Release_No").attr('required', true);
+
+                if ($("#lstReleaseUnit").val() == "0")
+                    $("#lstReleaseUnit").addClass('required');
+                else
+                    $("#lstReleaseUnit").removeClass('required');
+
+                if ($("#ddlHoldBackOnPlatform").val() == '')
+                    $("#ddlHoldBackOnPlatform").addClass('required');
+                else
+                    $("#ddlHoldBackOnPlatform").removeClass('required');
+
+                IsValid = false;
+            }
+        }
+        else {
+            if ($('#hdnHoldbackType').val() == 'D' && IsValid) {
+                if ($("#Holdback_Comment").val() == '' && ($("#Holdback_Release_Date").val() == '' || $("#Holdback_Release_Date").val() == undefined)) {
+                    if ($("#Holdback_Comment").val() == '')
+                        $("#Holdback_Comment").attr('required', true);
+
+                    if ($("#Holdback_Release_Date").val() == '' || $("#Holdback_Release_Date").val() == undefined)
+                        $("#Holdback_Release_Date").attr('required', true);
+                    IsValid = false;
+                }
+            }
+        }
+
+        if (IsValid) {
+            var chk_Is_Title_Language_Right = ''
+
+            if ($("#lb_Sub_Language_Popup").val() != null)
+                $('#hdn_Sub_LanguageList').val($("#lb_Sub_Language_Popup").val().join(','));
+            else
+                $('#hdn_Sub_LanguageList').val('');
+
+            if ($("#lb_Dubb_Language_Popup").val() != null)
+                $('#hdn_Dubb_LanguageList').val($("#lb_Dubb_Language_Popup").val().join(','));
+            else
+                $('#hdn_Dubb_LanguageList').val('');
+
+            if ($("#ddlHoldBackOnPlatform").val() != null)
+                $('#hdnHoldBackOnPlatform').val($("#ddlHoldBackOnPlatform").val());
+            else
+                $('#hdnHoldBackOnPlatform').val('');
+
+            if ($('#chk_Is_Title_Language_Right').prop('checked'))
+                chk_Is_Title_Language_Right = 'Y'
+            else
+                chk_Is_Title_Language_Right = 'N'
+
+            Counter = $('#hdnHBCounter').val();
+            showLoading();
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("Save_Holdback", "Syn_Rights_Holdback")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    hdnCounter: Counter,
+                    hdnHoldback_Platform_Code: $('#hdnPlatform_Codes_HB').val(),
+                    Regions: $('#lbTerritory_Popup').val().join(','),
+                    chk_Is_Title_Language_Right: chk_Is_Title_Language_Right,
+                    hdn_Sub_LanguageList: $('#hdn_Sub_LanguageList').val(),
+                    hdn_Dubb_LanguageList: $('#hdn_Dubb_LanguageList').val(),
+                    HoldbackType: $('#hdnHoldbackType').val(),
+                    HB_Run_After_Release_No: $("#HB_Run_After_Release_No").val(),
+                    lstReleaseUnit: $("#lstReleaseUnit").val(),
+                    hdnHoldBackOnPlatform: $('#hdnHoldBackOnPlatform').val(),
+                    Holdback_Release_Date: $("#Holdback_Release_Date").val(),
+                    Holdback_Comment: $("#Holdback_Comment").val()
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    if (result.Status == "U" || result.Status == "A") {
+                        $('#popEditHB').modal('hide');
+                        //$('.modal-backdrop').hide();
+                        if (result.Status == "A") {
+                            var count = parseInt($('#spnHoldBackCount').text());
+                            count += 1;
+                            $('#spnHoldBackCount').text(count);
+                        }
+                        var msg = result.Status == "A" ? "Holdback added successfully" : "Holdback updated successfully";
+                        showAlert("S", msg);
+                        if ($('#Is_Theatrical_Right').prop('checked') == false) {
+                            BindPlatform();
+                        }
+                        Bind_Holdback();
+                        hideLoading();
+                        $(document.getElementsByClassName('modal-open')).removeClass('modal-open');
+                        $(document.getElementsByClassName('modal-backdrop')).remove();
+                    }
+                    if (result.Status == 'D') {
+                        showAlert('E', 'Combination conflicts with other Holdback');
+                    }
+                    hideLoading();
+                },
+                error: function (result) {
+                    hideLoading();
+                    alert('Error Validate_Save_Holdback: ' + result.responseText);
+                }
+            });
+        }
+        //return true;
+    }
+
+    function ChangeHoldbackType(obj) {
+        if (obj == 'R')
+            $("#Holdback_Comment").removeAttr('required');
+        $('#hdnHoldbackType').val(obj);
+    }
+
+    function CheckMainTitleLanguage(chk) {
+        var chkTitle = $('#Is_Title_Language_Right').prop('checked');
+        if (chk.checked && !chkTitle) {
+            chk.checked = false;
+            showAlert('E', 'Please select title language right first.');
+            return false;
+        }
+        return true;
+    }
+    function fillTotalHB() {
+        debugger;
+        var selectedCount = 0, selectedRegion = '';
+        if ($("#lbTerritory_Popup option:selected").length > 0) {
+            $("#lbTerritory_Popup option:selected").each(function () {
+                if (selectedRegion == '') {
+                    selectedRegion = $(this).val();
+                }
+                else {
+                    selectedRegion = selectedRegion + ',' + $(this).val();
+                }
+                selectedCount++
+            });
+        }
+        $('#lblTerritoryCountHB').html(selectedCount);
+    }
+</script>
+
+<div class="modal-dialog">
+    <div class="modal-content clearfix">
+        <form class="form" id="new_syndication_bundle_form">
+            <div>
+                <div class="form_fields syn">
+                    <div class="modal_block modal_header">
+                        <a class="close" data-dismiss="modal" href="#">
+                            <span>×</span>
+                            <span class="sr-only">Close</span>
+                        </a>
+                        <h2>Add / Edit Holdback</h2>
+                    </div>
+                    <div class="modal_block" style="overflow: visible;max-height: 590px;">
+                        <ul class="form_fields_wrapper">
+                            <li class="clearfix">
+                                <table class="four_column table">
+                                    <tbody>
+                                        <tr>
+                                            <td class="td_label">Title</td>
+                                            <td>
+                                                <div class="expandable">@ViewBag.Title</div>
+                                            </td>
+                                            <td class="td_label">Term</td>
+                                            <td>
+                                                @ViewBag.PeriodTerm
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="td_label">Tentative</td>
+                                            <td>
+                                                @ViewBag.IsTentative
+                                            </td>
+                                            <td class="td_label">Period</td>
+                                            <td>
+                                                @ViewBag.Period
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </li>
+                            <li class="clearfix">
+                                <ul class="col-md-6">
+                                    <li>
+                                        <label class="bold">REGION </label>@*:&nbsp;<label id="lblTerritoryCountHB">@ViewBag.RCount</label>*@
+                                        <br />
+                                        <div class="lbTerritory_Popup" style="width: 436px;">
+                                            @Html.ListBox("lbTerritory_Popup", ViewBag.Territory_List_HB as MultiSelectList, new { @multiple = "multiple" })<!--, @@onchange = "return fillTotalHB();"-->
+                                        </div>
+                                        @Html.Hidden("hdnTerritoryList")
+                                        @Html.Hidden("hdnHBCounter")
+                                    </li>
+                                    <li>
+                                        <label class="bold small_title">Language</label>
+                                        <div class="platform_checkbox">
+                                            <label class="checkbox-inline">
+                                                @Html.CheckBox("chk_Is_Title_Language_Right", (Model.Is_Title_Language_Right != null && Model.Is_Title_Language_Right == "Y") ? true : false, new { @onclick = "return CheckMainTitleLanguage(this);" })
+                                                Title Language Right
+                                            </label>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <label class="bold small_title" style="margin-bottom: -10px;">Subtitling</label><br />
+                                        <div id="divSubSingleHB">
+                                            @Html.ListBox("lb_Sub_Language_Popup", ViewBag.SL_List_HB as MultiSelectList, new { @multiple = "multiple" })
+                                            @Html.Hidden("hdn_Sub_LanguageList")
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <label class="bold small_title" style="margin-bottom: -10px;">Dubbing</label><br />
+                                        <div id="divDubSingleHB">
+                                            @Html.ListBox("lb_Dubb_Language_Popup", ViewBag.DL_List_HB as MultiSelectList, new { @multiple = "multiple" })
+                                            @Html.Hidden("hdn_Dubb_LanguageList")
+                                        </div>
+                                    </li>
+                                    <li style="width: 90%">
+                                        <label class="bold small_title">Holdback Type</label>
+                                        <div class="tabbable">
+                                            <ul id="ulRightType" class="nav nav-tabs nav-tab pull-left">
+                                                <li class="@((string.IsNullOrEmpty(Model.Holdback_Type)) ? "active" : (Model.Holdback_Type == "R" ? "active" : ""))">
+                                                    <a data-toggle="tab" id="liTabRelease" href="#tabRelease" onclick="ChangeHoldbackType('R')" role="tab">Release</a>
+                                                </li>
+                                                <li class="@(Model.Holdback_Type == "D" ? "active" : "")">
+                                                    <a data-toggle="tab" id="liTabDate" href="#tabDate" role="tab" onclick="ChangeHoldbackType('D')">Date</a>
+                                                </li>
+                                            </ul>
+                                            <div class="tab-content clearfix table-wrapper scale_table_container">
+                                                <div class="@((string.IsNullOrEmpty(Model.Holdback_Type)) ? "tab-pane active scale_table_block" : (Model.Holdback_Type == "R" ? "tab-pane active scale_table_block" : "tab-pane scale_table_block"))" id="tabRelease">
+                                                    <ul class="from_to clearfix">
+                                                        <li class="form_li_sub">
+                                                            @Html.TextBoxFor(mbox => Model.HB_Run_After_Release_No, new { @class = "smallTextBox", @MaxLength = 3 })
+                                                        </li>
+                                                        <li class="form_li_sub" style="width: 100px;">
+                                                            @Html.DropDownList("lstReleaseUnit", ViewBag.HB_Run_After_Release_Unit as MultiSelectList, new { @class = "form_input chosen-select", @width = "150px" })
+                                                        </li>
+                                                        <li class="form_li_sub" style="width: 140px;">
+                                                            @*@Html.DropDownList("ddlHoldBackOnPlatform", ViewBag.HoldbackOnPlatform as MultiSelectList, "--Please Select--", new { @class = "form_input chosen-select", @width = "200px" })*@
+                                                            <select id="ddlHoldBackOnPlatform" class="form_input chosen-select"></select>
+                                                            @Html.Hidden("hdnHoldBackOnPlatform")
+                                                        </li>
+                                                    </ul>
+
+                                                </div>
+                                                <div class="@(Model.Holdback_Type == "D" ? "tab-pane active scale_table_block" : "tab-pane scale_table_block")" id="tabDate">
+                                                    <ul class="from_to clearfix">
+                                                        <li class="form_li_sub" style="width: 180px;">
+                                                            <table>
+                                                                <tr>
+                                                                    <td><label>Date</label></td>
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => Model.Holdback_Release_Date, "{0:" + UTOFrameWork.FrameworkClasses.GlobalParams.DateFormat + "}", new { @class = "isDatepicker", @placeholder = "DD/MM/YYYY" })
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                @Html.Hidden("hdnHoldbackType", "R")
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <div class="platform_wrapper col-md-6">
+                                    <label class="bold" for="platform">platform</label>
+                                    <div id="tree2" class="treeClass" style="margin-right: 65px;">
+                                        @Html.Partial("_TV_Platform")
+                                        <input type="hidden" name="hdnHoldback_Platform_Code" id="hdnPlatform_Codes_HB" />
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="divBlock">
+                                    <div class="bold small_title" style="padding-right: 320px;">Remarks</div>
+                                    <div style="">&nbsp;&nbsp;</div>
+                                    <div id="CharNum" class="charNum" style="float: right;">0/4000</div>
+                                </div>
+                                @Html.TextAreaFor(m => Model.Holdback_Comment, new { @class = "textarea", @onkeypress = "countChar(this)", @onkeyup = "countChar(this)", @maxlength = 4000 })
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="modal_block_full">
+                        <div class="form_links">
+                            <ul class="modal_block clearfix">
+                                <li>
+                                    <input type="button" id="btnSave" class="btn btn-primary" value="Save" onclick="return Save_Holdback();" />
+                                </li>
+                                <li>
+                                    <a data-dismiss="modal" class="btn-primary" href="#">cancel</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

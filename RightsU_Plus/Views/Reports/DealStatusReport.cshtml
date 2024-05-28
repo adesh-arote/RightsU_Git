@@ -1,0 +1,459 @@
+﻿@{
+    ViewBag.Title = "DealStatusReport";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
+<script>
+    URL_PopulateAgreementNo = '@Url.Action("PopulateAgreementNoOnBU_CodeDealStatus", "Reports")';
+    URL_BindDealStatusReport = '@Url.Action("BindDealStatusReport", "Reports")';
+    URL_BindUserDropdown = '@Url.Action("BindUserDropdown", "Reports")';
+
+    $(document).ready(function () {
+        $('#txtStart_DS').change(function () {
+            SetMinDtDS();
+        });
+        $('#txtEnd_DS').change(function () {
+            SetMaxDtDS();
+        });
+
+        $('#ddlBusinessUnitMultiSelect').SumoSelect({ selectAll: true, triggerChangeCombined: false }).sumo.selectAll();
+        $('#ddlBusinessUnitMultiSelect').each(function () {
+            $(this)[0].sumo.reload();
+            $('.SumoSelect > .CaptionCont > span').css("padding-right", "0px");
+            $('.SumoSelect .select-all').css({ paddingRight: '6px' });
+            $('.SumoSelect > .optWrapper > .options li.opt label').css({ direction: "LTR", paddingRight: '30px' });
+            $('.SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css({ paddingRight: '35px', lineHeight: '15px' });
+        });
+
+        $('#ddlDealWorkflowStatus').SumoSelect({ selectAll: true, triggerChangeCombined: false }).sumo.selectAll();
+        $('#ddlDealWorkflowStatus').each(function () {
+            $(this)[0].sumo.reload();
+            $('.SumoSelect > .CaptionCont > span').css("padding-right", "0px");
+            $('.SumoSelect .select-all').css({ paddingRight: '6px' });
+            $('.SumoSelect > .optWrapper > .options li.opt label').css({ direction: "LTR", paddingRight: '30px' });
+            $('.SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css({ paddingRight: '35px', lineHeight: '15px' });
+        });
+
+        $("#ddlUserName").SumoSelect();
+        $("#ddlUserName")[0].sumo.reload();
+        $("#ddlUserName_chosen").hide();
+
+        $("#ddlDeal").change(function () {
+            debugger;
+            $('#txtAgreementNo').val('');
+            $('#hdnAcqDealCode').val('0');
+
+            $('#ddlBusinessUnitMultiSelect').SumoSelect({ selectAll: true, triggerChangeCombined: false }).sumo.selectAll();
+            $('#ddlBusinessUnitMultiSelect').each(function () {
+                $(this)[0].sumo.reload();
+                $('.SumoSelect > .CaptionCont > span').css("padding-right", "0px");
+                $('.SumoSelect .select-all').css({ paddingRight: '6px' });
+                $('.SumoSelect > .optWrapper > .options li.opt label').css({ direction: "LTR", paddingRight: '30px' });
+                $('.SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css({ paddingRight: '35px', lineHeight: '15px' });
+            });
+            $("#ddlBusinessUnitMultiSelect")[0].sumo.reload();
+
+            $("#ddlUserName").SumoSelect();
+            $("#ddlUserName")[0].sumo.reload();
+            $("#ddlUserName_chosen").hide();
+        });
+
+    });
+
+    function populateAgreementNo(evt) {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var dealCode = $('#ddlDeal').val();
+        var businessUnitcode = $('#ddlBusinessUnitMultiSelect').val();
+
+        if (businessUnitcode == 0 || businessUnitcode == "undefined" || businessUnitcode == "" || businessUnitcode == null) {
+            showAlert('E', "Business Unit Cannot be Blank.");
+            return false;
+        }
+        if ($('#ddlBusinessUnitMultiSelect').val())
+            businessUnitcode = $('#ddlBusinessUnitMultiSelect').val().join(',');
+
+        var selectedtxt = $('#txtAgreementNo').val()
+        var returnVal = true;
+        if (businessUnitcode == 0) {
+            $('#ddlBusinessUnit').attr('required', true);
+            returnVal = false;
+        }
+
+        if (returnVal) {
+            $("#txtAgreementNo").autocomplete({
+                focus: function () {
+                    // prevent value inserted on focus
+                    return false;
+                },
+                search: function (e, u) {
+                    $(this).addClass('loader');
+                },
+                source: function (request, response) {
+                    $('#hdnAcqDealCode').val('0')
+                    $('#hdnAgreementNo').val('')
+                    var param = {
+                        searchPrefix: $('#txtAgreementNo').val(),
+                        module: dealCode,
+                        BU_Code: businessUnitcode
+                    };
+                    $.ajax({
+                        url: URL_PopulateAgreementNo,
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+                            if (data.length == 0) {
+                                data[0] = 'Result Not Found';
+                                response($.map(data, function (v, i) {
+                                    $('#txtAgreementNo').removeClass('loader');
+                                    return {
+                                        label: 'Result Not Found',
+                                        val: '0'
+                                    }
+                                }))
+                            }
+                            else {
+                                response($.map(data, function (v, i) {
+                                    $('#txtAgreementNo').removeClass('loader');
+                                    return {
+                                        label: v.Text,
+                                        val: v.Code
+                                    }
+                                }))
+                            }
+
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            alert("Error" + textStatus);
+                        }
+                    });
+                },
+                select: function (event, i) {
+                    var code = i.item.val;
+                    $('#hdnAcqDealCode').val(code);
+                    $('#hdnAgreementNo').val(i.item.value);
+                },
+                minLength: 2,
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("position", "absolute");
+                    $(".ui-autocomplete").css("max-height", "200px");
+                    $(".ui-autocomplete").css("overflow-y", "auto");
+                    $(".ui-autocomplete").css("overflow-x", "hidden");
+                    $(".ui-autocomplete").css("z-index", "2147483647");
+                    $(".ui-autocomplete").css("direction", "@objMessageKey.LayoutDirection")
+                },
+
+            });
+        }
+    }
+
+    function btnShow_OnClick() {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var dealCode = $('#ddlDeal').val();
+
+        if ($('#ddlBusinessUnitMultiSelect').val() != null)
+        var businessUnitcode = $('#ddlBusinessUnitMultiSelect').val().join(',');
+
+        var acqDealCode = $('#hdnAcqDealCode').val();
+        if ($("#txtAgreementNo").val() == "") {
+            acqDealCode = "0";
+        }
+
+        var returnVal = true;
+        if (businessUnitcode == 0 || businessUnitcode == undefined) {
+            $('#ddlBusinessUnitMultiSelect').attr('required', true);
+            showAlert("E", "Content category should not be blank", 'ddlBusinessUnitMultiSelect')
+            returnVal = false;
+        }
+
+        //if (acqDealCode == "0") {
+        //    $('#txtAgreementNo').val('');
+        //    $('#txtAgreementNo').addClass('required');
+        //    var agreementNo = $.trim($('#txtAgreementNo').val());
+        //    returnVal = false;
+        //    if (agreementNo != "")
+        //        showAlert("E", "Invalid Agreement No.", 'txtAgreementNo')
+        //}
+
+        var startDate = $('#txtStart_DS').val();
+        var endDate = $('#txtEnd_DS').val();
+
+
+        const date1 = new Date(MakeDateFormate(startDate));
+        const date2 = new Date(MakeDateFormate(endDate));
+        const diffTime = Math.abs(date2 - date1);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        console.log(diffTime + " milliseconds");
+        console.log(diffDays + " days");
+
+
+
+        if (diffDays > 180) {
+            showAlert("E", "Start Date and End Date should have 6 months gap")
+            returnVal = false;
+        }
+        else if ((startDate != "" && endDate == "")) {
+            $('#txtEnd_DS').attr('required', true);
+            showAlert("E", "Please select End Date")
+            returnVal = false;
+        }
+        else if ((endDate != "" && startDate == "")) {
+            $('#txtStart_DS').attr('required', true);
+            showAlert("E", "Please select Start Date")
+            returnVal = false;
+        }
+
+
+        var userName = '';
+        if ($('#ddlUserName').val() != null) {
+            userName = $('#ddlUserName').val().join();
+        }
+
+        var expiredDeal = $('#chk_expiredDeals').is(":checked");
+
+        if ($('#ddlDealWorkflowStatus').val() != null)
+            var dealWorkflowStatus = $('#ddlDealWorkflowStatus').val().join(',');
+
+        if (dealWorkflowStatus == undefined) {
+            $('#ddlDealWorkflowStatus').attr('required', true);
+            showAlert("E", "Deal Workflow Status should not be blank", 'ddlDealWorkflowStatus')
+            returnVal = false;
+        }
+
+        //var dealWorkflowStatus = $('#ddlDealWorkflowStatus').val();
+
+        if (returnVal) {
+            $.ajax({
+                type: "POST",
+                url: URL_BindDealStatusReport,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    dealCode: dealCode,
+                    businessUnitcode: businessUnitcode,
+                    dateformat: $('#ddlDateFormat').val(),
+                    userName: userName,
+                    acqDealCode: acqDealCode,
+                    startDate: startDate,
+                    endDate: endDate,
+                    isExpiredDeal: expiredDeal,
+                    dealWorkflowStatus: dealWorkflowStatus
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        $('#divResult').empty();
+                        $('#divResult').html(result);
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    }
+
+    function ClearAll() {
+        debugger;
+        $("#ddlUserName").val("0");
+        $("#ddlUserName")[0].sumo.reload();
+
+
+        $('#txtStart_DS').val('');
+        $('#txtEnd_DS').val('');
+
+        SetMinDtDS();
+        SetMaxDtDS();
+        $('#txtAgreementNo').val('');
+        $('#hdnAcqDealCode').val('0');
+    }
+
+    function SetMaxDtDS() {
+        setMinMaxDates('txtStart_DS', '', $('#txtEnd_DS').val());
+    }
+    function SetMinDtDS() {
+        setMinMaxDates('txtEnd_DS', $('#txtStart_DS').val(), '');
+    }
+
+    function BindUserDropdown() {
+        debugger;
+        var returnVal = true;
+        var businessUnitcode = $('#ddlBusinessUnitMultiSelect').val().join(',');
+
+        if (returnVal) {
+            $.ajax({
+                type: "POST",
+                url: URL_BindUserDropdown,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    businessUnitcode: businessUnitcode,
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        $("#ddlUserName").empty();
+                        $(result).each(function (index, item) {
+                            $("#ddlUserName").append($("<option>").val(this.Value).text(this.Text));
+                        });
+                        $("#ddlUserName").SumoSelect();
+                        $("#ddlUserName")[0].sumo.reload();
+
+
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    }
+
+</script>
+<style>
+    #divFilter {
+        background: #eee;
+        padding: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    #divResult {
+        margin-top: 10px;
+    }
+
+    #ddlBusinessUnit_chosen {
+        max-width: 100%;
+    }
+
+    /*#ReportViewer1 {
+        width:100% !important;
+        height:100% !important;
+    }*/
+    td, th {
+        padding: 2px;
+    }
+
+    #txtStart_DS, #txtEnd_DS {
+        width: 102px !important;
+    }
+
+    #ddlDeal_chosen {
+        float: right;
+        width: 17% !important;
+        margin-top: 1%;
+        display: inline-block;
+    }
+
+    #ddlDealWorkflowStatus_chosen {
+        width: 52% !important;
+    }
+
+    #ddlDateFormat_chosen {
+        width: 87% !important;
+    }
+</style>
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <h2 style="direction:@objMessageKey.LayoutDirection;display: inline-block;margin-right: 10px;">Deal Status Report</h2>
+            @Html.DropDownList("DealList", ViewBag.DealList as SelectList, new { @id = "ddlDeal", @class = "form_input chosen-select"})
+            <div id="divFilter">
+                <table>
+                    <tr>
+                        <td>
+                            <label class="bold">Status</label>
+                        </td>
+                        <td>
+                            @Html.DropDownList("DealWorkflowStatus", (List<SelectListItem>)ViewBag.DealWorkFlowStatus, new { @id = "ddlDealWorkflowStatus", @multiple = "multiple" })
+                        </td>
+                        <td>
+                            <label class="bold">@objMessageKey.BusinessUnit</label>
+                        </td>
+                        <td>
+                            @Html.DropDownList("BusinessUnitMulti", ViewBag.BusinessUnitList as SelectList, new { @id = "ddlBusinessUnitMultiSelect", @multiple = "multiple", @onchange = "BindUserDropdown()" })
+                        </td>
+                        <td>
+                            <b>Activity Date</b>
+                        </td>
+                        <td>
+                            <input type="hidden" id="hdnStartDate" />
+                            <input type="text" class="isDatepicker" id="txtStart_DS" name="Start_Date" placeholder="DD/MM/YYYY" width="100"
+                                   title="@objMessageKey.StartDate" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" autocomplete="off" />
+
+                            <input type="text" class="isDatepicker" id="txtEnd_DS" name="End_Date" placeholder="DD/MM/YYYY"
+                                   title="@objMessageKey.EndDate" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" autocomplete="off" />
+                        </td>
+                        <td>
+                            <input type="checkbox" id="chk_expiredDeals" /> Include Expired Deals
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>User:</b>
+                        </td>
+                        <td>
+                            @Html.DropDownList("UserName", ViewBag.UserName as SelectList, new { @id = "ddlUserName", @class = "form_input chosen-select", @multiple = "multiple" })
+                        </td>
+                        <td>
+                            <label class="bold">@objMessageKey.AgreementNo</label>
+                        </td>
+                        <td>
+                            <input type="text" id="txtAgreementNo" maxlength="20" style="width:200px" placeholder="@objMessageKey.AgreementNo" onkeyup="populateAgreementNo(this)" />
+                            <input type="hidden" id="hdnAcqDealCode" value="0" />
+                            <input type="hidden" id="hdnAgreementNo" value="0" />
+                        </td>
+                        <td>
+                            <b>@objMessageKey.DateFormat</b>
+                        </td>
+                        <td>
+                            @Html.DropDownList("DateFormat", (List<SelectListItem>)ViewBag.DateFormat, new { @id = "ddlDateFormat", @class = "form_input chosen-select" })
+                        </td>
+                        <td>
+                            <input type="button" id="btnShow" class="btn btn-primary" value="@objMessageKey.Show" onclick="btnShow_OnClick()">
+                            <input type="button" id="btnClearAll" class="btn btn-primary" value="@objMessageKey.Reset" onclick="ClearAll()">
+                        </td>
+
+                    </tr>
+                </table>
+            </div>
+            <div id="divResult">
+
+            </div>
+        </div>
+    </section>
+</div>

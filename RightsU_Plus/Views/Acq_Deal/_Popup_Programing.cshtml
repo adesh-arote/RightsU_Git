@@ -1,0 +1,903 @@
+﻿@model RightsU_Entities.Acq_Deal_Sport_Ancillary
+@{
+ MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script src="~/JS_Core/jquery.plugin.js"></script>
+<link href="~/CSS/jquery.timeentry.css" rel="stylesheet" />
+<script src="~/JS_Core/jquery.timeentry.js"></script>
+<script type="text/javascript" src="~/JS_Core/jquery.alphanum.min.js"></script>
+<script type="text/javascript">
+
+    var URL_ValidateDuplicate = '@Url.Action("ValidateDuplicate", "Acq_Sport_Ancillary")';
+    var URL_BindMarketing = '@Url.Action("BindMarketing", "Acq_Sport_Ancillary")';
+    var URL_BindFCT = '@Url.Action("BindFCT", "Acq_Sport_Ancillary")'
+
+    $(document).ready(function () {
+
+        @if (Model.Ancillary_For == "M")
+        {
+            <text>
+        $("#Duration").timeEntry({ show24Hours: true, showSeconds: true });
+        $("#Prime_Durartion").timeEntry({ show24Hours: true, showSeconds: true });
+        $("#Off_Prime_Durartion").timeEntry({ show24Hours: true, showSeconds: true });
+        $("#Prime_Start_Time").timeEntry();
+        $("#Prime_End_Time").timeEntry();
+        $("#Off_Prime_Start_Time").timeEntry();
+        $("#Off_Prime_End_Time").timeEntry();
+        $('#No_Of_Promos').numeric({ maxDigits: 3 });
+        $('#Prime_No_of_Promos').numeric({ maxDigits: 3 });
+        $('#Off_Prime_No_of_Promos').numeric({ maxDigits: 3 });
+        $('#Broadcast_Window').numeric({ maxDigits: 3 });
+        </text>
+            if (Model.Acq_Deal_Sport_Ancillary_Code > 0 && ViewBag.Mode != "V" && ViewBag.Mode != "APRV" && ViewBag.Mode != "EWOA")
+            {
+                <text>
+        var txtRemark = document.getElementById('Remarks');
+        countChar(txtRemark);
+        </text>
+            }
+        }
+        else
+        {
+            <text>
+        $('#txtDur').numeric({ maxDigits: 3 });
+        </text>
+        }
+
+        @if (Model.Acq_Deal_Sport_Ancillary_Code > 0)
+        {
+            if (Model.Broadcast_Periodicity_Code == 0 || Model.Broadcast_Periodicity_Code == null)
+            {
+                <text>
+        $('input[name=Broadcast_Periodicity_Code][value="0"]').prop('checked', true);
+        $('#Broadcast_Window').prop("disabled", "true");
+        </text>
+            }
+        }
+    });
+    function SaveMarketing() {
+        if ($("#ddlTitleMarketing").val() === null) {
+            $("#divddlTitleMarketing").addClass("required");
+            return false;
+        }
+        else {
+            $("#divddlTitleMarketing").removeClass("required");
+        }
+        if ($('#Sport_Ancillary_Type_Code').val() === '0') {
+            $('#Sport_Ancillary_Type_Code').addClass('required');
+            return false;
+        }
+        else
+            $('#Sport_Ancillary_Type_Code').removeClass('required');
+
+        if ($('input[name=Broadcast_Periodicity_Code]:checked').val() != '0' && $('#Broadcast_Window').val() === '') {
+            $("#Broadcast_Window").addClass("required");
+            return false;
+        }
+        else
+            $("#Broadcast_Window").removeClass("required");
+
+        if ($("#ddlSourceOfContentMrkt").val() === null) {
+            $("#divddlSourceOfContentMrkt").addClass('required');
+            return false;
+        }
+        else {
+            $("#divddlSourceOfContentMrkt").removeClass('required');
+        }
+
+        if ($('#Prime_Start_Time').val() != '') {
+            if ($('#Prime_End_Time').val() === '') {
+                showAlert('E', "@objMessageKey.PleaseselectPrimeEndtime");
+                return false;
+            }
+            else
+                if ($('#Prime_Durartion').val() === '' && $('#Prime_No_of_Promos').val() === '') {
+                    showAlert('E', "Please select either Prime Duration or No. Of Promos.");
+                    return false;
+                }
+        }
+        else
+            if ($('#Prime_Durartion').val() != '' || $('#Prime_No_of_Promos').val() != '') {
+                if ($('#Prime_End_Time').val() === '' || $('#Prime_Start_Time').val() === '') {
+                    showAlert('E', "Please select Prime Start Time and End time.");
+                    return false;
+                }
+            }
+
+        if ($('#Off_Prime_Start_Time').val() != '') {
+            if ($('#Off_Prime_End_Time').val() === '') {
+                showAlert('E', "Please select Off Prime End time.");
+                return false;
+            }
+            else
+                if ($('#Off_Prime_Durartion').val() === '' && $('#Off_Prime_No_of_Promos').val() === '') {
+                    showAlert('E', "Please select either Off Prime Duration or No. Of Promos.");
+                    return false;
+                }
+        }
+        else
+            if ($('#Off_Prime_Durartion').val() != '' || $('#Off_Prime_No_of_Promos').val() != '') {
+                if ($('#Off_Prime_End_Time').val() === '' || $('#Off_Prime_Start_Time').val() === '') {
+                    showAlert('E', "Please select Off Prime Start Time and End time.");
+                    return false;
+                }
+            }
+
+        if (validateMarketingDuplicate()) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    function validateMarketingDuplicate() {
+        var IsValid = true;
+        var Acq_Deal_Sport_Ancillary_Code = $('#Acq_Deal_Sport_Ancillary_Code').val();
+        var titleCodes = $("#ddlTitleMarketing").val().join(',');
+        var Sport_Ancillary_Type_Code = $('#Sport_Ancillary_Type_Code').val();
+
+        $.ajax({
+            type: "POST",
+            url: URL_ValidateDuplicate,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: false,
+            data: JSON.stringify({
+                AnchillaryFor: 'M',
+                Title: titleCodes,
+                Sport_Ancillary_Type_Code: Sport_Ancillary_Type_Code,
+                Acq_Deal_Sport_Ancillary_Code: Acq_Deal_Sport_Ancillary_Code,
+                DisplayType: $('#DisplayType').val(),
+                DetailsTitleCode: $('#TitleCodes').val()
+            }),
+
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                if (result == 'Success') {
+                    IsValid = true;
+                }
+                else {
+                    showAlert("E", result);
+                    IsValid = false;
+                }
+
+            },
+            error: function (result) {
+
+            }
+        });
+
+        return IsValid;
+    }
+    function SaveFCT() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        if ($("#ddlTitleFCT").val() === null) {
+            $("#divddlTitleFCT").addClass("required");
+            return false;
+        }
+        if ($('#Sport_Ancillary_Type_Code').val() === '0') {
+            $('#Sport_Ancillary_Type_Code').addClass('required');
+            return false;
+        }
+        if (ValidateFCTSave())
+            return true;
+        else
+            return false;
+    }
+    function ValidateFCTSave() {
+        var IsValid = true;
+        var Acq_Deal_Sport_Ancillary_Code = $('#Acq_Deal_Sport_Ancillary_Code').val();
+        var titleCodes = $("#ddlTitleFCT").val().join(',');
+        var Sport_Ancillary_Type_Code = $('#Sport_Ancillary_Type_Code').val();
+
+        $.ajax({
+            type: "POST",
+            url: URL_ValidateDuplicate,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: false,
+            data: JSON.stringify({
+                AnchillaryFor: 'F',
+                Title: titleCodes,
+                Sport_Ancillary_Type_Code: Sport_Ancillary_Type_Code,
+                Acq_Deal_Sport_Ancillary_Code: Acq_Deal_Sport_Ancillary_Code,
+                DisplayType: $('#DisplayType').val(),
+                DetailsTitleCode: $('#TitleCodes').val()
+            }),
+
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                if (result == 'Success')
+                    IsValid = true;
+                else {
+                    showAlert("E", result);
+                    IsValid = false;
+                }
+
+            },
+            error: function (result) {
+
+            }
+        });
+
+        return IsValid;
+    }
+    function OnMarketSaveSuccess(message) {
+        $('#popSportMrktAncillary').modal('hide');
+        $('div.modal-backdrop').hide();
+        CallFromDeleted = '';
+        showAlert('S', message, "OK");
+        var type = $(":radio[name=rdoMrktDisplayType]:checked").val();
+        var arrTitles = '';
+        if ($('#lblDisplatProTitle').val() != null)
+            arrTitles = $('#lblDisplatProTitle').val().join(',');
+        $.ajax({
+            type: "POST",
+            url: URL_BindMarketing,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                displayType: type,
+                selectedTitle: arrTitles
+            }),
+            success: function (result) {
+                $('#hdnAcqDealSportAncillaryCode').val('');
+                $('#divMarketing').html(result);
+                initializeChosen();
+                initializeExpander();
+                $('#lblDisplatProTitle').val(arrTitles.split(',')).trigger("chosen:updated");
+                $('input[name=rdoMrktDisplayType][value=' + type + ']').prop('checked', true);
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+
+    }
+    function OnFCTSaveSuccess(message) {
+        $('#popSportFCTAncillary').modal('hide');
+        $('div.modal-backdrop').hide();
+        var type = $(":radio[name=rdoFCTDisplayType]:checked").val();
+        var arrTitles = '';
+        if ($('#lblDisplayFCTTitle').val() != null)
+            arrTitles = $('#lblDisplayFCTTitle').val().join(',');
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindFCT,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                displayType: type,
+                selectedTitle: arrTitles
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                $('#hdnAcqDealSportAncillaryCode').val('');
+                $('#divFCT').html(result);
+                initializeChosen();
+                initializeExpander();
+                $('#lblDisplayFCTTitle').val(arrTitles.split(',')).trigger("chosen:updated");
+                $('input[name=rdoFCTDisplayType][value=' + type + ']').prop('checked', true);
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+
+        CallFromDeleted = '';
+        showAlert('S', message, "OK");
+    }
+</script>
+<style>
+    .SumoSelect, #divddlTitleFCT, #ddlWhenToBroadcastFCT, #divddlTitleMarketing, #divddlSourceOfContentMrkt {
+        width: 287px !important;
+    }
+
+        #divddlTitleMarketing > div {
+            width: 100% !important;
+        }
+
+        #divddlSourceOfContentMrkt > div {
+            width: 100% !important;
+        }
+
+        #divddlTitleFCT > div {
+            width: 100% !important;
+        }
+
+    .form_wrapper {
+        max-width: 900px !important;
+    }
+
+    #Sport_Ancillary_Type_Code_chosen {
+        width: 69% !important;
+    }
+</style>
+<div class="modal-dialog">
+    <div class="modal-content clearfix">
+        @if (ViewBag.Mode != "V" && ViewBag.Mode != "APRV" && ViewBag.PageMode != "EWOA")
+        {
+            if (Model.Ancillary_For == "M")
+            {
+                using (Ajax.BeginForm("SaveMarketing", "Acq_Sport_Ancillary", new AjaxOptions { OnSuccess = "OnMarketSaveSuccess" }, new { id = "frmMarketing", @class = "form" }))
+                {
+                    <div class="form_wrapper">
+                        <div class="form_fields acq">
+                            <div class="modal_block modal_header">
+                                <a class="close" data-dismiss="modal" href="#">
+                                    <span>
+                                        ×
+                                    </span>
+                                    <span class="sr-only">Close</span>
+                                </a>
+                                @if (Model.Acq_Deal_Sport_Ancillary_Code > 0)
+                                {
+                                    <h2>@objMessageKey.EditSportsAncillaryMarketing</h2>
+                                }
+                                else
+                                {
+                                    <h2>@objMessageKey.AddSportsAncillaryMarketing</h2>
+                                }
+                            </div>
+                            <div class="modal_block">
+                                <ul id="divSportAncMrkt">
+                                    <li class="clearfix" style="    display: inline-block;width: 50%;">
+                                        <label class="bold">@objMessageKey.Titles</label>
+                                        <span style="padding-right:90px"></span>
+                                        <div id="divddlTitleMarketing" style=" display: inline-block;">
+                                            @Html.ListBox("ddlTitleMarketing", ViewBag.MrktTitleList as MultiSelectList)
+                                        </div>
+                                        @Html.HiddenFor(m => Model.Acq_Deal_Sport_Ancillary_Code)
+                                        @Html.HiddenFor(m => Model.Ancillary_For)
+                                        @Html.Hidden("TitleCodes")
+                                        @Html.Hidden("DisplayType", (string)ViewBag.DisplayType)
+                                    </li>
+                                    <li class="clearfix" style="display: inline-block; width: 49%;">
+                                        <label class="bold" style="padding-right:87px;">@objMessageKey.Type</label>
+                                        @Html.DropDownListFor(m => Model.Sport_Ancillary_Type_Code, ViewBag.MrktTypeList as MultiSelectList, new { @class = "form_input chosen-select" })
+                                    </li>
+                                    <li class="clearfix">
+                                        <label class="radio-inline">
+                                            @Html.RadioButtonFor(m => Model.Obligation_Broadcast, "Y", false)@objMessageKey.ObligationtoBroadcast
+                                        </label>
+                                        <label class="radio-inline">
+                                            @Html.RadioButtonFor(m => Model.Obligation_Broadcast, "N", false)@objMessageKey.NoObligationtoBroadcast
+                                        </label>
+                                    </li>
+                                    <li class="clearfix">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 50%"></th>
+                                                    <th style="width: 50%"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <span><b>@objMessageKey.WhentoBroadcast</b></span>
+                                                        <div id="" style="display:inline-block;">
+                                                            @Html.ListBox("ddlWhenToBroadcastMrkt", ViewBag.MrktBroadcastList as MultiSelectList)
+                                                        </div>
+                                                        @Html.Hidden("BroadcastCodes")
+                                                    </td>
+                                                    <td>
+                                                        <span><b>@objMessageKey.BroadcastWindow</b></span>
+                                                        @Html.TextBoxFor(m => Model.Broadcast_Window, new { @class = "text smallTextBox" })
+                                                        @foreach (var item in ViewBag.MrktBroadcastPeriodicityList)
+                                                        {
+                                                            <label class="radio-inline">
+                                                                @Html.RadioButtonFor(m => Model.Broadcast_Periodicity_Code, (string)item.Value, new { @onclick = "setBroWindowVisibility(this);" })@item.Text
+                                                            </label>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </li>
+
+                                    <li class="clearfix">
+                                        <table class="table">
+                                         
+                                                <tr>
+                                                    <td class="bold" style="width:5%;">@objMessageKey.Periodicity</td>
+                                                    <td style="width:5%">
+                                                        @Html.DropDownListFor(m => Model.Sport_Ancillary_Periodicity_Code, ViewBag.MrktPeriodicityList as MultiSelectList, new { @class = "form_input chosen-select" })
+                                                    </td>
+                                                    <td class="bold" style="width:1%;">@objMessageKey.Duration</td>
+                                                    <td style="width:1%;">
+                                                        @Html.TextBoxFor(m => Model.Duration, new { @class = "text" })
+                                                    </td>
+                                                    <td class="bold" style="width:5%;">@objMessageKey.NoofPromos</td>
+                                                    <td style="width:17%;">
+                                                        @Html.TextBoxFor(m => Model.No_Of_Promos, new { @class = "text" })
+                                                    </td>
+                                                </tr>                                                                                                                                                                     
+                                        </table>
+                                    </li>
+                                    <li class="clearfix">
+                                        <table class=" table-bordered table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th style="text-align:center;padding-bottom:5px;">@objMessageKey.TimeSlot</th>
+                                                    <th style="text-align:center;">@objMessageKey.Start</th>
+                                                    <th style="text-align:center;">@objMessageKey.End</th>
+                                                    <th style="text-align:center;">@objMessageKey.Duration</th>
+                                                    <th style="text-align:center;">@objMessageKey.NoofPromos</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td style="text-align:center;padding-bottom:15px;">
+                                                        @objMessageKey.Prime
+                                                    </td>
+                                                    <td style="text-align:center;">
+                                                        @Html.TextBox("Prime_Start_Time", (Model.Prime_Start_Time == null) ? "" : Convert.ToString(Model.Prime_Start_Time))
+                                                        @*@Html.TextBoxFor(m => Model.Prime_Start_Time,"hh:mm tt")*@
+                                                    </td>
+                                                    <td style="text-align:center;">
+                                                        @Html.TextBox("Prime_End_Time", (Model.Prime_End_Time == null) ? "" : Convert.ToString(Model.Prime_End_Time))
+                                                        @*@Html.TextBoxFor(m => Model.Prime_End_Time,"hh:mm tt")*@
+                                                    </td>
+                                                    <td style="text-align:center;">
+                                                        @Html.TextBoxFor(m => Model.Prime_Durartion)
+                                                    </td>
+                                                    <td style="text-align:center;">
+                                                        @Html.TextBoxFor(m => Model.Prime_No_of_Promos)
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="text-align:center;padding-bottom:15px;">
+                                                        @objMessageKey.OffPrime
+                                                    </td>
+                                                    <td style="text-align:center;">
+                                                        @Html.TextBox("Off_Prime_Start_Time", (Model.Off_Prime_Start_Time == null) ? "" : Convert.ToString(Model.Off_Prime_Start_Time))
+                                                        @*@Html.TextBoxFor(m => Model.Off_Prime_Start_Time,"hh:mm tt")*@
+                                                    </td>
+                                                    <td style="text-align:center;">
+                                                        @Html.TextBox("Off_Prime_End_Time", (Model.Off_Prime_End_Time == null) ? "" : Convert.ToString(Model.Off_Prime_End_Time))
+                                                        @*@Html.TextBoxFor(m => Model.Off_Prime_End_Time,"hh:mm tt")*@
+                                                    </td>
+                                                    <td style="text-align:center;">
+                                                        @Html.TextBoxFor(m => Model.Off_Prime_Durartion)
+                                                    </td>
+                                                    <td style="text-align:center;">
+                                                        @Html.TextBoxFor(m => Model.Off_Prime_No_of_Promos)
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </li>
+                                    <li class="clearfix" style="display:inline-flex;">
+                                        <label class="bold" style="padding-right:7px;padding-top:5px;">Source of Content:</label>
+                                        <div id="divddlSourceOfContentMrkt">
+                                            @Html.ListBox("ddlSourceOfContentMrkt", ViewBag.MrktSourceList as MultiSelectList)
+                                        </div>
+                                        @Html.Hidden("SourceCodes")
+                                    </li>
+                                    <li class="clearfix">
+                                        <div class="divBlock">
+                                            <div class="bold small_title" style="padding-right: 320px;">@objMessageKey.Remarks</div>
+                                            <div style="">&nbsp;&nbsp;</div>
+                                            <div id="CharNum" class="charNum" style="float: right;">0/4000</div>
+                                        </div>
+                                        @Html.TextAreaFor(m => Model.Remarks, new { @class = "textarea", @onkeypress = "countChar(this)", @onkeyup = "countChar(this)", @maxlength = 4000 })
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="modal_block_full">
+                                <div class="form_links">
+                                    <ul class="modal_block clearfix">
+                                        <li>
+                                            <input type="submit" class="btn btn-primary" value="@objMessageKey.Save" onclick="return SaveMarketing();" />
+                                        </li>
+                                        <li>
+                                            <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="return closeMrktPopUp()" />
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                }
+            }
+            else
+                if (Model.Ancillary_For == "F")
+                {
+                    using (Ajax.BeginForm("SaveFCT", "Acq_Sport_Ancillary", new AjaxOptions { OnSuccess = "OnFCTSaveSuccess" }, new { id = "frmFCT", @class = "form" }))
+                    {
+                        <div class="form_wrapper">
+                            <div class="form_fields acq">
+                                <div class="modal_block modal_header">
+                                    <a class="close" data-dismiss="modal" href="#">
+                                        <span>
+                                            ×
+                                        </span>
+                                        <span class="sr-only">Close</span>
+                                    </a>
+                                    @if (Model.Acq_Deal_Sport_Ancillary_Code > 0)
+                                    {
+                                        <h2>@objMessageKey.EditSportsAncillaryFCTCommitments</h2>
+                                    }
+                                    else
+                                    {
+                                        <h2>@objMessageKey.AddSportsAncillaryFCTCommitments</h2>
+                                    }
+                                </div>
+                                <div class="modal_block">
+                                    <table id="divSportAncFCT">
+                                        <tr>
+                                            <td style="padding : 10px;width:15%;">
+                                                <label class="bold">@objMessageKey.Titles</label>
+                                            </td>
+                                            <td style="width:35%;">
+                                                <div id="divddlTitleFCT">
+                                                    @Html.ListBox("ddlTitleFCT", ViewBag.FCTTitleList as MultiSelectList)
+                                                </div>
+                                                @Html.HiddenFor(m => Model.Acq_Deal_Sport_Ancillary_Code)
+                                                @Html.HiddenFor(m => Model.Ancillary_For)
+                                                @Html.Hidden("TitleCodes")
+                                                @Html.Hidden("DisplayType", (string)ViewBag.DisplayType)
+                                            </td>
+                                            <td style="padding:10px;width:15%;">
+                                                <label class="bold">@objMessageKey.Type</label>
+                                            </td>
+                                            <td style="width:35%;">
+                                                @Html.DropDownListFor(m => Model.Sport_Ancillary_Type_Code, ViewBag.FCTTypeList as MultiSelectList, new { @class = "form_input chosen-select" })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding:10px;">
+                                                <label class="bold">@objMessageKey.Duration</label>
+                                            </td>
+                                            <td>
+                                                @Html.TextBox("txtDur", (Model.Duration == null) ? "" : Model.Duration.Value.TotalSeconds.ToString(), new { @class = "smallTextBox" })&nbsp;secs
+                                            </td>
+                                            <td>
+                                                <label class="bold">@objMessageKey.WhentoBroadcast</label>
+                                            </td>
+                                            <td>
+                                                <div id="divddlWhenToBroadcastFCT">
+                                                    @Html.ListBox("ddlWhenToBroadcastFCT", ViewBag.FCTBroadcastList as MultiSelectList)
+                                                </div>
+                                            </td>
+                                        <tr>
+                                            <td style="padding : 4px;">
+                                                <label class="bold">@objMessageKey.SourceofContent:</label>
+                                            </td>
+                                            <td>
+                                                @foreach (var item in (MultiSelectList)ViewBag.FCTSourceList)
+                                                {
+                                                    int value = Convert.ToInt32(item.Value);
+                                                    @Html.CheckBox("ddlSourceOfContentFCT", Model.Acq_Deal_Sport_Ancillary_Source.Any(s => s.Sport_Ancillary_Source_Code == value), new { @value = item.Value }) @item.Text
+                                                }
+                                            </td>
+                                        </tr>
+
+                                    </table>
+                                </div>
+                                <div class="modal_block_full">
+                                    <div class="form_links">
+                                        <ul class="modal_block clearfix">
+                                            <li>
+                                                <input type="submit" class="btn-primary" value="@objMessageKey.Save" onclick="return SaveFCT();" />
+                                            </li>
+                                            <li>
+                                                <input type="button" class="btn-primary" value="@objMessageKey.Cancel" onclick="return closeFCTPopUp()" />
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    }
+                }
+        }
+        else
+        {
+
+            int SelectedTitleCode = Convert.ToInt32(ViewBag.DetailTitleCode);
+            string titleName = string.Empty;
+            if (SelectedTitleCode != 0)
+            {
+                titleName = string.Join(",", Model.Acq_Deal_Sport_Ancillary_Title.Where(t => t.Title_Code == SelectedTitleCode).Select(t => t.Title.Title_Name));
+            }
+            else
+            {
+                titleName = string.Join(",", Model.Acq_Deal_Sport_Ancillary_Title.Select(t => t.Title.Title_Name));
+            }
+
+            if (Model.Ancillary_For == "M")
+            {
+                <form class="form">
+                    <div class="form_wrapper">
+                        <div class="form_fields acq">
+                            <div class="modal_block modal_header">
+                                <a class="close" data-dismiss="modal" href="#">
+                                    <span>
+                                        ×
+                                    </span>
+                                    <span class="sr-only">Close</span>
+                                </a>
+
+                                <h2>@objMessageKey.ViewSportsAncillaryMarketing</h2>
+                            </div>
+                            <div class="modal_block">
+                                <ul>
+                                    <li class="">
+                                        <label class="bold">@objMessageKey.Titles</label>
+                                        <div class="expandable">
+                                            @titleName
+                                        </div>
+                                    </li>
+                                    <li class="">
+                                        <label class="bold">@objMessageKey.Type</label>
+                                        @if (Model.Sport_Ancillary_Type_Code != null)
+                                        {
+                                            @Model.Sport_Ancillary_Type.Name
+                                        }
+                                    </li>
+                                    <li class="">
+                                        <label class="bold">@objMessageKey.ObligationtoBroadcast</label>
+                                        @if (Model.Obligation_Broadcast == "Y")
+                                        {
+                                            @:@objMessageKey.Yes
+                                }
+                                        else
+                                        {
+                                            @:@objMessageKey.NO
+                                }
+                                    </li>
+                                    <li class="">
+                                        <label class="bold">@objMessageKey.WhentoBroadcast</label>
+                                        <div class="expandable">
+                                            @{
+                string strWhenToBroadcast = string.Join(", ", Model.Acq_Deal_Sport_Ancillary_Broadcast.Select(sportAncBroadcast => sportAncBroadcast.Sport_Ancillary_Broadcast.Name)) + ((Model.Acq_Deal_Sport_Ancillary_Broadcast.Count > 0 && Model.Sport_Ancillary_Periodicity1 != null) ? "-" : "") + ((Model.Sport_Ancillary_Periodicity1 != null) ? Model.Broadcast_Window.ToString() + " " + Model.Sport_Ancillary_Periodicity1.Name : "");
+
+                                            }
+                                            @strWhenToBroadcast
+                                        </div>
+                                    </li>
+                                    <li class="">
+                                        <label class="bold">@objMessageKey.Periodicity</label>
+                                        @{
+                string strFor = string.Empty;
+                if (Model.Duration != null)
+                {
+                    if (Model.Duration.Value.Hours != 0)
+                    {
+                        strFor += Model.Duration.Value.Hours + objMessageKey.Hours ;
+                    }
+
+                    if (Model.Duration.Value.Minutes != 0)
+                    {
+                        strFor += Model.Duration.Value.Minutes + objMessageKey.Minutes ;
+                    }
+
+                    if (Model.Duration.Value.Seconds != 0)
+                    {
+                        strFor += Model.Duration.Value.Seconds + objMessageKey.Seconds ;
+                    }
+                }
+                string s = ((Model.Sport_Ancillary_Periodicity_Code != null) ? Model.Sport_Ancillary_Periodicity.Name : "") + ((Model.Sport_Ancillary_Periodicity_Code != null && (Model.Duration != null || Model.No_Of_Promos != null)) ? "-" : "") + ((Model.Duration != null) ? strFor : "") + ((Model.Duration != null && Model.No_Of_Promos != null) ? "-" : "") + ((Model.No_Of_Promos != null) ? Model.No_Of_Promos + " spots" : "");
+                                        }
+                                        @s
+                                    </li>
+                                    <li class="">
+                                        <table class=" table-bordered table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th style="text-align:center;">@objMessageKey.TimeSlot</th>
+                                                    <th style="text-align:center;">@objMessageKey.Start</th>
+                                                    <th style="text-align:center;">@objMessageKey.End</th>
+                                                    <th style="text-align:center;">@objMessageKey.Duration</th>
+                                                    <th style="text-align:center;">@objMessageKey.NoofPromos</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td style="text-align:center;">
+                                                        @objMessageKey.Prime
+                                                    </td>
+                                                    <td style="text-align:center;">
+                                                        @if (Model.Prime_Start_Time != null)
+                                                        {
+                                                            @Model.Prime_Start_Time
+                                                        }
+                                                        else
+                                                        {
+                                                            @:@objMessageKey.NA
+                                                    }
+                                                    </td>
+                                                    <td style="text-align:center;">
+                                                        @if (Model.Prime_End_Time != null)
+                                                        {
+                                                            @Model.Prime_End_Time }
+                                                        else
+                                                        {
+                                                            @:@objMessageKey.NA
+                                                }
+                                                    </td>
+                                                    <td style="text-align:center;">
+                                                        @if (Model.Prime_Durartion != null)
+                                                        {
+                                                            @Model.Prime_Durartion
+                                                        }
+                                                        else
+                                                        {
+                                                            @:@objMessageKey.NA
+                                                     }
+                                                    </td>
+                                                    <td style="text-align:center;">
+                                                        @if (Model.Prime_No_of_Promos != null)
+                                                        {
+                                                            @Model.Prime_No_of_Promos
+                                                        }
+                                                        else
+                                                        {
+                                                            @:@objMessageKey.NA
+                                                }
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="text-align:center;">
+                                                        @objMessageKey.OffPrime
+                                                    </td>
+                                                    <td style="text-align:center;">
+                                                        @if (Model.Off_Prime_Start_Time != null)
+                                                        {
+                                                            @Model.Off_Prime_Start_Time
+                                                        }
+                                                        else
+                                                        {
+                                                            @:@objMessageKey.NA
+                                                    }
+                                                    </td>
+                                                    <td style="text-align:center;">
+                                                        @if (Model.Off_Prime_End_Time != null)
+                                                        {
+                                                            @Model.Off_Prime_End_Time
+                                                        }
+                                                        else
+                                                        {
+                                                            @:@objMessageKey.NA
+                                                }
+                                                    </td>
+                                                    <td style="text-align:center;">
+                                                        @if (Model.Off_Prime_Durartion != null)
+                                                        {
+                                                            @Model.Off_Prime_Durartion
+                                                        }
+                                                        else
+                                                        {
+                                                            @:@objMessageKey.NA
+                                                     }
+                                                    </td>
+                                                    <td style="text-align:center;">
+                                                        @if (Model.Off_Prime_No_of_Promos != null)
+                                                        {
+                                                            @Model.Off_Prime_No_of_Promos
+                                                        }
+                                                        else
+                                                        {
+                                                            @:@objMessageKey.NA
+                                                }
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </li>
+                                    <li class="">
+                                        <label class="bold">@objMessageKey.SourceofContent:</label>
+                                        <div class="expandable">
+                                            @string.Join(",", Model.Acq_Deal_Sport_Ancillary_Source.Select(t => t.Sport_Ancillary_Source.Name))
+                                        </div>
+                                    </li>
+                                    <li class="">
+                                        <label class="bold">@objMessageKey.Remarks:</label>
+                                        <div class="expandable">
+                                            @Model.Remarks
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="modal_block_full">
+                                <div class="form_links">
+                                    <ul class="modal_block clearfix">
+                                        <li>
+                                            <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="return closeMrktPopUp()" />
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            }
+            else
+                if (Model.Ancillary_For == "F")
+                {
+                    <form class="form">
+                        <div class="form_wrapper">
+                            <div class="form_fields acq">
+                                <div class="modal_block modal_header">
+                                    <a class="close" data-dismiss="modal" href="#">
+                                        <span>
+                                            ×
+                                        </span>
+                                        <span class="sr-only">Close</span>
+                                    </a>
+
+                                    <h2>@objMessageKey.ViewSportsAncillaryFCTCommitments</h2>
+                                </div>
+                                <div class="modal_block">
+                                    <ul class="form_fields_wrapper">
+                                        <li class="clearfix">
+                                            <label class="bold">@objMessageKey.Titles</label>
+                                            @titleName
+                                        </li>
+                                        <li class="clearfix">
+                                            <label class="bold">@objMessageKey.Type</label>
+                                            @if (Model.Sport_Ancillary_Type_Code != null)
+                                            {
+                                                @Model.Sport_Ancillary_Type.Name
+                                            }
+                                        </li>
+                                        <li class="clearfix">
+                                            <label class="bold">@objMessageKey.Duration</label>
+                                            <br />
+                                            @if (Model.Duration != null)
+                                            {
+                                                @Model.Duration.Value.TotalSeconds.ToString()
+                                                <text>&nbsp;@objMessageKey.secs</text>
+                                            }
+
+                                        </li>
+                                        <li class="clearfix">
+                                            <label class="bold">@objMessageKey.WhentoBroadcast</label>
+                                            @string.Join(",", Model.Acq_Deal_Sport_Ancillary_Broadcast.Select(b => b.Sport_Ancillary_Broadcast.Name))
+                                        </li>
+                                        <li class="clearfix">
+                                            <label class="bold">@objMessageKey.SourceofContent:</label><br />
+                                            @string.Join(",", Model.Acq_Deal_Sport_Ancillary_Source.Select(s => s.Sport_Ancillary_Source.Name))
+
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="modal_block_full">
+                                    <div class="form_links">
+                                        <ul class="modal_block clearfix">
+                                            <li>
+                                                <input type="button" class="btn-primary" value="@objMessageKey.Cancel" onclick="return closeFCTPopUp()" />
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                }
+        }
+
+    </div>
+</div>

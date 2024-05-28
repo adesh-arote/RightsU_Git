@@ -1,0 +1,134 @@
+﻿@model List<RightsU_Entities.Language>
+@using UTOFrameWork.FrameworkClasses
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<table class="table table-bordered table-hover" id="divLanguageListTable"> 
+    <thead>
+        <tr>
+            @*<th style="width:30%;">Currency Name</th>
+                <th style="width:25%;">Currency Sign</th>*@
+            <th style="width:70%;">@objMessageKey.Language</th>
+            <th style="width:15%; text-align:center">@objMessageKey.Status</th>
+            <th style="width:15%; text-align:center">@objMessageKey.Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (ViewBag.CommandName == "ADD")
+        {
+            <tr>
+                <td>
+                    <input id="txtLanguageName_0" type="text" value=""  maxlength="250" style="width:90%;" />
+                </td>
+                <td style="text-align:center">
+                    <span>@objMessageKey.Active</span>
+                </td>
+                <td style="text-align:center">
+                    <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" onclick="SaveLanguage(0)"></a>
+                    <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" onclick="Cancel()"></a>
+                </td>
+            </tr>
+        }
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                string strActive = objMessageKey.Active;
+                if (item.Is_Active == "N")
+                {
+                    strActive = @objMessageKey.Deactive;
+                }
+                <tr>
+                    @if (ViewBag.CommandName == "EDIT" && ViewBag.Language_Code == item.Language_Code)
+                    {
+                        <td>
+                            <input id="txtLanguageName_@item.Language_Code" type="text" value="@item.Language_Name" maxlength="250" style="width:90%" />
+                        </td>
+                        <td style="text-align:center">
+                            <span>@strActive</span>
+                        </td>
+                        <td style="text-align:center">
+                            <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" onclick="SaveLanguage(@item.Language_Code)"></a>
+                            <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" onclick="Cancel()"></a>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            <span class="expand_Language_Name">@item.Language_Name</span>
+                        </td>
+                        <td style="text-align:center">
+                            <span>@strActive</span>
+                        </td>
+                        <td style="text-align:center">
+                            @{
+                        bool canDeactive = true;
+                        string toolTipMsg = "";
+                        if (item.Language_Group_Details.Count > 0)
+                        {
+                            canDeactive = false;
+                            toolTipMsg = objMessageKey.Cannotdeactivatethislanguageasitisusedinlanguagegroup;
+                        }
+                        else if (item.Acq_Deal_Rights_Dubbing.Count > 0 || item.Acq_Deal_Rights_Subtitling.Count > 0)
+                        {
+                            canDeactive = false;
+                            toolTipMsg = objMessageKey.Cannotdeactivatethislanguageasitisusedinacquisitiondeal;
+                        }
+                        else if (item.Syn_Deal_Rights_Dubbing.Count > 0 || item.Syn_Deal_Rights_Subtitling.Count > 0)
+                        {
+                            canDeactive = false;
+                            toolTipMsg = @objMessageKey.Cannotdeactivatethislanguageasitisusedinsyndicationdeal;
+                        }
+
+                        if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForEdit.ToString() + "~"))
+                        {
+                            if (item.Is_Active == "Y")
+                            {
+                                <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor:pointer;" onclick="CheckRecordLock(@item.Language_Code, 'EDIT')"></a>
+                            }
+                            else
+                            {
+                                <a title="@objMessageKey.Cannoteditthislanguageasitisdeactivated" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
+                            }
+                        }
+
+                        if (item.Is_Active == "Y")
+                        {
+                            if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForDeactivate + "~"))
+                            {
+                                if (canDeactive)
+                                {
+                                    <a title="@objMessageKey.Deactivate" class="glyphicon glyphicon-thumbs-down" style="cursor:pointer" onclick="ActiveDeactiveLanguage(@item.Language_Code, 'N')"></a>
+                                }
+                                else
+                                {
+                                    <a title="@toolTipMsg" class="glyphicon glyphicon-thumbs-down disabled" onclick="return false;"></a>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForActivate + "~"))
+                            {
+                                <a title="@objMessageKey.Activate" class="glyphicon glyphicon-thumbs-up" style="cursor: pointer;" onclick="ActiveDeactiveLanguage(@item.Language_Code, 'Y')"></a>
+                            }
+                        }
+                            }
+                        </td>
+                    }
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="3">@objMessageKey.Norecordfound</td>
+            </tr>
+        }
+    </tbody>
+</table>

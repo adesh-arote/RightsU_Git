@@ -1,0 +1,313 @@
+﻿@model List<RightsU_Entities.Digital_Config>
+
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+
+
+}
+<style>
+    #tblMusicLink tbody tr td input {
+        width: 100%;
+    }
+</style>
+<script>
+    //$(document).ready()
+    $('#ddlControlType').change(function () {
+        debugger;
+        var controlType = $(this).val();
+        if (controlType == "TXTDDL") {
+            $('#txtView_Name').removeAttr("disabled");
+            $('#txtText_Field').removeAttr("disabled");
+            $('#txtValue_Field').removeAttr("disabled");
+            $('#ddlAdditional').removeAttr("disabled");
+            $('#ddlIsMultipleSelect').removeAttr("disabled");
+
+            $('#txtMax_Length').val('');
+            $('#txtMax_Length').attr("disabled", "disabled");
+
+            $('#txtView_Name').val('Digital_Data');
+            $('#txtText_Field').val('Data_Description');
+            $('#txtValue_Field').val('Digital_Data_Code');
+
+            $('#txtView_Name').attr("disabled", "disabled");
+            $('#txtText_Field').attr("disabled", "disabled");
+            $('#txtValue_Field').attr("disabled", "disabled");
+
+            $('#txtView_Name').attr("title", "Digital_Data")
+            $('#txtText_Field').attr("title", "Data_Description")
+            $('#txtValue_Field').attr("title", "Digital_Data_Code")
+
+            $('#lnkDigitalData').show();
+        } else if (controlType == "CHK") {
+            $('#txtMax_Length').val('');
+            $('#txtMax_Length').attr("disabled", "disabled");
+            $('#txtView_Name').val('');
+            $('#txtView_Name').attr("disabled", "disabled");
+            $('#txtText_Field').val('');
+            $('#txtText_Field').attr("disabled", "disabled");
+            $('#txtValue_Field').val('');
+            $('#txtValue_Field').attr("disabled", "disabled");
+            $("#ddlAdditional").val('');
+            $('#ddlAdditional').attr("disabled", "disabled");
+            $("#ddlIsMultipleSelect").val('');
+            $('#ddlIsMultipleSelect').attr("disabled", "disabled");
+            //$('#ddlIsMultipleSelect').attr("disabled", "disabled");
+            $('#lnkDigitalData').hide();
+        } else if (controlType == "TXTAREA" || controlType == "DATE" || controlType == "INT") {
+            $('#txtMax_Length').removeAttr("disabled");
+
+            $('#txtView_Name').val('');
+            $('#txtView_Name').attr("disabled", "disabled");
+            $('#txtText_Field').val('');
+            $('#txtText_Field').attr("disabled", "disabled");
+            $('#txtValue_Field').val('');
+            $('#txtValue_Field').attr("disabled", "disabled");
+            $("#ddlAdditional").val('');
+            $('#ddlAdditional').attr("disabled", "disabled");
+            $("#ddlIsMultipleSelect").val('');
+            $('#ddlIsMultipleSelect').attr("disabled", "disabled");
+            //$('#ddlIsMultipleSelect').attr("disabled", "disabled");
+            $('#lnkDigitalData').hide();
+        }
+        else {
+            $('#txtMax_Length').removeAttr("disabled");
+
+            $('#txtView_Name').removeAttr("disabled");
+            $('#txtText_Field').removeAttr("disabled");
+            $('#txtValue_Field').removeAttr("disabled");
+            $('#ddlAdditional').removeAttr("disabled");
+            $('#ddlIsMultipleSelect').removeAttr("disabled");
+            $('#lnkDigitalData').hide();
+        }
+    }).change();
+
+    $(".numeric").keypress(function () {
+        CheckNumeric(event);
+    });
+    $('.alphaNumeric').keypress(function (e) {
+        debugger;
+        var regex = new RegExp("^[a-zA-Z0-9 ]+$");
+        var str = String.fromCharCode(!e.charCode ? e.which : e.charCode);
+        if (regex.test(str)) {
+            return true;
+        }
+        e.preventDefault();
+        return false;
+    });
+
+    function CheckNumeric(e) {
+        if (window.event) { if ((e.keyCode < 48 || e.keyCode > 57) & e.keyCode != 8) { event.returnValue = false; return false; } }
+    }
+</script>
+<table class="table table-bordered table-hover" id="tblMusicLink">
+    <thead>
+        <tr>
+            <th style="width:5%;">@objMessageKey.Srno.</th>
+            <th style="width:10%;">Column in Tab</th>
+            <th style="width:10%;">Control</th>
+            <th style="width:10%;">Is Multiple Select</th>
+            <th style="width:5%;">Mandatory</th>
+            <th style="width:10%;">Column Length</th>
+            <th style="width:10%;">Column Order</th>
+            <th style="width:10%;">Order in Column</th>
+            <th style="width:10%;">Ref Table</th>
+            <th style="width:10%;">Ref Display Field</th>
+            <th style="width:10%;">Ref Value Field</th>
+            <th style="width:10%;">Additional Condition</th>
+            @if (ViewBag.PageType != "VIEW")
+            {
+                <th style="width:10%;">@objMessageKey.Action</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+
+        @if (TempData["Action"] == "AddTabConfig")
+        {
+            <tr>
+                <td align="center">
+                    New No.
+                </td>
+                <td align="center">
+                    @Html.DropDownList("ddlDigital", TempData["DigitalDDL"] as SelectList, "Select", new { @id = "ddlDigital", @class = "form_input chosen-select" })
+                    <a id="lnkDigital" class="red_icon glyphicon glyphicon-plus" title="Add Digital" onclick="AddDigitalMaster('LIST',0,'');" />
+                </td>
+                <td align="center">
+                    @Html.DropDownList("ddlControlType", TempData["ControlTypeDDL"] as SelectList, "Select", new { @id = "ddlControlType", @class = "form_input chosen-select" })
+                </td>
+                <td align="center">
+                    @Html.DropDownList("ddlIsMultipleSelect", TempData["IsMultipleSelectDDL"] as SelectList, "Select", new { @id = "ddlIsMultipleSelect", @class = "form_input chosen-select" })
+                </td>
+                <td style="text-align:center">
+                    <input type="checkbox" id="chkMandatory" name="Is_Mandatory" class="form_input" />
+                </td>
+                <td align="center">
+                    @Html.TextBox("txtMax_Length", "", new { @class = "numeric", maxlength = 15 })
+                </td>
+                <td align="center">
+                    @Html.TextBox("txtPage_Control_Order", "", new { @class = "numeric", maxlength = 15 })
+                </td>
+                <td align="center">
+                    @Html.TextBox("txtControl_Field_Order", "1", new { @class = "numeric", maxlength = 15 })
+                </td>
+                <td align="center">
+                    @Html.TextBox("txtView_Name", "", new { @class = "alpha", maxlength = 50})
+                </td>
+                <td align="center">
+                    @Html.TextBox("txtText_Field", "", new { @class = "alpha", maxlength = 50 })
+                </td>
+                <td align="center">
+                    @Html.TextBox("txtValue_Field", "", new { @class = "alpha", maxlength = 50 })
+                </td>
+                <td align="center">
+                    @Html.DropDownList("ddlAdditional", TempData["AdditionalDDL"] as SelectList, "Select", new { @id = "ddlAdditional", @class = "form_input chosen-select" })
+                    <a id="lnkDigitalData" class="red_icon glyphicon glyphicon-plus" title="Add Digital Data" onclick="AddDigitalDataMaster('LIST',0,'');" />
+                </td>
+                <td align="center">
+                    <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" style="cursor: pointer;" onclick="SaveTabConfig()"></a>
+                    <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" style="cursor: pointer;" onclick="CancelTabConfig()"></a>
+                </td>
+            </tr>
+        }
+        @{int rowNumber = 1; }
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                if (TempData["Action"] == "EditTabConfig" && item.Dummy_Guid.ToString() == Convert.ToString(TempData["idTabConfig"]))
+                {
+                    <tr>
+                        <td align="center">
+                            <span>@rowNumber</span>
+                        </td>
+                        <td align="center">
+                            @Html.DropDownList("ddlDigital", TempData["DigitalDDL"] as SelectList, "Select", new { @id = "ddlDigital", @class = "form_input chosen-select" })
+                            <a id="lnkDigital" class="red_icon glyphicon glyphicon-plus" title="Add Digital" onclick="AddDigitalMaster('LIST',0);" />
+                        </td>
+                        <td align="center">
+                            @Html.DropDownList("ddlControlType", TempData["ControlTypeDDL"] as SelectList, "Select", new { @id = "ddlControlType", @class = "form_input chosen-select" })
+                        </td>
+                        <td align="center">
+                            @Html.DropDownList("ddlIsMultipleSelect", TempData["IsMultipleSelectDDL"] as SelectList, "Select", new { @id = "ddlIsMultipleSelect", @class = "form_input chosen-select" })
+                        </td>
+                        <td align="center">
+                            @if (item.Is_Mandatory == "Y")
+                            {
+                                <input type="checkbox" id="chkMandatory" name="Is_Mandatory" class="form_input" checked="checked" />
+                            }
+                            else
+                            {
+                                <input type="checkbox" id="chkMandatory" name="Is_Mandatory" class="form_input" />
+                            }
+                        </td>
+                        <td align="center">
+                            @Html.TextBoxFor(x => item.Max_Length, new { @class = "numeric", maxlength = 15, id = "txtMax_Length" })
+                        </td>
+                        <td align="center">
+                            @Html.TextBoxFor(x => item.Page_Control_Order, new { @class = "numeric", maxlength = 15, id = "txtPage_Control_Order" })
+                        </td>
+                        <td align="center">
+                            @Html.TextBoxFor(x => item.Control_Field_Order, new { @class = "numeric", maxlength = 15, id = "txtControl_Field_Order" })
+                        </td>
+                        <td align="center">
+                            @Html.TextBoxFor(x => item.View_Name, new { @class = "alpha", maxlength = 50, id = "txtView_Name"})
+                        </td>
+                        <td align="center">
+                            @Html.TextBoxFor(x => item.Text_Field, new { @class = "alpha", maxlength = 50, id = "txtText_Field" })
+                        </td>
+                        <td align="center">
+                            @Html.TextBoxFor(x => item.Value_Field, new { @class = "alpha", maxlength = 50, id = "txtValue_Field" })
+                        </td>
+                        <td align="center">
+                            @Html.DropDownList("ddlAdditional", TempData["AdditionalDDL"] as SelectList, "Select", new { @id = "ddlAdditional", @class = "form_input chosen-select" })
+                            <a id="lnkDigitalData" class="red_icon glyphicon glyphicon-plus" title="Add Digital Data" onclick="AddDigitalDataMaster('LIST',0);" />
+                        </td>
+                        <td align="center">
+                            <a title="@objMessageKey.Update" class="glyphicon glyphicon-ok-circle" style="cursor: pointer;" onclick="UpdateTabConfig('@item.Dummy_Guid')"></a>
+                            <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" style="cursor: pointer;" onclick="CancelTabConfig()"></a>
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td align="center">
+                            <span>@rowNumber</span>
+                        </td>
+                        <td align="center">
+                            <span>@item.Digital.Digital_Name</span>
+                        </td>
+                        <td align="center">
+                            <span>@item.Control_Type</span>
+                        </td>
+                        <td align="center">
+                            @if (item.Is_Multiselect == "Y")
+                            {
+                                <span>Yes</span>
+                            }
+                            else
+                            {
+                                <span>No</span>
+                            }
+                        </td>
+                        <td align="center">
+                            @if (item.Is_Mandatory == "Y")
+                            {
+                                <span>Yes</span>
+                            }
+                            else
+                            {
+                                <span>No</span>
+                            }
+                        </td>
+                        <td align="center">
+                            <span>@item.Max_Length</span>
+                        </td>
+                        <td align="center">
+                            <span>@item.Page_Control_Order</span>
+                        </td>
+                        <td align="center">
+                            <span>@item.Control_Field_Order</span>
+                        </td>
+                        <td align="center">
+                            <span>@item.View_Name</span>
+                        </td>
+                        <td align="center">
+                            <span>@item.Text_Field</span>
+                        </td>
+                        <td align="center">
+                            <span>@item.Value_Field</span>
+                        </td>
+                        <td align="center">
+                            <span>@item.Whr_Criteria</span>
+                        </td>
+                        @if (ViewBag.PageType != "VIEW")
+                        {
+                            <td align="center">
+                                <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer;" onclick="AddEditTabConfig(@item.Digital_Tab.Digital_Tab_Code,'@item.Dummy_Guid','EDIT')"></a>
+                                <a title="@objMessageKey.Delete" class="glyphicon glyphicon-trash" style="cursor: pointer;" onclick="DeleteTabConfig('@item.Dummy_Guid', false)"></a>
+
+                            </td>
+                        }
+                    </tr>
+                }
+                rowNumber++;
+            }
+        }
+        else
+        {
+            if (TempData["Action"] != "AddTabConfig")
+            {
+                <tr>
+                    <td colspan="13">@objMessageKey.Norecordfound</td>
+                </tr>
+            }
+
+        }
+    </tbody>
+</table>
+

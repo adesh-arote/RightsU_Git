@@ -1,0 +1,30 @@
+﻿@model List<RightsU_Entities.USP_Get_Release_Content_List_Result>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+    <input type="hidden" id="hdnAcqDealCode" value="@ViewBag.AcqDealCode" />
+    <table class="table table-bordered table-hover" id="tblReleaseContentList">
+        <thead>
+            <tr>
+                <th style="text-align:center"><input type="checkbox" id="chkAllContent" /></th>
+                <th>@objMessageKey.Title</th>
+                <th>@objMessageKey.ReleaseEpisodes</th>
+                <th>@objMessageKey.DeleteEpisodes</th>
+            </tr> 
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td style="text-align:center"><input type="checkbox" id="chkContent_@item.Title_Code" name="chkContent" value="@item.Title_Code" /> </td>
+                    <td>@item.Title_Name</td>
+                    <td>@item.Release_Episode_Range</td>
+                    <td>@item.Delete_Episode_Range</td>
+                </tr>
+            }
+        </tbody>
+    </table>

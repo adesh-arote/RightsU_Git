@@ -1,0 +1,1184 @@
+﻿@model RightsU_Entities.ProjectMilestone
+@using UTOFrameWork.FrameworkClasses;
+@{
+    /**/
+
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings[" Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/autoNumeric-1.8.1.js"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<link href="~/CSS/sumoselect.css" rel="stylesheet" />
+<script src="~/JS_Core/jquery.sumoselect.js"></script>
+<link type="text/css" rel="stylesheet" href="~/CSS/jquery.timeentry.css">
+<script type="text/javascript" src="~/JS_Core/jquery.plugin.js"></script>
+<script type="text/javascript" src="~/JS_Core/jquery.timeentry.js"></script>
+
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
+
+<style>
+    .sumo_divddlMilestoneNature {
+        width: 95% !important;
+    }
+
+    .SumoSelect {
+        width: 279px !important;
+    }
+
+    li.specialLI {
+        display: block;
+        height: 55px;
+    }
+
+    input.isDatepicker {
+        width: 201px;
+        z-index: auto;
+    }
+
+    #ddlCurrency_chosen {
+        width: 17% !important;
+    }
+
+    .form_li_sub input {
+        width: 23px;
+    }
+    #lstReleaseUnit {
+        width: 168% !important;
+    }
+</style>
+<script>
+    var URL_Cancel = '@Url.Action("Cancel", "Project_Milestone")';
+    var URL_BindPMDetailsList = '@Url.Action("BindPMDetailsList", "Project_Milestone")';
+    var URL_BindPMTitlesList = '@Url.Action("BindPMTitleList", "Project_Milestone")';
+    $(document).ready(function () {
+        debugger;
+        $('#divddlMilestoneNature').SumoSelect();
+        BindPMTitleList("");
+        SetRightPeriod('Y');
+        BindPMDetailsList("", "");
+
+
+        $('#ddllicensee').on('change', function () {
+            if (this.value == '2')
+            //.....................^.......
+            {
+                $("#BookPage").show();
+                $("#BookPageCP").show();
+                //$("#divddlTalentName").hide();
+                $("#trExchangeRate").hide();
+                $("#trExchangeRateNew").show();
+                $('#bookCost').hide();
+            }
+            else {
+                $("#BookPage").hide();
+                $("#BookPageCP").hide();
+                //$("#divddlTalentName").show();
+                $("#trExchangeRate").show();
+                $("#trExchangeRateNew").hide();
+                $('#bookCost').show();
+            }
+            if (this.value == '1')
+            //.....................^.......
+            {
+                $("#look1").hide();
+                $("#look2").hide();
+            }
+            else {
+                $("#look1").show();
+                $("#look2").show();
+
+            }
+        });
+    });
+
+
+    function AddEditPMDetailsList(commandName, dummyGuid) {
+        $('#hdnAction').val(commandName);
+        BindPMDetailsList(commandName, dummyGuid);
+    }
+    function BindPMDetailsList(commandName, dummyGuid) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_BindPMDetailsList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            async: false,
+            data: JSON.stringify({
+                commandName: commandName,
+                dummyGuid: dummyGuid
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divBindPMDetailsList').empty();
+                    $('#divBindPMDetailsList').html(result);
+                    var length = $("table tr[id*='trExchangeRate_']").length;
+                    $('#lblRecordCountPopup').text(length);
+                    initializeDatepicker();
+                    initializeTooltip();
+                    //addNumeric();
+
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function PMDetails_Cancel() {
+        $('#hdnAction').val("");
+        BindPMDetailsList("", "");
+    }
+
+
+
+    function BindPMTitleList(commandName, dummyGuid) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_BindPMTitlesList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            async: false,
+            data: JSON.stringify({
+                commandName: commandName,
+                dummyGuid: dummyGuid
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divBindPMTitlesList').empty();
+                    $('#divBindPMTitlesList').html(result);
+                    var length = $("table tr[id*='trExchangeRate_']").length;
+                    $('#lblRecordCountPopup').text(length);
+                    initializeDatepicker();
+                    initializeTooltip();
+                    addNumeric();
+
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function PMTitle_Cancel() {
+        $('#hdnAction').val("");
+        BindPMTitleList("");
+    }
+
+
+    function ValidatePM() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var Remarks = $.trim($('#txtRemark').val());
+        var StartDate = $.trim($('#Start_Date').val());
+        var EndDate = $.trim($('#End_Date').val());
+
+        var returnVal = true;
+
+        if ($('#divddlTalent').val() == "") {
+            $('#divddlTalent').addClass('required');
+            returnVal = false;
+        }
+        if ($('#divddlMilestoneNature').val() == "") {
+            $('#divddlMilestoneNature').addClass('required');
+            returnVal = false;
+        }
+        //if (StartDate == "") {
+        //    $('#Start_Date').val('');
+        //    $('#Start_Date').attr('required', true)
+        //    returnVal = false;
+        //}
+        //if (EndDate == "") {
+        //    $('#End_Date').val('');
+        //    $('#End_Date').attr('required', true)
+        //    returnVal = false;
+        //}
+
+        if (Remarks == '') {
+            $('#txtRemark').val('');
+            $('#txtRemark').attr('required', true)
+            returnVal = false;
+        }
+
+
+        return returnVal;
+    }
+
+     function Save_Success(result) {
+        hideLoading();
+        if (result == "true") {
+            redirectToLogin();
+        }
+        else {
+            if (result.Status == "S")
+            {
+                CommandName_G = "LIST_PAGE";
+                showAlert("S", result.Message, "OK");
+                CancelSavePMDeal();
+            }
+            else
+            {
+                    showAlert("E", result.Message);
+            }
+        }
+    }
+
+
+
+
+
+    function SetRightPeriod(rightType) {
+        debugger;
+        //if (rightType == YearBased && $('#tabValidity a[href="#tabCal"]').prop("disabled")) {
+        //    return false;
+        //}
+        //else if (rightType == Perpetuity && $('#tabValidity a[href="#tabPerp"]').prop("disabled")) {
+        //    return false;
+        //}
+        //else if (rightType == Milestone && $('#tabValidity a[href="#tabMile"]').prop("disabled")) {
+        //    return false;
+        //}
+        $('#Right_Type').val(rightType);
+        //$('#Original_Right_Type').val(rightType);
+        //if (rightType != YearBased) {
+
+        //    if (rightType == Perpetuity) {
+        //        $('#ROFR_DT').prop("disabled", true);
+        //        $('#ROFR_Days').prop("disabled", true);
+        //        $('#ROFR_DT').val('');
+        //        $('#ROFR_Days').val('');
+        //        $('#ROFR_Code').prop("disabled", true);
+        //        CalculatePerpetuityEndDate();
+        //    }
+        //    else
+        //        $('#ROFR_Code').prop("disabled", false);
+
+        //    if ($('#Milestone_Type_Code').val() == '')
+        //        $('#Milestone_Type_Code').val(1);
+
+        //    if ($('#Milestone_Unit_Type').val() == '')
+        //        $('#Milestone_Unit_Type').val(1);
+        //}
+        //else {
+        //    $('#ROFR_DT').prop("disabled", false);
+        //    $('#ROFR_Days').prop("disabled", false);
+        //    $('#ROFR_Code').prop("disabled", false);
+        //}
+        //$('#ROFR_Code').trigger('chosen:updated');
+    }
+    function CancelSavePMDeal() {
+        debugger;
+        //CommandName_G = "LIST_PAGE";
+        //showAlert("I", 'All Unsaved Data Will Be Lost Still Want To Go Ahead?', "OKCANCEL");
+        window.location.href = URL_Cancel;
+    }
+    //function handleOk() {
+    //    debugger
+    //    if (CommandName_G == "LIST_PAGE") {
+    //        ReleaseRecordLock(recordLockingCode, URL_Release_Lock);
+    //        location.href = URL_Cancel;
+    //    }
+    //    if(CommandName_G == "LIST")
+    //    {
+    //        $('#frmMusicDeal').submit();
+    //    }
+    //}
+    //function handleCancel()
+    //{
+    //    CommandName_G = "";
+    //}
+    function DealType(obj2) {
+        if (obj2.value == "1") {
+            $('#divRegion').show();
+            $('#divCountry').hide();
+        }
+        if (obj2.value == "2") {
+            $('#divCountry').show();
+            $('#divRegion').hide();
+        }
+    }
+    function showOverflow(obj2) {
+        if (obj2.value == "1" || obj2.value == "3") {
+            document.getElementById("RevenueSharing").style.display = 'none';
+        }
+        if (obj2.value == "2") {
+            document.getElementById("RevenueSharing").style.display = '';
+        }
+    }
+</script>
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col" onclick="">
+            <div class="top_area">
+                <h2 class="pull-left">
+                    @if (ViewBag.Mode == "E")
+                    {
+                        <label>Edit Project Milestone</label>
+                    }
+                    else
+                    {<label>Add Project Milestone</label>}
+
+                </h2>
+            </div>
+            @using (Ajax.BeginForm("Save", "Project_Milestone", new AjaxOptions { OnSuccess = "Save_Success" }, new { @id = "frmMusicDeal" }))
+            {
+                string ORightType = "";
+                <div class="grid_area">
+                    <div class="navigation_tabs">
+                        <div class="tabbable">
+                            <ul class="nav nav-tabs nav-tab pull-left">
+                                <li class="active">
+                                    <a data-toggle="tab" href="#" role="tab">General</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content clearfix table-wrapper scale_table_container">
+                                <div class="tab-pane active" id="tabGeneral">
+                                    <div class="scale_table_block">
+                                        <table class="four_column table" style="margin-top:10px">
+                                            <tbody>
+                                                <tr style="height:35px">
+                                                    <td class="td_label">Deal No</td>
+                                                    <td>
+                                                        @Html.HiddenFor(m => Model.ProjectMilestoneCode)
+                                                        @if (ViewBag.Mode == "E")
+                                                        {
+                                                            <span>@Model.AgreementNo</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            @Html.Label("Agreement_No", (string.IsNullOrEmpty(Model.AgreementNo)) ? "New" : Model.AgreementNo)
+                                                            @* @Html.Label("Version_No", "Version #: VN " + ((string.IsNullOrEmpty(Model.Version)) ? "0001" : Model.Version))*@
+
+                                                            @Html.Hidden("hdnRecordLockingCode", ViewBag.RecordLockingCode as string, new { @id = "hdnRecordLockingCode" })
+                                                        }
+
+                                                    </td>
+                                                    <td>Agreement Type</td>
+
+                                                    <td>
+                                                        <span class="required">
+                                                            <select name="ddllicensee" id="ddllicensee" class="form_input chosen-select">
+                                                                <option value="0" selected="selected">Remake</option>
+                                                                <option value="1">First Look</option>
+                                                                <option value="2">Book</option>
+                                                            </select>
+                                                        </span>
+                                                    </td>
+
+
+                                                </tr>
+                                                <tr>
+                                                    <td>Name of the Project</td>
+                                                    <td>
+                                                        @Html.TextBoxFor(m => Model.ProjectName, "", new { @id = "txtProjectName", @maxlength = 100 })
+                                                    </td>
+                                                    <td>Agreement Date</td>
+                                                    <td>
+                                                        @if (ViewBag.Mode == "E")
+                                                        {
+                                                            @Html.TextBox("Agreement_Date", string.Format("{0:" + "dd-MMM-yyyy" + "}", Model.AgreementDate), new { @class = "isDatepicker shortDate", @id = "txtAgreement_Date" })
+                                                        }
+                                                        else
+                                                        {
+                                                            @Html.TextBox("Agreement_Date", string.Format("{0:" + "dd-MMM-yyyy" + "}", DateTime.Today), new { @class = "isDatepicker shortDate", @id = "txtAgreement_Date" })
+                                                        }
+
+                                                    </td>
+
+                                                </tr>
+                                                <tr>
+                                                    <td> Name of the Counter party</td>
+                                                    <td>
+                                                        <div id="divddlTalentName">
+                                                            @Html.DropDownListFor(m => Model.TalentCode, ViewBag.TalentList as SelectList, "Please Select", new { @id = "divddlTalent", @class = "form_input chosen-select" })
+                                                        </div>
+                                                        @*<div id="BookPageCP" style="display:none">
+                                                                    <label class="bold">Author Name</label>
+                                                                    @Html.DropDownListFor(m => Model.TalentCode, ViewBag.TalentList as SelectList, "Please Select", new { @id = "divddlTalent", @class = "form_input chosen-select" })<br />
+                                                                    <label class="bold">
+                                                                        Publisher Name
+                                                                    </label>
+                                                                    @Html.DropDownListFor(m => Model.TalentCode, ViewBag.TalentList as SelectList, "Please Select", new { @id = "divddlTalent", @class = "form_input chosen-select" })
+                                                                </div>
+                                                            </td>*@
+                                                    <td>Nature of Deal</td>
+                                                    <td>
+                                                        <div id="divddlMilestoneNatureName">
+                                                            @*@Html.DropDownListFor(m => Model.MileStone_Nature_Code, ViewBag.MilestoneNatureList as SelectList, "Please Select", new { @id = "divddlMilestoneNature", @class = "form_input chosen-select" })*@
+                                                            @Html.ListBox("divddlMilestoneNature", ViewBag.MilestoneNatureList as MultiSelectList, new { @id = "divddlMilestoneNature", @class = "" })
+                                                        </div>
+                                                    </td>
+
+                                                </tr>
+                                                <tr id="BookPageCP" style="display:none">
+                                                    <td>
+                                                        <label class="bold">Author Name</label>
+                                                    </td>
+                                                    <td>
+                                                        <div id="divddlTalentName">
+                                                            @Html.DropDownListFor(m => Model.TalentCode, ViewBag.TalentList as SelectList, "Please Select", new { @id = "divddlTalent", @class = "form_input chosen-select" })
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <label class="bold">Publisher Name</label>
+                                                    </td>
+                                                    <td>
+                                                        @Html.DropDownListFor(m => Model.TalentCode, ViewBag.TalentList as SelectList, "Please Select", new { @id = "divddlTalent", @class = "form_input chosen-select" })
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Counter Party Details</td>
+                                                    <td> @Html.TextBoxFor(m => Model.ProjectName, "", new { @id = "txtProjectName", @maxlength = 100 })</td>
+                                                    <td id="look1">Party Type</td>
+                                                    <td id="look2">
+                                                        <label class="radio-inline">
+                                                            <input type="radio" name="optAcqMode" id="optAcqMode" onclick="ModeAcquisition(this);" value="1" checked />
+                                                            Own production
+                                                        </label>
+                                                        <label class="radio-inline">
+                                                            <input type="radio" name="optAcqMode" id="optAcqMode" onclick="ModeAcquisition(this);" value="2" />
+                                                            Assignee
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Term</td>
+                                                    <td>
+                                                        <div id="tabValidity" class="tabbable">
+                                                            <ul class="nav nav-tabs nav-tab pull-left">
+                                                                <li class="@(Model.PeriodType == "Y" ? "active" : "active")" id="liCal" onclick="SetRightPeriod('Y');">
+                                                                    <a data-toggle="tab" href="#tabCal" role="tab">Year based</a>
+                                                                </li>
+                                                                @*<li class="@(Model.PeriodType == "M" ? "active" : "")" id="liMile" onclick="SetRightPeriod('M');">
+                                                                        <a data-toggle="tab" href="#tabMile" role="tab">
+                                                                            Milestone based
+                                                                        </a>
+                                                                    </li>*@
+                                                            </ul>
+                                                            @Html.Hidden("Right_Type", Model.PeriodType)
+                                                            <div class="tab-content clearfix table-wrapper scale_table_container" style="width:218%;">
+                                                                <div class="tab-pane active scale_table_block active" id="tabCal">
+                                                                    @Html.CheckBox("IsTentative", (Model.IsTentitive == "Y" ? "N" : "Y"))
+                                                                    <label>Tentative</label>
+                                                                    <br>
+                                                                    <label>Start Date</label>
+                                                                    @Html.TextBox("Start_Date", Convert.ToDateTime(Model.StartDate).ToString("dd-MMM-yyyy"), new { @id = "Start_Date", @placeholder = "DD/MM/YYYY", @class = "isDatepicker", @style = "width:14%", Value = String.Format("{0:dd/MM/yyyy}", Model.StartDate) })
+                                                                    @Html.TextBox("Term_YY", Model.Term, new { @class = "smallTextBox", @placeholder = "YY", @maxlength = 2 })
+                                                                    @Html.TextBox("Term_MM", 0, new { @class = "smallTextBox", @placeholder = "MM", @maxlength = 2 })
+                                                                    <label style="margin-left: 15px">End Date</label>
+                                                                    @Html.TextBox("End_Date", Convert.ToDateTime(Model.EndDate).ToString("dd-MMM-yyyy"), new { @id = "End_Date", @class = "isDatepicker", @placeholder = "DD/MM/YYYY", @style = "width:14%", Value = String.Format("{0:dd/MM/yyyy}", Model.EndDate) })
+                                                                </div>
+                                                                @*<div class="@(Model.PeriodType == "M" ? "tab-pane active scale_table_block" : "tab-pane scale_table_block")" id="tabMile">
+                                                                        <ul class="from_to clearfix">
+                                                                            <li class="form_li_sub">
+                                                                                <label>Start Date</label>
+                                                                                @Html.TextBox("Milestone_Start_Date", Convert.ToDateTime(Model.StartDate).ToString("dd-MMM-yyyy"), new { @id = "Start_Date", @placeholder = "DD/MM/YYYY", @class = "isDatepicker", @style = "width:100%", Value = String.Format("{0:dd/MM/yyyy}", Model.StartDate) })
+                                                                            </li>
+                                                                            <li class="form_li_sub">
+                                                                                <label>start from</label>
+                                                                                @Html.DropDownList("ddlMilestone_Type_Code", ViewBag.MilestoneTypelist as SelectList, "Please Select", new { @id = "ddlMilestone_Type_Code", @class = "form_input chosen-select" })
+                                                                            </li>
+                                                                            <li class="form_li_sub">
+                                                                                <label>valid for</label>
+                                                                                @Html.TextBox("txtMilestone_No_Of_Unit", Model.Milestone_No_Of_Unit, new { @class = "smallTextBox", @onblur = "CalculateMilestoneEndDate()" })
+                                                                            </li>
+                                                                            <li class="form_li_sub">
+                                                                                <label></label>
+                                                                                <br />
+                                                                                @Html.DropDownList("ddlMilestone_Unit_Type", ViewBag.MilestoneUnitTypelist as SelectList, "Please Select", new { @id = "ddlMilestone_Unit_Type", @class = "form_input chosen-select" })
+                                                                            </li>
+                                                                            <li class="form_li_sub">
+                                                                                <label>End Date</label>
+                                                                                @Html.TextBox("Milestone_End_Date", Convert.ToDateTime(Model.EndDate).ToString("dd-MMM-yyyy"), new { @id = "End_Date", @class = "isDatepicker", @placeholder = "DD/MM/YYYY", @style = "width:100%", Value = String.Format("{0:dd/MM/yyyy}", Model.EndDate) })
+                                                                            </li>
+                                                                        </ul>
+                                                                    </div>*@
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid_area">
+                    <div class="navigation_tabs">
+                        <div class="tabbable">
+                            <ul class="nav nav-tabs nav-tab pull-left">
+                                <li class="active">
+                                    <a data-toggle="tab" href="#" role="tab">Milestone</a>
+                                </li>
+                                <div class="" style="vertical-align:top;line-height:0px !important;margin-left:1077px;">
+                                    @*<input type="button" class="btn btn-primary" value="Add" style="float:right" onclick="AddEditPMDetailsList('ADD', '')" />*@
+                                    @*<a alt title="Edit" href="#" class="glyphicon glyphicon-pencil" data-target="#popEditCost" data-toggle="modal"></a>*@
+                                    <input type="button" class="btn btn-primary" data-target="#popEditCost" data-toggle="modal" value="Add" />
+                                </div>
+                            </ul>
+                            @*<div class="paging_area clearfix" id="Pg3" style="height:30px !important;line-height:0px !important;padding-left:0.5% !important;">
+                                    <span class="pull-left">Total Records: </span>
+                                    <span class="pull-left" id="lblRecordCountPopup"></span>
+                                    <span class="pull-right" style="vertical-align:top;line-height:0px !important;margin-top:-4px;">
+                                                <input type="button" class="btn btn-primary" value="Add" style="float:right" onclick="AddEditPMDetailsList('ADD', '')" />
+                                    </span>
+                                </div>*@
+                            <div class="tab-content clearfix table-wrapper scale_table_container">
+                                <div class="scale_table_block" id="divBindPMDetailsList" style="overflow:auto; max-height:500px">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid_area">
+                    <div class="navigation_tabs">
+                        <div class="tabbable">
+                            <ul class="nav nav-tabs nav-tab pull-left">
+                                <li class="active">
+                                    <a data-toggle="tab" href="#" role="tab">Concept/Prospect Titles</a>
+                                </li>
+                                <div class="" style="vertical-align:top;line-height:0px !important;margin-left:1077px;">
+                                    <input type="button" class="btn btn-primary" value="Add" style="float:right" onclick="BindPMTitleList('ADD', '')" />
+                                </div>
+                            </ul>
+                            <div class="tab-content clearfix table-wrapper scale_table_container">
+                                @*<div class="scale_table_block" id="divBindPMTitlesList" style="overflow:auto; max-height:500px">
+                                    </div>*@
+                                <div class="scale_table_block" id="BookPageTitle">
+                                    <table class="table table-bordered table-hover" id="tblMusicLink">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:6%;">Sr no</th>
+                                                <th style="width:22%;">Title Name</th>
+                                                <th style="width:19%;">Year</th>
+                                                <th style="width:25%;">Language</th>
+                                                <th style="width:20%;">Description</th>
+                                                <th style="width:15%;">Action</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+
+
+                                            <tr>
+                                                <td style="text-align:center;">
+                                                    <span>New</span>
+                                                </td>
+                                                <td style="">
+                                                    <input type="text" id="txtExchangeRate_0" value="" class="exchangeRate form-control input-sm" maxlength="100" style="" />
+                                                </td>
+                                                <td style="text-align:center">
+                                                    <input type="text" id="txtEffectiveDate_0" value="" class="isDatepicker shortDate form-control input-sm" placeholder="DD/MM/YYYY" style="text-align:center;" />
+                                                </td>
+                                                <td style="">
+                                                    <select name="" id="Select32" class="form_input chosen-select">
+                                                        <option value="1">Please Select</option>
+                                                        <option value="2">English</option>
+                                                        <option value="2">Hindi</option>
+                                                        <option value="2">Marathi</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <input type="text" id="txtExchangeRate_0" value="" class="exchangeRate form-control input-sm" maxlength="500" style="width:125px" />
+                                                </td>
+                                                <td align="center" style="text-align:center">
+                                                    <a title="Save" class="glyphicon glyphicon-ok-circle" onclick="SavePMTitlesList('', 0)"></a>
+                                                    <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="PMTitle_Cancel()"></a>
+                                                </td>
+                                            </tr>
+
+
+
+                                            <tr id="trExchangeRate">
+                                                <td style="text-align:center;">
+                                                    <span>1</span>
+
+                                                </td>
+
+
+                                                <td style="">
+                                                    Knight and Day
+                                                </td>
+                                                <td style="text-align:center">
+                                                    2008
+                                                </td>
+                                                <td style="">
+                                                    English
+                                                </td>
+                                                <td style="">
+                                                    Remake concept ‘Bang Bang’
+                                                </td>
+                                                <td align="center" style="text-align:center">
+                                                    <a title="Save" class="glyphicon glyphicon-ok-circle" onclick=""></a>
+                                                    <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick=""></a>
+                                                </td>
+
+                                            </tr>
+                                            <tr id="trExchangeRateNew" style="display:none">
+                                                <td style="text-align:center;">
+                                                    <span>1</span>
+
+                                                </td>
+
+
+                                                <td style="">
+                                                    Five Point Someone
+                                                </td>
+                                                <td style="text-align:center">
+                                                    2008
+                                                </td>
+                                                <td style="">
+                                                    English
+                                                </td>
+                                                <td style="">
+                                                    Concept for film making ‘3 Idiots’
+                                                </td>
+                                                <td align="center" style="text-align:center">
+                                                    <a title="Save" class="glyphicon glyphicon-ok-circle" onclick=""></a>
+                                                    <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick=""></a>
+                                                </td>
+
+                                            </tr>
+
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+            }
+            <div class="grid_area">
+                <div class="navigation_tabs">
+                    <div class="tabbable">
+                        <ul class="nav nav-tabs nav-tab pull-left">
+                            <li class="active">
+                                <a data-toggle="tab" href="#" role="tab">Rights</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content clearfix table-wrapper scale_table_container">
+                            <div class="tab-pane active" id="tabGeneral">
+                                <div class="scale_table_block">
+                                    <table class="four_column table style_table">
+                                        <tbody>
+                                            <tr>
+                                                <td style="width:2%">Region</td>
+                                                <td style="width:4%">
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="optDealType" id="optMaster" value="2" checked onclick="DealType(this);" />
+                                                        Country
+                                                    </label>
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="optDealType" id="optSub" value="1" onclick="DealType(this);" />
+                                                        Territory
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <div id="divCountry" style="width:40%">
+                                                        <select name="" id="Select32" class="form_input chosen-select">
+                                                            <option value="1">Please Select</option>
+                                                            <option value="2">India</option>
+                                                            <option value="3">Pakistan</option>
+                                                            <option value="4">Afghanistan</option>
+                                                            <option value="5">Bangladesh</option>
+                                                            <option value="6">Saudi Arabia</option>
+                                                        </select>
+                                                    </div>
+                                                    <div id="divRegion" style="display:none;width:40%">
+                                                        <select name="" id="Select32" class="form_input chosen-select">
+                                                            <option value="1">Please Select</option>
+                                                            <option value="2">Asia</option>
+                                                            <option value="3">Australia</option>
+                                                            <option value="4">America</option>
+                                                        </select>
+                                                    </div>
+                                                </td>
+
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+
+                                    <table class="four_column table style_table">
+                                        <tbody>
+                                            <tr>
+                                                <td style="width:6%">Authorized Language</td>
+                                                <td>
+                                                    <div id="" style="width:40%">
+                                                        <select name="" id="Select32" class="form_input chosen-select">
+                                                            <option value="1">Please Select</option>
+                                                            <option value="2">English</option>
+                                                            <option value="3">Hindi</option>
+                                                            <option value="4">Marathi</option>
+                                                        </select>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr></tr>
+                                        </tbody>
+                                    </table>
+
+
+                                    <div class="tabbable">
+                                        <ul class="nav nav-tabs nav-tab pull-left">
+                                            <li class="active">
+                                                <a data-toggle="tab" href="" role="tab">Platforms</a>
+                                            </li>
+                                        </ul>
+                                        <div class="pull-right">
+                                            <span class="red_icon glyphicon glyphicon-plus"></span>
+                                        </div>
+                                        <div class="tab-content clearfix table-wrapper scale_table_container">
+                                            <div class="tab-pane active scale_table_block" id="">
+                                                <table class="table table-bordered table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Platforms</th>
+                                                            <th>Restriction</th>
+                                                            <th style="text-align:center">Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>Remake Rights</td>
+                                                            <td>ABC</td>
+                                                            <td style="text-align:center">
+                                                                <a title="Edit" href="#" class="glyphicon glyphicon-pencil"></a>
+                                                                <a title="Delete" href="#" class="glyphicon glyphicon-trash"></a>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <select name="ddlTitle" id="Select31" class="form_input chosen-select">
+                                                                    <option value="1">Please Select</option>
+                                                                    <option value="2">Underlying Rights</option>
+                                                                    <option value="3">Remake Rights</option>
+                                                                    <option value="4">Reserved Rights</option>
+                                                                    <option value="5">Exploitation Rights</option>
+                                                                    <option value="6">Crteative Decision Rights</option>
+                                                                </select>
+                                                            </td>
+                                                            <td>
+                                                                <input class="text" id="Text8" type="text" value="" />
+                                                            </td>
+                                                            <td style="text-align:center">
+                                                                <a title="Save" href="#" class="glyphicon glyphicon-ok-circle"></a>
+                                                                <a title="Cancel" href="#" class="glyphicon glyphicon-remove-circle"></a>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div style="width:130%">
+                                        <div class="bold" style="padding-right: 320px;">Remarks</div>
+                                        <div style="float:right">&nbsp;&nbsp;characters left.. </div>
+                                        <div style="float:right" class="charNum">4000</div>
+                                    </div>
+                                    <textarea id="field" class="textarea" rows="2" cols="20" onkeyup="countChar(this)" style="height:80px;"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid_area">
+                <div class="navigation_tabs">
+                    <div class="tabbable">
+                        <ul class="nav nav-tabs nav-tab pull-left">
+                            <li class="active">
+                                <a data-toggle="tab" href="#" role="tab">Cost</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content clearfix table-wrapper scale_table_container">
+                            <div class="tab-pane active" id="tabGeneral">
+                                <div class="scale_table_block">
+                                    <table class="four_column table style_table">
+                                        <tbody>
+                                            @*<div id="BookPage" style="display:none">
+                                                <div style="padding-bottom:7px;">
+                                                    <label class="bold" style="padding-right: 33px;">Option fee</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    <input class="text" id="Text6" type="text" value="" style="width:17%;" /><br />
+                                                </div>
+                                                <div style="padding-bottom:7px;">
+                                                    <label class="bold">Extended Option Fee</label>&nbsp;&nbsp;
+                                                    <input class="text" id="Text6" type="text" value="" style="width:17%;" /><br />
+                                                </div>
+                                                <div style="padding-bottom:7px;">
+                                                    <label class="bold" style="padding-right: 33px;">Assignment Fee</label>&nbsp;&nbsp;
+                                                    <input class="text" id="Text6" type="text" value="" style="width:17%;" /><br />
+                                                </div>
+                                                <div style="padding-bottom:7px;">
+                                                    <label class="bold" style="padding-right: 5px;">Assignment Fee Cap</label>&nbsp;&nbsp;
+                                                    <input class="text" id="Text6" type="text" value="" style="width:17%;" /><br />
+                                                </div>
+
+                                            </div>*@
+
+                                            <div>
+                                                <label class="bold" style="padding-right: 31px;">Agreement Cost</label>&nbsp;&nbsp;
+
+                                                <input class="text" id="Text6" type="text" value="" style="width:17%;" />
+                                            </div>
+
+                                            <div>
+                                                <label class="bold" style="padding-right:83px;">Currency</label>
+
+                                                <span class="required" style="width:40%">
+                                                    <select name="ddlCurrency" id="ddlCurrency" class="form_input chosen-select">
+                                                        <option value="1" selected>INR - INR</option>
+                                                        <option value="2">USD - $</option>
+                                                    </select>
+                                            </div>
+
+                                        </tbody>
+                                    </table>
+
+                                    <div class="tabbable">
+                                        <ul class="nav nav-tabs nav-tab pull-left">
+                                            <li class="active">
+                                                <a data-toggle="tab" href="#tabCostHead" role="tab">Cost Head</a>
+                                            </li>
+                                            <li class="">
+                                                <a data-toggle="tab" href="#tabOverflow" role="tab">Overflow</a>
+                                            </li>
+
+                                        </ul>
+                                        <div class="pull-right">
+                                            <span class="red_icon glyphicon glyphicon-plus"></span>
+                                        </div>
+                                        <div class="tab-content clearfix table-wrapper scale_table_container">
+                                            <div class="tab-pane active scale_table_block" id="tabCostHead">
+                                                <table class="table table-bordered table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Cost Type</th>
+                                                            <th>Amount</th>
+                                                            <th style="text-align:center">Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>Assignment Cost</td>
+                                                            <td>1,20,000.00 </td>
+                                                            <td style="text-align:center">
+                                                                <a title="Edit" href="#" class="glyphicon glyphicon-pencil"></a>
+                                                                <a title="Delete" href="#" class="glyphicon glyphicon-trash"></a>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td id="BookPage" style="display:none">
+                                                                <select name="ddlTitle" id="Select31" class="form_input chosen-select">
+                                                                    <option value="0" selected>Option fee</option>
+                                                                    <option value="1">Additional Content Cost</option>
+                                                                    <option value="2">Extended Option Fee</option>
+                                                                    <option value="3">Assignment Fee Cap</option>
+                                                                </select>
+                                                            </td>
+                                                            <td id="bookCost">
+                                                                <select name="ddlTitle" id="Select31" class="form_input chosen-select">
+                                                                    <option value="0" selected>Assignment Cost</option>
+                                                                    <option value="1">Additional Content Cost</option>
+                                                                    <option value="2">HD Cost</option>
+                                                                    <option value="3">One Time Cost</option>
+                                                                    <option value="4">Other Cost</option>
+                                                                    <option value="5">Set Cost</option>
+                                                                    <option value="6">Outdoor Cost</option>
+                                                                    <option value="7">License Fees</option>
+                                                                    <option value="8">Minimum Guarantee</option>
+                                                                    <option value="9">Episodic Cost</option>
+                                                                </select>
+                                                            </td>
+                                                            <td>
+                                                                <input class="text" id="Text4" type="text" value="0.00" />
+                                                            </td>
+                                                            <td style="text-align:center">
+                                                                <a title="Save" href="#" class="glyphicon glyphicon-ok-circle"></a>
+                                                                <a title="Cancel" href="#" class="glyphicon glyphicon-remove-circle"></a>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+
+                                            <div class="tab-pane scale_table_block" id="tabOverflow">
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="optOverflow" id="optOverflow1" onclick="showOverflow(this);" value="1" />
+                                                    Profit Sharing
+                                                </label>
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="optOverflow" id="optOverflow2" onclick="showOverflow(this);" value="2" />
+                                                    Revenue Sharing
+                                                </label>
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="optOverflow" id="optOverflow3" onclick="showOverflow(this);" value="3" />
+                                                    NA
+                                                </label>
+                                                <table class="table table-bordered table-hover" id="RevenueSharing" style="display:none;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Party</th>
+                                                            <th>Percentage</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>Reliance Media Limited</td>
+                                                            <td>
+                                                                <input class="text" id="Text4" type="text" value="0.00" />
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Digital Works</td>
+                                                            <td>
+                                                                <input class="text" id="Text5" type="text" value="0.00" />
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+
+
+                                    <div style="width:130%">
+                                        <div class="bold" style="padding-right: 320px;">Remarks</div>
+                                        <div style="float:right">&nbsp;&nbsp;characters left.. </div>
+                                        <div style="float:right" class="charNum">4000</div>
+                                    </div>
+                                    <textarea id="field" class="textarea" rows="2" cols="20" onkeyup="countChar(this)" style="height:80px;"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="grid_area">
+                <div class="navigation_tabs">
+                    <div class="tabbable">
+                        <ul class="nav nav-tabs nav-tab pull-left">
+                            <li class="active">
+                                <a data-toggle="tab" href="#" role="tab">Status History</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content clearfix table-wrapper scale_table_container">
+                            <div class="tab-pane active" id="tabGeneral">
+                                <div class="scale_table_block">
+                                    <table class="table table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th class="">Status</th>
+                                                <th class="">Date</th>
+                                                <th class="">By</th>
+                                                <th class="">Remarks</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Approved</td>
+                                                <td>03-Dec-2014</td>
+                                                <td>admin (System Admin)</td>
+                                                <td>System Migrated Deal</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bottom_action">
+                <ul class="form_link_nav clearfix">
+                    <li style="margin-top:10px;">
+                        <input type="submit" id="btnSave" class="btn btn-primary" value="Save" onclick="ValidatePM();" />
+                    </li>
+                    <li style="margin-top:10px;">
+                        <input type="button" id="btnCancel" class="btn btn-primary" name="CANCEL" value="Cancel" onclick="CancelSavePMDeal()" />
+                    </li>
+                </ul>
+            </div>
+            <div aria-labelledby="myModalLabel" class="form_wrapper modal fade" id="popEditCost" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+                <div class="modal-dialog">
+                    <div class="modal-content clearfix">
+                        <form class="form" id="Form3">
+                            <div class="form_wrapper acq">
+                                <div class="form_fields">
+                                    <div class="modal_block modal_header">
+                                        <a class="close" data-dismiss="modal" href="#">
+                                            <span>×</span>
+                                            <span class="sr-only">Close</span>
+                                        </a>
+                                        <h2>Add Milestone</h2>
+                                    </div>
+                                    <ul class="form_fields_wrapper">
+                                        <li class="form_field modal_block">
+                                            <ul>
+                                                <li>
+                                                    <lable class="bold">Stage</lable>
+                                                    <select name="" id="Select32"  class="form_input chosen-select">
+                                                        <option value="1">Please Select</option>
+                                                        <option value="2">Stage 1</option>
+                                                        <option value="3">Stage 2</option>
+                                                        <option value="4">Stage 3</option>
+                                                        <option value="5">Stage 4</option>
+                                                        <option value="6">Stage 5</option>
+                                                    </select>
+                                                </li>
+                                                <li>
+                                                    <label class="bold">Key Events </label>
+                                                    <select name="" id="Select32" class="form_input chosen-select">
+                                                        <option value="1">Please Select</option>
+                                                        <option value="2">All development deliverables to be submitted by the counter party to RIL</option>
+                                                        <option value="3">Option expires</option>
+                                                        <option value="4">Start of shoot</option>
+                                                        <option value="5">Completion of shoot</option>
+                                                        <option value="6">Submission of final screenplay</option>
+                                                        <option value="7">Submission of final dialogues</option>
+                                                        <option value="8">Delivery of final version of screenplay and dialogues of the film to RIL</option>
+                                                        <option value="9">First draft of the story of first season</option>
+                                                        <option value="10">First draft of the story of second season</option>
+                                                        <option value="11">First draft of the screenplay and dialogues for the first episode of first season</option>
+                                                        <option value="12">Story to be submitted</option>
+                                                        <option value="13">Delivery of the 120 second teaser</option>
+                                                        <option value="14">Rights expire</option>
+                                                        <option value="15">Theatrical Release of the film</option>
+                                                    </select>
+                                                </li>
+                                                <li class="specialLI">
+                                                    <div>
+                                                        <label class="bold">Deadline</label>
+                                                        <label class="">
+                                                            <input type="text" id="txtEffectiveDate_0" value="" class="isDatepicker shortDate form-control input-sm" placeholder="DD/MM/YYYY" style="x" />
+                                                        </label>
+                                                    </div>
+                                                    <div>
+                                                        @*<label class="bold">Date of Delivery</label>
+                                                            <label class="">
+                                                                <input type="text" id="txtEffectiveDate_0" value="" class="isDatepicker shortDate form-control input-sm" placeholder="DD/MM/YYYY" style="" />
+                                                            </label>*@
+                                                        <div class="tabbable">
+                                                            <ul id="ulRightType" class="nav nav-tabs nav-tab pull-left">
+                                                                <li class="active">
+                                                                    <a data-toggle="tab" id="liTabRelease" href="#tabRelease" onclick="" role="tab">Release</a>
+                                                                </li>
+                                                            </ul>
+                                                            <div class="tab-content clearfix table-wrapper scale_table_container">
+                                                                <div class=" tab-pane active scale_table_block" id="tabRelease">
+                                                                    <ul class="from_to clearfix">
+                                                                        <li class="form_li_sub" style=" vertical-align:sub">
+                                                                            <input checked="checked" id="Gender" name="Gender"
+                                                                                   type="radio"
+                                                                                   value="Male" style="vertical-align: sub;" />Pre
+                                                                            <br />
+
+                                                                            <input id="Gender"
+                                                                                   name="Gender"
+                                                                                   type="radio"
+                                                                                   value="Female" style="vertical-align: sub;" />Post
+                                                                        </li>
+                                                                        <li class="form_li_sub">
+                                                                            <input maxlength="3" class="smallTextBox" data-val="true" data-val-number="The field HB_Run_After_Release_No must be a number." id="HB_Run_After_Release_No" name="HB_Run_After_Release_No" type="text" value="">
+                                                                        </li>
+                                                                        <li class="form_li_sub" style="width: 100px;">
+                                                                            <select class="form_input chosen-select" id="lstReleaseUnit" name="lstReleaseUnit" width="150px" style="display: none;">
+                                                                                <option selected="selected" value="0">--Select--</option>
+                                                                                <option value="1">Days</option>
+                                                                                <option value="2">Weeks</option>
+                                                                                <option value="3">Months</option>
+                                                                                <option value="4">Years</option>
+                                                                            </select>
+                                                                            @*  <div class="chosen-container chosen-container-single" style="width: 85px;" title="" id="lstReleaseUnit_chosen" data-original-title=""><a class="chosen-single" tabindex="-1"><span>--Select--</span><div><b></b></div></a><div class="chosen-drop"><div class="chosen-search"><input type="text" autocomplete="off"></div><ul class="chosen-results"></ul></div></div>*@
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li class="specialLI">
+                                                    <div>
+                                                        <label class="bold">ROFR (from date of Deliveries)</label>
+                                                        <label class="">
+                                                            <input type="text" id="txtEffectiveDate_0" value="" class="isDatepicker shortDate form-control input-sm" placeholder="DD/MM/YYYY" style="" />
+                                                        </label>
+                                                    </div>
+                                                    <div>
+                                                        <label class="bold">Closed</label>
+                                                        <label class="">
+                                                            <label class="radio-inline">@Html.RadioButtonFor(m => Model.IsClosed, "Y", new { @id = "AbandonedY", @Name = "Abandoned", @checked = "checked" })Yes</label>
+                                                            <label class="radio-inline">@Html.RadioButtonFor(m => Model.IsClosed, "N", new { @id = "AbandonedN", @Name = "Abandoned" })No</label>
+                                                        </label>
+                                                    </div>
+                                                </li>
+                                                <li class="specialLI" style="height:90px;">
+                                                    <div style="width:130%">
+                                                        <div class="bold" style="padding-right: 320px;">Action items for RIL in relation to such milestone</div>
+                                                        @*<div style="">&nbsp;&nbsp;characters left.. </div>*@
+                                                        @*<div class="charNum">4000</div>*@
+                                                    </div>
+                                                    <textarea id="field" class="textarea" rows="2" cols="20" onkeyup="countChar(this)" style="height:80px;"></textarea>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="modal_block_full">
+                                    <div class="form_links">
+                                        <ul class="form_link_nav clearfix">
+                                            <li>
+                                                <a data-dismiss="modal" class="btn btn-primary" href="#">save</a>
+                                            </li>
+                                            <li>
+                                                <a data-dismiss="modal" class="btn btn-primary" href="#">cancel</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>>
+</div>
+
+

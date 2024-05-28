@@ -1,0 +1,130 @@
+﻿@model List<RightsU_Entities.Party_Category> 
+@using UTOFrameWork.FrameworkClasses;
+@using RightsU_BLL
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+        LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+
+    List<int?> lstPartyCategoryCodes = new RightsU_BLL.Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(w => true).Select(x => x.Party_Category_Code).ToList();
+}
+<script>
+    $('.expand_Party_Category_Name').expander({
+        slicePoint: 90,
+        expandPrefix: '',
+        expandText: '...@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+</script>
+<table class=" table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th style="width:60%;">@objMessageKey.PartyCategory</th>
+            <th style="width:20%;">@objMessageKey.Status</th>
+            <th style="width:20%;">@objMessageKey.Action</th>
+        </tr>              
+    </thead>
+    <tbody>
+        @if (ViewBag.CommandName == "ADD")
+        {
+            <tr>
+                <td><input type="text" id="txtPartyCategoryName_0" value="" maxlength="100"></td>
+                <td align="center">
+                    <span>@objMessageKey.Active</span>
+                </td>
+                <td align="center">
+                    <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" onclick="SavePartyCategory(0)"></a>
+                    <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" onclick="Cancel()"></a>
+                </td>
+            </tr>
+        }
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                string strActive = objMessageKey.Active;
+                if (item.Is_Active == "N")
+                {
+                    strActive = objMessageKey.Deactivate;
+                }
+                <tr>
+                    @if (ViewBag.CommandName == "EDIT" && ViewBag.PartyCategoryCode == item.Party_Category_Code)
+                    {
+                        <td><input type="text" id="txtPartyCategoryName_@item.Party_Category_Code" value="@item.Party_Category_Name" maxlength="100" /></td>
+                        <td align="center">
+                            <span>@strActive</span>
+                        </td>
+                        <td align="center">
+                            <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" onclick="SavePartyCategory(@item.Party_Category_Code)"></a>
+                            <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" onclick="Cancel()"></a>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            <div class="expand_Party_Category_Name">@item.Party_Category_Name</div>
+                        </td>
+                        <td align="center">
+                            <span>@strActive</span>
+                        </td>
+                        <td align="center">
+                          @if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForEdit + "~"))
+                            {
+                                if (item.Is_Active == "Y")
+                                {
+                                    <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor:pointer;" onclick="CheckRecordLock(@item.Party_Category_Code, 'EDIT')"></a>
+                                }
+                                else
+                                {
+                                    <a title="@objMessageKey.Cannoteditthispartycategoryasitisdeactivated" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
+                                }
+                           }                         
+                            @if (item.Is_Active == "Y")
+                            {
+                                bool canDeactivate = true;
+                                string strToolTip = "";
+                                if (lstPartyCategoryCodes.Where(x => x.HasValue && x.Value == item.Party_Category_Code).Count() > 0)
+                                {
+                                    canDeactivate = false;
+                                    strToolTip = @objMessageKey.Cannotdeactivatethispartycategoryasitisusedinparty;
+                                }
+                                if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForDeactivate + "~"))
+                                { 
+                                    if (canDeactivate)
+                                    {
+                                        <a title="@objMessageKey.Deactivate" class="glyphicon glyphicon-thumbs-down" style="cursor:pointer" onclick="ActiveDeactivePartyCategory(@item.Party_Category_Code, 'N')"></a>
+                                    }                          
+                                    else
+                                    {
+                                        <a title="@strToolTip" class="glyphicon glyphicon-thumbs-down disabled" onclick="return false;"></a>
+                                    }
+                                }
+                            }
+                            else
+                            {       
+                                if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForActivate + "~"))
+                                {                        
+                                   <a title="@objMessageKey.Activate" class="glyphicon glyphicon-thumbs-up" style="cursor: pointer;" onclick="ActiveDeactivePartyCategory(@item.Party_Category_Code, 'Y')"></a>    
+                                }                          
+                            }
+                        </td>
+                    }
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="3">@objMessageKey.Norecordfound</td>
+            </tr>
+        }
+    </tbody>
+</table>

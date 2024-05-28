@@ -1,0 +1,109 @@
+﻿@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }     
+}
+<script>
+    $(document).ready(function () {
+        var searchText = "@Html.Raw(ViewBag.SearchText)";
+        if ($("#hdnSearchBox").val() != "") {
+            searchText = $("#hdnSearchBox").val();
+            $("#hdnSearchBox").val("");
+        }
+        var episodeFrom = @ViewBag.EpisodeFrom;
+        var episodeTo = @ViewBag.EpisodeTo;
+        var pageNo = @ViewBag.PageNo;
+        var recordPerPage = @ViewBag.RecordPerPage;
+        debugger;
+        $('#searchCommon').val(searchText);
+        $('#txtEpisodeFrom').val((episodeFrom == 0) ? "" : episodeFrom);
+        $('#txtEpisodeTo').val((episodeTo == 0) ? "" : episodeTo);
+
+        $('#txtPageSize').val(recordPerPage);
+        $('#hdnPageNo').val(pageNo);
+        addNumeric();
+    });
+
+ 
+</script>
+<style>
+    .paging_area {
+        border-bottom: 1px dotted #777;
+        height: 36px;
+        margin-top: 10px;
+    }
+</style>
+
+<div class="title_block dotted_border clearfix">
+    <h2 class="pull-left">
+        @objMessageKey.ContentList
+        <span></span>
+    </h2>
+    <div class="right_nav pull-right">
+    </div>
+</div>
+<div class="search_area" style="background-color:#eee">
+    <table class="table">
+        <tr>
+            <td style="width:10%; line-height:26px">
+                @objMessageKey.Content / @objMessageKey.Title
+            </td>
+            <td style="width:30%;">
+                <input type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" placeholder="@objMessageKey.Content" onkeyup="populateContent(this)" />
+            </td>
+            <td style="width:8%; text-align:right; line-height:26px"> @objMessageKey.episode #</td>
+            <td style="width:13%;">
+                <input type="text" id="txtEpisodeFrom" style="width:50px" class="episodeRange" placeholder="@objMessageKey.From"  />
+                <input type="text" id="txtEpisodeTo" style="width:50px" class="episodeRange" placeholder="@objMessageKey.To" />
+            </td>
+            <td style="width:8%;">
+                <input type="button" id="btnSearch" class="btn btn-primary" value="@objMessageKey.Search" onclick="btnSearch_OnClick()">
+            </td>
+            <td style="width:3%;">
+                <a title="@objMessageKey.BulkUpload" id="btnBulkExport" class="glyphicon glyphicon-floppy-save" style="cursor: pointer;" onclick="window.location.href='@Url.Action("Index", "Title_Content_ImportExport")'"></a>
+            </td>
+            <td>
+                <a title="@objMessageKey.BulkImport" id="btnBulkImport" class="glyphicon glyphicon-floppy-open" style="cursor: pointer;" onclick="window.location.href='@Url.Action("Music_Program_Import", "Title_Content_ImportExport")'"></a>
+            </td>
+            <td id="btnExport" style="width:10px;">
+              
+                @*<label for="btnExportToXml" class="glyphicon glyphicon-save-file" title="Save To Xml" style="font-size: 18px; margin-right: 261px;">
+                    @using (Html.BeginForm("ExportToXml", "Title_Content"))
+                    {
+                        <input type="submit" style="display: none" id="btnExportToXml" />
+                    }
+                </label>*@
+            </td>
+            @*<td>
+                <a href="~/Download/Brightcove XML Generate.htm" class="glyphicon glyphicon-save-file" style="color:red" download=""></a>
+            </td>*@
+        </tr>
+    </table>
+</div>
+<div class="grid_area">
+    <div style="border-bottom: 1px dotted #777; display:none;"></div>
+    <div class="paging_area clearfix">
+        <span class="pull-left">@objMessageKey.TotalRecords: </span>
+        <span class="pull-left" id="lblRecordCount"></span>
+        <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+        <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+        <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+
+        <div id="Pagination" class="pagination">
+        </div>
+        <span class="pull-right">
+            @objMessageKey.PageSize:
+            <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" onkeypress="txtPageSize_OnChange('txtPageSize')"
+                   onchange="txtPageSize_OnChange('txtPageSize')" onblur="setDefaultPaging('txtPageSize')">
+        </span>
+    </div>
+    <div class="tab-content clearfix table-wrapper scale_table_container">
+        <div class="scale_table_block">
+            <div id="dvMusic_Program_List" class="deal clearfix">
+            </div>
+        </div>
+    </div>
+</div>
+<input type="hidden" id="hdnSearchBox" />

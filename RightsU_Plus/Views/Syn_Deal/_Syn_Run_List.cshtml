@@ -1,0 +1,150 @@
+﻿@using UTOFrameWork.FrameworkClasses;
+@{
+    RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
+    if (Session[RightsU_Entities.RightsU_Session.Syn_DEAL_SCHEMA] != null)
+    {
+        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.Syn_DEAL_SCHEMA];
+        if (objSchema.Run_PageSize == 0)
+        {
+            objSchema.Run_PageSize = 50;
+        }
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+    string Message = Convert.ToString(Session["Message"]);
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        var ShowMessage = {
+            "MSGRunDefinitionDeleted" : '@objMessageKey.RunDefinitionDeletedSuccessfully',
+            "MSGPleaseAddRight" : '@objMessageKey.PleaseaddRightsfirst',
+            "MSGAreYouSureYouwantToDeletethisRun" : '@objMessageKey.AreyousureyouwanttodeletethisRunDefinition',
+            "Selecttitletosearch" :'@objMessageKey.Selecttitletosearch',
+             "MsgPlaceSearch": '@objMessageKey.Search'
+        }
+        var URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global", null, Request.Url.Scheme)'
+    , URL_ResetMessageSession = '@Url.Action("ResetMessageSession", "Syn_Run_List")'
+    , URL_Delete = '@Url.Action("Delete", "Syn_Run_List")'
+    , URL_BindRun = '@Url.Action("BindRun", "Syn_Run_List")'
+    , URL_SetSynApprovalRemarks = '@Url.Action("SetSynApprovalRemarks", "Global")';
+
+        var Record_Locking_Code_G = '@ViewBag.Record_Locking_Code'
+    ,  Message_G = '@Message'
+    ,  Run_Titles_G = '@objSchema.Run_Titles'
+    , Run_PageSize_G = @objSchema.Run_PageSize
+    , Mode_G = '@objSchema.Mode'
+    , IsRightsAdded_G = '@(ViewBag.IsRightsAdded)'
+    , Run_PageNo_G =  '@objSchema.Run_PageNo'
+    ,PageNo_G = '@ViewBag.PageNo'
+        ,RecordCount_G='@ViewBag.RecordCount'
+            , URL_ButtonEvents = '@Url.Action("ButtonEvents", "Syn_Run_List")'
+            , URL_CheckTitlesForRun = '@Url.Action("CheckTitlesForRun", "Syn_Run_List")';
+        $(document).ready(function () {
+            debugger;
+            $('#Title_Code').SumoSelect({ selectAll: true, triggerChangeCombined: true });
+           // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?syn_RunDefinition');
+        });
+    </script>
+    <style>
+        .clusterDDL {
+            float: left;
+            width: 300px;
+            margin-left: 200px;
+        }
+
+        #tblMain li {
+            float: none;
+            line-height: initial;
+            list-style: none;
+            margin: 0;
+        }
+
+            #tblMain li:before {
+                content: "\0BB \020";
+            }
+
+        .SumoSelect {
+            width: 580px;
+        }
+            span::after{
+                content:"\200E‎";
+            }
+            label::after{
+                content:"\200E‎";
+            }
+    </style>
+    <script src="~/Custom_Scripts/Syn_Deal_Run_List.js"></script>
+</head>
+<body>
+    <div class="grid_area">
+        <div class="navigation_tabs">
+            <div class="tabbable">
+                <div class="tab-content clearfix table-wrapper scale_table_container">
+                    <div class="tab-pane active" id="tabRunDef">
+                        <div class="scale_table_block">
+                            <table class="table">
+                                <tr>
+                                    <td class="bold" style="width: 10%;">@objMessageKey.Titles</td>
+                                    <td style="width: 60%;">
+                                        <input type="hidden" id="hdnTabName" name="hdnTabName" />
+                                        @Html.Hidden("hdnTitleCode", "")
+                                        @* @Html.ListBox( "Title_Code",ViewBag.TitleList as MultiSelectList,new { @class = "form_input chosen-select" })*@
+                                        @Html.ListBox("Title_Code", ViewBag.TitleList as MultiSelectList, new { @multiple = "multiple" })
+                                    </td>
+                                    <td style="width: 10%;">
+                                        <input type="button" class="button" value="@objMessageKey.Search" onclick="searchClick()">
+                                    </td>
+                                    <td style="width: 10%;">
+                                        <input type="button" class="button" value="@objMessageKey.ShowAll" onclick="showAllClick()">
+                                    </td>
+                                    <td style="width: 10%;">
+                                        @if (objSchema.Mode != GlobalParams.DEAL_MODE_APPROVE && objSchema.Mode != GlobalParams.DEAL_MODE_VIEW)
+                                        {
+                                            @*@Html.ActionLink("Add", "ButtonEvents", "Syn_Run_List", new { id = 0 }, new { @class = "btn btn-primary", @onclick = "return ValidateAdd()" })*@
+                                            <a class="btn btn-primary" onclick="ButtonEvents(0)">@objMessageKey.Add</a>
+                                        }
+                                    </td>
+                                </tr>
+                            </table>
+                            @* }*@
+                        </div>
+                        <div class="paging_area clearfix">
+                            <span id="spanRecordCount" class="pull-left">@objMessageKey.TotalRecords:  @ViewBag.RecordCount</span>
+
+
+                            <div id="Pagination" class="pagination"></div>
+                            <span class="pull-right">@objMessageKey.PageSize : <input type="text" class="smallTextBox" value="" id="txtPageSize" 
+                                                       onchange="if(CheckPageNumber()) LoadGrid(0)" onblur="setDefaultPaging('txtPageSize')">@* @Html.TextBox("txtPageSize", 50, new { @onchange = "applyPaging()", @style = "width:35px" })*@</span>
+                        </div>
+                        <div class="scale_table_block" id="grdRun">
+                        </div>
+                        @Html.Hidden("Syn_Deal_Run_Code")
+                    </div>
+                    @if (objSchema.Mode == GlobalParams.DEAL_MODE_APPROVE)
+                    {
+                        @Html.Partial("_Syn_Approved_List")
+                    }
+                    else
+                    {
+                        <div class="bottom_action">
+                            <ul class="form_link_nav clearfix">
+                                <li>
+                                    <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                           onclick="location.href='@Url.Action("Cancel", "Syn_Run_List")    '">
+                                </li>
+                            </ul>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div aria-labelledby="myModalLabel" id="popupLinkShow" class="form_wrapper modal fade scroll" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    </div>
+</body>
+</html>

@@ -1,0 +1,367 @@
+﻿@using UTOFrameWork.FrameworkClasses
+
+@{
+    RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
+
+    if (Session[RightsU_Entities.RightsU_Session.Syn_DEAL_SCHEMA] != null)
+    {
+        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.Syn_DEAL_SCHEMA];
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+
+<script type="text/javascript">
+    var dealMode_G = '@objSchema.Mode';
+    var URL_BindSupplementary = '@Url.Action("BindSupplementary", "Syn_Supplementary")';
+    var URL_SuppButtonEvents = '@Url.Action("SuppButtonEvents", "Syn_Supplementary")';
+    var URL_BindAllPreReq_Async = '@Url.Action("BindAllPreReq_Async", "Syn_Supplementary")';
+    var URL_DeleteSupplementary = '@Url.Action("DeleteSupplementary", "Syn_Supplementary")';
+
+    $(document).ready(function () {
+        debugger;
+        var page_size = parseInt(@ViewBag.page_size);
+        $('#txtPageSize').val(@ViewBag.page_size);
+
+        if (page_size > 0) {
+            $('#hdnCurrentPageNo').val(@ViewBag.page_index);
+        } else {
+            $('#hdnCurrentPageNo').val(0);
+        }
+        BindGrid();
+    });
+
+    function initializeReadmore() {
+        $('.SuppRemarks').expander({
+            slicePoint: 200,
+            expandPrefix: '',
+            expandText: '...@objMessageKey.readmore',
+            collapseTimer: 0,
+            userCollapseText: '<span>[^]</span>'
+        });
+    }
+
+    function BindGrid() {
+        debugger;
+        var txtPageSize = $('#txtPageSize').val();
+        var page_index = $('#hdnCurrentPageNo').val();
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindSupplementary,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+
+            data: JSON.stringify({
+                page_index: page_index,
+                page_size: txtPageSize
+            }),
+            success: function (result) {
+                debugger;
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                $('.div_BindGrid').html(result.List);
+                $('#suppTotal').text(result.TCount);
+                $("#hdnRecordCount").val(result.TCount);
+                $('#hdnCurrentPageNo').val(page_index);
+                initializeReadmore();
+                SetPaging(txtPageSize);
+                hideLoading();
+            },
+            error: function (result) {
+            }
+        });
+    }
+    var IsCall = 'Y';
+    function SuppButtonEvents(Supplementary_code, title_code, mode, rCode, tCode, episodeFrom, episodeTo, pCode, isHB, isSynSynMapp) {
+        debugger;
+        var page_index = $('#hdnCurrentPageNo').val();
+        var page_size = $('#txtPageSize').val();
+        showLoading();
+        $.ajax({
+            //    $('#lbTerritory,#lbSub_Language,#lbDub_Language').SumoSelect({ selectAll: true, triggerChangeCombined: false });
+            //$('#lbTerritory,#lbSub_Language,#lbDub_Language')[0].sumo.reload();
+            type: "POST",
+            url: URL_SuppButtonEvents,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: false,
+            data: JSON.stringify({
+                Supplementary_code: 0,
+                title_code: 0,
+                MODE: 'A',
+                page_size: page_size,
+                page_index: page_index
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    BindPartialTabs(result.TabName);
+
+                }
+                hideLoading();
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+    function Edit(Supplementary_code, title_code,View) {
+        debugger;
+        var page_index = $('#hdnCurrentPageNo').val();
+        var page_size = $('#txtPageSize').val();
+        $.ajax({
+            type: "POST",
+            url: URL_SuppButtonEvents,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: false,
+            data: JSON.stringify({
+                Supplementary_code: Supplementary_code,
+                title_code: title_code,
+                view: View,
+                MODE: 'E',
+                page_size: page_size,
+                page_index: page_index
+            }),
+            success: function (result) {
+                debugger;
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    BindPartialTabs(result.TabName);
+
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function Delete(Supplementarycode) {
+        debugger;
+        var page_index = $('#hdnCurrentPageNo').val();
+        var page_size = $('#txtPageSize').val();
+
+        $.ajax({
+            type: "POST",
+            url: URL_DeleteSupplementary,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: true,
+            data: JSON.stringify({
+                Supplementary_code: Supplementarycode,
+                page_index: page_index,
+                page_size: page_size
+            }),
+            success: function (result) {
+                if (result == "201") {
+                    BindPartialTabs("SUPP");
+                    showAlert('I', 'Supplementary Deleted Succesfully');
+                }
+            }
+        })
+    }
+
+    function ValidateSave() {
+    debugger;
+        showLoading();
+        var Isvalid = true;
+        // Code for Maintaining approval remarks in session
+        if (dealMode_G == 'APRV') {
+            var approvalremarks = $('#approvalremarks').val();
+            $.ajax({
+                type: "POST",
+                url: URL_Global_SetApprovalRemarks,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                async: true,
+                data: JSON.stringify({
+                    approvalremarks: $('#approvalremarks').val()
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    Isvalid = true;
+                    hideLoading();
+                },
+                error: function (result) {
+                    Isvalid = false;
+                    hideLoading();
+                }
+            });
+        }
+        if (Isvalid) {
+            hideLoading();
+            var tabName = $('#hdnTabName').val();
+            BindPartialTabs(tabName);
+        }
+        hideLoading();
+
+        //Code end for approval
+        return Isvalid;
+    }
+
+    function ClearHidden() {
+        if (!clickedOnTab) {
+            $("#hdnTabName").val('');
+        }
+    }
+
+    function SetPaging(txtPageSize) {
+        debugger;
+        IsCall = 'N';
+        var PageNo, recordCnt = 3;
+        PageNo = $("#hdnCurrentPageNo").val();
+        recordCnt = $("#hdnRecordCount").val();
+        $('#hdnCurrentPageNo').val(PageNo);
+        var opt = { callback: pageselectCallback };
+
+        opt["items_per_page"] = txtPageSize;
+        opt["num_display_entries"] = 5;
+        opt["num"] = 1;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = PageNo - 1;
+        $("#Pagination").pagination(recordCnt, opt);
+    }
+
+    function pageselectCallback(page_index, jq) {
+        debugger;
+        if (ValidatePageSize()) {
+            if (IsCall == 'Y') {
+                var hdnCurrentPageNo = parseInt(page_index) + 1;
+                $('#hdnCurrentPageNo').val(hdnCurrentPageNo);
+                BindGrid();
+            }
+            else
+                IsCall = 'Y';
+        }
+    }
+
+    function PageSize_OnChange() {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        var IsValid = ValidatePageSize();
+        if (IsValid) {
+            $('#hdnCurrentPageNo').val(0);
+            BindGrid();
+        }
+        else
+            return false;
+    }
+
+    function ValidatePageSize() {
+        var recordPerPage = $('#txtPageSize').val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize').addClass("required");
+        return false;
+    }
+</script>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=no" name="viewport">
+<link href="~/CSS/Rights_Tab.css" rel="stylesheet" />
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
+<input type="hidden" id="hdnTabName" name="hdnTabName" />
+<input type="hidden" id="hdnCurrentPageNo" name="hdnCurrentPageNo" />
+<input type="hidden" id="hdnRecordCount" name="hdnRecordCount" />
+
+<div class="grid_area">
+    <div class="navigation_tabs">
+        <div class="tabbable">
+            <div class="tab-content clearfix table-wrapper scale_table_container">
+                <div class="tab-pane active" id="tabSupplementary">
+                    <div class="scale_table_block">
+                        <table class="table">
+                            <tr>
+                                <td class="bold" style="width: 10%;">
+                                    @*objMessageKey.Titles*@Contractual Term : @ViewBag.SynLP
+                                </td>
+                                @if (objSchema.Mode != "V")
+                                {
+                                    <td style="width: 20%;">
+                                        <a class="btn btn-primary pull-right" onclick="SuppButtonEvents('@GlobalParams.DEAL_MODE_ADD')">@objMessageKey.AddSupplementary</a>
+                                    </td>
+                                }
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="paging_area clearfix">
+                        <span class="pull-left">@objMessageKey.TotalRecords: </span>
+                        <span class="pull-left" id="suppTotal"></span>
+                        <div id="Pagination" class="pagination"></div>
+                        <span class="pull-right">
+                            @objMessageKey.PageSize:
+                            <input type="text" id="txtPageSize" class="smallTextBox pagingSize" maxlength="2" value="10" onchange="return PageSize_OnChange();" onblur="setDefaultPaging('txtPageSize')" />
+                        </span>
+                        @Html.Hidden("hdnPageNo")
+                    </div>
+                    <div class="scale_table_block">
+                        <div class="div_BindGrid">
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content clearfix table-wrapper scale_table_container">
+                    @*<div class="tab-pane active scale_table_block" id="tabRestriction">*@
+                    @*@Html.TextAreaFor(Restriction_Remarks, new { @id = "Restriction_Remarks", @class = "textarea", @onkeypress = "countChar(this)", @onkeyup = "countChar(this)", @maxlength = 4000 })*@
+                    @*<textarea cols="20" id="Description" name="Description" rows="4"></textarea>
+                            <div class="divBlock">
+                                <div class="charNum">0/4000</div>
+                                <div style=""></div>
+                            </div>
+                        </div>*@
+                    <div class="tab-pane scale_table_block" id="tabHoldback">
+                    </div>
+
+                    <div class="tab-pane scale_table_block" id="tabBlackout">
+                    </div>
+                    <div class="tab-pane scale_table_block" id="tabPromoter">
+
+                    </div>
+                </div>
+                @*<div class="bottom_action">
+                        <ul class="form_link_nav clearfix">
+                            <li>
+                                <input type="submit" id="btnSaveDeal" class="btn btn-primary" value="@objMessageKey.Save" onclick="ClearHidden(); return ValidateSave();">
+                            </li>
+                            <li>
+                                <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="return Cancel_Rights1();" />
+                            </li>
+                        </ul>
+                    </div>*@
+                @if (ViewBag.Deal_Mode == UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_APPROVE)
+                {
+                    @Html.Partial("_Syn_Approved_List")
+                }
+                else
+                {
+                    <input type="button" id="btnCancelDeal" class="btn btn-primary" value="Back To List"
+                           onclick="location.href='@Url.Action("Index", "Syn_List")    '">
+                }
+            </div>
+        </div>
+    </div>
+</div>

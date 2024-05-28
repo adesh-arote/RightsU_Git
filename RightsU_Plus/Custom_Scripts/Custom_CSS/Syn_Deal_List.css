@@ -1,0 +1,59 @@
+﻿#divSearch {
+    padding: 6px 10px;
+    margin-bottom: 5px;
+    border: 1px solid #ddd;
+    background-color: #eee;
+}
+
+    #divSearch > ul > li {
+        float: left;
+        min-height: 56px;
+        list-style-type: none;
+        padding: 0 3px;
+    }
+
+    #divSearch .chosen-container {
+        margin: 0;
+    }
+
+    #divSearch .checkbox-inline {
+        margin-bottom: 7px;
+    }
+
+    #divSearch .btn-primary {
+        display: inline-block;
+        margin-top: 23px;
+        margin-left: 12px;
+    }
+
+    #divSearch label {
+        display: inline-block;
+    }
+
+.search_area {
+    border-bottom: 1px dotted #777;
+    margin-bottom: 5px;
+}
+
+ul.first > li {
+    width: 16%;
+}
+
+    ul.first > li:nth-child(2) {
+        width: 20%;
+    }
+
+    ul.first > li:last-child {
+        width: 16%;
+    }
+
+ul.second > li {
+    width: 27%;
+}
+
+    ul.second > li:last-child {
+        width: 19%;
+    }
+.deal ul:first-child {
+    line-height: 28px;
+}

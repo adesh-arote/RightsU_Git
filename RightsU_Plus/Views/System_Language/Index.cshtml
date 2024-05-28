@@ -1,0 +1,569 @@
+﻿@using UTOFrameWork.FrameworkClasses
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<script type="text/javascript" src="~/JS_Core/autoNumeric-1.8.1.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+@*<link href="~/CSS/bootstrap.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />*@
+
+<script>
+    var IsCall = 'Y', Command_Name = "";
+    var URL_BindSystemLanguageList = '@Url.Action("BindSystemLanguageList", "System_Language")';
+    var URL_SearchSystemLanguage = '@Url.Action("SearchSystemLanguage", "System_Language")';
+    var URL_CheckRecordLock = '@Url.Action("CheckRecordLock", "System_Language")';
+    var URL_EditSystemLanguage = '@Url.Action("AddEdit", "System_Language")';
+    var URL_SaveSystemLanguage = '@Url.Action("SaveSystemLanguage", "System_Language")';
+    var URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")';
+    var URL_Release_Lock = '@Url.Action("Release_Lock", "Global")';
+
+    $(document).ready(function () {
+        $('.progress .progress-bar').progressbar({ display_text: 'center', use_percentage: false });
+        addNumeric();
+        SearchSystemLanguage("");
+       // $("#ancFileName").attr('href', '../Help/Masters/Layout.html?SystemLanguage');
+    });
+    function addNumeric() {
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
+    function SetPaging() {
+        IsCall = 'N';
+        var pageNo = parseInt($('#hdnPageNo').val());
+        var recordCount = parseInt($('#hdnRecordCount').val());
+        var pagePerBatch = parseInt($('#hdnPagePerBatch').val());
+        var recordPerPage = parseInt($('#txtPageSize').val());
+
+        var cnt = pageNo * recordPerPage;
+        if (cnt >= recordCount) {
+            var v1 = parseInt(recordCount / recordPerPage);
+            if ((v1 * recordPerPage) == recordCount)
+                pageNo = v1;
+            else
+                pageNo = v1 + 1;
+        }
+
+        if (pageNo == 0)
+            pageNo = 1;
+
+        var index = pageNo - 1;
+        $('#hdnPageNo').val(pageNo);
+
+        var opt = null;
+        opt = { callback: pageselectCallback };
+        opt["items_per_page"] = recordPerPage;
+        opt["num_display_entries"] = pagePerBatch;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = index;
+        $("#Pagination").pagination(recordCount, opt);
+    }
+    function pageselectCallback(page_index, jq) {
+        if (checkCurrentAction()) {
+            $('.required').removeClass('required');
+
+            if (!ValidatePageSize())
+                return false;
+
+            var pageNo = page_index + 1
+            $('#hdnPageNo').val(pageNo);
+            if (IsCall == 'Y')
+                BindSystemLanguageList(0, '');
+            else
+                IsCall = 'Y';
+        }
+    }
+    function txtPageSize_OnChange() {
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+
+        if (!ValidatePageSize())
+            return false;
+
+        BindSystemLanguageList(0, '')
+        SetPaging();
+    }
+    function pageBinding() {
+        BindSystemLanguageList(0, '')
+        SetPaging();
+    }
+    function ValidatePageSize() {
+        var recordPerPage = $('#txtPageSize').val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize').attr('required', true)
+        return false
+    }
+    function checkCurrentAction() {
+        var action = $.trim($('#hdnAction').val());
+        if (action == "ADD") {
+            showAlert("E", "Complete Add Operation First")
+            return false;
+        }
+        return true;
+    }
+
+    function BindSystemLanguageList(systemLanguageCode, commandName) {
+
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+        $.ajax({
+            type: "POST",
+            url: URL_BindSystemLanguageList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+                commandName: commandName
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divListPage').show();
+                    $('#divAddEditPage').empty().hide();
+                    $('#divSystemLanguageList').empty().show().html(result);
+                    $(".Completion").autoNumeric('init', { vMax: '99999999999.99', dGroup: 2 });
+                    initializeExpander();
+                    initializeTooltip();
+                    initializeChosen();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function SearchSystemLanguage(searchText) {
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: URL_SearchSystemLanguage,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                searchText: searchText
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#hdnPageNo').text(1);
+                    $('#lblRecordCount').text(result.Record_Count);
+                    $("#hdnRecordCount").val(result.Record_Count);
+                    SetPaging()
+                    BindSystemLanguageList(0, '');
+                    hideLoading();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+    function CheckRecordLock(SystemLanguageCode, commandName) {
+        $.ajax({
+            type: "POST",
+            url: URL_CheckRecordLock,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                SystemLanguageCode: SystemLanguageCode,
+                commandName: commandName
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Is_Locked == "Y") {
+                        if (checkCurrentAction() && ValidatePageSize())
+                            EditSystemLanguage(SystemLanguageCode, result.Record_Locking_Code);
+
+                        $('#hdnRecodLockingCode').val(result.Record_Locking_Code);
+                        Call_RefreshRecordReleaseTime(result.Record_Locking_Code, URL_Refresh_Lock);
+                    }
+                    else
+                        showAlert("E", result.Message);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+    function AddEditSystemLanguage(SystemLanguageCode, commandName) {
+        debugger;
+        if (checkCurrentAction() && ValidatePageSize()) {
+            BindSystemLanguageList(SystemLanguageCode, commandName);
+            $('#hdnAction').val(commandName)
+        }
+    }
+    function SaveSystemLanguage(SystemLanguageCode) {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        if (!ValidatePageSize())
+            return false;
+
+        var SystemLanguageName = $.trim($('#txtSystemLanguage').val());
+        var Record_Code = $('#hdnRecodLockingCode').val();
+        if (SystemLanguageName == '') {
+            $('#txtSystemLanguage').val('')
+            $('#txtSystemLanguage').attr('required', true)
+            return false;
+        }
+        var Direction = $('#ddlDirection').val();
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: URL_SaveSystemLanguage,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                SystemLanguageCode: SystemLanguageCode,
+                SystemLanguageName: SystemLanguageName,
+                Direction: Direction,
+                Record_Code: Record_Code
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    hideLoading();
+                    if (result.Status == "S") {
+                        $('#lblRecordCount').text(result.RecordCount);
+                        $('#hdnRecordCount').val(result.RecordCount);
+                        $('#hdnAction').val("")
+                        $('#hdnPageNo').val(1);
+                        showAlert("S", result.Message);
+
+                        BindSystemLanguageList(0, "");
+                        SetPaging();
+                    }
+                    else {
+                        showAlert("E", result.Message);
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+    function CancelSave() {
+        var recordLockingCode = parseInt($('#hdnRecodLockingCode').val())
+        if (recordLockingCode > 0)
+            ReleaseRecordLock(recordLockingCode, URL_Release_Lock);
+        $('#hdnAction').val("")
+        BindSystemLanguageList(0, "");
+    }
+    function EditSystemLanguage(SystemlanguageCode, RecordLockingCode) {
+
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        $.ajax({
+            type: "POST",
+            url: URL_EditSystemLanguage,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                SystemLanguageCode: SystemlanguageCode,
+                RecordLockingCode: RecordLockingCode
+            }),
+            async: true,
+            success: function (result) {
+                $('#divListPage').hide();
+                $('#divSystemLanguageList').empty();
+                $('#divAddEditPage').empty().show().html(result);
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+    
+</script>
+<script>
+    var CommmandName = '';
+    var URL_BindSystem_LanguageList = "@Url.Action("BindSystem_LanguageList", "System_Language")";
+    var URL_Release_Lock = '@Url.Action("Release_Lock", "Global")';
+    var URL_BindDropDown_ByModuleID = '@Url.Action("BindForm_ByModuleID", "System_Language")';
+    function BindSystem_LanguageList(moduleCode, formId) {
+        $.ajax({
+            type: "POST",
+            url: URL_BindSystem_LanguageList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                moduleCode: moduleCode,
+                formId: formId
+            }),
+            success: function (result) {
+                if (result=="true") {
+                    redirectToLogin();
+                } else {
+                    $('#divMessageList').empty();
+                    $('#divMessageList').html(result);
+                    $('#lblRecordCount_').text($("#hdnSystemMessage_Count").val());
+                }
+
+                
+            }
+        });
+    }
+    function Show() {
+        var moduleCode = $("#ddlModule option:selected").val();
+        if (moduleCode == "") {
+            moduleCode = 0;
+        }
+        var val = "";
+        var formId = $("#ddlForm").val();
+        if (formId == null) {
+            val = "";
+        } else {
+            for (var i = 0; i < formId.length; i++) {
+                val += formId[i] + ",";
+            }
+        }
+        BindSystem_LanguageList(moduleCode, val);
+        initializeChosen();
+    }
+    function ValidateSave() {
+        showLoading();
+        var isValid = true;
+        $(".validatetxt").each(function () {
+            if ($.trim($(this).val()) == "") {
+                $(this).val('').attr('required', true)
+                isValid = false;
+            }
+        });
+
+        if (!isValid)
+            hideLoading();
+
+        return isValid;
+    }
+    function Save_Success(result) {
+        if (result == "true") {
+            redirectToLogin();
+        }
+        else {
+            if (result.Status == "S") {
+                showAlert("S", result.Message);
+                $('#hdnPageNo').val(1);
+                GoToListPage();
+            }
+            else if (result.Status == "E") {
+                showAlert("E", result.Message);
+            } else {
+                GoToListPage();
+            }
+
+            hideLoading();
+        }
+    }
+    function GoToListPage() {
+        var recordLockingCode = parseInt($('#hdnRecodLockingCode').val());
+        if (recordLockingCode > 0)
+            ReleaseRecordLock(recordLockingCode, URL_Release_Lock);
+        $('#hdnRecodLockingCode').val('0');
+        BindSystemLanguageList(0, '');
+        $('#divListPage').show();
+        $('#divAddEditPage').empty().hide();
+    }
+    function handleCancel() {
+        return true;
+    }
+    function handleOk() {
+        if (CommmandName == "LIST_PAGE") {
+            CommmandName = "";
+            GoToListPage();
+        }
+    }
+
+    function Cancel() {
+        if ($("#hdnSystemMessage_Count").val() == "0") {
+            BindSystemLanguageList(0, '');
+        } else {
+            CommmandName = "LIST_PAGE";
+            showAlert("I", "All unsaved data will be lost, still want to go ahead?", "OKCANCEL");
+            return false;
+        }
+    }
+
+    function GetFormsByModuleID(moduleCode) {
+        debugger;
+        if (moduleCode == "") {
+            moduleCode = 0;
+        }
+        $.ajax({
+            type: "POST",
+            url: URL_BindDropDown_ByModuleID,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: JSON.stringify({
+                moduleCode: moduleCode
+            }),
+            success: function (result) {
+                debugger;
+                $("#ddlForm").html("");
+                $.each(result, function (i, Form_ID) {
+                    $("#ddlForm").append($('<option></option>').val(result[i].Form_ID).html(result[i].Form_ID));
+                });               
+                $('#ddlForm')[0].sumo.reload();
+            }
+        });
+    }
+    function noenter(e) {
+        e = e || window.event;
+        var key = e.keyCode || e.charCode;
+        return key !== 13;
+    }
+</script>
+<style>
+    .search_area {
+        border-bottom: 1px dotted #777;
+        margin-bottom: 5px;
+        background-color: #eee;
+    }
+
+    #ddlSortType_chosen {
+        max-width: 46%;
+        text-align: left;
+    }
+
+    .progress-bar-info {
+        background-color: #4489d8;
+    }
+
+    .progress .progress-bar {
+        position: absolute;
+        overflow: hidden;
+        line-height: 20px;
+    }
+
+    .progress-bar {
+        height: 100%;
+        float: left;
+        font-size: 12px;
+        color: #ffffff;
+        text-align: center;
+    }
+
+    .progress .progressbar-back-text {
+        position: absolute;
+        height: 100%;
+        font-size: 12px;
+        line-height: 20px;
+        text-align: center;
+        z-index: 999;
+        color: black;
+        font-weight: bold;
+    }
+
+    .progress {
+        position: relative;
+    }
+
+    .alert-info {
+        background-color: #AEE1FF !important;
+    }
+
+    .alert-success {
+        background-color: #9FF77B !important;
+    }
+
+    label {
+        font-weight: 100 !important;
+    }
+</style>
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div id="divListPage">
+                <div class="title_block dotted_border clearfix">
+                    <h2 class="pull-left">
+                        System Language List
+                        <span></span>
+                    </h2>
+                    <div class="right_nav pull-right">
+                        <ul>
+                            <li>
+                                @if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForAdd + "~"))
+                                {
+                                    <a class="btn btn-primary" onclick="AddEditSystemLanguage(0, 'ADD')">Add</a>
+                                }
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="grid_area">
+                    <div style="border-bottom: 1px dotted #777; display:none;"></div>
+                    <div class="paging_area clearfix">
+                        <span class="pull-left">Total Records: </span>
+                        <span class="pull-left" id="lblRecordCount"></span>
+                        <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                        <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                        <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+                        <input type="hidden" id="hdnAction" name="hdnAction" value="" />
+                        <div id="Pagination" class="pagination">
+                        </div>
+                        <span class="pull-right">
+                            Page Size:
+                            <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10"
+                                   onchange="txtPageSize_OnChange()" onfocus="checkCurrentAction()" onblur="setDefaultPaging('txtPageSize')">
+                        </span>
+                    </div>
+                    <div class="tab-content clearfix table-wrapper scale_table_container">
+                        <div class="scale_table_block">
+                            <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
+                            <div id="divSystemLanguageList" class="deal clearfix">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="divAddEditPage">
+
+            </div>
+        </div>
+    </section>
+</div>

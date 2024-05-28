@@ -1,0 +1,1017 @@
+﻿@model RightsU_Entities.IPR_REP
+@using System.Configuration;
+@using UTOFrameWork.FrameworkClasses
+@using RightsU_Entities;
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    List<string>
+    lstFrq = (List<string>
+        )ViewBag.Frq_List;
+    string FileName = string.Empty;
+    RightsU_Entities.IPR_REP_ATTACHMENTS objAtt = Model.IPR_REP_ATTACHMENTS.Where(a => a.Flag == "M").FirstOrDefault();
+    if (objAtt != null)
+    {
+        FileName = objAtt.File_Name;
+    }
+}
+<script src="~/JS_Core/jquery.sumoselect.js"></script>
+<link href="~/CSS/sumoselect.css" rel="stylesheet" />
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings[" Version_No"]" />
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css">
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings[" Version_No"]"></script>
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script type="text/javascript" src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<style type="text/css">
+    #Tree_Filter_IPR_Class {
+        width: 511px;
+        position: relative !important;
+    }
+
+    #IPR_Class {
+        margin: 0px 0px 0px 0px !important;
+    }
+    /*.chosen-container {
+                margin: 0;
+            }
+
+            textarea {
+                overflow: auto;
+                width: 95% !important;
+                height: 40px !important;
+            }*/
+
+    #tabRights .ui-fancytree {
+        height: 1150px;
+        overflow-y: auto;
+        width: 510px !important;
+    }
+
+    .scale_table_block {
+        margin-bottom: 10px;
+        background-color: #fff;
+        padding: 0px !important;
+    }
+
+    .tdbackgourd {
+        background-color: #EEE;
+    }
+
+    .card {
+        background: #fff;
+        border-radius: 2px;
+        display: inline-block;
+        margin-left: 3px;
+        margin-right: 3px;
+        position: relative;
+    }
+
+    .cardheader {
+        background-color: #80878e;
+        padding: 5px 5px 5px 10px;
+        color: white;
+        margin: 0px;
+        width: 100%;
+    }
+
+    .firstBox {
+        margin-top: 5px;
+        width: 99.3%;
+        max-height: 1500px;
+    }
+
+    td {
+        padding: 5px 0px;
+    }
+
+    .chosen-container {
+        margin: 2px 0px;
+        width: 87% !important;
+    }
+
+    #oppByDetail, #oppParty {
+        width: 49.3%;
+        max-height: 500px;
+    }
+
+    #publicationDetail {
+        width: 99.3%;
+        max-height: 300px;
+    }
+
+    #procesuctionDetail_OppBy, #procesuctionDetail_OppAgainst {
+        width: 99.3%;
+        height: 370px;
+    }
+
+    #attachment, #hearing, #statusHistory {
+        width: 99.3%;
+    }
+
+
+    textarea {
+        overflow: auto;
+        width: 93% !important;
+        height: 60px !important;
+    }
+
+    .form-control {
+        display: inline-block !important;
+    }
+
+    .container .top_area {
+        border-bottom: none !important;
+    }
+
+    .SumoSelect {
+        width: 87% !important;
+    }
+</style>
+
+
+<script type="text/javascript">
+
+    var attachmentMode = "";
+    debugger;
+    var CommandName_G = "";
+    var recordLockingCode = @ViewBag.RecordLockingCode;
+    var
+    URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")',
+    URL_Release_Lock = '@Url.Action("Release_Lock", "Global")';
+    $(document).ready(function () {
+        debugger;
+        $('#hdnRecordLockingCode').val(recordLockingCode)
+        if(recordLockingCode > 0)
+            Call_RefreshRecordReleaseTime(recordLockingCode, URL_Refresh_Lock);
+        $('#ddlBusinessUnit,#ddlChannel').SumoSelect();
+        $('#ddlBusinessUnit')[0].sumo.reload();
+        $('#ddlChannel')[0].sumo.reload();
+        var a = parseInt('@ViewBag.hdnIPR_Renewed_Untill_Year1');
+        $(function() {
+            $('#txtApplication_Date').change(function () {
+                debugger;
+                var parts = $(this).val().split('/');
+                var date = new Date(parseInt(parts[2], 10), parseInt(parts[1], 10) - 1, parseInt(parts[0], 10));
+                date.setFullYear(date.getFullYear() + a);
+                $('#txtRenewed_Until').val(isNaN(date.getFullYear()) ? '' : formatDate(date));
+            });
+        });
+        function formatDate(date) {
+            var day = date.getDate();
+            var month = date.getMonth() + 1;
+            var year = date.getFullYear();
+            return (day < 10 ? '0' : '') + day + '/' + (month < 10 ? '0' : '') + month + '/' + year;
+        }
+
+        $("#imgAttachment").on("click", function () {
+            $("#FileUpload").click();
+        });
+        initializeDatepicker();
+        initializeExpander();
+        $('.numbertext').numeric({ allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            maxPreDecimalPlaces: 3,
+            maxDecimalPlaces: 0 });
+        debugger;
+        if(@Model.IPR_Rep_Code > 0)
+        {
+            if('@Model.IPR_For' == 'I')
+            {
+                var txtInternational_Trademark_Attorney = document.getElementById('txtInternational_Trademark_Attorney');
+                countLocalChar(txtInternational_Trademark_Attorney,100,'divIntTradmarkAttCharCount');
+            }
+
+            var txtTrademark = document.getElementById('txtTrademark');
+            countLocalChar(txtTrademark,100,'divTrademarkCharCount');
+
+            var txtTrademark_Attorney = document.getElementById('txtTrademark_Attorney');
+            countLocalChar(txtTrademark_Attorney,100,'divDomTrademarkAttCharCount');
+
+            var txtComments = document.getElementById('txtComments');
+            countLocalChar(txtComments,1000,'divCommentCountChar');
+
+            var txtClass_Comments = document.getElementById('txtClass_Comments');
+            countLocalChar(txtClass_Comments,1000,'divDescCharCount');
+            $('#hdnClassCodes').val('@ViewBag.ClassCodes');
+
+            if('@Model.Proposed_Or_Date' == 'P')
+            {
+                $('#txtDate_Of_Use').attr("disabled", "disabled");
+            }
+        }
+        debugger;
+        BindPlatform();
+        if('@ViewBag.message' != "")
+        {
+            showAlert('m','@ViewBag.message','OK');
+        }
+    });
+
+    function BindPlatform()
+    {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindClassTreeView", "IPR_Int_Dom")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data : JSON.stringify({
+                strPlatform: $("#hdnClassCodes").val().split(',')
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                debugger;
+                $('#tree').html(result);
+            },
+            error: function (result) {}
+        });
+    }
+
+    function countLocalChar(val,max,id) {
+        var len = val.value.length;
+        if (len >= max)
+            val.value = val.value.substring(0, max);
+        $('#'+id).text(val.value.length.toString() + '/' + max.toString());
+    }
+
+    function AddAttachment(obj, hdnid, rowindex,filepath) {
+        debugger;
+        attachmentMode = "A";
+        if(rowindex >= 0)
+            attachmentMode = "E"
+
+
+        var description = $(hdnid).val();
+        var Attchpath = $(filepath).val();
+
+        $("#FileUpload").replaceWith($("#FileUpload").clone(true));
+        var Addedit = $('#AddIPR').val();
+        // if (Addedit != "ADD") {
+        if (attachmentMode == "A") {
+            //var test = '@ViewBag.imagePage.ToString()';
+            //if (test == "") {
+            $('#imgAttachment').attr('src', '@Url.Content("~/Images/add.png")');
+            //}
+        }
+        else if (attachmentMode == "E") {
+            $('#imgAttachment').attr({src: "@Url.Content("UploadFolder/")" + Attchpath});
+        }
+
+        if (obj == 'M') {
+            document.getElementById('divAttachmentDescription').style.display = 'none';
+            $('#hdnAttachment_RowIndex').val('');
+            $('#txt_Description').val('')
+            $('#hdnAttachment_Flag').val('M');
+        }
+        else {
+            document.getElementById('divAttachmentDescription').style.display = 'block';
+            $('#hdnAttachment_Flag').val('G');
+            $('#txt_Description').val(description);
+            $('#hdnAttachment_RowIndex').val(rowindex);
+            var txtRemark = document.getElementById('txt_Description');
+            countLocalChar(txtRemark,200,'divAttachDescCharCount');
+        }
+
+        $('#popupAttachment').modal();
+    }
+
+    function DeleteAttachment(rowindex) {
+        $('#hdnCommandName').val('DELETEATTACHMENT');
+        $('#hdnAttchRowIndex').val(rowindex);
+        showAlert('I','Are you sure, you want to delete this attachment?','OKCANCEL');
+    }
+
+    function OnAttachmentSaveSuccess(obj) {
+        debugger;
+        if ($('#hdnAttachment_Flag').val() == 'M') {
+            // $('#imgLogo').attr('src', '@Url.Content("UploadFolder/")' + obj);
+            $('#imgLogo').attr({src: "@Url.Content("UploadFolder/")" + obj});
+
+            $('#imgAttachment').attr({src: "@Url.Content("UploadFolder/")" + obj});
+        }
+        else {
+            $('#divAttachments').html(obj);
+        }
+        $('#popupAttachment').modal('hide');
+    }
+
+
+
+    function ValidateSave(isSubmit)
+    {
+        var IsValidSave = true;
+        $('#hdnIsSubmit').val(isSubmit);
+
+        if ($("#hdnClassCodes").val() == '') {
+            IsValidSave = false;
+            $("#tree").addClass('required');
+        }
+        else
+            $("#tree").removeClass('required');
+
+        if ($("#txtTrademark").val() == '') {
+            IsValidSave = false;
+            $("#txtTrademark").addClass('required');
+        }
+        else
+            $("#txtTrademark").removeClass('required');
+
+        if($("#ddlIPR_Type").val() == "0")
+        {
+            IsValidSave = false;
+            $("#ddlIPR_Type").addClass('required');
+        }
+        else
+            $("#ddlIPR_Type").removeClass('required');
+
+        if($('#Application_No').val() == "")
+        {
+            IsValidSave = false;
+            $("#Application_No").attr('required', true);
+        }
+        else
+            $("#Application_No").removeAttr('required');
+
+        if($('#txtApplication_Date').val() == "" || $('#txtApplication_Date').val() == "DD/MM/YYYY")
+        {
+            IsValidSave = false;
+            $("#txtApplication_Date").attr('required', true);
+        }
+        else
+            $("#txtApplication_Date").removeAttr('required');
+
+        if($("input:radio[name='Proposed_Or_Date']:checked").val() == 'D' && $('#txtDate_Of_Use').val() == '')
+        {
+            IsValidSave = false;
+            $("#txtDate_Of_Use").attr('required', true);
+        }
+        else
+            $("#txtDate_Of_Use").removeAttr('required');
+
+        if($("#ddlApplication_Status").val() == "0" )
+        {
+            IsValidSave = false;
+            $("#ddlApplication_Status").addClass('required');
+        }
+        else
+            $("#ddlApplication_Status").removeClass('required');
+
+        if('@Model.IPR_For' == 'D')
+            if($('#txtRenewed_Until').val() == "" || $('#txtRenewed_Until').val() == "DD/MM/YYYY")
+            {
+                IsValidSave = false;
+                $("#txtRenewed_Until").attr('required', true);
+            }
+            else
+                $("#txtRenewed_Until").removeAttr('required');
+
+        if($("#ddlApplicant").val() == "0")
+        {
+            IsValidSave = false;
+            $("#ddlApplicant").addClass('required');
+        }
+        else
+            $("#ddlApplicant").removeClass('required');
+
+        if($('#txtTrademark_Attorney').val() == '')
+        {
+            IsValidSave = false;
+            $("#txtTrademark_Attorney").addClass('required');
+        }
+        else
+            $("#txtTrademark_Attorney").removeClass('required');
+
+        if($("#ddlIPR_Country").val()=="0")
+        {
+            IsValidSave=false;
+            $("#ddlIPR_Country").addClass('required');
+        }
+        else
+            $("#ddlIPR_Country").removeClass('required');
+
+        return IsValidSave;
+    }
+
+    function fileCheck(obj) {
+        debugger;
+        var fileExtension = ['jpeg', 'jpg', 'png', 'gif', 'bmp'];
+
+        if ($.inArray($(obj).val().split('.').pop().toLowerCase(), fileExtension) == -1) {
+            alert("Only '.jpeg','.jpg', '.png', '.gif', '.bmp' formats are allowed.");
+            return false;
+        }
+
+        if (obj.files && obj.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#imgAttachment').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(obj.files[0]);
+        }
+
+        return true;
+    }
+
+    function OnSaveSuccess(obj,SystemFileName)
+    {
+        debugger;
+        $('#hdnCommandName').val('SAVE');
+        showAlert('S',obj);
+        location.href = '@Url.Action("Index", "IPR_List", new { TABNAME = Model.IPR_For })'
+    }
+
+    function clickOnImage(For,SystemFileName)
+    {
+        var f=For;
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("checkDownloadFile", "IPR_Int_Dom")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            async: false,
+            data: JSON.stringify({
+                For:f,
+                systemFileName:SystemFileName
+            }),
+            success: function (result) {
+                var s=SystemFileName;
+                if(result=="")
+                    showAlert('S',"Image Not Found",'OK');
+                else
+                {
+                    debugger;
+                    var parameter="?&For="+For+"&systemFileName="+SystemFileName;
+                    var URL = '@Url.Action("DownloadFile", "IPR_Int_Dom", new { SearchedTitle = "Searched_Text" })';
+                    URL = URL.replace("Searched_Text",parameter);
+                    window.location.href = URL;
+                    //location.href= window.location.pathname+ "/DownloadFile?For="+For+"&systemFileName="+SystemFileName;
+                }
+            },
+            error: function (result) {
+            }
+        });
+    }
+    function handleOk()
+    {
+        debugger;
+        if($('#hdnCommandName').val() == 'DELETEATTACHMENT' )
+        {
+            var rowindex = $('#hdnAttchRowIndex').val();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("DeleteAttachment", "IPR_Int_Dom")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                async: false,
+                data: JSON.stringify({
+                    row_index: rowindex
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        $('#divAttachments').html(result);
+                    }
+                },
+                error: function (result) {
+                    var StrErrMessage = "Please wait....Page is loading";
+                    alert('Error: ' + StrErrMessage);
+                }
+            });
+        }
+        else
+            if($('#hdnCommandName').val() == 'SAVE' )
+            {
+                location.href = '@Url.Action("Index", "IPR_List", new { TABNAME = Model.IPR_For })'
+            }
+            else if($('#hdnCommandName').val() == 'CANCEL')
+            {
+                location.href='@Url.Action("Cancel", "IPR_Int_Dom", new { TABNAME = Model.IPR_For })'
+            }
+    }
+
+    function OnBegin() {
+        var files = $('#FileUpload')[0].files;
+        if (files.length > 0) {
+            if (window.FormData !== undefined) {
+                var data = new FormData();
+                for (var x = 0; x < files.length; x++) {
+                    data.append("file" + x, files[x]);
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("UploadAttachment", "IPR_Int_Dom")',
+                    contentType: false,
+                    processData: false,
+                    data: data,
+                    async: true,
+                    success: function (result) {
+                        console.log(result);
+                    },
+                    error: function (xhr, status, p3, p4) {
+                        var err = "Error " + " " + status + " " + p3 + " " + p4;
+                        if (xhr.responseText && xhr.responseText[0] == "{")
+                            err = JSON.parse(xhr.responseText).Message;
+                        console.log(err);
+                    }
+                });
+            } else {
+                showAlert("E", "This browser doesn't support HTML5 file uploads!");
+                return false;
+            }
+        }
+        else {
+            showAlert('E', 'Please select file');
+            return false;
+        }
+        $('#FileUpload').val('');
+        attachmentMode="A";
+    }
+
+    function OnChangeProRdb(obj)
+    {
+        if(obj == 'P')
+        {
+            $("#txtDate_Of_Use").removeAttr('required');
+            $('#txtDate_Of_Use').attr("disabled", "disabled");
+        }
+        else
+            $('#txtDate_Of_Use').removeAttr("disabled");
+    }
+
+    function OnCancelClick()
+    {
+        $('#hdnCommandName').val('CANCEL');
+        showAlert('I', 'All unsaved data will be lost, still want to go ahead?', 'OKCANCEL');
+    }
+</script>
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container ipr main_col">
+            <div class="top_area">
+                <div class="title_block dotted_border clearfix">
+                    <h2 class="pull-left">
+                        @if (Model.IPR_Rep_Code > 0)
+                        {
+                            if (ViewBag.Mode == "C" && Model.IPR_For == "D")
+                            {
+                                @:Clone IPR Application <span>( Domestic )</span>
+                            }
+                            else if (ViewBag.Mode == "C" && Model.IPR_For == "I")
+                            {
+                                @:Clone IPR Application <span>( International )</span>
+                            }
+                            else if (Model.IPR_For == "D")
+                            {
+                                @:Edit IPR Application <span>( Domestic )</span>
+                                <input type="hidden" name="Add" value="EDIT" id="AddIPR" />
+                            }
+                            else
+                            {
+                                @:Edit IPR Application<span> ( International )</span>
+                                <input type="hidden" name="Add" value="EDIT" id="AddIPR" />
+                            }
+                        }
+                        else
+                        {
+                            if (Model.IPR_For == "D")
+                            {
+                                @:Add IPR Application <span>( Domestic )</span>
+                                <input type="hidden" name="Add" value="ADD" id="AddIPR" />
+
+                            }
+                            else
+                            {
+                                @:Add IPR Application<span> ( International )</span>
+                                <input type="hidden" name="Add" value="ADD" id="AddIPR" />
+                            }
+                        }
+
+                    </h2>
+                </div>
+
+                @using (Ajax.BeginForm("Save", "IPR_Int_Dom", new AjaxOptions { OnSuccess = "OnSaveSuccess", HttpMethod = "POST" }))
+                {
+                    <table class="table_brif table" style="background:#e2e1e0" id="tabRights">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    @Html.Hidden("hdnRecordLockingCode", ViewBag.RecordLockingCode as string, new { @id = "hdnRecordLockingCode" })
+                                    @*<div class="tab-pane active" id="tabRights">*@
+                                    @*<div class="scale_table_block">*@
+                                    <div class="card firstBox">
+                                        <table width="100%" class="table">
+                                            <tr>
+                                                <td>
+                                                    <b>Trade Mark No</b>
+                                                    @Html.HiddenFor(m => m.IPR_Rep_Code)
+                                                    @Html.HiddenFor(m => m.IPR_For)
+                                                    <input type="hidden" id="hdnIsSubmit" name="hdnIsSubmit" />
+                                                </td>
+                                                @if (ViewBag.Mode == "C")
+                                                {
+                                                    <td colspan="2">
+                                                        New&nbsp;&nbsp;&nbsp; @Model.Version
+                                                    </td>
+                                                }
+                                                else if (Model.Trademark_No != "" && Model.Trademark_No != null)
+                                                {
+                                                    <td colspan="2">
+                                                        @Model.Trademark_No
+                                                    </td>
+                                                }
+                                                else
+                                                {
+                                                    <td colspan="2">
+                                                        New&nbsp;&nbsp;&nbsp; @Model.Version
+                                                    </td>
+                                                }
+                                                <td rowspan="21" width="50%">
+                                                    <div class="platform_wrapper">
+                                                        <div id="tree" class="treeClass">
+
+                                                        </div>
+                                                        <input type="hidden" id="hdnClassCodes" name="hdnClassCodes" value="@Model.IPR_REP_CLASS.Select(s=> s.IPR_CLASS.Description))" />
+                                                        @*<input type="hidden" id="hdnClassCodes" name="hdnClassCodes" value="@(string.Join(" ,", Model.IPR_REP_CLASS.Select(s=> s.IPR_Class_Code)))" />*@
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <b>Trade Mark</b>
+                                                </td>
+                                                <td colspan="2">
+                                                    @Html.TextAreaFor(m => Model.Trademark, new { @id = "txtTrademark", @class = "textarea", @onkeypress = "countLocalChar(this,100,'divTrademarkCharCount')", @onkeyup = "countLocalChar(this,100,'divTrademarkCharCount')", @maxlength = 100 })
+                                                    <div class="divBlock">
+                                                        <div id="divTrademarkCharCount">0/100</div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Type</b></td>
+                                                <td colspan="2">
+                                                    @Html.DropDownList("IPR_Type_Code", (List<SelectListItem>)ViewBag.Bindddl_IPR_Type, new { @id = "ddlIPR_Type", @class = "form_input chosen-select" })
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Business Unit</b></td>
+                                                <td colspan="2">
+                                                    @Html.DropDownList("ddlBusinessUnit", ViewBag.BusinessUnitList as MultiSelectList, new { @id = "ddlBusinessUnit", @multiple = "multiple" })
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Channel</b></td>
+                                                <td colspan="2">
+                                                    @Html.DropDownList("ddlChannel", ViewBag.ChannelList as MultiSelectList, new { @id = "ddlChannel", @multiple = "multiple" })
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Attachment</b></td>
+                                                <td>
+                                                    <button id="btnUpload" class="button" type="button" onclick="return AddAttachment('M');">Add Attachment</button>
+                                                </td>
+                                                <td rowspan="3">
+                                                    @*@if (ViewBag.imagePage != "")
+                                                        {
+
+                                                        }
+                                                        else
+                                                        {
+                                                            <img id="imgLogo" style="height: 100px; width: 180px;" src="~/Images/NoImageFound.jpg" />
+                                                        }*@
+                                                    @if (ViewBag.ImageShow)
+                                                    {
+                                                        if (ViewBag.imagePage == "")
+                                                        {
+                                                            <img id="imgLogo" style="height: 100px; width: 180px;" src="~/Images/NoImageFound.jpg" />
+                                                        }
+                                                        else
+                                                        {
+                                                            @*<img id="imgLogo" style="height: 100px; width: 180px;" src="@Url.Content(ViewBag.imagePage)" />*@
+                                                            @Html.Image("imgLogo", "", (string)ViewBag.imagePage, "", "height: 100px; width: 180px;")
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <img id="imgLogo" style="height: 100px; width: 180px;" src="~/Images/NoImageFound.jpg" />
+                                                    }
+                                                </td>
+
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <b>Application No</b>
+                                                </td>
+                                                <td>
+                                                    @Html.TextBox("Application_No", Model.Application_No, new { style = "width:150px;", @maxlength = 50 })
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <b>Application Date</b>
+                                                </td>
+                                                <td>
+                                                    @Html.TextBox("txtApplication_Date", (Model.Application_Date != null) ? Model.Application_Date.Value.ToString("dd/MM/yyyy") : "", new { style = "width:150px;", @class = "isDatepicker shortDate", @placeholder = "DD/MM/YYYY" })
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <b>Country</b>
+                                                </td>
+                                                @if (Model.IPR_For == "D")
+                                                {
+                                                    <td colspan="2">
+                                                        India
+                                                    </td>
+                                                }
+                                                else
+                                                {
+                                                    <td colspan="2">
+                                                        @Html.DropDownList("Country_Code", (List<SelectListItem>)ViewBag.Bindddl_Country, new { @id = "ddlIPR_Country", @class = "form_input chosen-select" })
+                                                    </td>
+                                                }
+                                            </tr>
+                                            <tr>
+                                                <td><b>Date of Use</b></td>
+                                                <td colspan="2">
+                                                    @Html.TextBox("txtDate_Of_Use", (Model.Date_Of_Use != null) ? Model.Date_Of_Use.Value.ToString("dd/MM/yyyy") : "", new { style = "width:150px;", @class = "isDatepicker shortDate", @placeholder = "DD/MM/YYYY" })
+                                                    @Html.RadioButton("Proposed_Or_Date", "D", new { @id = "Proposed_Or_Date_0", @value = "D", @onchange = "OnChangeProRdb('D');", @checked = "checked" }) Date&nbsp;
+                                                    @Html.RadioButton("Proposed_Or_Date", "P", new { @id = "Proposed_Or_Date_1", @value = "P", @onchange = "OnChangeProRdb('P');" }) Proposed to be used
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <b>Date of Actual Use</b>
+                                                </td>
+                                                <td colspan="2">
+                                                    @Html.TextBox("txtDate_Of_Actual_Use", (Model.Date_Of_Actual_Use != null) ? Model.Date_Of_Actual_Use.Value.ToString("dd/MM/yyyy") : "", new { style = "width:150px;", @class = "isDatepicker shortDate", @placeholder = "DD/MM/YYYY" })
+
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <b>Application Status</b>
+                                                </td>
+                                                <td colspan="2">
+                                                    @Html.DropDownList("Application_Status_Code", (List<SelectListItem>)ViewBag.Bindddl_Application_Status, new { @id = "ddlApplication_Status", @class = "form_input chosen-select" })
+                                                </td>
+
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <b>Renewed Until</b>
+                                                </td>
+                                                <td colspan="2">
+                                                    @Html.TextBox("txtRenewed_Until", (Model.Renewed_Until != null) ? Model.Renewed_Until.Value.ToString("dd/MM/yyyy") : "", new { style = "width:150px;", @class = "isDatepicker shortDate", @placeholder = "DD/MM/YYYY" })
+
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <b>Applicant</b>
+                                                </td>
+                                                <td colspan="2">
+                                                    @Html.DropDownList("Applicant_Code", (List<SelectListItem>)ViewBag.Bindddl_Applicant, new { @id = "ddlApplicant", @class = "form_input chosen-select" })
+                                                </td>
+                                            </tr>
+                                            @if (Model.IPR_For == "I")
+                                            {
+                                                <tr>
+                                                    <td><b>International Trade Mark Attorney</b></td>
+                                                    <td colspan="2">
+                                                        @Html.TextAreaFor(m => Model.International_Trademark_Attorney, new { @id = "txtInternational_Trademark_Attorney", @class = "textarea", @onkeypress = "countLocalChar(this,100,'divIntTradmarkAttCharCount')", @onkeyup = "countLocalChar(this,100,'divIntTradmarkAttCharCount')", @maxlength = 100 })
+                                                        <div class="divBlock">
+                                                            <div id="divIntTradmarkAttCharCount">0/100</div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            }
+                                            <tr>
+                                                <td><b>Domestic Trade Mark Attorney</b></td>
+                                                <td colspan="2">
+                                                    @Html.TextAreaFor(m => Model.Trademark_Attorney, new { @id = "txtTrademark_Attorney", @class = "textarea", @onkeypress = "countLocalChar(this,100,'divDomTrademarkAttCharCount')", @onkeyup = "countLocalChar(this,100,'divDomTrademarkAttCharCount')", @maxlength = 100 })
+                                                    <div class="divBlock">
+                                                        <div id="divDomTrademarkAttCharCount">0/100</div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <b>Reminder email frequency (days)</b>
+                                                </td>
+                                                <td colspan="2">
+                                                    @Html.TextBox("txtFreq_1", lstFrq[0], new { @class = "numbertext smallTextBox" })
+                                                    @Html.TextBox("txtFreq_2", lstFrq[1], new { @class = "numbertext smallTextBox" })
+                                                    @Html.TextBox("txtFreq_3", lstFrq[2], new { @class = "numbertext smallTextBox" })
+                                                    @Html.TextBox("txtFreq_4", lstFrq[3], new { @class = "numbertext smallTextBox" })
+                                                    @Html.TextBox("txtFreq_5", lstFrq[4], new { @class = "numbertext smallTextBox" })
+                                                    @Html.TextBox("txtFreq_6", lstFrq[5], new { @class = "numbertext smallTextBox" })
+                                                </td>
+                                            </tr>
+                                            @if (Model.IPR_For == "I")
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <b> Date of Registration</b>
+                                                    </td>
+                                                    <td colspan="2">
+                                                        @Html.TextBox("txtDate_Of_Registration", (Model.Date_Of_Registration != null) ? Model.Date_Of_Registration.Value.ToString("dd/MM/yyyy") : "", new { style = "width:150px;", @class = "isDatepicker shortDate", @placeholder = "DD/MM/YYYY" })
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <b> Registration No</b>
+                                                    </td>
+                                                    <td colspan="2">
+                                                        @Html.TextBox("Registration_No", Model.Registration_No, new { style = "width:150px;", @maxlength = 200 })
+                                                    </td>
+                                                </tr>
+                                            }
+                                            <tr>
+                                                <td>
+                                                    <b>Remarks</b>
+                                                </td>
+                                                <td colspan="2">
+                                                    @Html.TextAreaFor(m => Model.Comments, new { @id = "txtComments", @class = "textarea", @onkeypress = "countLocalChar(this,1000,'divCommentCountChar')", @onkeyup = "countLocalChar(this,1000,'divCommentCountChar')", @maxlength = 1000 })
+                                                    <div class="divBlock">
+                                                        <div id="divCommentCountChar">0/1000</div>
+                                                    </div>
+
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <b>  Goods/Services Description</b>
+                                                </td>
+                                                <td colspan="2">
+                                                    @Html.TextAreaFor(m => Model.Class_Comments, new { @id = "txtClass_Comments", @class = "textarea", @onkeypress = "countLocalChar(this,1000,'divDescCharCount')", @onkeyup = "countLocalChar(this,1000,'divDescCharCount')", @maxlength = 1000 })
+                                                    <div class="divBlock">
+                                                        <div id="divDescCharCount">0/1000</div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="card" id="attachment">
+                                        <div class="card cardheader">
+                                            <b>Attachment</b>
+                                            <div class="pull-right">
+                                                <a class="glyphicon glyphicon-plus" title="Add" onclick="AddAttachment('G','','-1')"></a>
+                                            </div>
+                                        </div>
+                                        <div id="divAttachments">
+                                            @Html.Partial("List_Attachment", Model.IPR_REP_ATTACHMENTS.Where(a => a.Flag == "G").ToList())
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="card" id="statusHistory">
+                                        <div class="card cardheader">
+                                            <b>Status History</b>
+                                        </div>
+                                        <table style="margin:10px; width:98%" class="table table-bordered table-hover">
+                                            <tr>
+                                                <td style="width:20%"><b>Status</b></td>
+                                                <td style="width:20%"><b>Changed On</b></td>
+                                                <td style="width:60%"><b>Changed By</b></td>
+                                            </tr>
+                                            @if (ViewBag.Mode == "C")
+                                            {
+                                                ViewBag.IPR_Status_History = "";
+                                            }
+                                            @foreach (RightsU_Entities.USP_List_IPR_Status_History_Result objStatusHist in ViewBag.IPR_Status_History)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        @objStatusHist.IPR_Status
+                                                    </td>
+                                                    <td>
+                                                        @objStatusHist.Changed_On
+                                                    </td>
+                                                    <td>
+                                                        @objStatusHist.UserName
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </table>
+                                    </div>
+                                    <div class="bottom_action" style="margin-top: 5px;">
+                                        <ul class="form_link_nav clearfix">
+                                            <li>
+                                                <input type="submit" id="btnSaveDeal" class="btn btn-primary" value="Save" onclick="return ValidateSave(false);">
+                                            </li>
+                                            @if (Model.IPR_Rep_Code > 0)
+                                            {
+                                                if (ViewBag.CurrentLoginUserCode != Model.IPR_REP_STATUS_HISTORY.Where(x => x.IPR_Status == "N").Select(x => x.Changed_By).FirstOrDefault())
+                                                {
+                                                    <li>
+                                                        <input type="submit" id="btnSaveSubmitDeal" class="btn btn-primary" value="Save & Submit" onclick="return ValidateSave(true);">
+                                                    </li>
+                                                }
+                                            }
+                                            <li>
+                                                <a type="button" id="btnCancelDeal" class="btn btn-primary" onclick="OnCancelClick();">Cancel</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <input type="hidden" id="hdnCommandName" />
+                                    <input type="hidden" id="hdnAttchRowIndex" />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    </section>
+</div>
+
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade in scroll" id="popupAttachment" role="dialog" tabindex="-1" aria-hidden="false" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            @using (Ajax.BeginForm("SaveFile", "IPR_Int_Dom", new AjaxOptions { OnSuccess = "OnAttachmentSaveSuccess", HttpMethod = "POST" }))
+            {
+                <div>
+                    <div class="form_fields ipr">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>Attachment</h2>
+                        </div>
+                        <div class="modal_block">
+                            <ul class="form_fields_wrapper">
+                                <li class="clearfix">
+                                    <label class="bold">File for upload</label>
+
+                                    @if (Model.IPR_Rep_Code == 0)
+                                    {
+                                        <img id="imgAttachment" style="cursor: pointer; max-height: 100px;" alt="Image" src="~/Images/add.png" />
+                                    }
+                                    else
+                                    {
+                                        if (ViewBag.imagePage != "")
+                                        {
+                                            @Html.Image("imgAttachment", "", (string)ViewBag.imagePage, "", "cursor: pointer; max-height: 100px;")
+                                        }
+                                        else
+                                        {
+                                            <img id="imgAttachment" style="cursor: pointer; max-height: 100px;" alt="Image" src="~/Images/add.png" />
+                                        }
+                                    }
+                                    @Html.TextBox("FileUpload", "", new { @type = "file", @style = "display:none;", onchange = "fileCheck(this);" })
+                                    @*<input type="file" id="fileUpload_Attachment" name="fileUpload_Attachment" />*@
+                                    <input type="hidden" id="hdnAttachment_Flag" name="hdnAttachment_Flag" />
+                                    <input type="hidden" id="hdnAttachment_RowIndex" name="hdnAttachment_RowIndex" />
+                                    <label>(Choose only jpeg, jpg, bmp, png, gif)</label>
+                                </li>
+                                <li id="divAttachmentDescription" class="clearfix">
+                                    <label class="bold">Description</label>
+                                    @Html.TextArea("txt_Description", "", new { @class = "textarea", @maxlength = "200", @onkeypress = "countLocalChar(this,200,'divAttachDescCharCount')", @onkeyup = "countLocalChar(this,200,'divAttachDescCharCount')" })
+                                    <div class="divBlock">
+                                        <div id="divAttachDescCharCount">0/200</div>
+                                        <div style=""></div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li>
+                                        <input type="submit" name="btnAddToAttachmentList" class="btn btn-primary" value="Save" onclick="return OnBegin();" id="btnAddToAttachmentList" />
+                                    </li>
+                                    <li>
+                                        <a data-dismiss="modal" class="btn btn-primary" href="#">Cancel</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

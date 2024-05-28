@@ -1,0 +1,56 @@
+﻿@model List<RightsU_Entities.Acq_Deal>
+
+<table class="table table-bordered table-hover" id="tblMaterial_Medium">
+    <thead>
+        <tr>
+            <th>Agreement No</th>
+            <th>Liscensor</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Period</th>
+            <th>Amort On</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{int Counter = 0;}
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                Counter = Counter + 1;
+                <tr>
+                    <td>
+                        <span>@item.Agreement_No</span>
+                    </td>
+                    <td>
+                        <span>Prasoon Joshi, Unisys Infosolutions Pvt Ltd</span>
+                    </td>
+                    <td>
+                        <span>@item.Deal_Desc</span>
+                    </td>
+                    <td>
+                        <span>Open</span>
+                    </td>
+                    <td>
+                        <span>01 Jan 2017  -  31 Jun 2019</span>
+                    </td>
+                    <td>
+                        @Html.RadioButton("Amort_On_" + Counter, "D", true, new { id = "Deal_Type"+Counter, style = "cursor: pointer;" }) Title Wise
+                        @Html.RadioButton("Amort_On_" + Counter, "C", new { id = "Cost_Type"+Counter, style = "cursor: pointer;" }) Cost Type
+                    </td>
+                    <td align="center">
+                        <a title="View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;"></a>
+                        <a title="Configuration" class="glyphicon glyphicon-cog" style="cursor: pointer;" onclick="ViewAmortRule(@item.Acq_Deal_Code,@Counter)"></a>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="7">No Records Found</td>
+            </tr>
+        }
+    </tbody>
+</table>

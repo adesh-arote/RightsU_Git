@@ -1,0 +1,52 @@
+.header-div {
+    background-color:#d6d6d6;
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+}
+
+.divRemarks {
+    display: inline-block;
+    font-weight: bold;
+    border-bottom: 1px dotted #777;
+    padding: 5px;
+    background-color: #eee;
+    width: 500px;
+  }
+  
+  .vl {
+    border-left: 2px solid;
+    height: 25px;
+    width: 40px;
+  }
+
+  #movieAlbum {
+    width: 35% !important;
+}
+
+:host ::ng-deep div.slimScrollDiv[style] {
+	height:42px !important;
+ } 
+
+/* .label{
+    position: absolute;
+    top: 9px;
+    right: 10px;
+    text-align: center;
+    font-size: 9px;
+    padding: 2px 3px;
+    line-height: .9;
+    color: white;
+}
+
+.label-success{
+    background: green;
+}
+
+.label-warning{
+    background: orangered;
+} */
+/* .tblFormat{width:90%; border:1px solid black;border-collapse:collapse;}
+					.tblHead{border:1px solid black;  color: #ffffff ; background-color: #585858;font-family:verdana;font-size:10px;font-weight:bold; padding:5px;}
+					.tblData{border:1px solid black; vertical-align:top;font-family:verdana;font-size:10px; padding:5px;}
+					.tblData.center{text-align:center;} */

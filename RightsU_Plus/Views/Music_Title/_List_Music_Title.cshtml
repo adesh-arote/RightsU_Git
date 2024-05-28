@@ -1,0 +1,487 @@
+﻿@model List<RightsU_Entities.USP_List_Music_Title_Result>
+@using UTOFrameWork.FrameworkClasses
+@using System.Configuration;
+@{
+    Layout = null;
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    RightsU_BLL.System_Parameter_New_Service objSPNService = new RightsU_BLL.System_Parameter_New_Service(objLoginEntity.ConnectionStringName);
+}
+
+<style>
+    .MoreActionDiv {
+        padding: 7px;
+        background: #ffffff; /*#2B5F8E;*/
+        width: 218px;
+        height: inherit;
+        box-shadow: 0 0 5px #aaa;
+        font-size: 12px;
+        color: #000;
+        text-align: left;
+        position: absolute;
+        z-index: 99;
+        right: 659px;
+        display: none;
+    }
+    .MoreActionDiv_Singer {
+        padding: 7px;
+        background: #ffffff; /*#2B5F8E;*/
+        width: 218px;
+        height: inherit;
+        box-shadow: 0 0 5px #aaa;
+        font-size: 12px;
+        color: #000;
+        text-align: left;
+        position: absolute;
+        z-index: 99;
+        right: 140px;
+        display: none;
+    }
+     .MoreActionDiv_Lyricist {
+        padding: 7px;
+        background: #ffffff; /*#2B5F8E;*/
+        width: 218px;
+        height: inherit;
+        box-shadow: 0 0 5px #aaa;
+        font-size: 12px;
+        color: #000;
+        text-align: left;
+        position: absolute;
+        z-index: 99;
+        /*right: 400px;*/
+        display: none;
+    }
+    span.not-available, label.not-available {
+        font-style: italic;
+        opacity: 0.5;
+    }
+</style>
+
+<script>
+
+    $('.show_hide').click(function () {
+        debugger
+        hideSinger();
+        hideLyricist();
+        $('.MoreActionDiv').slideUp();
+        $(this).parent().find('.MoreActionDiv').slideToggle('fast');
+        return false;
+    });
+
+    $('.show_hide_Singer').click(function () {
+        debugger
+        hideMusicLangugae();
+        hideLyricist();
+        if ('@objMessageKey.LayoutDirection' == "RTL") {
+            $('.MoreActionDiv_Singer').css({ left: '67px', right: '' });
+        }
+        $('.MoreActionDiv_Singer').slideUp();
+        $(this).parent().find('.MoreActionDiv_Singer').slideToggle('fast');
+        return false;
+    });
+
+    $('.show_hide_Lyricist').click(function () {
+        debugger
+        hideMusicLangugae();
+        hideSinger();
+        if ('@objMessageKey.LayoutDirection' == "RTL") {
+            $('.MoreActionDiv_Lyricist').css({ left: '87px', right: '' });
+        }
+        $('.MoreActionDiv_Lyricist').slideUp();
+        $(this).parent().find('.MoreActionDiv_Lyricist').slideToggle('fast');
+
+        return false;
+    });
+
+
+    function hideMusicLangugae() {$('.MoreActionDiv').hide('slow');}
+    function hideSinger() { $('.MoreActionDiv_Singer').hide('slow'); }
+    function hideLyricist() { $('.MoreActionDiv_Lyricist').hide('slow'); }
+
+</script>
+
+
+
+@{
+    int counter = 0;
+    @Html.Hidden("hdnRowNum", new { @id = "hdnRowNum" })
+
+    foreach (var item in Model)
+    {
+        counter += 1;
+        <div class="grid_area clearfix" onclick="hideMusicLangugae(); hideSinger(); hideLyricist();">
+            <table class="grid_item active" id="MT_List">
+                <tr>
+                    <td class="title_logo">
+                        @if (item.Image_Path != null && item.Image_Path.ToString().Trim(' ') != "")
+                        {
+                            <a>
+                                <img src="@Url.Content(ConfigurationManager.AppSettings["TitleImagePath"] + item.Image_Path)" alt="Image" />
+                            </a>
+                        }
+                        else
+                        {
+                            <a>
+                                <img src="~/Images/musicIcon.png" alt="Image" />
+                            </a>
+                            @*if (item.Deal_Type_Code == GlobalParams.Deal_Type_Music)
+                                { <a><img src="~/Images/musicIcon.png" alt="Image" /></a> }
+                                else if (item.Deal_Type_Code == GlobalParams.Deal_Type_Content)
+                                {<a><img src="~/Images/program.png" alt="Image" /></a> }
+                                else if (item.Deal_Type_Code == GlobalParams.Deal_Type_Format_Program)
+                                {<a><img src="~/Images/formatShow.png" alt="Image" /></a> }
+                                else if (item.Deal_Type_Code == GlobalParams.Deal_Type_Event)
+                                {<a><img src="~/Images/Event.png" alt="Image" /></a> }
+                                else
+                                {<a><img src="~/Images/movieIcon.png" alt="Image" /></a> }*@
+                        }
+                        @Html.Hidden("hdnTitleCode", item.Music_Title_Code, new { id = counter + "_hdnTitleCode" })
+                    </td>
+                    <td class="title_descriptn">
+                        <h4 class="title_name Highlight" data-toggle="tooltip">
+                            @*@Html.Label("Title_Name", item.Music_Title_Name)*@
+                            @Html.ActionLink(item.Music_Title_Name, "View", "Music_Title",
+                        new
+                        {
+                            id = item.Music_Title_Code,
+                            @Page_No = ViewBag.PageNo,
+                            @SearchedTitle = @ViewBag.SearchedTitle,
+                            @PageSize = @ViewBag.PageSize
+                        }, new { @title = @objMessageKey.MusicTrack})
+
+                        </h4>
+                        <ul>
+                            <li>
+                                <h5 class="title_lang Highlight" title="@objMessageKey.Movie / @objMessageKey.Album">
+                                    @if (item.Movie_Album != null && item.Movie_Album != "")
+                                    {@Html.Label("Movie_Album", item.Movie_Album)}
+                                    else
+                                    {
+                                        <span class="not-available">@objMessageKey.Nomoviealbum</span>
+                                    }
+                                    @*{@Html.Label("Movie_Album", "No Movie / Album")}*@
+                                </h5>
+
+                                @*@if (item.Music_Title_Code != null || item.Music_Title_Code.ToString() != "")
+                                    {<h5 class="title_code" title="Movie Code">@item.Music_Title_Code</h5>
+                                    }
+                                    else
+                                    {<h5 class="title_code" title="Movie Code"></h5>}*@
+
+                            </li>
+                            <li><span class="seperator">| </span></li>
+                            <li>
+                                <h5 class="title_lang" title="@objMessageKey.Length (@objMessageKey.mins)">
+                                    @if (item.Duration_In_Min != null && Convert.ToString(item.Duration_In_Min) != "")
+                                    {@Html.Label("Duration_In_Min", Convert.ToString(item.Duration_In_Min) + " min")}
+                                    else
+                                    {<span class="not-available">@objMessageKey.NA</span>}
+                                </h5>
+                            </li>
+                            <li><span class="seperator">| </span></li>
+                            <li>
+                                <h5 class="title_lang Highlight" title="@objMessageKey.MusicLanguage">
+                                    @if (item.Language_Name != null && item.Language_Name != "")
+                                    {
+                                        if (item.Language_Name.Length > 18)
+                                        {
+                                            @Html.Label("Language_Name", item.Language_Name.Substring(0, 18))
+                                            <a href="#" class="glyphicon glyphicon-option-vertical show_hide"></a>
+                                            <div class="MoreActionDiv" style="display:none;">
+                                                @Html.Label("Language_Name", item.Language_Name)
+                                            </div>}
+                                        else
+                                        { @Html.Label("Language_Name", item.Language_Name)}
+                                    }
+                                    else
+                                    {
+                                        <span class="not-available">@objMessageKey.Nolanguage</span>
+                                    }
+                                </h5>
+                            </li>
+                            <li><span class="seperator">| </span></li>
+                            <li class="expandable">
+                                <h5 class="title_country" title="@objMessageKey.YearOfRelease">
+                                    @if (item.Release_Year != null && Convert.ToString(item.Release_Year) != "")
+                                    {@Html.Label("Release_Year", Convert.ToString(item.Release_Year))}
+                                    else
+                                    {<span class="not-available">@objMessageKey.NA</span>}
+                                </h5>
+                            </li>
+                            @{
+                                    var MusicTitleVersion = new RightsU_BLL.System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Parameter_Name == "SPN_Music_Version").Select(w => w.Parameter_Value).SingleOrDefault();
+                                    ViewBag.IsMuciVersionSPN = MusicTitleVersion;
+                            }
+                        @if (ViewBag.IsMuciVersionSPN == "Y")
+                                {
+                            <li><span class="seperator">| </span></li>
+                            <li>
+                                <h5 class="Public_Domain" title="@objMessageKey.PublicDomain">
+                                  @if(item.Public_Domain != null && item.Public_Domain != "" && item.Public_Domain == "Y")
+                                   { <span>@objMessageKey.Yes</span>}
+                                  else
+                                  {<span class="not-available">@objMessageKey.NO</span> }                                                                                        
+                                </h5>
+                            </li>
+                               }
+                        </ul>
+                    </td>
+                    <td class="title_credits">
+                        @*<div class="expandable" >*@
+                        @*<h5 class="title_singer">*@
+                        <ul>
+                            <li title="@objMessageKey.Singer">
+                                <h5 class="title_singer Highlight" style="margin-top: 0px;">
+                                    @if (item.Singer != null && item.Singer != "")
+                                    {
+                                        if (item.Singer.Length > 70)
+                                        {
+                                            @Html.Label("SingerName", Convert.ToString(item.Singer.Substring(0, 70)).Trim(' ').Trim(','))
+
+                                            <a href="#" class="glyphicon glyphicon-option-vertical show_hide_Singer"></a>
+                                            <div class="MoreActionDiv_Singer" style="display:none;">
+                                                @Html.Label("SingerName", Convert.ToString(item.Singer).Trim(' ').Trim(','))
+                                            </div>}
+                                        else
+                                        { @Html.Label("SingerName", Convert.ToString(item.Singer).Trim(' ').Trim(','))}
+                                    }
+                                    else
+                                    { <span class="not-available">@objMessageKey.Nosinger</span>}
+                                </h5>
+                            </li>
+                        </ul>
+                        @*</h5>*@
+                        @*</div>*@
+                        <ul>
+                            <li class="expandable" title="@objMessageKey.MusicComposer">
+                                <h5 class="title_music_composer Highlight">
+                                    @if (item.Music_Composer != null && item.Music_Composer != "")
+                                    {@Html.Label("Music_Composer", Convert.ToString(item.Music_Composer).Trim(' ').Trim(','))}
+                                    else
+                                    {<span class="not-available">@objMessageKey.Nomusiccomposer</span> }
+                                   
+                                </h5>
+                            </li>
+                            <li><span class="seperator">| </span></li>
+                            <li title="@objMessageKey.Lyricist">
+                                <h5 class="title_lyricist Highlight">
+                                    @if (item.Lyricist != null && Convert.ToString(item.Lyricist) != "")
+                                    {
+                                        if (Convert.ToString(item.Lyricist).Length > 18)
+                                        {
+                                            @Html.Label("Lyricist", Convert.ToString(item.Lyricist.Substring(0, 18)).Trim(' ').Trim(','))
+
+                                            <a href="#" class="glyphicon glyphicon-option-vertical show_hide_Lyricist"></a>
+                                            <div class="MoreActionDiv_Lyricist" style="display:none;">
+                                                @Html.Label("Lyricist", Convert.ToString(item.Lyricist).Trim(' ').Trim(','))
+                                            </div>}
+                                        else
+                                        {  @Html.Label("Lyricist", Convert.ToString(item.Lyricist).Trim(' ').Trim(','))}
+                                    }
+                                    else
+                                    {<span class="not-available">@objMessageKey.Nolyricist</span> }
+                                </h5>
+
+                            </li>
+                            <li><span class="seperator">| </span></li>
+                            <li class="expandable">
+                                <h5 class="title_music_label Highlight" title="@objMessageKey.MusicLabel">
+                                    @if (item.Music_Label != null && Convert.ToString(item.Music_Label) != "")
+                                    {@Html.Label("Music_Label", Convert.ToString(item.Music_Label).Trim(' ').Trim(','))}
+                                    else
+                                    {<span class="not-available">@objMessageKey.Nomusiclabel</span> }
+                                </h5>
+                            </li>
+                        </ul>
+                    </td>
+
+                    <td class="title_action">
+                        @if (ViewBag.AddVisibility.Contains("~" + GlobalParams.RightCodeForView + "~"))
+                        {
+                            @Html.ActionLink(" ", "View", "Music_Title", new { id = item.Music_Title_Code, @Page_No = ViewBag.PageNo, @SearchedTitle = @ViewBag.SearchedTitle, @PageSize = @ViewBag.PageSize }, new { @class = "glyphicon glyphicon-eye-open", @title = @objMessageKey.View })
+                        }
+                        @if (item.Is_Active == "Y")
+                        {
+                            if (ViewBag.AddVisibility.Contains("~" + GlobalParams.RightCodeForEdit + "~"))
+                            {
+                                @*@Html.ActionLink(" ", "Index", "Music_Title", new { id = item.Music_Title_Code, @Page_No = ViewBag.PageNo, @SearchedTitle = @ViewBag.SearchedTitle, @PageSize = @ViewBag.PageSize, @commandName = "" },
+                                    new { @class = "glyphicon glyphicon-pencil", @title = "Edit", onclick = "CheckRecordLock('" + item.Music_Title_Code + "','" + ViewBag.PageNo + "', '" + @ViewBag.SearchedTitle + "', '" + @ViewBag.PageSize + "' , '" + "" + "'); " })*@
+
+                                <a title="@objMessageKey.Edit" id="Edit" href="#" class="glyphicon glyphicon-pencil" onclick="return CheckRecordLock(@item.Music_Title_Code)"></a>
+
+                                @*@Html.ActionLink(" ", "Index", "Music_Title", new { id = item.Music_Title_Code, @Page_No = ViewBag.PageNo, @SearchedTitle = @ViewBag.SearchedTitle, @PageSize = @ViewBag.PageSize, @commandName = ViewBag.commandName }, new { @class = "glyphicon glyphicon-pencil", @title = "Edit" })*@
+                            }
+                            if (ViewBag.AddVisibility.Contains("~" + GlobalParams.RightCodeForEdit + "~"))
+                            {
+                                string ab = @item.Music_Title_Name.Replace("\'", "\\'");
+                                <a title="@objMessageKey.ChangeMusicLabel" class="glyphicon glyphicon-bookmark" onclick="return CheckRecordLock_Bookmark(@item.Music_Title_Code, '@ab')"></a>
+                            }
+                            if (ViewBag.AddVisibility.Contains("~" + GlobalParams.RightCodeForDeactivate + "~"))
+                            {
+                                <a title="@objMessageKey.Deactivate" id="Deactivate" class="glyphicon glyphicon-thumbs-down" onclick="Ask_Confirmation('DEACTIVATE', @counter )"></a>
+                            }
+                            if (ViewBag.AddVisibility.Contains("~" + GlobalParams.RightCodeForRightGranted + "~"))
+                            {
+                                @Html.ActionLink(" ", "Index", "Music_Title", new { id = item.Music_Title_Code, @Page_No = ViewBag.PageNo, @SearchedTitle = @ViewBag.SearchedTitle, @PageSize = @ViewBag.PageSize, @commandName = GlobalParams.DEAL_MODE_CLONE }, new { @class = "glyphicon glyphicon-duplicate", @title = @objMessageKey.MusicTrackClone })
+                            }
+                        }
+                        else
+                        {
+                            if (ViewBag.AddVisibility.Contains("~" + GlobalParams.RightCodeForActivate + "~"))
+                            {
+                                <a title="@objMessageKey.Activate" id="Activate"  class="glyphicon glyphicon-thumbs-up" onclick="Ask_Confirmation('ACTIVATE', @counter )"></a>
+                            }
+                        }
+                        @if (ViewBag.AddVisibility.Contains("~" + GlobalParams.RightCodeForMusicTrackContents + "~"))
+                        {
+                            @Html.ActionLink(" ", "MusicTitleContent", "Music_Title", new { id = item.Music_Title_Code }, new { @class = "glyphicon glyphicon-copy", @title = @objMessageKey.ViewContentData })
+                        }
+
+                    </td>
+                </tr>
+            </table>
+        </div>
+    }
+}
+@*<style>
+    mark {
+        padding: 0;
+        background: transparent;
+        background-color: yellow;
+        background-position: right bottom;
+        background-size: 200% 100%;
+        transition: all .5s ease;
+    }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.8.3/jquery.mark.min.js"></script>*@
+<script>
+    var URL_Index = '@Url.Action("Index", "Music_Title")';
+    var URL_CheckRecordLock = '@Url.Action("CheckRecordLock", "Music_Title")';
+    var URL_CheckRecordLock_Bookmark = '@Url.Action("CheckRecordLock_Bookmark", "Music_Title")';
+     $('#lblRecordCount').text(@ViewBag.RecordCount);
+    $('#hdnRecordCount').val(@ViewBag.RecordCount);
+    $('#hdnPageNo').val(@ViewBag.PageNo);
+    $(document).ready(function () {
+        debugger;
+        //$("#MT_List tr:first-child").remove();
+        $('#MT_List').find('tr,td,th').first().remove();
+        $(".glyphicon-option-vertical").parent().css('margin-top', '0px')
+        @*$('#lblRecordCount').text(@ViewBag.RecordCount);
+        $('#hdnRecordCount').val(@ViewBag.RecordCount);
+        $('#hdnPageNo').val(@ViewBag.PageNo);*@
+
+       // $("#ancFileName").attr('href', '../Help/Masters/Layout.html?MusicTrackPage');
+        $('.expandable').expander({
+            slicePoint: 30,
+            expandPrefix: '',
+            expandText: '...@objMessageKey.readmore',
+            collapseTimer: 0,
+            userCollapseText: '<span>[^]</span>'
+        });
+
+        $('.expandable1').expander({
+            slicePoint: 70,
+            expandPrefix: '',
+            expandText: '...@objMessageKey.readmore',
+            collapseTimer: 0,
+            userCollapseText: '<span>[^]</span>'
+        });
+    })
+    function CheckRecordLock(id) {
+        debugger
+        var pageNo = '@ViewBag.PageNo';
+        var SearchedTitle = '@ViewBag.SearchedTitle';
+        var PageSize = '@ViewBag.PageSize';
+        $.ajax({
+            type: "POST",
+            url: URL_CheckRecordLock,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: true,
+            data: JSON.stringify({
+                id: id,
+                Page_No: pageNo,
+                SearchedTitle: SearchedTitle,
+                PageSize: PageSize,
+                commandName: ""
+            }),
+            success: function (result) {
+                debugger;
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Is_Locked == "N") {
+                        debugger
+                        var URL = '@Url.Action("Index", "Music_Title", new { id = "id", @Page_No = "Page_No"})';//, new { CallFrom = "T", Page_No = "Code", DealTypeCode = "Deal_Type_Code", TitleName = "Title_Name" }
+
+                        SearchedTitle = "Searched_Title", IsMenu = "N"
+                        URL = URL.replace("id", result.id);
+                        URL = URL.replace("amp;", "");
+                        URL = URL.replace("Page_No", '@ViewBag.PageNo');
+                        URL = URL.replace("amp;", "");
+                        URL = URL.replace("SearchedTitle", '@ViewBag.SearchedTitle');
+                        URL = URL.replace("amp;", "");
+                        URL = URL.replace("PageSize", '@ViewBag.PageSize');
+                        URL = URL.replace("amp;", "");
+                        URL = URL.replace("commandName", '@ViewBag.commandName');
+                        URL = URL.replace("amp;", "");
+                        window.location.href = URL;
+
+                    }
+                    if (result.Is_Locked == "Y") {
+                        showAlert("E", result.Message);
+
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+    function CheckRecordLock_Bookmark(id,ab) {
+        debugger
+        $.ajax({
+            type: "POST",
+            url: URL_CheckRecordLock_Bookmark,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: true,
+            data: JSON.stringify({
+                id: id
+            }),
+            success: function (result) {
+                debugger;
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Is_Locked == "N") {
+                        debugger
+                        AssignMusicLabel(id, ab)
+                    }
+                    if (result.Is_Locked == "Y") {
+                        showAlert("E", result.Message);
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+</script>

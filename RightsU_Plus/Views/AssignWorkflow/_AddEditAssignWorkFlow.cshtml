@@ -1,0 +1,588 @@
+﻿@model List<RightsU_Entities.Workflow_Module>
+
+@using UTOFrameWork.FrameworkClasses;
+@{
+    RightsU_Entities.Workflow_Module objWorkflow_Module = new RightsU_Entities.Workflow_Module();
+    if (ViewData["MyWorkflow"] != "")
+    {
+        objWorkflow_Module = (RightsU_Entities.Workflow_Module)ViewData["MyWorkflow"];
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<div class="title_block dotted_border clearfix">
+    <h2 class="pull-left">
+        @if (ViewData["Status"] == "A")
+        {
+            <span>  Add Assign WorkFlow </span>
+        }
+        else if (ViewData["Status"] == "U")
+        {
+            <span>  Edit Assign WorkFlow </span>
+        }
+        else if (ViewData["Status"] == "V")
+        {
+            <span>  View Assign WorkFlow </span>
+        }
+        <span> </span>
+    </h2>
+</div>
+
+<table class="table_brif table">
+    <tbody>
+        <tr>
+            <td class="intro">
+                @if (ViewData["Status"] != "V")
+                {
+                    <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
+                    <table class="four_column table">
+                        <tr>
+                            <td>Module Name :</td>
+                            <td>
+                                <input type="hidden" name="AssignAppCode" id="AACode" value="@objWorkflow_Module.Workflow_Module_Code " />
+                                @if (ViewData["Status"] == "U")
+                                {
+                                    @objWorkflow_Module.System_Module.Module_Name
+
+                                }
+                                else
+                                {
+                                    <select id="ddlModuleName" class="form_input chosen-select"></select>
+                                }
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>@objMessageKey.BusinessUnit :</td>
+                            <td>
+                                @if (ViewData["Status"] == "U")
+                                {
+                                    @objWorkflow_Module.Business_Unit.Business_Unit_Name
+                                    <input type="hidden" value="@objWorkflow_Module.Business_Unit_Code" id="hdnBUCode" />
+
+                                }
+                                else
+                                {
+                                    <select id="ddlBusinessUnit" class="form_input chosen-select"></select>
+                                    <input type="hidden" value="" id="hdnBUCode" />
+                                }
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Workflow Name :</td>
+                            <td>
+                                @if (ViewData["Status"] == "U")
+                                {
+                                    @objWorkflow_Module.Workflow.Workflow_Name
+                                }
+                                else
+                                {
+                                    <select id="ddlWorkflow" class="form_input chosen-select"></select>
+                                }
+                            </td>
+                        </tr>
+                        @if (ViewData["Status"] == "U")
+                        {
+                            <tr>
+                                <td>New Workflow Name :</td>
+                                <td>
+                                    <select id="ddlWorkflow_Edit" class="form_input chosen-select"></select>
+                                </td>
+                            </tr>
+                        }
+                        <tr>
+                            <td>Effective Start Date :</td>
+                            <td>
+                                @if (ViewData["Status"] == "U")
+                                {
+                                    @Html.TextBox("EffectiveSD_Edit", objWorkflow_Module.Effective_Start_Date, "{0:dd/MM/yy}", new { placeholder = "DD/MM/YYYY", @class = "ActivityDate", style = "width:20%;" })
+
+
+                                    <input type="hidden" name="hdnStartDate" id="hdnStartDate" value='@string.Format("{0:" + GlobalParams.DateFormat + "}", objWorkflow_Module.Effective_Start_Date)' />
+                                }
+                                else
+                                {
+                                    @Html.TextBox("EffectiveSD", "", "{0:dd/MM/yy}", new { @class = "ActivityDate", placeholder = "DD/MM/YYYY", style = "width:20%;" })
+                                }
+
+                            </td>
+                        </tr>
+                        @*<tr>
+                            <td>Reminder Days :</td>
+                            <td>
+                                @if (ViewData["Status"] == "U")
+                                {
+                                    string c = "0";
+
+                                    @Html.TextBox("Reminder_Days", objWorkflow_Module.Workflow_Module_Role.Select(x => x.Reminder_Days).FirstOrDefault(), new { style = "width:20%;" })
+                                  
+                                }
+                                else
+                                {
+                                    @Html.TextBox("Reminder_Days", "", new { style = "width:20%;" })
+                                }
+                            </td>
+                        </tr>*@
+                    </table>
+                }
+                else
+                {
+                    <table class="four_column table">
+                        <tr>
+                            <td>Module Name :</td>
+                            <td>
+                                <input type="hidden" name="AssignWFCode" id="WFCode_vIEW" value="@objWorkflow_Module.Workflow_Code " />
+                                @objWorkflow_Module.System_Module.Module_Name
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>@objMessageKey.BusinessUnit :</td>
+                            <td>
+                                @objWorkflow_Module.Business_Unit.Business_Unit_Name
+                                <input type="hidden" value="@objWorkflow_Module.Business_Unit_Code" id="hdnBUCode" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Workflow Name :</td>
+                            <td>
+                                @objWorkflow_Module.Workflow.Workflow_Name
+                        </tr>
+                        <tr>
+                            <td>Effective Start Date :</td>
+                            <td>
+                                @string.Format("{0:" + GlobalParams.DateFormat_Display + "}", objWorkflow_Module.Effective_Start_Date)
+                            </td>
+                        </tr>
+                        @*<tr>
+                            <td>Reminder Days :</td>
+                            <td>
+                                 @objWorkflow_Module.Workflow_Module_Role.Select(x => x.Reminder_Days).FirstOrDefault()
+                            </td>
+                        </tr>*@
+                    </table>
+                }
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<br />
+<br />
+
+<input type="hidden" id="hdnAction" value="" />
+<input type="hidden" id="hdnWorkflowSGCode" value="0" />
+<div id="divWorkflowSG" class="deal clearfix">
+
+</div>
+<br />
+<div class="bottom_action">
+    @if (ViewData["Status"] != "V")
+    {
+        <ul class="form_link_nav clearfix">
+            <li>
+                <input type="button" id="btnSave" class="btn btn-primary" value="Assign" onclick="SaveWorkflowModule()" />
+            </li>
+            <li>
+                <input type="button" id="btnCancel" class="btn btn-primary" value="Cancel" onclick="CancelSaveDeal()" />
+            </li>
+        </ul>
+    }
+    else
+    {
+        <ul class="form_link_nav clearfix">
+            <li>
+                <input type="button" id="btnCancel" class="btn btn-primary" value="Cancel" onclick="BindPartialView('LIST', 0)" />
+            </li>
+        </ul>
+    }
+</div>
+
+<script>
+
+
+    var URL_BindWorkflowSG = '@Url.Action("BindWorkflowSG", "AssignWorkflow")';
+    var URL_BindWorkflow_Edit = '@Url.Action("BindWorkflowEdit", "AssignWorkflow")';
+    var URL_BindWorkflow = '@Url.Action("BindWorkflow", "AssignWorkflow")';
+    var URL_BindBusinessUnit = '@Url.Action("BindBusinesUnit", "AssignWorkflow")';
+    var URL_DDL = '@Url.Action("BindDDL", "AssignWorkflow")';
+    var URL_SaveWorkflowModule = '@Url.Action("SaveWorkflowModule", "AssignWorkflow")';
+
+    $(document).ready(function () {
+        debugger;
+        $("#hdnRecodLockingCode").val($("#hdnRecodLockingCode_temp").val());
+
+        initializeTooltip();
+        $(".ActivityDate").datepicker({
+            dateFormat: "dd/mm/yy",
+        });
+        var AACode = $('#AACode').val();
+        $("#ddlWorkflow_Edit,#ddlWorkflow").change(function () {
+            debugger;
+            var WFCode = this.value;
+            if (WFCode > 0) {
+                BindWorkflowSG(WFCode,'E')
+            } else {
+                $('#divWorkflowSG').empty();
+            }
+        });
+
+        $("#ddlModuleName").change(function () {
+            debugger;
+            var MCode = this.value;
+            if (MCode > 0) {
+                BindBusinessUnit(MCode)
+            }
+            else {
+                $("#ddlBusinessUnit").empty();
+                $("#ddlWorkflow").empty();
+                $("#ddlBusinessUnit").append($("<option>").val("").text(" -- Please Select --"));
+                $("#ddlBusinessUnit").trigger("chosen:updated")
+                $("#ddlWorkflow").append($("<option>").val("").text(" -- Please Select --"));
+                $("#ddlWorkflow").trigger("chosen:updated")
+            }
+        });
+        $("#ddlBusinessUnit").change(function () {
+            debugger;
+            var MNCode = $("#ddlModuleName").val();
+            var BUCode = this.value;
+            $("#hdnBUCode").val(BUCode);
+            if (BUCode > 0) {
+                BindWorkflow(BUCode, MNCode)
+            }
+            else {
+                $("#ddlWorkflow").empty();
+                $("#ddlWorkflow").append($("<option>").val("").text(" -- Please Select --"));
+                $("#ddlWorkflow").trigger("chosen:updated")
+            }
+        });
+
+        var test = '@ViewData["Status"].ToString()';
+        if (test == "U") {
+            BindWorkflow_Edit(AACode);
+        }
+        else if (test == "V") {
+            debugger;
+            var WFCode_vIEW = $("#WFCode_vIEW").val();
+            BindWorkflowSG(WFCode_vIEW,'V')
+        }
+        else {
+            BindDDL();
+        }
+    });
+
+    function CancelSaveDeal() {
+        debugger;
+        Command_Name = "CANCEL_SAVE_DEAL";
+        showAlert("I", 'All unsaved data will be lost, still want to go ahead?', "OKCANCEL");
+    }
+    function handleOk() {
+        if (Command_Name == "CANCEL_SAVE_DEAL") {
+            var recordLockingCode = parseInt($('#hdnRecodLockingCode').val())
+            if (recordLockingCode > 0)
+                ReleaseRecordLock(recordLockingCode, URL_Release_Lock);
+
+
+            BindPartialView("LIST", 0)
+        }
+    }
+    function BindWorkflowSG(WFCode,status) {
+        debugger;
+        var BUCode = $('#hdnBUCode').val();
+        $.ajax({
+            type: "POST",
+            url: URL_BindWorkflowSG,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                WFCode: WFCode,
+                BUCode: BUCode,
+                Status: status
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divWorkflowSG').empty();
+                    $('#divWorkflowSG').html(result);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+
+    function BindWorkflow_Edit(AACode) {
+        debugger
+        $.ajax({
+            type: "POST",
+            url: URL_BindWorkflow_Edit,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                AACode: AACode
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $("#ddlWorkflow_Edit").empty();
+                    $("#ddlWorkflow_Edit").append($("<option>").val("").text(" -- Please Select --"));
+                    $(result.lstWorkflowName_Edit).each(function (index, item) {
+                        $("#ddlWorkflow_Edit").append($("<option>").val(this.Value).text(this.Text));
+                    });
+                    $("#ddlWorkflow_Edit").trigger("chosen:updated")
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function SaveWorkflowModule() {
+        debugger
+        if (!Validate_Save_WM()) {
+            return false;
+        }
+        var rowCount = parseInt($('#rowCount').val());
+        var lstRemiderDays = new Array();
+        if (rowCount > 1) {
+            for (i = 1; i < rowCount; i++) {
+                lstRemiderDays[i - 1] = $('#Reminder_Days' + i).val() + '~' + $('#Workflow_Role_Code' + i).val();
+            }
+        }
+        var Record_Code = $('#hdnRecodLockingCode').val();
+        var Reminder_Days = $('#Reminder_Days').val();
+
+        var Module_Code = $("#ddlModuleName").val();
+        var Businessunit_Code = $("#ddlBusinessUnit").val();
+        var Workflow_Code = $("#ddlWorkflow").val();
+        var ESD = $("#EffectiveSD").val();
+        var AACode = 0;
+        var New_Workflow_Code = 0;
+        var New_ESD = "";
+        var test = '@ViewData["Status"].ToString()';
+        if (test == "U") {
+            AACode = $("#AACode").val();
+            New_Workflow_Code = $("#ddlWorkflow_Edit").val();
+            New_ESD = $("#EffectiveSD_Edit").val();
+        }
+
+        var formData = new FormData();
+        formData.append("Record_Code", Record_Code);
+        formData.append("Module_Code", Module_Code);
+        formData.append("Businessunit_Code", Businessunit_Code);
+        formData.append("Workflow_Code", Workflow_Code);
+        formData.append("ESD", ESD);
+        formData.append("New_ESD", New_ESD);
+        formData.append("AACode", AACode);
+        formData.append("New_Workflow_Code", New_Workflow_Code);
+        formData.append("Reminder_Days", lstRemiderDays);
+        $.ajax({
+            type: "POST",
+            url: URL_SaveWorkflowModule,
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            processData: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger;
+                    if (result.Status == "S") {
+                        $('#hdnRecodLockingCode').val(0)
+                        $('#hdnRecodLockingCode_temp').val(0)
+                        showAlert("S", result.Message);
+                        BindPartialView("LIST", 0);
+                    }
+                    else {
+                        showAlert("E", result.Message);
+                    }
+
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+
+
+    }
+    function BindWorkflow(BUCode, MNCode) {
+        debugger
+        $.ajax({
+            type: "POST",
+            url: URL_BindWorkflow,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                BUCode: BUCode,
+                MNCode: MNCode
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $("#ddlWorkflow").empty();
+                    $("#ddlWorkflow").append($("<option>").val("").text(" -- Please Select --"));
+                    $(result.lstWorkflowName).each(function (index, item) {
+                        $("#ddlWorkflow").append($("<option>").val(this.Value).text(this.Text));
+                    });
+                    $("#ddlWorkflow").trigger("chosen:updated")
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function BindBusinessUnit(MCode) {
+        debugger
+        $.ajax({
+            type: "POST",
+            url: URL_BindBusinessUnit,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                MCode: MCode
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $("#ddlBusinessUnit").empty();
+                    $("#ddlBusinessUnit").append($("<option>").val("").text(" -- Please Select --"));
+                    $(result.lstBusinessUnit).each(function (index, item) {
+                        $("#ddlBusinessUnit").append($("<option>").val(this.Value).text(this.Text));
+                    });
+                    $("#ddlBusinessUnit").trigger("chosen:updated")
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function BindDDL() {
+        debugger
+        $.ajax({
+            type: "POST",
+            url: URL_DDL,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: '',
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger;
+                    $("#ddlModuleName").empty();
+                    $("#ddlBusinessUnit").empty();
+                    $("#ddlWorkflow").empty();
+                    $("#ddlModuleName").append($("<option>").val("").text(" -- Please Select --"));
+                    $(result.lstModuleName).each(function (index, item) {
+                        $("#ddlModuleName").append($("<option>").val(this.Value).text(this.Text));
+                    });
+                    $("#ddlModuleName").trigger("chosen:updated")
+                    $("#ddlBusinessUnit").append($("<option>").val("").text(" -- Please Select --"));
+                    $("#ddlBusinessUnit").trigger("chosen:updated")
+                    $("#ddlWorkflow").append($("<option>").val("").text(" -- Please Select --"));
+                    $("#ddlWorkflow").trigger("chosen:updated")
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function Validate_Save_WM() {
+        //debugger;
+        var returnVal = true;
+
+        var test = '@ViewData["Status"].ToString()';
+
+        if (test == "U") {
+            //debugger;
+
+            var m_names = new Array("Jan", "Feb", "Mar",
+           "Apr", "May", "Jun", "Jul", "Aug", "Sep",
+           "Oct", "Nov", "Dec");
+            var d1 = new Date();
+            var curr_date1 = d1.getDate();
+            var curr_month1 = d1.getMonth();
+            var curr_year1 = d1.getFullYear();
+            var printTodayDate = curr_date1 + "-" + m_names[curr_month1] + "-" + curr_year1;
+
+
+            var d = new Date();
+            var month = d.getMonth()+1;
+            var day = d.getDate();
+            var outPut = d.getFullYear() + '/' +
+                ((''+month).length<2 ? '0' : '') + month + '/' +
+                ((''+day).length<2 ? '0' : '') + day;
+
+            var effectiveDate = new Date(MakeDateFormate($('#hdnStartDate').val()));
+            var currentDate = new Date(MakeDateFormate($('#EffectiveSD_Edit').val()));
+            var todayDate = new Date(MakeDateFormate(outPut));
+            if (currentDate < todayDate) {
+                showAlert("E", "Effective Start Date should be greater than " + printTodayDate);
+                returnVal = false;
+            }
+
+            if ($('#ddlWorkflow_Edit').val() == "") {
+                $('#ddlWorkflow_Edit').attr('required', true)
+                returnVal = false;
+            }
+
+        }
+        else {
+            if ($('#EffectiveSD').val() == "") {
+                $('#EffectiveSD').attr('required', true)
+                returnVal = false;
+            }
+
+            if ($('#ddlModuleName').val() == "") {
+                returnVal = false;
+                $('#ddlModuleName').attr('required', true)
+
+
+            }
+            if ($('#ddlBusinessUnit').val() == "") {
+                $('#ddlBusinessUnit').attr('required', true)
+                returnVal = false;
+            }
+            if ($('#ddlWorkflow').val() == "") {
+                $('#ddlWorkflow').attr('required', true)
+                returnVal = false;
+            }
+
+        }
+
+        return returnVal;
+    }
+</script>
+

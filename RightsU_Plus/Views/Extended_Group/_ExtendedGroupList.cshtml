@@ -1,0 +1,135 @@
+﻿@model List<RightsU_Entities.Extended_Group>
+@using UTOFrameWork.FrameworkClasses
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+@{
+    int i = 0;
+}
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>
+                Sr. No.
+            </th>
+            <th>
+                Module
+            </th>
+            <th>
+                Group Name
+            </th>
+            <th>
+                Short Name
+            </th>
+            <th>
+                Group Order
+            </th>
+            <th>
+                Type
+            </th>
+            <th>
+                Actions
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count() > 0)
+        {
+            foreach (var item in Model)
+            {
+                i++;
+                <tr>
+                    <td style="text-align:center">
+                        @i
+                    </td>
+                    <td style="text-align:center">
+                        @{
+                            string SelectedModule = "";
+                        }
+                        @if (item.Module_Code == null)
+                        {
+                            <span></span>
+                        }
+                        else
+                        {
+                            {
+                                List<SelectListItem> lstModule = new List<SelectListItem>();
+                                lstModule.Add(new SelectListItem { Text = "Title", Value = "27" });
+                                lstModule.Add(new SelectListItem { Text = "Party", Value = "10" });
+                                lstModule.Add(new SelectListItem { Text = "Booking Sheet", Value = "263" });
+                                lstModule.Add(new SelectListItem { Text = "OEM", Value = "260" });
+                                SelectedModule = lstModule.Where(w => w.Value == item.Module_Code.ToString()).Select(s => s.Text).FirstOrDefault();
+                            }
+                            @SelectedModule
+                        }
+                    </td>
+                    <td style="text-align:center">
+                        @Html.DisplayFor(modelItem => item.Group_Name)
+                    </td>
+                    <td style="text-align:center">
+                        @Html.DisplayFor(modelItem => item.Short_Name)
+                    </td>
+                    <td style="text-align:center">
+                        @Html.DisplayFor(modelItem => item.Group_Order)
+                    </td>
+                    <td style="text-align:center">
+                        @*@Html.DisplayFor(modelItem => item.Add_Edit_Type)*@
+                        @if(item.Add_Edit_Type == "grid")
+                        {
+                            <span>Grid</span>
+                        }
+                        else
+                        {
+                            <span>Row</span>
+                        }
+                    </td>
+                    <td style="text-align:center">
+                        @if (item.IsActive == "Y")
+                        {
+                            if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForEdit.ToString() + "~"))
+                            {
+                                <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer;" onclick="CheckRecordLock(@item.Extended_Group_Code, 'EDIT', '@item.Module_Code')"></a>
+                            }
+                            if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForView + "~"))
+                            {
+                                <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="AddEditViewExtdGrp(@item.Extended_Group_Code, 'VIEW', '@item.Module_Code')"></a>
+                            }
+                            if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForDeactivate + "~"))
+                            {
+                                <a title="@objMessageKey.Deactivate" class="glyphicon glyphicon-thumbs-down" style="cursor: pointer;" onclick="ActivateDeactivateExtdGrp(@item.Extended_Group_Code, 'N')"></a>
+                            }
+                        }
+                        else
+                        {
+                            if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForEdit.ToString() + "~"))
+                            {
+                                <a title="Cannot edit this group as it is deactivated" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
+                            }
+                            if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForView + "~"))
+                            {
+                                <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="AddEditViewExtdGrp(@item.Extended_Group_Code, 'VIEW', '@item.Module_Code')"></a>
+                            }
+                            if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForActivate + "~"))
+                            {
+                                <a title="@objMessageKey.Activate" class="glyphicon glyphicon-thumbs-up" style="cursor: pointer;" onclick="ActivateDeactivateExtdGrp(@item.Extended_Group_Code, 'Y')"></a>
+                            }
+                        }
+                    </td>
+
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="7">@objMessageKey.Norecordfound</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,568 @@
+﻿@model IEnumerable<RightsU_Entities.Acq_Sport_Ancillary_Wrapper>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script type="text/javascript">
+
+    var CallFromDeleted = '';
+    var pageMode_G = '@ViewBag.PageMode';
+
+    var URL_BindSales = '@Url.Action("BindSales", "Acq_Sport_Ancillary")';
+    var URL_CreateSales = '@Url.Action("CreateSales", "Acq_Sport_Ancillary")';
+    var URL_DeleteSportSalesAncillary = '@Url.Action("DeleteSportSalesAncillary", "Acq_Sport_Ancillary")'
+
+    $(document).ready(function () {
+        $('#lblDisplaySalesTitle').SumoSelect({ selectAll: true, triggerChangeCombined: false });
+        $('#lblDisplaySalesTitle')[0].sumo.reload();
+        $(":radio[name=rdoSalesDisplayType]").change(function (e) {
+            var type = $(this).val();
+
+            if (($('#lblDisplaySalesTitle').val() == '' || $('#lblDisplaySalesTitle').val() == null) && type == 'D') {
+                showAlert('E', '@objMessageKey.Pleaseselecttitle');
+
+                if (type == 'G')
+                    $('input[name=rdoSalesDisplayType][value=D]').prop('checked', true);
+                else
+                    $('input[name=rdoSalesDisplayType][value=G]').prop('checked', true);
+            }
+            else {
+                var arrTitles = '';
+
+                if ($('#lblDisplaySalesTitle').val() != null)
+                    arrTitles = $('#lblDisplaySalesTitle').val().join(',');
+
+                if (type == 'G')
+                    arrTitles = '';
+
+                $.ajax({
+                    type: "POST",
+                    url: URL_BindSales,
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify({
+                        displayType: type,
+                        selectedTitle: arrTitles
+                    }),
+                    success: function (result) {
+                        if (result == "true") {
+                            redirectToLogin();
+                        }
+
+                        $('#hdnAcqDealSportSalesAncillaryCode').val('');
+                        $('#divSales').html(result);
+                        initializeChosen();
+                        initializeExpander();
+                        $('#lblDisplaySalesTitle').val(arrTitles.split(','))[0].sumo.reload();
+                        $('input[name=rdoSalesDisplayType][value=' + type + ']').prop('checked', true);
+                    },
+                    error: function (result) {
+                        alert('Error: ' + result.responseText);
+                    }
+                });
+            }
+        });
+    });
+    function openSalesPopUp(obj, titleCode) {
+        var type = $(":radio[name=rdoSalesDisplayType]:checked").val()
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+     
+        $.ajax({
+            type: "POST",
+            url: URL_CreateSales,
+            traditional: true,
+            async: false,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Acq_Deal_Sport_Ancillary_Code: obj,
+                TitleCode: titleCode,
+                DisplayType: type
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+
+                $('#popSportSalesAncillary').html(result);
+                initializeChosen();
+
+                if (obj > 0 && pageMode_G != 'V' && pageMode_G != 'APRV' && pageMode_G != 'EWOA') {
+                    setSponsorOnEdit();
+
+                    if ($("input[name=FRO_Given_Official_Sponsor]:checked").val() === 'N') {
+                        $('#Official_FRO_No_of_Days').val('');
+                        $('#Official_FRO_Validity').val('');
+                        $("#Official_FRO_No_of_Days").prop('disabled', true);
+                        $("#Official_FRO_Validity").prop('disabled', true);
+                    }
+                    else {
+                        $("#Official_FRO_No_of_Days").removeAttr('disabled');
+                        $("#Official_FRO_Validity").removeAttr('disabled');
+                    }
+
+                    if ($("input[name=FRO_Given_Title_Sponsor]:checked").val() === 'N') {
+                        $('#Title_FRO_No_of_Days').val('');
+                        $('#Title_FRO_Validity').val('');
+                        $("#Title_FRO_No_of_Days").prop('disabled', true);
+                        $("#Title_FRO_Validity").prop('disabled', true);
+                    }
+                    else {
+                        $("#Title_FRO_No_of_Days").removeAttr('disabled');
+                        $("#Title_FRO_Validity").removeAttr('disabled');
+                    }
+
+                    if ($("input[name=Last_Matching_Rights_Official_Sponsor]:checked").val() === 'N') {
+                        $('#Official_Last_Matching_Rights_Validity').val('');
+                        $("#Official_Last_Matching_Rights_Validity").prop('disabled', true);
+                    }
+                    else
+                        $("#Official_Last_Matching_Rights_Validity").removeAttr('disabled');
+
+                    if ($("input[name=Last_Matching_Rights_Title_Sponsor]:checked").val() === 'N') {
+                        $('#Title_Last_Matching_Rights_Validity').val('');
+                        $("#Title_Last_Matching_Rights_Validity").prop('disabled', true);
+                    }
+                    else
+                        $("#Title_Last_Matching_Rights_Validity").removeAttr('disabled');
+                }
+
+                $('#popSportSalesAncillary').modal();
+                $('#lstSalesTitle').SumoSelect({ selectAll: true, triggerChangeCombined: false });
+                $('#lstSalesTitle')[0].sumo.reload();
+                initializeExpander();
+            },
+            error: function (result) { }
+        });
+        return false;
+    }
+    function setSponsorOnEdit() {
+        $('#btnAddTexSpo').remove();
+        var titleSponsorList = $('#hdnSponserlist').val();
+        var titleSponsorCount = parseInt($('#hdnSponsorId').val());
+
+        if (titleSponsorCount == 1)
+            $('#txtSponsor1').val(titleSponsorList);
+        else {
+            var titleSponsorArr = $('#hdnSponserlist').val().split('~');
+            $('#txtSponsor1').val(titleSponsorArr[0]);
+
+            for (var i = 1; i < titleSponsorCount ; i++) {
+                var txt = "<br id='brs" + (i + 1) + "'/><input id='txtSponsor" + (i + 1) + "' type='text' style='width:186px;'>";
+                txt += "</input>";
+                txt += "<input type='button' value='X' onclick='hideControl(this,txtSponsor" + (i + 1) + ",brs" + (i + 1) + ")'/>"
+                $("#sponsorlist").append(txt);
+                $("#txtSponsor" + (i + 1)).val(titleSponsorArr[i]);
+            }
+        }
+
+        $('#sponsorlist').append("<input id='btnAddTexSpo' type='button' value='+' onclick='createtextbox(this);' />");
+        $('#btnAddtxtOff').remove();
+
+        var titleOfficialList = $('#hdnOfficiallist').val();
+        var titleOfficialCount = parseInt($('#hdnOfficialId').val());
+
+        if (titleOfficialCount == 1)
+            $('#txtOfficial1').val(titleOfficialList);
+        else {
+            var titleOfficialArr = $('#hdnOfficiallist').val().split('~');
+            $('#txtOfficial1').val(titleOfficialArr[0]);
+
+            for (var j = 1; j < titleOfficialCount ; j++) {
+                var txt = "<br id='bro" + (j + 1) + "'/><input id='txtOfficial" + (j + 1) + "' type='text' style='width:186px;'>";
+                txt += "</input>";
+                txt += "<input type='button' value='X' onclick='hideControl(this,txtOfficial" + (j + 1) + ",bro" + (j + 1) + ")'/>"
+                $("#officiallist").append(txt);
+                $("#txtOfficial" + (j + 1)).val(titleOfficialArr[j]);
+            }
+        }
+
+        $('#officiallist').append("<input id='btnAddtxtOff' type='button' value='+' onclick='createtextboxOfficial(this);' />");
+
+        if ($("#sponsorlist").find('input[type="text"]').length > 3) {
+            $("#sponsorlist").css("overflow-y", "auto");
+            $("#sponsorlist").css("height", "63px");
+        }
+        else {
+            $("#sponsorlist").css("overflow-y", "hidden");
+            $("#sponsorlist").css("height", "auto");
+        }
+
+        if ($("#officiallist").find('input[type="text"]').length > 3) {
+            $("#officiallist").css("overflow-y", "auto");
+            $("#officiallist").css("height", "63");
+        }
+        else {
+            $("#officiallist").css("overflow-y", "hidden");
+            $("#officiallist").css("height", "auto");
+        }
+
+        loadAutoComplete();
+    }
+    function closeSalesPopUp() {
+        $('#popSportSalesAncillary').modal('hide')
+    }
+    function DeleteSportSalesAncliallary(Acq_Deal_Sport_Sales_Ancillary_Code, titleCode) {
+        $('#hdnTitleCode').val(titleCode);
+        $('#hdnAcqDealSportSalesAncillaryCode').val(Acq_Deal_Sport_Sales_Ancillary_Code);
+        CallFromDeleted = 'Y';
+        showAlert("I", "Are you sure, you want to delete this record ?", "OKCANCEL");
+    }
+    function handleOk() {
+        if (CallFromDeleted == 'Y') {
+            var Acq_Deal_Sport_Sales_Ancillary_Code = $('#hdnAcqDealSportSalesAncillaryCode').val();
+            var type = $(":radio[name=rdoSalesDisplayType]:checked").val();
+            var titleCode = $('#hdnTitleCode').val();
+
+            $.ajax({
+                type: "POST",
+                url: URL_DeleteSportSalesAncillary,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                async: false,
+                data: JSON.stringify({
+                    id: Acq_Deal_Sport_Sales_Ancillary_Code,
+                    titleCode: titleCode,
+                    DisplayType: type
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+
+                    if (result == 'Success') {
+                        var arrTitles = '';
+                        CallFromDeleted = '';
+                        showAlert("S", "@objMessageKey.RecordDeletedsuccessfully", "OK");
+
+                        if ($('#lblDisplaySalesTitle').val() != null)
+                            arrTitles = $('#lblDisplaySalesTitle').val().join(',');
+
+                        $.ajax({
+                            type: "POST",
+                            url: URL_BindSales,
+                            traditional: true,
+                            enctype: 'multipart/form-data',
+                            contentType: "application/json; charset=utf-8",
+                            data: JSON.stringify({
+                                displayType: type,
+                                selectedTitle: arrTitles
+                            }),
+                            success: function (result) {
+                                $('#hdnAcqDealSportSalesAncillaryCode').val('');
+                                $('#divSales').html(result);
+                                initializeChosen();
+                                initializeExpander();
+                                $('#lblDisplaySalesTitle').val(arrTitles).trigger("chosen:updated");
+                                $('input[name=rdoSalesDisplayType][value=' + type + ']').prop('checked', true);
+                            },
+                            error: function (result) {
+                                alert('Error: ' + result.responseText);
+                            }
+                        });
+                    }
+                    else {
+                        showAlert("E", result);
+                        return false;
+                    }
+                },
+                error: function (result) { }
+            });
+        }
+
+        $(document.getElementsByClassName('modal-open')).removeClass('modal-open');
+    }
+    function showAllClick() {
+        $.ajax({
+            type: "POST",
+            url: URL_BindSales,
+            traditional: true,
+            async: false,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                displayType: 'G',
+                selectedTitle: ''
+            }),
+            success: function (result) {
+                $('#divSales').html(result);
+                initializeChosen();
+                initializeExpander();
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function closeSales() {
+        $('#popSportSalesAncillary').modal('hide');
+    }
+</script>
+<style>
+    .SumoSelect{
+        width : 94% !important;
+    }
+</style>
+<div class="scale_table_block">
+    <table class="table abovePaging">
+        <tr>
+            <td class="bold" style="width: 10%;">@objMessageKey.PageView : </td>
+            <td style="width: 14%;">
+                <label class="radio-inline">
+                    <input type="radio" name="rdoSalesDisplayType" value="G" checked="checked" tabindex="0" />@objMessageKey.Group
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" name="rdoSalesDisplayType" value="D" tabindex="0" />@objMessageKey.Detail
+                </label>
+            </td>
+            <td style="width: 56%;">
+                @Html.ListBox("lblDisplaySalesTitle", ViewBag.DisplaySalesTitleList as MultiSelectList)
+            </td>
+            <td>
+                <input type="submit" class="btn-primary" value="@objMessageKey.ShowAll" onclick="showAllClick()" /></td>
+            <td style="width: 10%;">
+                @if (ViewBag.PageMode != "V" && ViewBag.PageMode != "APRV" && ViewBag.PageMode != "EWOA")
+                {
+                    <input type="button" class="btn-primary" value="@objMessageKey.Add" onclick="return openSalesPopUp(0);" />
+                }
+            </td>
+        </tr>
+    </table>
+</div>
+
+<table class="table table-bordered table-hover" id="tblSales">
+    <thead>
+        <tr>
+            <th style="width: 20%;">@objMessageKey.Title</th>
+            <th style="width: 10%;">@objMessageKey.TypeOfSponsor</th>
+            <th style="width: 13%;">@objMessageKey.Sponsor</th>
+            <th style="width: 17%;">@objMessageKey.WhetherFROToGiven</th>
+            <th style="width: 5%;">@objMessageKey.PriceProtection</th>
+            <th style="width: 15%;">@objMessageKey.LastMatchingRight</th>
+            <th style="width: 15%;" class="longTH">@objMessageKey.Excludedcategoriesofsponsorsandothercriticalinformation</th>
+            <th style="width: 15%;">@objMessageKey.Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (int i = 0; i < Model.Count(); i++)
+        {
+            if (ViewBag.DisplayType == "G")
+            {
+            <tr>
+                @if ((i + 1) < Model.Count())
+                {
+                    if (Model.ElementAt(i).Acq_Deal_Sport_Sales_Ancillary_Code == Model.ElementAt(i + 1).Acq_Deal_Sport_Sales_Ancillary_Code)
+                    {
+                    <td rowspan="2">
+                        <div class="expandable">
+                            @Model.ElementAt(i).Title
+                        </div>
+                    </td>
+                    }
+                    else
+                        if (Model.ElementAt(i).Acq_Deal_Sport_Sales_Ancillary_Code == Model.ElementAt(i - 1).Acq_Deal_Sport_Sales_Ancillary_Code)
+                        {
+                        }
+                        else
+                        {
+                    <td>
+                        <div class="expandable">
+                            @Model.ElementAt(i).Title
+                        </div>
+                    </td>
+                        }
+                }
+                else
+                    if (Model.ElementAt(i).Acq_Deal_Sport_Sales_Ancillary_Code == Model.ElementAt(i - 1).Acq_Deal_Sport_Sales_Ancillary_Code)
+                    {
+                    }
+                    else
+                    {
+                    <td>
+                        <div class="expandable">
+                            @Model.ElementAt(i).Title
+                        </div>
+                    </td>
+                    }
+
+                <td>@Model.ElementAt(i).Type_Of_Sponsor</td>
+                <td>@Model.ElementAt(i).Sponsor</td>
+                <td>@Model.ElementAt(i).FRO_To_Given</td>
+                <td>@Model.ElementAt(i).Price_Protection</td>
+                <td>@Model.ElementAt(i).Last_Matching_Right</td>
+
+                @if ((i + 1) < Model.Count())
+                {
+                    if (Model.ElementAt(i).Acq_Deal_Sport_Sales_Ancillary_Code == Model.ElementAt(i + 1).Acq_Deal_Sport_Sales_Ancillary_Code)
+                    {
+                    <td rowspan="2">
+                        <div class="expandable">
+                            @Model.ElementAt(i).Remarks
+                        </div>
+                    </td>
+                        if (ViewBag.PageMode != "V" && ViewBag.PageMode != "APRV" && ViewBag.PageMode != "EWOA")
+                        {
+                    <td rowspan="2"><a title="@objMessageKey.Edit" class = "glyphicon glyphicon-pencil" onclick='openSalesPopUp(@Model.ElementAt(i).Acq_Deal_Sport_Sales_Ancillary_Code,@Model.ElementAt(i).TitleCode);'/>&nbsp; <a title="@objMessageKey.Delete" class = "glyphicon glyphicon-trash" onclick='DeleteSportSalesAncliallary(@Model.ElementAt(i).Acq_Deal_Sport_Sales_Ancillary_Code,@Model.ElementAt(i).TitleCode);'/></td>
+                        }
+                        else
+                        {
+                    <td rowspan="2"><a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" onclick='openSalesPopUp(@Model.ElementAt(i).Acq_Deal_Sport_Sales_Ancillary_Code,@Model.ElementAt(i).TitleCode);' /></td>
+                        }
+                    }
+                    else
+                        if (Model.ElementAt(i).Acq_Deal_Sport_Sales_Ancillary_Code == Model.ElementAt(i - 1).Acq_Deal_Sport_Sales_Ancillary_Code)
+                        {
+                        }
+                        else
+                        {
+                    <td>
+                        <div class="expandable">
+                            @Model.ElementAt(i).Remarks
+                        </div>
+                    </td>
+                            if (ViewBag.PageMode != "V" && ViewBag.PageMode != "APRV" && ViewBag.PageMode != "EWOA")
+                            {
+                    <td><a title="@objMessageKey.Edit" class = "glyphicon glyphicon-pencil" onclick='openSalesPopUp(@Model.ElementAt(i).Acq_Deal_Sport_Sales_Ancillary_Code,@Model.ElementAt(i).TitleCode);'/>&nbsp; <a title="@objMessageKey.Delete" class = "glyphicon glyphicon-trash" onclick='DeleteSportSalesAncliallary(@Model.ElementAt(i).Acq_Deal_Sport_Sales_Ancillary_Code,@Model.ElementAt(i).TitleCode);'/></td>
+                            }
+                            else
+                            {
+                    <td><a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" onclick='openSalesPopUp(@Model.ElementAt(i).Acq_Deal_Sport_Sales_Ancillary_Code,@Model.ElementAt(i).TitleCode);'/></td>
+                            }
+                        }
+                }
+                else
+                    if (Model.ElementAt(i).Acq_Deal_Sport_Sales_Ancillary_Code == Model.ElementAt(i - 1).Acq_Deal_Sport_Sales_Ancillary_Code)
+                    {
+                    }
+                    else
+                    {
+                    <td>
+                        <div class="expandable">
+                            @Model.ElementAt(i).Remarks
+                        </div>
+                    </td>
+                        if (ViewBag.PageMode != "V" && ViewBag.PageMode != "APRV" && ViewBag.PageMode != "EWOA")
+                        {
+                    <td><a title="@objMessageKey.Edit" class = "glyphicon glyphicon-pencil" onclick='openSalesPopUp(@Model.ElementAt(i).Acq_Deal_Sport_Sales_Ancillary_Code,@Model.ElementAt(i).TitleCode);'/>&nbsp; <a title="@objMessageKey.Delete" class = "glyphicon glyphicon-trash" onclick='DeleteSportSalesAncliallary(@Model.ElementAt(i).Acq_Deal_Sport_Sales_Ancillary_Code,@Model.ElementAt(i).TitleCode);'/></td>
+                        }
+                        else
+                        {
+                    <td><a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" onclick='openSalesPopUp(@Model.ElementAt(i).Acq_Deal_Sport_Sales_Ancillary_Code,@Model.ElementAt(i).TitleCode);'/></td>   
+                        }
+                    }
+            </tr>
+            }
+            else
+            {
+            <tr>
+                @if ((i + 1) < Model.Count())
+                {
+                    if (Model.ElementAt(i).Acq_Deal_Sport_Sales_Ancillary_Code == Model.ElementAt(i + 1).Acq_Deal_Sport_Sales_Ancillary_Code && Model.ElementAt(i).TitleCode == Model.ElementAt(i + 1).TitleCode)
+                    {
+                    <td rowspan="2">
+                        <div class="expandable">
+                            @Model.ElementAt(i).Title
+                        </div>
+                    </td>
+                    }
+                    else
+                        if (Model.ElementAt(i).Acq_Deal_Sport_Sales_Ancillary_Code == Model.ElementAt(i - 1).Acq_Deal_Sport_Sales_Ancillary_Code && Model.ElementAt(i).TitleCode == Model.ElementAt(i - 1).TitleCode)
+                        {
+                        }
+                        else
+                        {
+                    <td>
+                        <div class="expandable">
+                            @Model.ElementAt(i).Title
+                        </div>
+                    </td>
+                        }
+                }
+                else
+                    if (Model.ElementAt(i).Acq_Deal_Sport_Sales_Ancillary_Code == Model.ElementAt(i - 1).Acq_Deal_Sport_Sales_Ancillary_Code && Model.ElementAt(i).TitleCode == Model.ElementAt(i - 1).TitleCode)
+                    {
+                    }
+                    else
+                    {
+                    <td>
+                        <div class="expandable">@Model.ElementAt(i).Title</div>
+                    </td>
+                    }
+
+                <td>@Model.ElementAt(i).Type_Of_Sponsor</td>
+                <td>@Model.ElementAt(i).Sponsor</td>
+                <td>@Model.ElementAt(i).FRO_To_Given</td>
+                <td>@Model.ElementAt(i).Price_Protection</td>
+                <td>@Model.ElementAt(i).Last_Matching_Right</td>
+
+                @if ((i + 1) < Model.Count())
+                {
+                    if (Model.ElementAt(i).Acq_Deal_Sport_Sales_Ancillary_Code == Model.ElementAt(i + 1).Acq_Deal_Sport_Sales_Ancillary_Code && Model.ElementAt(i).TitleCode == Model.ElementAt(i + 1).TitleCode)
+                    {
+                    <td rowspan="2">
+                        <div class="expandable">@Model.ElementAt(i).Remarks</div>
+                    </td>
+                        if (ViewBag.PageMode != "V" && ViewBag.PageMode != "APRV" && ViewBag.PageMode != "EWOA")
+                        {
+                    <td rowspan="2"><a title="@objMessageKey.Edit" class = "glyphicon glyphicon-pencil" onclick='openSalesPopUp(@Model.ElementAt(i).Acq_Deal_Sport_Sales_Ancillary_Code,@Model.ElementAt(i).TitleCode);'/>&nbsp; <a title="@objMessageKey.Delete" class = "glyphicon glyphicon-trash" onclick='DeleteSportSalesAncliallary(@Model.ElementAt(i).Acq_Deal_Sport_Sales_Ancillary_Code,@Model.ElementAt(i).TitleCode);'/></td>
+                        }
+                        else
+                        {
+                    <td rowspan="2"><a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" onclick='openSalesPopUp(@Model.ElementAt(i).Acq_Deal_Sport_Sales_Ancillary_Code,@Model.ElementAt(i).TitleCode);'/></td>  
+                        }
+                    }
+                    else
+                        if (Model.ElementAt(i).Acq_Deal_Sport_Sales_Ancillary_Code == Model.ElementAt(i - 1).Acq_Deal_Sport_Sales_Ancillary_Code && Model.ElementAt(i).TitleCode == Model.ElementAt(i - 1).TitleCode)
+                        {
+                        }
+                        else
+                        {
+                    <td>
+                        <div class="expandable">@Model.ElementAt(i).Remarks</div>
+                    </td>
+                            if (ViewBag.PageMode != "V" && ViewBag.PageMode != "APRV" && ViewBag.PageMode != "EWOA")
+                            {
+                    <td><a title="@objMessageKey.Edit" class = "glyphicon glyphicon-pencil" onclick='openSalesPopUp(@Model.ElementAt(i).Acq_Deal_Sport_Sales_Ancillary_Code,@Model.ElementAt(i).TitleCode);'/>&nbsp; <a title="@objMessageKey.Delete" class = "glyphicon glyphicon-trash" onclick='DeleteSportSalesAncliallary(@Model.ElementAt(i).Acq_Deal_Sport_Sales_Ancillary_Code,@Model.ElementAt(i).TitleCode);'/></td>
+                            }
+                            else
+                            {
+                    <td><a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" onclick='openSalesPopUp(@Model.ElementAt(i).Acq_Deal_Sport_Sales_Ancillary_Code,@Model.ElementAt(i).TitleCode);'/></td> 
+                            }
+                        }
+                }
+                else
+                    if (Model.ElementAt(i).Acq_Deal_Sport_Sales_Ancillary_Code == Model.ElementAt(i - 1).Acq_Deal_Sport_Sales_Ancillary_Code && Model.ElementAt(i).TitleCode == Model.ElementAt(i - 1).TitleCode)
+                    {
+                    }
+                    else
+                    {
+                    <td>
+                        <div class="expandable">@Model.ElementAt(i).Remarks</div>
+                    </td>
+                        if (ViewBag.PageMode != "V" && ViewBag.PageMode != "APRV" && ViewBag.PageMode != "EWOA")
+                        {
+                    <td><a title="@objMessageKey.Edit" class = "glyphicon glyphicon-pencil" onclick='openSalesPopUp(@Model.ElementAt(i).Acq_Deal_Sport_Sales_Ancillary_Code,@Model.ElementAt(i).TitleCode);'/>&nbsp; <a title="@objMessageKey.Delete" class = "glyphicon glyphicon-trash" onclick='DeleteSportSalesAncliallary(@Model.ElementAt(i).Acq_Deal_Sport_Sales_Ancillary_Code,@Model.ElementAt(i).TitleCode);'/></td>
+                        }
+                        else
+                        {
+                    <td><a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" onclick='openSalesPopUp(@Model.ElementAt(i).Acq_Deal_Sport_Sales_Ancillary_Code,@Model.ElementAt(i).TitleCode);'/></td> 
+                        }
+                    }
+            </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@Html.Hidden("hdnAcqDealSportSalesAncillaryCode")
+@Html.Hidden("hdnTitleCode")
+
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade scroll" id="popSportSalesAncillary"
+    role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+</div>

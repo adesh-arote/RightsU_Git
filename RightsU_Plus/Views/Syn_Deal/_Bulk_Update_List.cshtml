@@ -1,0 +1,675 @@
+﻿@model List<RightsU_Entities.USP_List_Rights_Result>
+@using UTOFrameWork.FrameworkClasses
+@{
+                /**/
+
+                MessageKey objMessageKey = new MessageKey();
+                if (Session["objMessageKey"] != null)
+                {
+                    objMessageKey = (MessageKey)Session["objMessageKey"];
+                }
+}
+<script>
+    IsCall = 'Y';
+    var pos = null;
+    var URL_BindPlatformTreePopup = '@Url.Action("BindPlatformTreePopup", "Syn_Rights_List")';
+    $(document).ready(function () {
+        if ($('#PaginationBulk'))
+            SetPaging();
+        $('.expandable').expander({
+            slicePoint: 20,
+            expandPrefix: '',
+            expandText: '@objMessageKey.readmore',
+            collapseTimer: 0,
+            userCollapseText: '<span>[^]</span>'
+        });
+        $('.clsPlatformPopup').on('click', function(e) {
+            var btdId = e.target.id;
+            var hdnRightCodeID = btdId.replace("_aViewPlatform", "_hdnRightCode");
+            var rightCode = $('#' + hdnRightCodeID).val();
+            pos = $('#' + btdId).offset();
+            $.ajax({
+                type: "POST",
+                url: URL_BindPlatformTreePopup,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    rightCode: rightCode
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    $('#divPlatformTree').html(result);
+                    $('#popupFade').offset({ top: pos.top, left: pos.left}).fadeIn();
+                    $('#popupFade').offset({ top: pos.top, left: pos.left}).fadeIn();
+                },
+                error: function (result) { }
+            });
+            return false;
+        });
+
+        $( "#popupFade" ).click(function( event ) {
+            event.stopPropagation();
+        });
+        $('.tooltip-wrapper').tooltip();
+
+        chkEnableOrDisable();
+
+        //$('.checkbox').on('change', function () {
+        $('.checkbox').click(function (event) {
+            debugger;
+            CommonCalling();
+        });
+    })
+
+    function chkEnableOrDisable() {
+        $(':checkbox').each(function () {
+            if (this.name == "chkRecord" && !this.disabled) {
+                debugger;
+                //$(this).attr('title', 'This is the hover-over text');
+                chkAllBxEnableOrDisable(this);
+            }
+            else if (this.disabled) {
+                $(this).attr('title', " Can not edit this title as it is in Error Stage");
+            }
+        })
+    }
+    function FadeOutPopup()
+    {
+        $('#divPlatformTree').empty();
+        $('#popupFade').offset({ top: pos.top, left: pos.left}).fadeOut();
+        return false;
+    }
+    function SetPaging() {
+        IsCall = 'N';
+        var PageNo, recordCnt;
+
+        if ('@ViewBag.PageNo' != null)
+            PageNo = '@ViewBag.PageNo';
+
+        if ('@ViewBag.RecordCount' != null)
+            recordCnt = '@ViewBag.RecordCount';
+
+
+        $("#lblTotal").text('@objMessageKey.TotalRecords : ' + recordCnt);
+        PageNo = PageNo - 1;
+
+        var opt = { callback: pageselectCallback };
+        opt["items_per_page"] = $('#txtPageSize').val();
+        opt["num_display_entries"] = 5;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = PageNo;
+        $("#PaginationBulk").pagination(recordCnt, opt);
+    }
+
+    function pageselectCallback(page_index, jq) {
+        if (IsCall == 'Y') {
+            $("#hdnPageIndex").val(page_index + 1);
+            var ViewType = $('input[name=optViewType]:checked').val();
+            BindGridNew($("#" + ViewType)[0], 'Y');
+            //LoadBulkUpdateList();
+        }
+        else
+            IsCall = 'Y';
+    }
+</script>
+<script language="javascript" type="text/javascript">
+    $(document).ready(function () {
+
+        $('.nav-toggle').click(function () {
+            debugger;
+            var collapse_content_selector = $(this).attr('onclick');
+            var toggle_switch = $(this);
+            if ($(this).hasClass('glyphicon-triangle-top')) {
+                toggle_switch.removeClass("glyphicon-triangle-top");
+                toggle_switch.addClass("glyphicon-triangle-bottom");
+                $(collapse_content_selector).hide();
+            }
+            else {
+                toggle_switch.removeClass("glyphicon-triangle-bottom");
+                toggle_switch.addClass("glyphicon-triangle-top");
+                $(collapse_content_selector).show();
+            }
+            //$(collapse_content_selector).toggle(function () {
+            //});
+        });
+
+        $('.list-toggle').click(function () {
+            debugger;
+            var totalCount = @Model.Count;
+
+            for (var i = 1; i <= totalCount; i++) {
+                var collapse_content_selector = "#coll"+i;
+                var toggle_switch = $(this);
+                var toggle_switch_Col = $(".expander");
+                if ($(this).hasClass('glyphicon-triangle-top')) {
+
+                    if (i == totalCount) {
+                        toggle_switch.removeClass("glyphicon-triangle-top");
+                        toggle_switch.addClass("glyphicon-triangle-bottom");
+                    }
+                    toggle_switch_Col.removeClass("glyphicon-triangle-top");
+                    toggle_switch_Col.addClass("glyphicon-triangle-bottom");
+                    $(collapse_content_selector).hide();
+                }
+                else {
+                    if (i == totalCount) {
+                        toggle_switch.removeClass("glyphicon-triangle-bottom");
+                        toggle_switch.addClass("glyphicon-triangle-top");
+                    }
+                    toggle_switch_Col.removeClass("glyphicon-triangle-bottom");
+                    toggle_switch_Col.addClass("glyphicon-triangle-top");
+                    $(collapse_content_selector).show();
+                }
+
+            }
+
+        });
+        $("td").bind("mousemove", function (event) {
+            $(this).find("span.PlatformExpand").css({
+                top: event.pageY + 5 + "px",
+                left: event.pageX + 5 + "px"
+            }).show();
+        }).bind("mouseout", function () {
+            $("span.PlatformExpand").hide();
+        });
+    });
+
+    function helpClose() {
+        document.getElementById("collapse1").style.display = 'none';
+
+    }
+    $('#chkAll').click(function (event) {
+        debugger;
+        if (this.checked) {
+            // Iterate each checkbox
+            $(':checkbox').each(function () {
+                if (!this.disabled) {
+                    if (this.name != "Is_Tentative") {
+                        this.checked = true;
+                        //chkAllBxEnableOrDisable(this);
+                    }
+                }
+            });
+        } else {
+            $(':checkbox').each(function () {
+                if (!this.disabled) {
+                    if (this.name != "Is_Tentative") {
+                        this.checked = false;
+                    }
+                }
+            });
+        }
+    });
+</script>
+
+<style>
+    .container {
+        /* width: 900px; */
+        width: 95%;
+        margin: 0 auto;
+        /* min-height: 710px; */
+        padding: 0px 0 55px 80px !important;
+    }
+
+    .help {
+        text-align: center;
+        border-left: 1px solid #000;
+        border-right: 1px solid #000;
+        border-bottom: 1px solid #000;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+        padding: 0px 2px 2px 2px;
+        width: 80px;
+        float: right;
+    }
+
+        .help:hover {
+            background: #e0e0e0;
+        }
+
+    .collapse {
+        position: absolute;
+        right: 3px;
+        top: 72px;
+        width: 180px;
+        height: 280px;
+        z-index: 99;
+        background-color: #f3f3f3;
+        border: 1px solid #000000;
+    }
+
+        .collapse div {
+            padding: 15px;
+            border-bottom: 1px solid #dddddd;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+            .collapse div:hover {
+                background-color: #0080c0;
+                color: #ffffff;
+            }
+
+    .rowBorder td {
+        border-bottom: 1px dotted #dddddd !important;
+        background-color: #ffffff !important;
+    }
+
+    .rowBg {
+        background-color: #eaeaea;
+    }
+
+        .rowBg td {
+            border-bottom: 1px dotted #dddddd !important;
+        }
+
+    .PlatformExpand {
+        position: absolute;
+        display: none;
+        z-index: 1000;
+        background-color: black;
+        color: white;
+        border: 1px solid black;
+        padding: 5px;
+    }
+
+    .expandable li {
+        float: none;
+        line-height: initial;
+        list-style: none;
+        margin: 0;
+    }
+
+        .expandable li:before {
+            content: "\0BB \020";
+        }
+
+    #popupFade {
+        position: absolute;
+        display: none;
+        max-width: 300px;
+        overflow: hidden;
+        border: #bbb 1px solid;
+        z-index: 100;
+    }
+
+        #popupFade .modal-dialog ul.fancytree-container {
+            height: 100%;
+            border: 0;
+        }
+
+        #popupFade form .modal_block {
+            padding: 3px 10px;
+        }
+
+        #popupFade #Rights_Platform {
+            max-height: 300px;
+        }
+</style>
+<div class="deal clearfix">
+    @{
+        int counter = 0;
+        string Concat = " To ";
+        var hdnPlatformCode_ = "hdnPlatformCode_";
+        string ClassName = "rowBg";
+
+        <input type="hidden" id="hdnCurrentID" />
+        @Html.Hidden("hdnSynDealCode")
+
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>
+                        <ul>
+                            <li class="glyphicon glyphicon-triangle-bottom list-toggle"></li>
+                        </ul>
+                    </th>
+                    <th>
+                        @Html.CheckBox("chkAll", new { @id = "chkAll", @class = "checkbox" })
+                    </th>
+                    <th style="width:20%;">@objMessageKey.Title</th>
+                    <th style="width:15%;">@objMessageKey.Exclusive</th>
+                    <th style="width:20%;">@objMessageKey.Platform</th>
+                    <th style="width:20%;">@objMessageKey.Region</th>
+                    <th style="width:25%;">@objMessageKey.PeriodTerm</th>
+                    @*<th style="width:8%;">Action</th>*@
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+
+                    counter += 1;
+                    if (counter % 2 == 0)
+                    {
+                        ClassName = "rowBorder";
+                    }
+                    else
+                    {
+                        ClassName = "rowBg";
+                    }
+                    @Html.Hidden("hdnRightCode", item.Rights_Code, new { id = counter + "_hdnRightCode" })
+
+                    @Html.Hidden("hdnTitleCode", item.Title_Code, new { id = counter + "_hdnTitleCode" })
+                    @Html.Hidden("hdnTitleName", item.Title_Name, new { id = counter + "_hdnTitleName" })
+                    // @Html.Hidden("hdnIs_Syn_Acq_Mapp", item.Is_Syn_Acq_Mapp, new { id = counter + "_hdnIs_Syn_Acq_Mapp" })
+                    @Html.Hidden("hdnEps_Frm_To", item.Episode_From + "~" + item.Episode_To, new { id = counter + "_hdnEps_Frm_To" })
+
+                    <tr class=@ClassName>
+                        <td>
+                            <ul>
+                                @*</li>*@
+                                <li class="glyphicon glyphicon-triangle-bottom nav-toggle expander" onclick="@("#coll"+counter)"></li>
+
+                            </ul>
+                        </td>
+                        <td>
+
+                            <div class="expandable">
+                                <div style="width:7%;float:left">
+                                    @if (item.Is_Ref_Close_Title == "Y")
+                                    {
+                                        @Html.CheckBox("chkRecord", new
+                            {
+                                @id = counter + "_chkRecord",
+                                @title = "Can not edit this title as it is closed",
+                                @onclick = "return false;",
+                                disabled = "disabled"
+                            })
+                                    }
+                                    else if (item.Right_Status != "C")
+                                    {
+                                        @Html.CheckBox("chkRecord", new
+                            {
+                                @id = counter + "_chkRecord",
+                                @class = "tooltip-wrapper disabled",
+                                @title = "Can not edit this title",
+                                @onclick = "return false;",
+                                disabled = "disabled",
+                            })
+                                    }
+                                    else
+                                    {
+                                        @Html.CheckBox("chkRecord", new
+                            {
+                                @id = counter + "_chkRecord",
+                                @class = "checkbox"
+                            })                  // @onclick = "return chkBxEnableOrDisable(this);",
+                                    }
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="expandable">
+
+                                <div style="width:93%;">
+                                    @Html.Label("Title_Name", item.Title_Name)
+                                </div>
+                            </div>
+                        </td>
+                        <td class="action">
+
+                            @item.Is_Exclusive
+                        </td>
+
+                        <td>
+                            @if (item.Platform_Name != null && item.Platform_Name != "")
+                            {
+                                @Html.Raw(item.Platform_Name.Split('~').First())
+                                <a id="@(counter)_aViewPlatform" title="@objMessageKey.ViewPlatforms" class="glyphicon glyphicon-triangle-right clsPlatformPopup"></a>
+                            }
+                        </td>
+                        <td>
+                            <div class="expandable">
+                                @if (item.Country != null && item.Country != "")
+                                {
+                                    @Html.Label("Territory", item.Country)
+                                }
+                                else
+                                {
+                                    @Html.Label("Territory", item.Territory)
+                                }
+                            </div>
+                        </td>
+                        <td>
+                            <div class="">
+                                @if (@item.Right_Type == "Y" && @item.Term != null)
+                                {
+                                    var arr = item.Term.Split('.');
+                                    var str = arr[0] + objMessageKey.Years;
+
+                                    if (arr[1] != "0")
+                                    {
+                                        str += " " + arr[1] + objMessageKey.Months;
+                                    }
+
+                                    if (arr[2] != "0")
+                                    {
+                                        str += " " + arr[2] + objMessageKey.Days;
+                                    }
+
+                                    @Html.Label("TermY", str, new { @title = "Term" })
+                                }
+                                else
+                                {
+                                    @Html.Label("TermY", item.Right_Term, new { @title = "Term" })
+                                }
+
+                                @if (item.Rights_Start_Date != null && item.Rights_End_Date != null && item.Right_Term != "Perpetuity")
+                                {
+                                    <text> (</text>
+                                    if (item.Rights_Start_Date != null)
+                                    {
+                                        @Convert.ToDateTime(item.Rights_Start_Date).ToString(GlobalParams.DateFormat_Display).Trim()
+                                    }
+
+                                    if (item.Rights_End_Date != null)
+                                    {
+                                        <text> @objMessageKey.To </text>
+                                        @Convert.ToDateTime(item.Rights_End_Date).ToString(GlobalParams.DateFormat_Display).Trim()
+                                    }
+                                    <text>)</text>
+                                    if (item.Rights_End_Date < DateTime.Now.Date && item.Rights_End_Date != null)
+                                    {
+                                        <span style='color: red'>@objMessageKey.Expired</span>
+                                    }
+                                }
+                                else
+                                {
+
+                                    if (item.Rights_Start_Date != null)
+                                    {
+                                        <text> @objMessageKey.From </text>
+                                        @Convert.ToDateTime(item.Rights_Start_Date).ToString(GlobalParams.DateFormat_Display).Trim()
+                                    }
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class=@ClassName id="@("coll"+counter)" style="display: none;">
+                        <td></td>
+                        <td></td>
+                        <td><div class="expandable"><strong>@objMessageKey.Subtitle:</strong> @Html.Label("Sub_Titling_Language", @item.Sub_Titling_Language)</div></td>
+                        <td><div class="expandable"><strong>@objMessageKey.Dubbing:</strong> @Html.Label("Dubbing_Titling_Language", item.Dubbing_Titling_Language)</div></td>
+                        <td><strong>@objMessageKey.SubLicense -</strong> @Html.Label("Is_Sublicencing", item.Is_Sublicencing, new { @title = "Sublicensing" })</td>
+                        <td><strong>@objMessageKey.TitleLanguage -</strong> @item.Title_Language_Right</td>
+                        <td></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @Html.Hidden("hdnCount", counter);
+    }
+</div>
+<div id="popupFade">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <form class="form">
+                <div class="form_fields">
+                    <div class="modal_block modal_header">
+                        <a class="close" onclick="FadeOutPopup()">
+                            <span>×</span>
+                            <span class="sr-only">@objMessageKey.Close</span>
+                        </a>
+                        <h5>@objMessageKey.PlatformMatrix</h5>
+                    </div>
+                    <div class="modal_block treeClass" id="divPlatformTree">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@*<div class="deal clearfix">
+        @{
+            int counter = 0;
+            string Concat = " To ";
+            var hdnPlatformCode_ = "hdnPlatformCode_";
+            <input type="hidden" id="hdnCurrentID" />
+            @Html.Hidden("hdnSynDealCode")
+            foreach (var item in Model)
+            {
+
+                counter += 1;
+
+                <div class="rights_table_block">
+                    @Html.Hidden("hdnRightCode", item.Rights_Code, new { id = counter + "_hdnRightCode" })
+
+                    <table class="table style_table">
+                        <tbody>
+                            <tr>
+                                <th class="first_td">Title</th>
+                                <th class="second_td">Region</th>
+                                <th class="third_td">Subtitle</th>
+                                <td class="forth_td"><span>Sub License</span> - @Html.Label("Is_Sublicencing", item.Is_Sublicencing, new { @title = "Sublicensing" })</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <table>
+                                        <tr>
+                                            <td style="width:3.5%">
+                                                @Html.CheckBox("chkRecord", new { @id = counter + "_chkRecord", @onclick = "return chkBxEnableOrDisable(this);", @class = "checkbox" })
+                                            </td>
+                                            <td>
+                                                <div class="expandable">
+                                                    @Html.Label("Title_Name", item.Title_Name)
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td>
+                                    <div class="expandable">
+                                        @if (item.Country != null && item.Country != "")
+                                        {
+                                            @Html.Label("Territory", item.Country)
+                                        }
+                                        else
+                                        {
+                                            @Html.Label("Territory", item.Territory)
+                                        }
+                                    </div>
+                                </td>
+                                <td><div class="expandable">@Html.Label("Sub_Titling_Language", @item.Sub_Titling_Language)</div></td>
+                                <td class="forth_td">
+                                    <span title="Exclusive /Non-exclusive">
+                                        @if (item.Is_Exclusive == "Yes")
+                                        {
+                                            <span>Exclusive - </span>
+                                        }
+                                        @if (item.Is_Exclusive == "No")
+                                        {
+                                            <span>Non-Exclusive - </span>
+                                        }
+                                        <span class="glyphicon glyphicon-flag"></span>
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Platform </th>
+                                <th>Period - Term</th>
+                                <th>Dubbing</th>
+                                <td class="forth_td"><span>Title Language</span> - @item.Title_Language_Right</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="expandable">
+                                        <ul>
+                                            <li>
+
+                                                @if (item.Platform_Name != null && item.Platform_Name != "")
+                                                {
+                                                    @Html.Raw(item.Platform_Name.Replace("~", "</li><li>"))
+                                                }
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="expandable">
+                                        @if (@item.Right_Type == "Y" && @item.Term != null)
+                                        {
+                                            var arr = item.Term.Split('.');
+                                            var str = arr[0] + " years";
+
+                                            if (arr[1] != "0")
+                                            {
+                                                str += " " + arr[1] + " months";
+                                            }
+
+                                            @Html.Label("TermY", str, new { @title = "Term" })
+                                        }
+                                        else
+                                        {
+                                            @Html.Label("TermY", item.Right_Term, new { @title = "Term" })
+                                        }
+
+                                        @if (item.Rights_Start_Date != null && item.Rights_End_Date != null && item.Right_Term != "Perpetuity")
+                                        {
+                                            <text> (</text>
+                                            if (item.Rights_Start_Date != null)
+                                            {
+                                                @Convert.ToDateTime(item.Rights_Start_Date).ToString(GlobalParams.DateFormat_Display).Trim()
+                                            }
+
+                                            if (item.Rights_End_Date != null)
+                                            {
+                                                <text> To </text>
+                                                @Convert.ToDateTime(item.Rights_End_Date).ToString(GlobalParams.DateFormat_Display).Trim()
+                                            }
+                                            <text>)</text>
+                                            if (item.Rights_End_Date < DateTime.Now.Date && item.Rights_End_Date != null)
+                                            {
+                                                <span style='color: red'>(Expired)</span>
+                                            }
+                                        }
+                                        else
+                                        {
+
+                                            if (item.Rights_Start_Date != null)
+                                            {
+                                                <text> From </text>
+                                                @Convert.ToDateTime(item.Rights_Start_Date).ToString(GlobalParams.DateFormat_Display).Trim()
+                                            }
+                                        }
+                                        </div>
+    </td>
+                                <td><div class="expandable">@Html.Label("Dubbing_Titling_Language", item.Dubbing_Titling_Language)</div></td>
+                                <td class="forth_td">
+
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            }
+            @Html.Hidden("hdnCount", counter);
+        }
+    </div>*@

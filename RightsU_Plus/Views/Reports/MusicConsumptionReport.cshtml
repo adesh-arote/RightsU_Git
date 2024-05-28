@@ -1,0 +1,396 @@
+﻿@{
+    ViewBag.Title = "MusicConsumptionReport";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+
+<script>
+    var URL_BindMusicConsumptionReport = '@Url.Action("BindMusicConsumptionReport", "Reports")';
+    var URL_PopulateAgreementNo = '@Url.Action("PopulateAgreementNo", "Reports")';
+   var URL_MusicLabelForMusicConsumption = '@Url.Action("MusicLabelMusicConsumption", "Reports")';
+  var  URL_ContentForMusicConsumption = '@Url.Action("ContentMusicConsumption", "Reports")';
+
+
+    $(document).ready(function () {
+        $('#txtfrom').change(function () {
+            SetMinDt();
+        });
+
+        $('#txtto').change(function () {
+            SetMaxDt();
+        });
+        $('.date-picker').datepicker( {
+            changeMonth: true,
+            changeYear: true,
+          //  showButtonPanel: true,
+            dateFormat: 'MM yy',
+
+            onClose: function(dateText, inst) {
+                $(this).datepicker('setDate', new Date(inst.selectedYear, inst.selectedMonth, 1));
+            }
+        });
+    });
+
+
+    function btnShow_OnClick() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var returnVal = true;
+        var musicList = $('#txtMusicLabel').val();
+        var contentList = $('#txtTitle').val();
+        var txtfrom = $('#txtfrom').val();
+        var txtto = $('#txtto').val();
+
+
+        if (($('#hdnMusicLabelCode').val() == '0' || $('#hdnMusicLabelCode').val() == '0, ') && ($('#hdnTitleCode').val() == '0' || $('#hdnTitleCode').val() == '0, '))
+        {
+            showAlert('E', '@objMessageKey.PleaseSelectatleastonesearchcriteria');
+            return false;
+        }
+
+        if ($('#txtfrom').val() == '' && $('#txtto').val() != '') {
+            showAlert('E', '@objMessageKey.PleaseSelectConsumptionFromDate');
+            return false;
+        }
+        if ($('#txtfrom').val() != '' && $('#txtto').val() == '') {
+            showAlert('E', 'Please Select To Date');
+            return false;
+        }
+
+        if (returnVal) {
+            $.ajax({
+                type: "POST",
+                url: URL_BindMusicConsumptionReport,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    musicList: musicList,
+                    contentList: contentList,
+                    txtfrom: txtfrom,
+                    txtto: txtto,
+                    dateformat: $('#ddlDateFormat').val()
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        $('#divResult').empty();
+                        $('#divResult').html(result);
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    }
+
+    function SetMaxDt() {
+        setMinMaxDates('txtfrom', '', $('#txtto').val());
+    }
+    function SetMinDt() {
+        setMinMaxDates('txtto', $('#txtfrom').val(), '');
+    }
+    function PopulateTitleName(keyword) {
+        if ($('#txtTitle').val().length == "0") {
+            $('#hdnTitleCode').val(0);
+        }
+        var selectedtxt = $('#txtTitle').val()
+        var txt = selectedtxt.split('﹐');
+        var iscomplete = true;
+        if (txt[txt.length - 1].trim() == "")
+            iscomplete = false;
+        if (iscomplete) {
+            $("#txtTitle").autocomplete({
+                focus: function () {
+                    return false;
+                },
+                search: function (e, u) {
+                    $(this).addClass('loader');
+                },
+                source: function (request, response) {
+                    var param = {
+                        keyword: $('#txtTitle').val()
+
+                    };
+                    $.ajax({
+                        url: URL_ContentForMusicConsumption,
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+                            if (data.length == 0) {
+                                data[0] = 'Result Not Found';
+                                response($.map(data, function (v, i) {
+                                    $('#txtTitle').removeClass('loader');
+                                    return {
+                                        label: '@objMessageKey.ResultNotFound',
+                                        val: '0'
+                                    }
+                                }))
+                            }
+                            else {
+                                response($.map(data, function (v, i) {
+                                    $('#txtTitle').removeClass('loader');
+                                    return {
+                                        label: v.Title_Name,
+                                        val: v.Title_Code
+                                    }
+                                }))
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                            alert("Error" + textStatus);
+                        }
+                    });
+                },
+                select: function (event, i) {
+                    debugger;
+                    if (i.item.value != "@objMessageKey.ResultNotFound") {
+                        var text = this.value.split(/﹐\s*/);
+                        text.pop();
+                        text.push(i.item.value);
+                        text.push("");
+                        this.value = text;
+                        this.value = text.join("﹐");
+                        var value = $("#hdnTitleCode").val().split(/,\s*/);
+                        value.pop();
+                        value.push(i.item.val);
+                        value.push("");
+                        $("#hdnTitleCode")[0].value = value.join(", ");
+                        return false;
+                    }
+                    else
+                    {
+                        $('#txtTitle').val("");
+                        return false;
+                    }
+                },
+                minLength: 3,
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("position", "absolute");
+                    $(".ui-autocomplete").css("max-height", "200px");
+                    $(".ui-autocomplete").css("max-width", "285px");
+                    $(".ui-autocomplete").css("overflow-y", "auto");
+                    $(".ui-autocomplete").css("overflow-x", "hidden");
+                    $(".ui-autocomplete").css("z-index", "2147483647");
+                    $(".ui-autocomplete").css("direction", "@objMessageKey.LayoutDirection");
+                },
+
+            });
+        }
+        else
+            return false;
+    }
+    function PopulateMusicLabelName(keyword) {
+        debugger;
+        if ($('#txtMusicLabel').val().length == "0") {
+            $('#hdnMusicLabelCode').val(0);
+        }
+        var selectedtxt = $('#txtMusicLabel').val()
+        var txt = selectedtxt.split('﹐');
+        var iscomplete = true;
+        if (txt[txt.length - 1].trim() == "")
+            iscomplete = false;
+        if (iscomplete) {
+            $("#txtMusicLabel").autocomplete({
+                focus: function () {
+                    return false;
+                },
+                search: function (e, u) {
+                    $(this).addClass('loader');
+                },
+                source: function (request, response) {
+                    var param = {
+                        keyword: $('#txtMusicLabel').val()
+
+                    };
+                    $.ajax({
+                        url: URL_MusicLabelForMusicConsumption,
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+                            if (data.length == 0) {
+                                data[0] = 'Result Not Found';
+                                response($.map(data, function (v, i) {
+                                    $('#txtMusicLabel').removeClass('loader');
+                                    return {
+                                        label: '@objMessageKey.ResultNotFound',
+                                        val: '0'
+                                    }
+                                }))
+                            }
+                            else {
+                                response($.map(data, function (v, i) {
+                                    $('#txtMusicLabel').removeClass('loader');
+                                    return {
+                                        label: v.Music_Label_Name,
+                                        val: v.Music_Label_Code
+                                    }
+                                }))
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                            alert("Error" + textStatus);
+                        }
+                    });
+                },
+                select: function (event, i) {
+                    debugger;
+                    if (i.item.value != "@objMessageKey.ResultNotFound") {
+                        var text = this.value.split(/﹐\s*/);
+                        text.pop();
+                        text.push(i.item.value);
+                        text.push("");
+                        this.value = text;
+                        this.value = text.join("﹐");
+                        var value = $("#hdnMusicLabelCode").val().split(/,\s*/);
+                        value.pop();
+                        value.push(i.item.val);
+                        value.push("");
+                        $("#hdnMusicLabelCode")[0].value = value.join(", ");
+                        return false;
+                    }
+                    else{
+                        $('#txtMusicLabel').val("");
+                        return false;
+                    }
+                },
+                minLength: 3,
+                open: function (event, ui) {
+                    $(".ui-autocomplete").css("position", "absolute");
+                    $(".ui-autocomplete").css("max-height", "200px");
+                    $(".ui-autocomplete").css("max-width", "285px");
+                    $(".ui-autocomplete").css("overflow-y", "auto");
+                    $(".ui-autocomplete").css("overflow-x", "hidden");
+                    $(".ui-autocomplete").css("z-index", "2147483647");
+                    $(".ui-autocomplete").css("direction", "@objMessageKey.LayoutDirection");
+                },
+
+            });
+        }
+        else
+            return false;
+    }
+    function ShowHideSearchCriteria(show) {
+        if (show == 'S') {
+            $('#divFilter').show();
+            $('#tdShowImg').hide();
+            $('#tdHideImg').show();
+            $('#divFilter').width = '100%';
+        }
+        else if (show == 'H') {
+            debugger;
+            $('#divFilter').hide();
+            $('#tdHideImg').hide();
+            $('#tdShowImg').show();
+            $('#divFilter').width = '100%';
+        }
+    }
+</script>
+<style>
+    #divFilter {
+        background: #eee;
+        padding: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    #divResult {
+        margin-top: 10px;
+    }
+
+     #ddlContentList_chosen {
+        max-width: 100%;
+    }
+     #ddlMusicList_chosen {
+        max-width: 136%;
+    }
+
+.ui-datepicker-calendar {
+    display: none;
+    }
+#ui-datepicker-div{
+    width:13% !important;
+}
+</style>
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <h2 style="direction:@objMessageKey.LayoutDirection">@objMessageKey.LabelwiseMusicConsumption</h2>
+            <div id="divFilter">
+                <table>
+                    <tr>
+                        <td style="width:6%"><label class="bold">@objMessageKey.MusicLabel</label></td>
+                        <td style="width:19%;padding-bottom:10px;">
+                            <input type="text" id="txtMusicLabel" class="search" maxlength="100" style="width:285px" placeholder="@objMessageKey.MusicLabel" onkeyup="PopulateMusicLabelName(event)" autocomplete="on" />
+                            <input type="hidden" id="hdnMusicLabelCode" value="0" />
+                        </td>
+                        <td style="width:7%;"><label class="bold">@objMessageKey.Content</label></td>
+                        <td style="width:19%;">
+                            <input type="text" id="txtTitle" class="search" maxlength="100" style="width:285px" placeholder="@objMessageKey.Title" onkeyup="PopulateTitleName(event)" autocomplete="on" />
+                            <input type="hidden" id="hdnTitleCode" value="0" />
+                        </td>
+                        <td style="width:8%"><b>@objMessageKey.DateFormat:</b></td>
+                        <td style="width:17%">
+                            @Html.DropDownList("DateFormat", (List<SelectListItem>)ViewBag.DateFormat, new { @id = "ddlDateFormat", @class = "form_input chosen-select" })
+                    </td>
+                        </tr>
+                            <tr>
+                        <td style="width:10%;"><label class="bold">@objMessageKey.ConsumptionFrom</label></td>
+                        <td style="width: 17%">
+                          
+                            <input type="text" class="date-picker" value="@ViewBag.DealFrmDt_Search" id="txtfrom" placeholder="@objMessageKey.From" title="@objMessageKey.From" />
+                            </td>
+                        <td style="width:3%;"><label class="bold">@objMessageKey.To</label></td>
+                        <td style="width: 16%">
+                            <input type="text" class="date-picker" value="@ViewBag.DealToDt_Search" id="txtto" placeholder="@objMessageKey.To" title="@objMessageKey.To" />
+                        </td>
+                        &nbsp;&nbsp; 
+                                <td></td>
+                        <td style="width:10%;"><input type="button" id="btnShow" class="btn btn-primary" value="@objMessageKey.Show" onclick="btnShow_OnClick()"> </td>
+                    </tr>
+                </table>
+            </div>
+            <div>
+                <table>
+                    <tr align="left" id="trImg">
+                        <td id='tdShowImg' align='left' style="display: none">
+                            <input type="image" title="Expand" alt="Expand Search Criteria" style="cursor:pointer;" src="~/Images/expand.jpg" onclick="return ShowHideSearchCriteria('S');" />
+                        </td>
+                        <td id='tdHideImg' align="left">
+                            <input type="image" title="Collapse" alt="Collapse Search Criteria" style="cursor:pointer;" src="~/Images/collapse.jpg" onclick="return ShowHideSearchCriteria('H');" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div id="divResult">
+
+            </div>
+        </div>
+    </section>
+</div>
+<script>
+
+    
+</script>

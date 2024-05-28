@@ -1,0 +1,108 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{
+
+    string IsMenu = "";
+    Dictionary<string, string> obj_Dic_Layout = new Dictionary<string, string>();
+    if (TempData["QS_LayOut"] != null)
+    {
+        obj_Dic_Layout = TempData["QS_LayOut"] as Dictionary<string, string>;
+        IsMenu = obj_Dic_Layout["IsMenu"];
+        IsMenu = "N";
+    }
+}
+<script src="~/JS_Core/jquery.sumoselect.js"></script>
+<link href="~/CSS/sumoselect.css" rel="stylesheet" />
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script src="~/Custom_Scripts/Title_Objection_Generic.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div id="divTitleObjection">
+
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+    var URL_BindPartialPages = '@Url.Action("BindPartialPages", "Title_Objection")';
+    var URL_BindPlatformTree = '@Url.Action("BindPlatformTree", "Title_Objection")';
+    var URL_BindCountryTerritory = '@Url.Action("BindCountryTerritory", "Title_Objection")';
+    var URL_BindObjectionType = '@Url.Action("BindObjectionType", "Title_Objection")';
+    var URL_SaveTitleObjection = '@Url.Action("SaveTitleObjection", "Title_Objection")';
+
+    var Command_Name = "";
+    var TitleObjectCode = '@ViewBag.TitleObjectCode';
+    var callFrom = '@ViewBag.callFrom'
+
+    $(document).ready(function () {
+        initializeExpander();
+        BindPartialView('@ViewBag.callFrom');
+    });
+
+    function CancelSaveDeal(isView = 'N') {
+        if (isView == "Y") {
+             var URL = '@Url.Action("Index", "Title_Objection_List")';
+             window.location.href = URL;
+        }
+        else {
+            Command_Name = "CANCEL_SAVE_DEAL";
+            showAlert("I", 'All Unsaved Data Will Be Lost. Still Want To Go Ahead?', "OKCANCEL");
+        }
+    }
+    function backToList() {
+        var URL = '@Url.Action("Index", "Title_Objection_List")';
+        window.location.href = URL;
+    }
+    function handleOk() {
+        if (Command_Name == "CANCEL_SAVE_DEAL") {
+             var URL = '@Url.Action("Index", "Title_Objection_List")';
+             window.location.href = URL;
+        }
+    }
+
+    function BindPartialView(key, Deal_Code = 0, Title_Code = 0) {
+        debugger
+        Record_Type = TitleObjectCode == 0 ? $("input[name='rb_AcqSyn']:checked").val() : 'A';
+        //if (callFrom =="LIST") {
+        //    Record_Type = $("input[name='rb_AcqSyn']:checked").val();
+        //}
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindPartialPages,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                key: key,
+                Record_Type: Record_Type,
+                Deal_Code: Deal_Code,
+                Title_Code: Title_Code,
+                TitleObjectCode: TitleObjectCode
+            }),
+            success: function (result) {
+                debugger;
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divTitleObjection').empty();
+                    $('#divTitleObjection').html(result);
+
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+</script>

@@ -1,0 +1,145 @@
+﻿@model List<RightsU_Entities.Cost_Type>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }  
+}
+<script>
+    $('.expand_Cost_Type_Name').expander({
+        slicePoint: 73,
+        expandPrefix: '',
+        expandText: '...@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+</script>
+    <table class="table table-bordered table-hover" id="tblCostType">
+        <thead>
+            <tr>
+                <th style="width:55%;">@objMessageKey.CostType</th>
+                <th style="width:15%;">@objMessageKey.Status</th>
+                <th style="width:15%;">@objMessageKey.IsSystemGenerated</th>
+                <th style="width:15%;">@objMessageKey.Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (ViewBag.CommandName == "ADD")
+        {
+            <tr>
+                    <td>
+                        <input id="txtCostTypeName_0" type="text" value="" maxlength="100" />
+                    </td>
+                    <td align="center">
+                        <span>@objMessageKey.Active</span>
+                    </td>
+                    <td align="center">
+                        <span>@objMessageKey.NO</span>
+                    </td>
+                    <td align="center">
+                        <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" onclick="SaveCostType(0)"></a>
+                        <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" onclick="Cancel()"></a>
+                    </td>
+                </tr>
+        }
+            @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                string strActive = objMessageKey.Active, strSystemGenerated = objMessageKey.NO;
+                if (item.Is_Active == "N")
+                {
+                    strActive = objMessageKey.Deactive;
+                }
+                if (item.Is_System_Generated == "Y")
+                {
+                    strSystemGenerated = objMessageKey.Yes;
+                }
+                <tr>
+                        @if (ViewBag.CommandName == "EDIT" && ViewBag.CostTypeCode == item.Cost_Type_Code)
+                    {
+                        <td>
+                                <input id="txtCostTypeName_@item.Cost_Type_Code" type="text" value="@item.Cost_Type_Name" maxlength="100" />
+                            </td>
+                        <td align="center">
+                                <span>@strActive</span>
+                            </td>
+                        <td align="center">
+                                <span>@strSystemGenerated</span>
+                            </td>
+                        <td align="center">
+                                <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" onclick="SaveCostType(@item.Cost_Type_Code)"></a>
+                                <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" onclick="Cancel()"></a>
+                            </td>
+                    }
+                    else
+                    {
+                        <td>
+                            <div class="expand_Cost_Type_Name">@item.Cost_Type_Name</div>
+                            </td>
+                        <td align="center">
+                                <span>@strActive</span>
+                            </td>
+                        <td align="center">
+                                <span>@strSystemGenerated</span>
+                            </td>
+                        <td align="center">
+                                @if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForEdit + "~"))
+                            {
+                                if (item.Is_Active == "Y")
+                                {
+                                    <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor:pointer;" onclick="CheckRecordLock(@item.Cost_Type_Code, 'EDIT')"></a>
+                                }
+                                else
+                                {
+                                    <a title="@objMessageKey.CannoteditthisCostTypeasitisdeactivated" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
+                                }
+                            }
+                                @if (item.Is_Active == "Y")
+                            {
+                                if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForDeactivate + "~"))
+                                {
+                                    bool canDeactivate = true;
+                                    string strToolTip = "";
+                                    if (item.Acq_Deal_Cost_Commission.Count > 0 || item.Acq_Deal_Cost_Costtype.Count > 0 || item.Acq_Deal_Payment_Terms.Count > 0)
+                                    {
+                                        canDeactivate = false;
+                                        strToolTip = objMessageKey.CannotdeactivatethisCostTypeasitisusedinAcquisitionDeal;
+                                    }
+                                    else if (item.Syn_Deal_Payment_Terms.Count > 0 || item.Syn_Deal_Revenue_Commission.Count > 0 || item.Syn_Deal_Revenue_Costtype.Count > 0)
+                                    {
+                                        canDeactivate = false;
+                                        strToolTip = @objMessageKey.CannotdeactivatethisCostTypeasitisusedinSyndicationDeal;
+                                    }
+                                    if (canDeactivate)
+                                    {
+
+                                        <a title="@objMessageKey.Deactivate" class="glyphicon glyphicon-thumbs-down" style="cursor:pointer" onclick="ActiveDeactiveCostType(@item.Cost_Type_Code, 'N')"></a>
+                                    }
+                                    else
+                                    {
+                                        <a title="@strToolTip" class="glyphicon glyphicon-thumbs-down disabled" onclick="return false;"></a>
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForActivate + "~"))
+                                {
+                                    <a title="@objMessageKey.ActionBy" class="glyphicon glyphicon-thumbs-up" style="cursor: pointer;" onclick="ActiveDeactiveCostType(@item.Cost_Type_Code, 'Y')"></a>
+                                }
+                            }
+                            </td>
+                    }
+                    </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                    <td colspan="4">@objMessageKey.Norecordfound</td>
+                </tr>
+        }
+        </tbody>
+    </table>

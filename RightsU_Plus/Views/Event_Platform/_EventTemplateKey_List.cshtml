@@ -1,0 +1,130 @@
+﻿@model List<RightsU_Plus.Controllers.Event_PlatformController.EventTemplateKeys>
+@using UTOFrameWork.FrameworkClasses;
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+
+<div class="modal_block modal_header">
+    <a class="close" onclick="ClosePopup()">
+        <span>X</span>
+        <span class="sr-only">Close</span>
+    </a>
+    <h2>Credentials</h2>
+</div>
+<div class="paging_area clearfix" style="height:40px !important;line-height:0px !important;padding-left:0.5% !important;margin-top:20px;">
+    <span class="pull-left">Total Records: </span>
+    <span class="pull-left">@Model.Count</span>
+    <span class="pull-right" style="vertical-align:top;line-height:0px !important;margin-top:-4px;">
+        <input type="button" class="btn btn-primary" value="Add" style="float:right" onclick="AddEditKeys('0', 'ADD');" />
+    </span>
+</div>
+
+<div class="modal_block">
+    <div class="tab-content clearfix table-wrapper scale_table_container">
+        <div class="scale_table_block">
+            <table class="table table-bordered table-hover" style="width:100%; border-collapse:collapse;">
+                <thead>
+                    <tr>
+                        <th style="width:10%;">Sr.No.</th>
+                        <th style="width:10%;">Key</th>
+                        <th style="width:10%;">Value</th>
+                        <th style="width:10%;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int rowZero = 0;
+                        int rowNumber = 1;
+                    }
+                    @if (TempData["Action"] == "ADD")
+                    {
+                        <tr id="trKeys_">
+                            <td style="width:10%;">
+                                New
+                            </td>
+                            <td style="text-align:left;width:20%;">
+                                @Html.DropDownList("lstKeys", (IEnumerable<SelectListItem>)ViewBag.ddlKeys, "Please Select", htmlAttributes: new { @id = "ddlKey_" + rowZero, @class = "form_input chosen-select" })
+                            </td>
+                            <td style="width:20%;">
+                                <input type="text" id="Value_@rowZero" placeholder="Enter Value" autocomplete="off" class="form-control" style="width:100%" />
+                            </td>
+                            <td align="center" style="width:10%;">
+                                <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" onclick='SaveTemplateKey("0","0")'></a>
+                                <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" onclick="CancelTemplateKey()"></a>
+                            </td>
+                        </tr>
+                    }
+                    @if (Model.Count() > 0)
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr id="trKeys_@rowNumber">
+                                <td style="text-align:center; display:none;">
+                                    <input type="hidden" id="rowNumber" value="@rowNumber" />
+                                    <input type="hidden" id="hdnKeyId_@rowNumber" value="@item.Code" />
+                                </td>
+                                @if (TempData["Action"] == "EDIT" && Convert.ToInt32(TempData["Id"]) == item.Code)
+                                {
+                                    <td>
+                                        <p>@rowNumber</p>
+                                    </td>
+
+                                    <td style="text-align:left;width:20%;">
+                                        @Html.DropDownList("lstKeys", (IEnumerable<SelectListItem>)ViewBag.ddlKeys, "Please Select", htmlAttributes: new { @id = "ddlKey_" + rowNumber, @class = "form_input chosen-select" })
+                                    </td>
+                                    <td style="width:20%;">
+                                        <input type="text" id="Value_@rowNumber" value="@item.Value" class="form-control" style="width:100%"/>
+                                    </td>
+                                    <td style="width:10%;">
+                                        <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" onclick="SaveTemplateKey(@item.Code, @rowNumber)"></a>
+                                        <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" onclick="CancelTemplateKey()"></a>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td style="text-align:center;">
+                                        <span>@rowNumber</span>
+                                    </td>
+                                    <td>
+                                        @item.Key
+                                    </td>
+                                    <td>
+                                        @item.Value
+                                    </td>
+                                    <td style="width:10%;">
+                                        <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" onclick='AddEditKeys("@item.Code","EDIT")'></a>
+                                        <a title=@objMessageKey.Delete class="glyphicon glyphicon-trash" onclick="Deletekeys(@item.Code)"></a>
+                                    </td>
+                                }
+                            </tr>
+                            rowNumber++;
+
+                        }
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal_block_full" style="margin-top: 10px;">
+    <div class="form_links">
+        <ul class="modal_block clearfix" style="padding-left:10px;padding-top: 10px;">
+            <li>
+                <input type="button" class="btn btn-primary" value="@objMessageKey.Save" onclick="SaveMasterData()" />
+                <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="ClosePopup()" />
+            </li>
+        </ul>
+    </div>
+</div>
+

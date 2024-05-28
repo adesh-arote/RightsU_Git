@@ -1,0 +1,192 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+
+<script>
+    var URL_BindDealWorkflowStatusReport = '@Url.Action("BindDealWorkflowStatusReport", "Reports")';
+    $(document).ready(function () {
+        initializeChosen();
+        $("#ddlBusinessUnit").SumoSelect();
+       // $("#ddlBusinessUnit")[0].sumo.reload();
+        //$("#ddlBusinessUnit").hide();
+        $("#ddlDeal").change(function () {
+            debugger;
+            $("#ddlBusinessUnit").val("");
+            //$("#ddlBusinessUnit").trigger("chosen:updated");
+        });
+        $("#ddlBusinessUnit").change(function () {
+            $('#hdnAcqDealCode').val(0);
+
+        });
+    });
+
+    //function validateSearch() {
+    //    debugger;
+
+    //    var tmpDealType = '', tmpBU = '';
+
+    //    if ($('#ddlBusinessUnit').val())
+    //        tmpBU = $('#ddlBusinessUnit').val().join(',');
+
+
+    //    //if (tmpDealType == '' && tmpBU == '') {
+    //    //    showAlert('e', 'Please Select at least one record');
+    //    //    return false;
+    //    //}
+    //    //else {
+    //        btnShow_OnClick();
+    //    //}
+    //}
+    function ClearAll() {
+        debugger;
+        $("#ddlBusinessUnit").val("0");
+        $("#ddlBusinessUnit")[0].sumo.reload();
+    }
+
+    function ClearBU() {
+        debugger;
+        $("#ddlBusinessUnit").val("0");
+        $("#ddlBusinessUnit")[0].sumo.reload();
+    }
+
+    function btnShow_OnClick() {
+        debugger;
+        //$('.required').removeClass('required');
+        //$("[required='required']").removeAttr("required");
+
+        var dealCode = $('#ddlDeal').val();
+        if ($('#ddlBusinessUnit').val() == "" || $('#ddlBusinessUnit').val() == null) {
+            debugger;
+            showAlert('E', "Content Category Cannot be Blank.");
+            return false;
+        }
+        var businessUnitcode = $('#ddlBusinessUnit').val().join(',');
+        var returnVal = true;
+        
+        //if (businessUnitcode == 0) {
+        //    $('#ddlBusinessUnit').attr('required', true);
+        //    returnVal = false;
+        //}
+
+        if (returnVal) {
+            $.ajax({
+                type: "POST",
+                url: URL_BindDealWorkflowStatusReport,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    businessUnitcode: businessUnitcode,
+                    dealCode: dealCode
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        $('#divResult').empty();
+                        $('#divResult').html(result);
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    }
+    function ShowHideSearchCriteria(show) {
+        if (show == 'S') {
+            $('#divFilter').show();
+            $('#tdShowImg').hide();
+            $('#tdHideImg').show();
+            $('#divFilter').width = '100%';
+        }
+        else if (show == 'H') {
+            debugger;
+            $('#divFilter').hide();
+            $('#tdHideImg').hide();
+            $('#tdShowImg').show();
+            $('#divFilter').width = '100%';
+        }
+    }
+</script>
+<style>
+    #divFilter {
+        background: #eee;
+        padding: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    #divResult {
+        margin-top: 10px;
+    }
+
+    #ddlBusinessUnit_chosen {
+        max-width: 100%;
+    }
+
+    .SumoSelect {
+        width: 300px !important;
+    }
+    /*:required {
+         background: red;
+    }*/
+    /*#ReportViewer1 {
+        width:100% !important;
+        height:100% !important;
+    }*/
+</style>
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <h2 style="direction:@objMessageKey.LayoutDirection">Deal Approval Work-flow Status(Pending) Reports</h2>
+            <div id="divFilter">
+                <table>
+                    <tr>
+                        <td style="width:10%;"><label class="bold">@objMessageKey.DealType</label></td>
+                        <td style="width:20%;">
+                            @Html.DropDownList("DealList", ViewBag.DealList as SelectList, new { @id = "ddlDeal", @class = "form_input chosen-select",@onchange = "ClearBU()" })
+                        </td>
+                        <td style="width:10%;"><label class="bold">@objMessageKey.BusinessUnit</label></td>
+                        <td style="width:20%;">
+                            @Html.DropDownList("BusinessUnit", ViewBag.BusinessUnitList as SelectList, new { @id = "ddlBusinessUnit", @class = "", @multiple ="multiple" })
+                            
+                        </td>
+                        <td style="width:20%;position:absolute;right:6%"><input type="button" id="btnShow" class="btn btn-primary" value="@objMessageKey.Show" onclick="btnShow_OnClick()"> </td>
+                        <td style="width:20%;position:absolute;right:1%"><input type="button" id="btnClearAll" class="btn btn-primary" value="@objMessageKey.Reset" onclick="ClearAll()">
+                    </tr>
+                </table>
+            </div>
+
+            <div>
+                <table>
+                    <tr align="left" id="trImg">
+                        <td id='tdShowImg' align='left' style="display: none">
+                            <input type="image" title="@objMessageKey.Expand" alt="Expand Search Criteria" style="cursor:pointer;" src="~/Images/expand.jpg" onclick="return ShowHideSearchCriteria('S');" />
+                        </td>
+                        <td id='tdHideImg' align="left">
+                            <input type="image" title="@objMessageKey.Collapse" alt="Collapse Search Criteria" style="cursor:pointer;" src="~/Images/collapse.jpg" onclick="return ShowHideSearchCriteria('H');" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div id="divResult">
+
+            </div>
+        </div>
+    </section>
+</div>

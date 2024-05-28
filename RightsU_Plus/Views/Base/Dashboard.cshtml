@@ -1,0 +1,1409 @@
+﻿@model List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>
+@{
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    List<RightsU_Entities.USP_Get_Dashboard_Detail_Result> StartAcqDealList = new List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>();
+    List<RightsU_Entities.USP_Get_Dashboard_Detail_Result> StartSynDealList = new List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>();
+    List<RightsU_Entities.USP_Get_Dashboard_Detail_Result> ExpireAcqDealList = new List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>();
+    List<RightsU_Entities.USP_Get_Dashboard_Detail_Result> ExpireSynDealDataList = new List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>();
+    List<RightsU_Entities.USP_Get_Dashboard_Detail_Result> ROFR_AcquisitionList = new List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>();
+    List<RightsU_Entities.USP_Get_Dashboard_Detail_Result> TentativeStartAcquDealsList = new List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>();
+    List<RightsU_Entities.USP_Get_Dashboard_Detail_Result> AproveAcqDealList = new List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>();
+    List<RightsU_Entities.USP_Get_Dashboard_Detail_Result> AproveSynDealList = new List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>();
+    List<RightsU_Entities.USP_Get_Dashboard_Detail_Result> ExpireSynDealDataList_SynRevHB = new List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>();
+    List<RightsU_Entities.USP_Get_Dashboard_Detail_Result> ExpireAcqDealDataList_AcqRevHB = new List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>();
+    List<RightsU_Entities.USP_Get_Dashboard_Detail_Result> ExpireAcqDealDataList_AcqHB = new List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>();
+    List<RightsU_Entities.USP_Get_Dashboard_Detail_Result> ExpireSynDealDataList_SynHB = new List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>();
+    List<RightsU_Entities.USP_Get_Dashboard_Detail_Material_Type_Result> MTAcqDealList = new List<RightsU_Entities.USP_Get_Dashboard_Detail_Material_Type_Result>();
+    List<RightsU_Entities.USP_Get_Dashboard_Detail_Payment_Term_Result> PTAcqDealList = new List<RightsU_Entities.USP_Get_Dashboard_Detail_Payment_Term_Result>();
+
+    if (@ViewBag.StartAcqDealList != null)
+    { StartAcqDealList = (List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>)ViewBag.StartAcqDealList; }
+
+    if (@ViewBag.StartSynDealList != null)
+    { StartSynDealList = (List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>)ViewBag.StartSynDealList; }
+
+    if (@ViewBag.ExpireAcqDealList != null)
+    { ExpireAcqDealList = (List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>)ViewBag.ExpireAcqDealList; }
+
+    if (@ViewBag.ExpireSynDealDataList != null)
+    { ExpireSynDealDataList = (List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>)ViewBag.ExpireSynDealDataList; }
+
+    if (@ViewBag.ROFR_AcquisitionList != null)
+    { ROFR_AcquisitionList = (List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>)ViewBag.ROFR_AcquisitionList; }
+
+    if (@ViewBag.TentativeStartAcquDealsList != null)
+    { TentativeStartAcquDealsList = (List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>)ViewBag.TentativeStartAcquDealsList; }
+
+    if (@ViewBag.AproveAcqDealList != null)
+    { AproveAcqDealList = (List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>)ViewBag.AproveAcqDealList; }
+
+    if (@ViewBag.AproveSynDealList != null)
+    { AproveSynDealList = (List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>)ViewBag.AproveSynDealList; }
+
+    if (ViewBag.ExpireSynDealDataList_SynRevHB != null)
+    { ExpireSynDealDataList_SynRevHB = (List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>)ViewBag.ExpireSynDealDataList_SynRevHB; }
+
+    if (ViewBag.ExpireAcqDealDataList_AcqRevHB != null)
+    { ExpireAcqDealDataList_AcqRevHB = (List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>)ViewBag.ExpireAcqDealDataList_AcqRevHB; }
+
+    if (ViewBag.ExpireAcqDealDataList_AcqHB != null)
+    { ExpireAcqDealDataList_AcqHB = (List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>)ViewBag.ExpireAcqDealDataList_AcqHB; }
+
+    if (ViewBag.ExpireSynDealDataList_SynHB != null)
+    { ExpireSynDealDataList_SynHB = (List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>)ViewBag.ExpireSynDealDataList_SynHB; }
+
+    if (@ViewBag.MTAcqDealList != null)
+    { MTAcqDealList = (List<RightsU_Entities.USP_Get_Dashboard_Detail_Material_Type_Result>)ViewBag.MTAcqDealList; }
+
+    if (@ViewBag.PTAcqDealList != null)
+    { PTAcqDealList = (List<RightsU_Entities.USP_Get_Dashboard_Detail_Payment_Term_Result>)ViewBag.PTAcqDealList; }
+
+}
+<html>
+<head>
+    <title>RightsU</title>
+    <link rel="stylesheet" href="~/CSS/dashboard.css" />
+    <script type="text/javascript">
+        URL_Reload_Current_Page = '@Url.Action("Main", "Base")';
+        $(document).ready(function () {
+            if ('@TempData["ShowAlert"]' != '') {
+                message = '@TempData["ShowAlert"]';
+                showAlert('E', message);
+            }
+            //$("#ancFileName").attr('href', '../Help/index.html?IntCode=Dashboard');
+           // $("#ancFileName").attr('href', '../Help/Masters/Layout.html?Dashboard');
+            $("#txtSearch").removeClass('required');
+
+            $("#txtSearch").keyup(function () {
+                $("#txtSearch").removeClass('required');
+            });
+
+            ShowHideButton_StartAcqDealList('@ViewBag.StartAcqDealList_PageNo', '@ViewBag.StartAcqDealList_LastPageNo');
+            ShowHideButton_StartSynDealList('@ViewBag.StartSynDealList_PageNo', '@ViewBag.StartSynDealList_LastPageNo');
+            ShowHideButton_ExpireAcqDealList('@ViewBag.ExpireAcqDealList_PageNo', '@ViewBag.ExpireAcqDealList_LastPageNo');
+            ShowHideButton_ExpireSynDealDataList('@ViewBag.ExpireSynDealDataList_PageNo', '@ViewBag.ExpireSynDealDataList_LastPageNo');
+            ShowHideButton_ROFR_AcquisitionList('@ViewBag.ROFR_AcquisitionList_PageNo', '@ViewBag.ROFR_AcquisitionList_LastPageNo');
+            ShowHideButton_TentativeStartAcquDealsList('@ViewBag.TentativeStartAcquDealsList_PageNo', '@ViewBag.TentativeStartAcquDealsList_LastPageNo');
+            ShowHideButton_AproveAcqDealList('@ViewBag.AproveAcqDealList_PageNo', '@ViewBag.AproveAcqDealList_LastPageNo');
+            ShowHideButton_AproveSynDealList('@ViewBag.AproveSynDealList_PageNo', '@ViewBag.AproveSynDealList_LastPageNo');
+
+
+            $("#btnNext_StartAcqDealList").click(function () {
+                if ($(this).attr('onClick') != 'return false') {
+                    Paging($("#currentPageIndex_StartAcqDealList").val(), "AS", $("#txtSearch").val().trim(), "N", "StartAcqDealList_tbl");
+                }
+            });
+            $("#btnPrevious_StartAcqDealList").click(function () {
+                if ($(this).attr('onClick') != 'return false') {
+                    Paging($("#currentPageIndex_StartAcqDealList").val(), "AS", $("#txtSearch").val().trim(), "P", "StartAcqDealList_tbl");
+                }
+            });
+
+            $("#btnNext_StartSynDealList").click(function () {
+                if ((this).attr('onClick') != 'return false') {
+                    Paging($("#currentPageIndex_StartSynDealList").val(), "SS", $("#txtSearch").val().trim(), "N", "StartSynDealList_tbl");
+                }
+            });
+            $("#btnPrevious_StartSynDealList").click(function () {
+                if ($(this).attr('onClick') != 'return false') {
+                    Paging($("#currentPageIndex_StartSynDealList").val(), "SS", $("#txtSearch").val().trim(), "P", "StartSynDealList_tbl");
+                }
+            });
+
+            $("#btnNext_ExpireAcqDealList").click(function () {
+                if ($(this).attr('onClick') != 'return false') {
+                    Paging($("#currentPageIndex_ExpireAcqDealList").val(), "AE", $("#txtSearch").val().trim(), "N", "ExpireAcqDealList_tbl");
+                }
+            });
+            $("#btnPrevious_ExpireAcqDealList").click(function () {
+                if ($(this).attr('onClick') != 'return false') {
+                    Paging($("#currentPageIndex_ExpireAcqDealList").val(), "AE", $("#txtSearch").val().trim(), "P", "ExpireAcqDealList_tbl");
+                }
+            });
+
+            $("#btnNext_ExpireSynDealDataList").click(function () {
+                if ($(this).attr('onClick') != 'return false') {
+                    Paging($("#currentPageIndex_ExpireSynDealDataList").val(), "SE", $("#txtSearch").val().trim(), "N", "ExpireSynDealDataList_tbl");
+                }
+            });
+            $("#btnPrevious_ExpireSynDealDataList").click(function () {
+                if ($(this).attr('onClick') != 'return false') {
+                    Paging($("#currentPageIndex_ExpireSynDealDataList").val(), "SE", $("#txtSearch").val().trim(), "P", "ExpireSynDealDataList_tbl");
+                }
+            });
+
+            $("#btnNext_ROFR_AcquisitionList").click(function () {
+                if ($(this).attr('onClick') != 'return false') {
+                    Paging($("#currentPageIndex_ROFR_AcquisitionList").val(), "AR", $("#txtSearch").val().trim(), "N", "ROFR_AcquisitionList_tbl");
+                }
+            });
+            $("#btnPrevious_ROFR_AcquisitionList").click(function () {
+                if ($(this).attr('onClick') != 'return false') {
+                    Paging($("#currentPageIndex_ROFR_AcquisitionList").val(), "AR", $("#txtSearch").val().trim(), "P", "ROFR_AcquisitionList_tbl");
+                }
+            });
+
+            $("#btnNext_TentativeStartAcquDealsList").click(function () {
+                if ($(this).attr('onClick') != 'return false') {
+                    Paging($("#currentPageIndex_TentativeStartAcquDealsList").val(), "AT", $("#txtSearch").val().trim(), "N", "TentativeStartAcquDealsList_tbl");
+                }
+            });
+            $("#btnPrevious_TentativeStartAcquDealsList").click(function () {
+                if ($(this).attr('onClick') != 'return false') {
+                    Paging($("#currentPageIndex_TentativeStartAcquDealsList").val(), "AT", $("#txtSearch").val().trim(), "P", "TentativeStartAcquDealsList_tbl");
+                }
+            });
+
+            $("#btnNext_AproveAcqDealList").click(function () {
+                if ($(this).attr('onClick') != 'return false') {
+                    Paging($("#currentPageIndex_AproveAcqDealList").val(), "AA", $("#txtSearch").val().trim(), "N", "AproveAcqDealList_tbl");
+                }
+            });
+            $("#btnPrevious_AproveAcqDealList").click(function () {
+                if ($(this).attr('onClick') != 'return false') {
+                    Paging($("#currentPageIndex_AproveAcqDealList").val(), "AA", $("#txtSearch").val().trim(), "P", "AproveAcqDealList_tbl");
+                }
+            });
+            $("#btnNext_AproveSynDealList").click(function () {
+                if ((this).attr('onClick') != 'return false') {
+                    Paging($("#currentPageIndex_AproveSynDealList").val(), "SA", $("#txtSearch").val().trim(), "N", "AproveSynDealList_tbl");
+                }
+            });
+            $("#btnPrevious_AproveSynDealList").click(function () {
+                if ($(this).attr('onClick') != 'return false') {
+                    Paging($("#currentPageIndex_AproveSynDealList").val(), "SA", $("#txtSearch").val().trim(), "P", "AproveSynDealList_tbl");
+                }
+            });
+        });
+        function ShowHideButton_StartAcqDealList(PageNo, LastPageNo) {
+            if ('@StartAcqDealList.Count' > 0) {
+                if (PageNo > 1) {
+                    $("#btnPrevious_StartAcqDealList").removeClass('glyphicon glyphicon-chevron-left disabled').addClass('glyphicon glyphicon-chevron-left');
+                } else {
+                    $("#btnPrevious_StartAcqDealList").removeClass('glyphicon glyphicon-chevron-left').addClass('glyphicon glyphicon-chevron-left disabled');
+                }
+                if (PageNo < LastPageNo) {
+                    $("#btnNext_StartAcqDealList").removeClass('glyphicon glyphicon-chevron-right disabled').addClass('glyphicon glyphicon-chevron-right');
+                } else {
+                    $("#btnNext_StartAcqDealList").removeClass('glyphicon glyphicon-chevron-right').addClass('glyphicon glyphicon-chevron-right disabled');
+                }
+                if (PageNo == 1) {
+                    $('#btnPrevious_StartAcqDealList').attr('onClick', 'return false');
+                    $('#btnPrevious_StartAcqDealList').tooltip('disable');
+                }
+                if (PageNo == LastPageNo) {
+                    $('#btnNext_StartAcqDealList').attr('onClick', 'return false');
+                    $('#btnNext_StartAcqDealList').tooltip('disable')
+                }
+                if (PageNo > 1 && PageNo != LastPageNo) {
+                    $('#btnPrevious_StartAcqDealList').attr('onClick', '');
+                    $('#btnNext_StartAcqDealList').attr('onClick', '');
+                    $('#btnPrevious_StartAcqDealList').tooltip('enable');
+                    $('#btnNext_StartAcqDealList').tooltip('enable')
+                }
+            }
+        }
+        function ShowHideButton_StartSynDealList(PageNo, LastPageNo) {
+            if ('@StartSynDealList.Count' > 0) {
+                if (PageNo > 1) {
+                    $("#btnPrevious_StartSynDealList").removeClass('glyphicon glyphicon-chevron-left disabled').addClass('glyphicon glyphicon-chevron-left');
+                } else {
+                    $("#btnPrevious_StartSynDealList").removeClass('glyphicon glyphicon-chevron-left').addClass('glyphicon glyphicon-chevron-left disabled');
+
+                }
+                if (PageNo < LastPageNo) {
+                    $("#btnNext_StartSynDealList").removeClass('glyphicon glyphicon-chevron-right disabled').addClass('glyphicon glyphicon-chevron-right');
+                } else {
+                    $("#btnNext_StartSynDealList").removeClass('glyphicon glyphicon-chevron-right').addClass('glyphicon glyphicon-chevron-right disabled');
+
+                }
+                if (PageNo == 1) {
+                    $('#btnPrevious_StartSynDealList').attr('onClick', 'return false');
+                    $('#btnPrevious_StartSynDealList').tooltip('disable');
+                }
+                if (PageNo == LastPageNo) {
+                    $('#btnNext_StartSynDealList').attr('onClick', 'return false');
+                    $('#btnNext_StartSynDealList').tooltip('disable');
+                }
+                if (PageNo > 1 && PageNo != LastPageNo) {
+                    $('#btnPrevious_StartSynDealList').attr('onClick', '');
+                    $('#btnNext_StartSynDealList').attr('onClick', '');
+                    $('#btnPrevious_StartSynDealList').tooltip('enable');
+                    $('#btnNext_StartSynDealList').tooltip('enable');
+                }
+            }
+        }
+        function ShowHideButton_ExpireAcqDealList(PageNo, LastPageNo) {
+            if ('@ExpireAcqDealList.Count' > 0) {
+                if (PageNo > 1) {
+                    $("#btnPrevious_ExpireAcqDealList").removeClass('glyphicon glyphicon-chevron-left disabled').addClass('glyphicon glyphicon-chevron-left');
+                } else {
+                    $("#btnPrevious_ExpireAcqDealList").removeClass('glyphicon glyphicon-chevron-left').addClass('glyphicon glyphicon-chevron-left disabled');
+
+                }
+                if (PageNo < LastPageNo) {
+                    $("#btnNext_ExpireAcqDealList").removeClass('glyphicon glyphicon-chevron-right disabled').addClass('glyphicon glyphicon-chevron-right');
+                } else {
+                    $("#btnNext_ExpireAcqDealList").removeClass('glyphicon glyphicon-chevron-right').addClass('glyphicon glyphicon-chevron-right disabled');
+
+                }
+                if (PageNo == 1) {
+                    $('#btnPrevious_ExpireAcqDealList').attr('onClick', 'return false');
+                    $('#btnPrevious_ExpireAcqDealList').tooltip('disable');
+                }
+                if (PageNo == LastPageNo) {
+                    $('#btnNext_ExpireAcqDealList').attr('onClick', 'return false');
+                    $('#btnNext_ExpireAcqDealList').tooltip('disable');
+                }
+                if (PageNo > 1 && PageNo != LastPageNo) {
+                    $('#btnPrevious_ExpireAcqDealList').attr('onClick', '');
+                    $('#btnNext_ExpireAcqDealList').attr('onClick', '');
+                    $('#btnPrevious_ExpireAcqDealList').tooltip('enable');
+                    $('#btnNext_ExpireAcqDealList').tooltip('enable');
+                }
+            }
+        }
+        function ShowHideButton_ExpireSynDealDataList(PageNo, LastPageNo) {
+            if ('@ExpireSynDealDataList.Count' > 0) {
+                if (PageNo > 1) {
+                    $("#btnPrevious_ExpireSynDealDataList").removeClass('glyphicon glyphicon-chevron-left disabled').addClass('glyphicon glyphicon-chevron-left');
+                } else {
+                    $("#btnPrevious_ExpireSynDealDataList").removeClass('glyphicon glyphicon-chevron-left').addClass('glyphicon glyphicon-chevron-left disabled');
+
+                }
+                if (PageNo < LastPageNo) {
+                    $("#btnNext_ExpireSynDealDataList").removeClass('glyphicon glyphicon-chevron-right disabled').addClass('glyphicon glyphicon-chevron-right');
+                } else {
+                    $("#btnNext_ExpireSynDealDataList").removeClass('glyphicon glyphicon-chevron-right').addClass('glyphicon glyphicon-chevron-right disabled');
+
+                }
+                if (PageNo == 1) {
+                    $('#btnPrevious_ExpireSynDealDataList').attr('onClick', 'return false');
+                    $('#btnPrevious_ExpireSynDealDataList').tooltip('disable');
+                }
+                if (PageNo == LastPageNo) {
+                    $('#btnNext_ExpireSynDealDataList').attr('onClick', 'return false');
+                    $('#btnNext_ExpireSynDealDataList').tooltip('disable');
+                }
+                if (PageNo > 1 && PageNo != LastPageNo) {
+                    $('#btnPrevious_ExpireSynDealDataList').attr('onClick', '');
+                    $('#btnNext_ExpireSynDealDataList').attr('onClick', '');
+                    $('#btnPrevious_ExpireSynDealDataList').tooltip('enable');
+                    $('#btnNext_ExpireSynDealDataList').tooltip('enable');
+                }
+            }
+        }
+        function ShowHideButton_ROFR_AcquisitionList(PageNo, LastPageNo) {
+            debugger;
+            if ('@ROFR_AcquisitionList.Count' > 0) {
+                if (PageNo > 1) {
+                    $("#btnPrevious_ROFR_AcquisitionList").removeClass('glyphicon glyphicon-chevron-left disabled').addClass('glyphicon glyphicon-chevron-left');
+                } else {
+                    $("#btnPrevious_ROFR_AcquisitionList").removeClass('glyphicon glyphicon-chevron-left').addClass('glyphicon glyphicon-chevron-left disabled');
+
+                }
+                if (PageNo < LastPageNo) {
+                    $("#btnNext_ROFR_AcquisitionList").removeClass('glyphicon glyphicon-chevron-right disabled').addClass('glyphicon glyphicon-chevron-right');
+                } else {
+                    $("#btnNext_ROFR_AcquisitionList").removeClass('glyphicon glyphicon-chevron-right').addClass('glyphicon glyphicon-chevron-right disabled');
+
+                }
+                if (PageNo == 1) {
+                    $('#btnPrevious_ROFR_AcquisitionList').attr('onClick', 'return false');
+                    $('#btnPrevious_ROFR_AcquisitionList').tooltip('disable');
+                }
+                if (PageNo == LastPageNo) {
+                    $('#btnNext_ROFR_AcquisitionList').attr('onClick', 'return false');
+                    $('#btnNext_ROFR_AcquisitionList').tooltip('disable');
+                }
+                if (PageNo > 1 && PageNo != LastPageNo) {
+                    $('#btnPrevious_ROFR_AcquisitionList').attr('onClick', '');
+                    $('#btnNext_ROFR_AcquisitionList').attr('onClick', '');
+                    $('#btnPrevious_ROFR_AcquisitionList').tooltip('enable');
+                    $('#btnNext_ROFR_AcquisitionList').tooltip('enable');
+                }
+            }
+        }
+        function ShowHideButton_TentativeStartAcquDealsList(PageNo, LastPageNo) {
+            if ('@TentativeStartAcquDealsList.Count' > 0) {
+                if (PageNo > 1) {
+                    $("#btnPrevious_TentativeStartAcquDealsList").removeClass('glyphicon glyphicon-chevron-left disabled').addClass('glyphicon glyphicon-chevron-left');
+                } else {
+                    $("#btnPrevious_TentativeStartAcquDealsList").removeClass('glyphicon glyphicon-chevron-left').addClass('glyphicon glyphicon-chevron-left disabled');
+
+                }
+                if (PageNo < LastPageNo) {
+                    $("#btnNext_TentativeStartAcquDealsList").removeClass('glyphicon glyphicon-chevron-right disabled').addClass('glyphicon glyphicon-chevron-right');
+                } else {
+                    $("#btnNext_TentativeStartAcquDealsList").removeClass('glyphicon glyphicon-chevron-right').addClass('glyphicon glyphicon-chevron-right disabled');
+
+                }
+                if (PageNo == 1) {
+                    $('#btnPrevious_TentativeStartAcquDealsList').attr('onClick', 'return false');
+                    $('#btnPrevious_TentativeStartAcquDealsList').tooltip('disable');
+                }
+                if (PageNo == LastPageNo) {
+                    $('#btnNext_TentativeStartAcquDealsList').attr('onClick', 'return false');
+                    $('#btnNext_TentativeStartAcquDealsList').tooltip('disable');
+                }
+                if (PageNo > 1 && PageNo != LastPageNo) {
+                    $('#btnPrevious_TentativeStartAcquDealsList').attr('onClick', '');
+                    $('#btnNext_TentativeStartAcquDealsList').attr('onClick', '');
+                    $('#btnPrevious_TentativeStartAcquDealsList').tooltip('enable');
+                    $('#btnNext_TentativeStartAcquDealsList').tooltip('enable');
+                }
+            }
+        }
+        function ShowHideButton_AproveAcqDealList(PageNo, LastPageNo) {
+            if ('@AproveAcqDealList.Count' > 0) {
+                if (PageNo > 1) {
+                    $("#btnPrevious_AproveAcqDealList").removeClass('glyphicon glyphicon-chevron-left disabled').addClass('glyphicon glyphicon-chevron-left');
+                } else {
+                    $("#btnPrevious_AproveAcqDealList").removeClass('glyphicon glyphicon-chevron-left').addClass('glyphicon glyphicon-chevron-left disabled');
+                }
+                if (PageNo < LastPageNo) {
+                    $("#btnNext_AproveAcqDealList").removeClass('glyphicon glyphicon-chevron-right disabled').addClass('glyphicon glyphicon-chevron-right');
+                } else {
+                    $("#btnNext_AproveAcqDealList").removeClass('glyphicon glyphicon-chevron-right').addClass('glyphicon glyphicon-chevron-right disabled');
+                }
+                if (PageNo == 1) {
+                    $('#btnPrevious_AproveAcqDealList').attr('onClick', 'return false');
+                    $('#btnPrevious_AproveAcqDealList').tooltip('disable');
+                }
+                if (PageNo == LastPageNo) {
+                    $('#btnNext_AproveAcqDealList').attr('onClick', 'return false');
+                    $('#btnNext_AproveAcqDealList').tooltip('disable')
+                }
+                if (PageNo > 1 && PageNo != LastPageNo) {
+                    $('#btnPrevious_AproveAcqDealList').attr('onClick', '');
+                    $('#btnNext_AproveAcqDealList').attr('onClick', '');
+                    $('#btnPrevious_AproveAcqDealList').tooltip('enable');
+                    $('#btnNext_AproveAcqDealList').tooltip('enable')
+                }
+            }
+        }
+        function ShowHideButton_AproveSynDealList(PageNo, LastPageNo) {
+            debugger
+            if ('@AproveSynDealList.Count' > 0) {
+                if (PageNo > 1) {
+                    $("#btnPrevious_AproveSynDealList").removeClass('glyphicon glyphicon-chevron-left disabled').addClass('glyphicon glyphicon-chevron-left');
+                } else {
+                    $("#btnPrevious_AproveSynDealList").removeClass('glyphicon glyphicon-chevron-left').addClass('glyphicon glyphicon-chevron-left disabled');
+
+                }
+                if (PageNo < LastPageNo) {
+                    $("#btnNext_AproveSynDealList").removeClass('glyphicon glyphicon-chevron-right disabled').addClass('glyphicon glyphicon-chevron-right');
+                } else {
+                    $("#btnNext_AproveSynDealList").removeClass('glyphicon glyphicon-chevron-right').addClass('glyphicon glyphicon-chevron-right disabled');
+
+                }
+                if (PageNo == 1) {
+                    $('#btnPrevious_AproveSynDealList').attr('onClick', 'return false');
+                    $('#btnPrevious_AproveSynDealList').tooltip('disable');
+                }
+                if (PageNo == LastPageNo) {
+                    $('#btnNext_AproveSynDealList').attr('onClick', 'return false');
+                    $('#btnNext_AproveSynDealList').tooltip('disable');
+                }
+                if (PageNo > 1 && PageNo != LastPageNo) {
+                    $('#btnPrevious_AproveSynDealList').attr('onClick', '');
+                    $('#btnNext_AproveSynDealList').attr('onClick', '');
+                    $('#btnPrevious_AproveSynDealList').tooltip('enable');
+                    $('#btnNext_AproveSynDealList').tooltip('enable');
+                }
+            }
+        }
+
+        function search() {
+            if ($("#txtSearch").val().trim() == "") {
+                $("#txtSearch").addClass('required');
+            } else {
+                $("#txtSearch").removeClass('required');
+                $("#frmDashboard").submit();
+            }
+        }
+        function Paging(pageindex, pagetype, SearchText, buttonType, TableName) {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("Paging", "Base")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                async: false,
+                data: JSON.stringify({
+                    currentPageIndex: pageindex,
+                    type: pagetype,
+                    Search: SearchText,
+                    Button: buttonType
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        $("#" + TableName).html = null;
+                        $("#" + TableName).html(result.Html);
+                        initializeTooltip();
+                        debugger;
+                        if (pagetype == "AS") {
+                            ShowHideButton_StartAcqDealList(result.PageNo, result.LastPageNo);
+                            $("#currentPageIndex_StartAcqDealList").val(result.PageNo);
+                        } else if (pagetype == "SS") {
+                            ShowHideButton_StartSynDealList(result.PageNo, result.LastPageNo);
+                            $("#currentPageIndex_StartSynDealList").val(result.PageNo);
+                        } else if (pagetype == "AE") {
+                            ShowHideButton_ExpireAcqDealList(result.PageNo, result.LastPageNo);
+                            $("#currentPageIndex_ExpireAcqDealList").val(result.PageNo);
+                        } else if (pagetype == "SE") {
+                            ShowHideButton_ExpireSynDealDataList(result.PageNo, result.LastPageNo);
+                            $("#currentPageIndex_ExpireSynDealDataList").val(result.PageNo);
+                        } else if (pagetype == "AR") {
+                            ShowHideButton_ROFR_AcquisitionList(result.PageNo, result.LastPageNo);
+                            $("#currentPageIndex_ROFR_AcquisitionList").val(result.PageNo);
+                        } else if (pagetype == "AT") {
+                            ShowHideButton_TentativeStartAcquDealsList(result.PageNo, result.LastPageNo);
+                            $("#currentPageIndex_TentativeStartAcquDealsList").val(result.PageNo);
+                        } else if (pagetype == "AA") {
+                            ShowHideButton_AproveAcqDealList(result.PageNo, result.LastPageNo);
+                            $("#currentPageIndex_AproveAcqDealList").val(result.PageNo);
+                        } else if (pagetype == "SA") {
+                            ShowHideButton_AproveSynDealList(result.PageNo, result.LastPageNo);
+                            $("#currentPageIndex_AproveSynDealList").val(result.PageNo);
+                        }
+
+                    }
+                },
+                error: function (result) {
+                    //alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    </script>
+    <style>
+        .dashboardGroup .glyphicon {
+            color: white !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="main_section">
+        <section class="rightsU_container clearfix">
+            <div class="container main_col">
+                @using (Html.BeginForm("Dashboard", "Base", FormMethod.Post, new { id = "frmDashboard" }))
+                {
+                    <section class="searchDIV clearfix">
+                        @Html.TextBox("Search", TempData["Search"] as string, new { @MaxLength = "200", id = "txtSearch", autocomplete = "off", placeholder = "Search by Title, Deal No., Licensee, Licensor ..." })
+                        <a href="#">
+                            <span class="glyphicon glyphicon-search" title="Search" onclick="return search()"></span>
+                        </a>
+                        <a href="#" onclick=" window.location.href='@Url.Action("Dashboard", "Base", new { Search = "" })    ' ">
+                            <span class=" glyphicon glyphicon-refresh" title="Show All" id="ShowAll">
+                            </span>
+                        </a>
+                    </section>
+                }
+                <section class="dashboardGroup clearfix">
+                    @if (ViewBag.StartAcqDealList != null)
+                    {
+                        <div class="dashboard acq">
+                            <span>
+                                @*<input type="button" class="glyphicon-chevron-left" id="btnPrevious_StartAcqDealList"  />*@
+                                <a title="Previous" class="glyphicon glyphicon-chevron-left" id="btnPrevious_StartAcqDealList" style="float:left;padding-top:1px;"></a>
+
+                                @Html.ActionLink((string)ViewBag.StartAcqDealListTitle, "DealExpiryReport", "Reports", new { callFor = "AS", expDays = (int)ViewBag.DealStartAndExp_Days, callFrom = "D" }, null)
+
+                                @*<input type="button" class="pull-right" id="btnNext_StartAcqDealList" value=">>" />*@
+                                <a title="Next" class="glyphicon glyphicon-chevron-right" id="btnNext_StartAcqDealList" style="float:right;padding-top:1px;"></a>
+                                <input type="hidden" id="currentPageIndex_StartAcqDealList" value="@ViewBag.StartAcqDealList_PageNo" />
+                            </span>
+
+                            @if (StartAcqDealList.Count > 0)
+                            {
+                                <table id="StartAcqDealList_tbl">
+                                    <tr>
+                                        <th>Deal No.</th>
+                                        <th>Title</th>
+                                        <th>Party Name</th>
+                                        @if (ViewBag.CostVisibility)
+                                        {
+                                            <th>Amount</th>
+                                        }
+                                        <th>Period</th>
+                                    </tr>
+                                    @foreach (var item in StartAcqDealList)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @if (item.Is_Deal_Rights == "Y")
+                                                {
+                                                    <h5><a href="@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = @item.Deal_Code })">@item.Agreement_No</a></h5>
+                                                }
+                                                else
+                                                {
+                                                    @item.Agreement_No
+                                                }
+                                            </td>
+                                            <td>
+                                                <h5 title="@item.TitleName">
+                                                    @Html.Raw(@item.TitleName.Length >= 33 ? @item.TitleName.Substring(0, 30) + "..." : @item.TitleName)
+                                                </h5>
+                                            </td>
+                                            <td>
+                                                <div title="@item.Customer">@Html.Raw(@item.Customer.Length >= 33 ? @item.Customer.Substring(0, 30) + "..." : @item.Customer)</div>
+                                            </td>
+                                            @if (ViewBag.CostVisibility)
+                                            {
+                                                <td class="amount">
+                                                    @String.Format("{0:n}", item.Deal_Movie_Cost)
+                                                </td>
+                                            }
+                                            <td>
+                                                @item.RightPeriod
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            }
+                            else
+                            {<h1>NO DATA</h1>}
+                        </div>
+                    }
+                    @if (ViewBag.StartSynDealList != null)
+                    {
+                        <div class="dashboard syn">
+                            <span>
+                                @*<input type="button" class="pull-left" id="btnPrevious_StartSynDealList" value="<<" />*@
+                                <a title="Previous" class="glyphicon glyphicon-chevron-left" id="btnPrevious_StartSynDealList" style="float:left;padding-top:1px;"></a>
+
+                                @Html.ActionLink((string)ViewBag.StartSynDealListTitle, "DealExpiryReport", "Reports", new { callFor = "SS", expDays = (int)ViewBag.DealStartAndExp_Days, callFrom = "D" }, null)
+
+                                @*<input type="button" class="pull-right" id="btnNext_StartSynDealList" value=">>" />*@
+                                <a title="Next" class="glyphicon glyphicon-chevron-right" id="btnNext_StartSynDealList" style="float:right;padding-top:1px;"></a>
+                                <input type="hidden" id="currentPageIndex_StartSynDealList" value="@ViewBag.StartSynDealList_PageNo" />
+                            </span>
+
+                            @if (StartSynDealList.Count > 0)
+                            {
+                                <table id="StartSynDealList_tbl">
+                                    <tr>
+                                        <th>Deal No.</th>
+                                        <th>Title</th>
+                                        <th>Party Name</th>
+                                        @if (ViewBag.CostVisibility)
+                                        {
+                                            <th>Amount</th>
+                                        }
+                                        <th>Period</th>
+                                    </tr>
+                                    @foreach (var item in StartSynDealList)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @if (item.Is_Deal_Rights == "Y")
+                                                {
+                                                    <h5><a href="@Url.Action("ButtonEvents", "Syn_List", new { CommandName = "View", Syn_Deal_Code = @item.Deal_Code })">@item.Agreement_No</a></h5>
+                                                }
+                                                else
+                                                {
+                                                    @item.Agreement_No
+                                                }
+                                            </td>
+                                            <td>
+                                                <h5 title="@item.TitleName">
+                                                    @Html.Raw(@item.TitleName.Length >= 33 ? @item.TitleName.Substring(0, 30) + "..." : @item.TitleName)
+                                                </h5>
+                                            </td>
+                                            <td>
+                                                <div title="@item.Customer">
+                                                    @Html.Raw(@item.Customer.Length >= 33 ? @item.Customer.Substring(0, 30) + "..." : @item.Customer)
+                                                </div>
+                                            </td>
+                                            @if (ViewBag.CostVisibility)
+                                            {
+                                                <td class="amount">
+                                                    @String.Format("{0:n}", item.Deal_Movie_Cost)
+
+                                                </td>
+                                            }
+                                            <td>
+                                                @item.RightPeriod
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            }
+                            else
+                            {<h1>NO DATA</h1>}
+                        </div>
+                    }
+
+                    @if (ViewBag.ExpireAcqDealList != null)
+                    {
+                        <div class="dashboard acq">
+                            <span>
+                                @*<input type="button" class="pull-left" id="btnPrevious_ExpireAcqDealList" value="<<" />*@
+                                <a title="Previous" class="glyphicon glyphicon-chevron-left" id="btnPrevious_ExpireAcqDealList" style="float:left;padding-top:1px;"></a>
+
+                                @Html.ActionLink((string)ViewBag.ExpireAcqDealListTitle, "DealExpiryReport", "Reports", new { callFor = "AE", expDays = (int)ViewBag.DealStartAndExp_Days, callFrom = "D" }, null)
+
+                                @*<input type="button" class="pull-right" id="btnNext_ExpireAcqDealList" value=">>" />*@
+                                <a title="Next" class="glyphicon glyphicon-chevron-right" id="btnNext_ExpireAcqDealList" style="float:right;padding-top:1px;"></a>
+                                <input type="hidden" id="currentPageIndex_ExpireAcqDealList" value="@ViewBag.ExpireAcqDealList_PageNo" />
+                            </span>
+
+                            @if (ExpireAcqDealList.Count > 0)
+                            {
+                                <table id="ExpireAcqDealList_tbl">
+                                    <tr>
+                                        <th>Deal No.</th>
+                                        <th>Title</th>
+                                        <th>Party Name</th>
+                                        @if (ViewBag.CostVisibility)
+                                        {
+                                            <th>Amount</th>
+                                        }
+                                        <th>Period</th>
+                                    </tr>
+                                    @foreach (var item in ExpireAcqDealList)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @if (item.Is_Deal_Rights == "Y")
+                                                {
+                                                    <h5><a href="@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = @item.Deal_Code })">@item.Agreement_No</a></h5>
+                                                }
+                                                else
+                                                {
+                                                    @item.Agreement_No
+                                                }
+                                            </td>
+                                            <td>
+                                                <h5 title="@item.TitleName">
+                                                    @Html.Raw(@item.TitleName.Length >= 33 ? @item.TitleName.Substring(0, 30) + "..." : @item.TitleName)
+                                                </h5>
+                                            </td>
+                                            <td>
+                                                <div title="@item.Customer">
+                                                    @Html.Raw(@item.Customer.Length >= 33 ? @item.Customer.Substring(0, 30) + "..." : @item.Customer)
+                                                </div>
+                                            </td>
+                                            @if (ViewBag.CostVisibility)
+                                            {
+                                                <td class="amount">
+                                                    @String.Format("{0:n}", item.Deal_Movie_Cost)
+                                                </td>
+                                            }
+                                            <td>
+                                                @item.RightPeriod
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            }
+
+                            else
+                            {<h1>NO DATA</h1>}
+                        </div>
+                    }
+
+                    @if (ViewBag.ExpireSynDealDataList != null)
+                    {
+                        <div class="dashboard syn">
+                            <span>
+                                @*<input type="button" class="pull-left" id="btnPrevious_ExpireSynDealDataList" value="<<" />*@
+                                <a title="Previous" class="glyphicon glyphicon-chevron-left" id="btnPrevious_ExpireSynDealDataList" style="float:left;padding-top:1px;"></a>
+
+                                @Html.ActionLink((string)ViewBag.ExpireSynDealDataListTitle, "DealExpiryReport", "Reports", new { callFor = "SE", expDays = (int)ViewBag.DealStartAndExp_Days, callFrom = "D" }, null)
+
+                                @*<input type="button" class="pull-right" id="btnNext_ExpireSynDealDataList" value=">>" />*@
+                                <a title="Next" class="glyphicon glyphicon-chevron-right" id="btnNext_ExpireSynDealDataList" style="float:right;padding-top:1px;"></a>
+                                <input type="hidden" id="currentPageIndex_ExpireSynDealDataList" value="@ViewBag.ExpireSynDealDataList_PageNo" />
+                            </span>
+
+                            @if (ExpireSynDealDataList.Count > 0)
+                            {
+                                <table id="ExpireSynDealDataList_tbl">
+                                    <tr>
+                                        <th>Deal No.</th>
+                                        <th>Title</th>
+                                        <th>Party Name</th>
+                                        @if (ViewBag.CostVisibility)
+                                        {
+                                            <th>Amount</th>
+                                        }
+                                        <th>Period</th>
+                                    </tr>
+                                    @foreach (var item in ExpireSynDealDataList)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @if (item.Is_Deal_Rights == "Y")
+                                                {
+                                                    <h5><a href="@Url.Action("ButtonEvents", "Syn_List", new { CommandName = "View", Syn_Deal_Code = @item.Deal_Code })">@item.Agreement_No</a></h5>
+                                                }
+                                                else
+                                                {
+                                                    @item.Agreement_No
+                                                }
+                                            </td>
+                                            <td>
+                                                <h5 title="@item.TitleName">
+                                                    @Html.Raw(@item.TitleName.Length >= 33 ? @item.TitleName.Substring(0, 30) + "..." : @item.TitleName)
+                                                </h5>
+                                            </td>
+                                            <td>
+                                                <div title="@item.Customer">@Html.Raw(@item.Customer.Length >= 33 ? @item.Customer.Substring(0, 30) + "..." : @item.Customer)</div>
+                                            </td>
+                                            @if (ViewBag.CostVisibility)
+                                            {
+                                                <td class="amount">
+                                                    @String.Format("{0:n}", item.Deal_Movie_Cost)
+                                                </td>}
+                                            <td>
+                                                @item.RightPeriod
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            }
+                            else
+                            {<h1>NO DATA</h1>}
+                        </div>
+                    }
+
+                    @if (ViewBag.ROFR_AcquisitionList != null)
+                    {
+                        <div class="dashboard acq">
+                            <span>
+                                @*<input type="button" class="pull-left" id="btnPrevious_ROFR_AcquisitionList" value="<<" />*@
+                                <a title="Previous" class="glyphicon glyphicon-chevron-left" id="btnPrevious_ROFR_AcquisitionList" style="float:left;padding-top:1px;"></a>
+
+                                @Html.ActionLink((string)ViewBag.ROFR_AcquisitionListTitle, "DealExpiryReport", "Reports", new { callFor = "AR", expDays = (int)ViewBag.DealStartAndExp_Days, callFrom = "D" }, null)
+
+                                @*<input type="button" class="pull-right" id="btnNext_ROFR_AcquisitionList" value=">>" />*@
+                                <a title="Next" class="glyphicon glyphicon-chevron-right" id="btnNext_ROFR_AcquisitionList" style="float:right;padding-top:1px;"></a>
+                                <input type="hidden" id="currentPageIndex_ROFR_AcquisitionList" value="@ViewBag.ROFR_AcquisitionList_PageNo" />
+                            </span>
+
+                            @if (ROFR_AcquisitionList.Count > 0)
+                            {
+                                <table id="ROFR_AcquisitionList_tbl">
+                                    <tr>
+                                        <th>Deal No.</th>
+                                        <th>Title</th>
+                                        <th>Party Name</th>
+                                        @if (ViewBag.CostVisibility)
+                                        {
+                                            <th>Amount</th>
+                                        }
+                                        <th>Period</th>
+                                    </tr>
+                                    @foreach (var item in ROFR_AcquisitionList)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @if (item.Is_Deal_Rights == "Y")
+                                                {
+                                                    <h5><a href="@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = @item.Deal_Code })">@item.Agreement_No</a></h5>
+                                                }
+                                                else
+                                                {
+                                                    @item.Agreement_No
+                                                }
+                                            </td>
+                                            <td>
+                                                <h5 title="@item.TitleName">
+                                                    @Html.Raw(@item.TitleName.Length >= 33 ? @item.TitleName.Substring(0, 30) + "..." : @item.TitleName)
+                                                </h5>
+                                            </td>
+                                            <td>
+                                                <div title="@item.Customer">@Html.Raw(@item.Customer.Length >= 33 ? @item.Customer.Substring(0, 30) + "..." : @item.Customer)</div>
+                                            </td>
+                                            @if (ViewBag.CostVisibility)
+                                            {
+                                                <td class="amount">
+                                                    @String.Format("{0:n}", item.Deal_Movie_Cost)
+                                                </td>
+                                            }
+                                            <td>
+                                                @item.RightPeriod
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            }
+                            else
+                            {<h1>NO DATA</h1>}
+                        </div>
+                    }
+
+                    @if (ViewBag.TentativeStartAcquDealsList != null)
+                    {
+                        <div class="dashboard acq">
+                            <span>
+                                @*<input type="button" class="pull-left" id="btnPrevious_TentativeStartAcquDealsList" value="<<" />*@
+                                <a title="Previous" class="glyphicon glyphicon-chevron-left" id="btnPrevious_TentativeStartAcquDealsList" style="float:left;padding-top:1px;"></a>
+
+                                @Html.ActionLink((string)ViewBag.TentativeStartAcquDealsListTitle, "DealExpiryReport", "Reports", new { callFor = "AT", expDays = (int)ViewBag.DealStartAndExp_Days, callFrom = "D" }, null)
+
+                                @*<input type="button" class="pull-right" id="btnNext_TentativeStartAcquDealsList" value=">>" />*@
+                                <a title="Next" class="glyphicon glyphicon-chevron-right" id="btnNext_TentativeStartAcquDealsList" style="float:right;padding-top:1px;"></a>
+                                <input type="hidden" id="currentPageIndex_TentativeStartAcquDealsList" value="@ViewBag.TentativeStartAcquDealsList_PageNo" />
+                            </span>
+
+                            @if (TentativeStartAcquDealsList.Count > 0)
+                            {
+                                <table id="TentativeStartAcquDealsList_tbl">
+                                    <tr>
+                                        <th>Deal No.</th>
+                                        <th>Title</th>
+                                        <th>Party Name</th>
+                                        @if (ViewBag.CostVisibility)
+                                        {
+                                            <th>Amount</th>
+                                        }
+                                        <th>Period</th>
+                                    </tr>
+                                    @foreach (var item in TentativeStartAcquDealsList)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @if (item.Is_Deal_Rights == "Y")
+                                                {
+                                                    <h5><a href="@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = @item.Deal_Code })">@item.Agreement_No</a></h5>
+                                                }
+                                                else
+                                                {
+                                                    @item.Agreement_No
+                                                }
+                                            </td>
+                                            <td>
+                                                <h5 title="@item.TitleName">
+                                                    @Html.Raw(@item.TitleName.Length >= 33 ? @item.TitleName.Substring(0, 30) + "..." : @item.TitleName)
+                                                </h5>
+                                            </td>
+                                            <td>
+                                                <div title="@item.Customer">@Html.Raw(@item.Customer.Length >= 33 ? @item.Customer.Substring(0, 30) + "..." : @item.Customer)</div>
+                                            </td>
+                                            @if (ViewBag.CostVisibility)
+                                            {
+                                                <td class="amount">
+                                                    @String.Format("{0:n}", item.Deal_Movie_Cost)
+                                                </td>
+                                            }
+                                            <td>
+                                                @item.RightPeriod
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            }
+                            else
+                            {<h1>NO DATA</h1>}
+                        </div>
+                    }
+
+                    @if (ViewBag.AproveAcqDealList != null)
+                    {
+                        <div class="dashboard acq">
+                            <span>
+                                <a title="Previous" class="glyphicon glyphicon-chevron-left" id="btnPrevious_AproveAcqDealList" style="float:left;padding-top:1px;"></a>
+
+                                @Html.ActionLink((string)ViewBag.AproveAcqDealListTitle, "DealExpiryReport", "Reports", new { callFor = "AA", expDays = (int)ViewBag.DealStartAndExp_Days, callFrom = "D" }, null)
+
+                                <a title="Next" class="glyphicon glyphicon-chevron-right" id="btnNext_AproveAcqDealList" style="float:right;padding-top:1px;"></a>
+                                <input type="hidden" id="currentPageIndex_AproveAcqDealList" value="@ViewBag.AproveAcqDealList_PageNo" />
+                            </span>
+
+                            @if (AproveAcqDealList.Count > 0)
+                            {
+                                <table id="AproveAcqDealList_tbl">
+                                    <tr>
+                                        <th>Deal No.</th>
+                                        <th>Title</th>
+                                        <th>Party Name</th>
+                                        @if (ViewBag.CostVisibility)
+                                        {
+                                            <th>Amount</th>
+                                        }
+                                        <th>Approved On</th>
+                                    </tr>
+                                    @foreach (var item in AproveAcqDealList)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @if (item.Is_Deal_Rights == "Y")
+                                                {
+                                                    <h5><a href="@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = @item.Deal_Code })">@item.Agreement_No</a></h5>
+                                                }
+                                                else
+                                                {
+                                                    @item.Agreement_No
+                                                }
+                                            </td>
+                                            <td>
+                                                <h5 title="@item.TitleName">
+                                                    @Html.Raw(@item.TitleName.Length >= 33 ? @item.TitleName.Substring(0, 30) + "..." : @item.TitleName)
+                                                </h5>
+                                            </td>
+                                            <td>
+                                                <div title="@item.Customer">@Html.Raw(@item.Customer.Length >= 33 ? @item.Customer.Substring(0, 30) + "..." : @item.Customer)</div>
+                                            </td>
+                                            @if (ViewBag.CostVisibility)
+                                            {
+                                                <td class="amount">
+                                                    @String.Format("{0:n}", item.Deal_Movie_Cost)
+                                                </td>
+                                            }
+                                            <td>
+                                                @item.RightPeriod
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            }
+                            else
+                            {<h1>NO DATA</h1>}
+                        </div>
+                    }
+
+                    @if (ViewBag.AproveSynDealList != null)
+                    {
+                        <div class="dashboard syn">
+                            <span>
+                                @*<input type="button" class="pull-left" id="btnPrevious_StartSynDealList" value="<<" />*@
+                                <a title="Previous" class="glyphicon glyphicon-chevron-left" id="btnPrevious_AproveSynDealList" style="float:left;padding-top:1px;"></a>
+
+                                @Html.ActionLink((string)ViewBag.AproveSynDealListTitle, "DealExpiryReport", "Reports", new { callFor = "SA", expDays = (int)ViewBag.DealStartAndExp_Days, callFrom = "D" }, null)
+
+                                @*<input type="button" class="pull-right" id="btnNext_StartSynDealList" value=">>" />*@
+                                <a title="Next" class="glyphicon glyphicon-chevron-right" id="btnNext_AproveSynDealList" style="float:right;padding-top:1px;"></a>
+                                <input type="hidden" id="currentPageIndex_AproveSynDealList" value="@ViewBag.AproveSynDealList_PageNo" />
+                            </span>
+
+                            @if (AproveSynDealList.Count > 0)
+                            {
+                                <table id="AproveSynDealList_tbl">
+                                    <tr>
+                                        <th>Deal No.</th>
+                                        <th>Title</th>
+                                        <th>Party Name</th>
+                                        @if (ViewBag.CostVisibility)
+                                        {
+                                            <th>Amount</th>
+                                        }
+                                        <th>Aproved On</th>
+                                    </tr>
+                                    @foreach (var item in AproveSynDealList)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @if (item.Is_Deal_Rights == "Y")
+                                                {
+                                                    <h5><a href="@Url.Action("ButtonEvents", "Syn_List", new { CommandName = "View", Syn_Deal_Code = @item.Deal_Code })">@item.Agreement_No</a></h5>
+                                                }
+                                                else
+                                                {
+                                                    @item.Agreement_No
+                                                }
+                                            </td>
+                                            <td>
+                                                <h5 title="@item.TitleName">
+                                                    @Html.Raw(@item.TitleName.Length >= 33 ? @item.TitleName.Substring(0, 30) + "..." : @item.TitleName)
+                                                </h5>
+                                            </td>
+                                            <td>
+                                                <div title="@item.Customer">
+                                                    @Html.Raw(@item.Customer.Length >= 33 ? @item.Customer.Substring(0, 30) + "..." : @item.Customer)
+                                                </div>
+                                            </td>
+                                            @if (ViewBag.CostVisibility)
+                                            {
+                                                <td class="amount">
+                                                    @String.Format("{0:n}", item.Deal_Movie_Cost)
+
+                                                </td>
+                                            }
+                                            <td>
+                                                @item.RightPeriod
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            }
+                            else
+                            {<h1>NO DATA</h1>}
+                        </div>
+                    }
+
+
+
+                    @if (ViewBag.ExpireAcqDealDataList_AcqRevHB != null)
+                    {
+                        <div class="dashboard acq">
+                            <span>
+                                @*<input type="button" class="pull-left" id="btnPrevious_ExpireSynDealDataList" value="<<" />*@
+                                <a title="Previous" class="glyphicon glyphicon-chevron-left" id="btnPrevious_ExpireSynDealDataList" style="float:left;padding-top:1px;"></a>
+
+                                @Html.ActionLink((string)ViewBag.AcqRevHB_Title, "DealExpiryReport", "Reports", new { callFor = "ARHB", expDays = (int)ViewBag.DealStartAndExp_Days, callFrom = "D" }, null)
+
+                                @*<input type="button" class="pull-right" id="btnNext_ExpireSynDealDataList" value=">>" />*@
+                                <a title="Next" class="glyphicon glyphicon-chevron-right" id="btnNext_ExpireSynDealDataList" style="float:right;padding-top:1px;"></a>
+                                <input type="hidden" id="currentPageIndex_ExpireSynDealDataList" value="@ViewBag.ExpireSynDealDataList_PageNo" />
+                            </span>
+
+                            @if (ExpireAcqDealDataList_AcqRevHB.Count > 0)
+                            {
+                                <table id="ExpireSynDealDataList_tbl">
+                                    <tr>
+                                        <th>Deal No.</th>
+                                        <th>Title</th>
+                                        <th>Party Name</th>
+                                        @if (ViewBag.CostVisibility)
+                                        {
+                                            <th>Amount</th>
+                                        }
+                                        <th>Period</th>
+                                    </tr>
+                                    @foreach (var item in ExpireAcqDealDataList_AcqRevHB)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @if (item.Is_Deal_Rights == "Y")
+                                                {
+                                                    <h5><a href="@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = @item.Deal_Code })">@item.Agreement_No</a></h5>
+                                                }
+                                                else
+                                                {
+                                                    @item.Agreement_No
+                                                }
+                                            </td>
+                                            <td>
+                                                <h5 title="@item.TitleName">
+                                                    @Html.Raw(@item.TitleName.Length >= 33 ? @item.TitleName.Substring(0, 30) + "..." : @item.TitleName)
+                                                </h5>
+                                            </td>
+                                            <td>
+                                                <div title="@item.Customer">@Html.Raw(@item.Customer.Length >= 33 ? @item.Customer.Substring(0, 30) + "..." : @item.Customer)</div>
+                                            </td>
+                                            @if (ViewBag.CostVisibility)
+                                            {
+                                                <td class="amount">
+                                                    @String.Format("{0:n}", item.Deal_Movie_Cost)
+                                                </td>}
+                                            <td>
+                                                @item.RightPeriod
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            }
+                            else
+                            {<h1>NO DATA</h1>}
+                        </div>
+                    }
+
+                    @if (ViewBag.ExpireSynDealDataList_SynRevHB != null)
+                    {
+                        <div class="dashboard syn">
+                            <span>
+                                @*<input type="button" class="pull-left" id="btnPrevious_ExpireSynDealDataList" value="<<" />*@
+                                <a title="Previous" class="glyphicon glyphicon-chevron-left" id="btnPrevious_ExpireSynDealDataList" style="float:left;padding-top:1px;"></a>
+
+                                @Html.ActionLink((string)ViewBag.SynRevHB_Title, "DealExpiryReport", "Reports", new { callFor = "SRHB", expDays = (int)ViewBag.DealStartAndExp_Days, callFrom = "D" }, null)
+
+                                @*<input type="button" class="pull-right" id="btnNext_ExpireSynDealDataList" value=">>" />*@
+                                <a title="Next" class="glyphicon glyphicon-chevron-right" id="btnNext_ExpireSynDealDataList" style="float:right;padding-top:1px;"></a>
+                                <input type="hidden" id="currentPageIndex_ExpireSynDealDataList" value="@ViewBag.ExpireSynDealDataList_PageNo" />
+                            </span>
+
+                            @if (ExpireSynDealDataList_SynRevHB.Count > 0)
+                            {
+                                <table id="ExpireSynDealDataList_tbl">
+                                    <tr>
+                                        <th>Deal No.</th>
+                                        <th>Title</th>
+                                        <th>Party Name</th>
+                                        @if (ViewBag.CostVisibility)
+                                        {
+                                            <th>Amount</th>
+                                        }
+                                        <th>Period</th>
+                                    </tr>
+                                    @foreach (var item in ExpireSynDealDataList_SynRevHB)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @if (item.Is_Deal_Rights == "Y")
+                                                {
+                                                    <h5><a href="@Url.Action("ButtonEvents", "Syn_List", new { CommandName = "View", Syn_Deal_Code = @item.Deal_Code })">@item.Agreement_No</a></h5>
+                                                }
+                                                else
+                                                {
+                                                    @item.Agreement_No
+                                                }
+                                            </td>
+                                            <td>
+                                                <h5 title="@item.TitleName">
+                                                    @Html.Raw(@item.TitleName.Length >= 33 ? @item.TitleName.Substring(0, 30) + "..." : @item.TitleName)
+                                                </h5>
+                                            </td>
+                                            <td>
+                                                <div title="@item.Customer">@Html.Raw(@item.Customer.Length >= 33 ? @item.Customer.Substring(0, 30) + "..." : @item.Customer)</div>
+                                            </td>
+                                            @if (ViewBag.CostVisibility)
+                                            {
+                                                <td class="amount">
+                                                    @String.Format("{0:n}", item.Deal_Movie_Cost)
+                                                </td>}
+                                            <td>
+                                                @item.RightPeriod
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            }
+                            else
+                            {<h1>NO DATA</h1>}
+                        </div>
+                    }
+
+                    @if (ViewBag.ExpireAcqDealDataList_AcqHB != null)
+                    {
+                        <div class="dashboard acq">
+                            <span>
+                                @*<input type="button" class="pull-left" id="btnPrevious_ExpireSynDealDataList" value="<<" />*@
+                                <a title="Previous" class="glyphicon glyphicon-chevron-left" id="btnPrevious_ExpireSynDealDataList" style="float:left;padding-top:1px;"></a>
+
+                                @Html.ActionLink((string)ViewBag.AcqHB_Title, "DealExpiryReport", "Reports", new { callFor = "AHB", expDays = (int)ViewBag.DealStartAndExp_Days, callFrom = "D" }, null)
+
+                                @*<input type="button" class="pull-right" id="btnNext_ExpireSynDealDataList" value=">>" />*@
+                                <a title="Next" class="glyphicon glyphicon-chevron-right" id="btnNext_ExpireSynDealDataList" style="float:right;padding-top:1px;"></a>
+                                <input type="hidden" id="currentPageIndex_ExpireSynDealDataList" value="@ViewBag.ExpireSynDealDataList_PageNo" />
+                            </span>
+
+                            @if (ExpireAcqDealDataList_AcqHB.Count > 0)
+                            {
+                                <table id="ExpireSynDealDataList_tbl">
+                                    <tr>
+                                        <th>Deal No.</th>
+                                        <th>Title</th>
+                                        <th>Party Name</th>
+                                        @if (ViewBag.CostVisibility)
+                                        {
+                                            <th>Amount</th>
+                                        }
+                                        <th>Holdback expiry date</th>
+                                    </tr>
+                                    @foreach (var item in ExpireAcqDealDataList_AcqHB)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @if (item.Is_Deal_Rights == "Y")
+                                                {
+                                                    <h5><a href="@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = @item.Deal_Code })">@item.Agreement_No</a></h5>
+                                                }
+                                                else
+                                                {
+                                                    @item.Agreement_No
+                                                }
+                                            </td>
+                                            <td>
+                                                <h5 title="@item.TitleName">
+                                                    @Html.Raw(@item.TitleName.Length >= 33 ? @item.TitleName.Substring(0, 30) + "..." : @item.TitleName)
+                                                </h5>
+                                            </td>
+                                            <td>
+                                                <div title="@item.Customer">@Html.Raw(@item.Customer.Length >= 33 ? @item.Customer.Substring(0, 30) + "..." : @item.Customer)</div>
+                                            </td>
+                                            @if (ViewBag.CostVisibility)
+                                            {
+                                                <td class="amount">
+                                                    @String.Format("{0:n}", item.Deal_Movie_Cost)
+                                                </td>}
+                                            <td>
+                                                @item.RightPeriod
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            }
+                            else
+                            {<h1>NO DATA</h1>}
+                        </div>
+                    }
+
+                    @if (ViewBag.ExpireSynDealDataList_SynHB != null)
+                    {
+                        <div class="dashboard syn">
+                            <span>
+                                @*<input type="button" class="pull-left" id="btnPrevious_ExpireSynDealDataList" value="<<" />*@
+                                <a title="Previous" class="glyphicon glyphicon-chevron-left" id="btnPrevious_ExpireSynDealDataList" style="float:left;padding-top:1px;"></a>
+
+                                @Html.ActionLink((string)ViewBag.SynHB_Title, "DealExpiryReport", "Reports", new { callFor = "SHB", expDays = (int)ViewBag.DealStartAndExp_Days, callFrom = "D" }, null)
+
+                                @*<input type="button" class="pull-right" id="btnNext_ExpireSynDealDataList" value=">>" />*@
+                                <a title="Next" class="glyphicon glyphicon-chevron-right" id="btnNext_ExpireSynDealDataList" style="float:right;padding-top:1px;"></a>
+                                <input type="hidden" id="currentPageIndex_ExpireSynDealDataList" value="@ViewBag.ExpireSynDealDataList_PageNo" />
+                            </span>
+
+                            @if (ExpireSynDealDataList_SynHB.Count > 0)
+                            {
+                                <table id="ExpireSynDealDataList_tbl">
+                                    <tr>
+                                        <th>Deal No.</th>
+                                        <th>Title</th>
+                                        <th>Party Name</th>
+                                        @if (ViewBag.CostVisibility)
+                                        {
+                                            <th>Amount</th>
+                                        }
+                                        <th>Holdback expiry date</th>
+                                    </tr>
+                                    @foreach (var item in ExpireSynDealDataList_SynHB)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @if (item.Is_Deal_Rights == "Y")
+                                                {
+                                                    <h5><a href="@Url.Action("ButtonEvents", "Syn_List", new { CommandName = "View", Syn_Deal_Code = @item.Deal_Code })">@item.Agreement_No</a></h5>
+                                                }
+                                                else
+                                                {
+                                                    @item.Agreement_No
+                                                }
+                                            </td>
+                                            <td>
+                                                <h5 title="@item.TitleName">
+                                                    @Html.Raw(@item.TitleName.Length >= 33 ? @item.TitleName.Substring(0, 30) + "..." : @item.TitleName)
+                                                </h5>
+                                            </td>
+                                            <td>
+                                                <div title="@item.Customer">@Html.Raw(@item.Customer.Length >= 33 ? @item.Customer.Substring(0, 30) + "..." : @item.Customer)</div>
+                                            </td>
+                                            @if (ViewBag.CostVisibility)
+                                            {
+                                                <td class="amount">
+                                                    @String.Format("{0:n}", item.Deal_Movie_Cost)
+                                                </td>}
+                                            <td>
+                                                @item.RightPeriod
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            }
+                            else
+                            {<h1>NO DATA</h1>}
+                        </div>
+                    }
+                    @if (ViewBag.MTAcqDealList != null)
+                    {
+                        <div class="dashboard acq">
+                            <span>
+
+                                <a title="Previous" class="glyphicon glyphicon-chevron-left" id="btnPrevious_MTAcqDealList" style="float:left;padding-top:1px;"></a>
+
+                                @Html.ActionLink((string)ViewBag.MTAcqDealListTitle, "DealExpiryReport", "Reports", new { callFor = "AMT", expDays = (int)ViewBag.DealStartAndExp_Days, callFrom = "D" }, null)
+
+
+                                <a title="Next" class="glyphicon glyphicon-chevron-right" id="btnNext_MTAcqDealList" style="float:right;padding-top:1px;"></a>
+                                <input type="hidden" id="currentPageIndex_MTAcqDealList" value="@ViewBag.MTAcqDealList_PageNo" />
+                            </span>
+
+                            @if (MTAcqDealList.Count > 0)
+                            {
+                                <table id="MTAcqDealList_tbl">
+                                    <tr>
+                                        <th>Deal No.</th>
+                                        <th>Material Type_Name</th>
+                                        <th>Material Medium Name</th>
+                                        <th>Quantity</th>
+                                    </tr>
+                                    @foreach (var item in MTAcqDealList)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @item.Agreement_No
+                                            </td>
+                                            <td>
+                                                <h5 title="@item.Material_Type_Name">
+                                                    @Html.Raw(@item.Material_Type_Name.Length >= 33 ? @item.Material_Type_Name.Substring(0, 30) + "..." : @item.Material_Type_Name)
+                                                </h5>
+                                            </td>
+                                            <td>
+                                                <div title="@item.Material_Medium_Name">@Html.Raw(@item.Material_Medium_Name.Length >= 33 ? @item.Material_Medium_Name.Substring(0, 30) + "..." : @item.Material_Medium_Name)</div>
+                                            </td>
+                                            <td class="amount">
+                                                @item.Quantity
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            }
+                            else
+                            {<h1>NO DATA</h1>}
+                        </div>
+                    }
+
+                    @if (ViewBag.PTAcqDealList != null)
+                    {
+                        <div class="dashboard acq">
+                            <span>
+
+                                <a title="Previous" class="glyphicon glyphicon-chevron-left" id="btnPrevious_PTAcqDealList" style="float:left;padding-top:1px;"></a>
+
+                                @Html.ActionLink((string)ViewBag.PTAcqDealListTitle, "DealExpiryReport", "Reports", new { callFor = "APT", expDays = (int)ViewBag.DealStartAndExp_Days, callFrom = "D" }, null)
+
+                                <a title="Next" class="glyphicon glyphicon-chevron-right" id="btnNext_PTAcqDealList" style="float:right;padding-top:1px;"></a>
+                                <input type="hidden" id="currentPageIndex_PTAcqDealList" value="@ViewBag.PTAcqDealList_PageNo" />
+                            </span>
+
+                            @if (PTAcqDealList.Count > 0)
+                            {
+                                <table id="PTAcqDealList_tbl">
+                                    <tr>
+                                        <th>Deal No.</th>
+                                        <th>Payment Terms</th>
+                                        <th>Days After</th>
+                                        <th>Cost Percentage</th>
+                                        <th>Due Date</th>
+
+                                    </tr>
+                                    @foreach (var item in PTAcqDealList)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @item.Agreement_No
+                                            </td>
+                                            <td>
+                                                <h5 title="@item.Payment_Terms">
+                                                    @Html.Raw(@item.Payment_Terms.Length >= 33 ? @item.Payment_Terms.Substring(0, 30) + "..." : @item.Payment_Terms)
+                                                </h5>
+                                            </td>
+                                            <td class="amount">
+                                                @item.Days_After
+                                            </td>
+                                            <td>
+                                                @*<div title="@item.Payment_Terms">@Html.Raw(@item.Payment_Terms.Length >= 33 ? @item.Payment_Terms.Substring(0, 30) + "..." : @item.Payment_Terms)</div>*@
+                                                @item.Cost_Percentage
+                                            </td>
+                                            <td>
+                                                @(item.Due_Date.ToString().Substring(0, 10))
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            }
+                            else
+                            {<h1>NO DATA</h1>}
+                        </div>
+                    }
+                </section>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
